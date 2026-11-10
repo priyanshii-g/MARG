@@ -1,0 +1,1765 @@
+package in.marg.transport;
+
+import in.marg.building.BuildingDensityRasterProvider;
+import in.marg.building.BuildingFootprintVectorIndex;
+import in.marg.building.SettlementClassification;
+import in.marg.config.BuildingRoutingProperties;
+import in.marg.config.DemographicRoutingProperties;
+import in.marg.config.GeotechRoutingProperties;
+import in.marg.config.TransportRoutingProperties;
+import in.marg.config.UtilityRoutingProperties;
+import in.marg.config.WaterBodyRoutingProperties;
+import in.marg.config.WildlifeRoutingProperties;
+import in.marg.demographic.DemographicVectorIndex;
+import in.marg.demographic.DemographicVulnerabilityTier;
+import in.marg.demographic.PopulationDensityRasterProvider;
+import in.marg.environment.ProtectedAreaRasterProvider;
+import in.marg.geotech.GeotechHazardTier;
+import in.marg.geotech.GeotechLineamentVectorIndex;
+import in.marg.geotech.GeotechRasterProvider;
+import in.marg.hydrology.RiverHierarchyClass;
+import in.marg.hydrology.RiverNetworkVectorIndex;
+import in.marg.hydrology.WaterBodyClass;
+import in.marg.hydrology.WaterBodyRasterProvider;
+import in.marg.model.GeoPoint;
+import in.marg.model.StudyRegion;
+import in.marg.routing.CompositeCostSurface;
+import in.marg.routing.CostAssessment;
+import in.marg.routing.CostLayer;
+import in.marg.routing.CostSurface;
+import in.marg.routing.GeotechCostPolicy;
+import in.marg.routing.GreenfieldAStarRouter;
+import in.marg.routing.TransportCostPolicy;
+import in.marg.routing.UtilityCostPolicy;
+import in.marg.routing.WaterBodyCostPolicy;
+import in.marg.routing.WildlifeCostPolicy;
+import in.marg.row.RightOfWayCorridorEngine;
+import in.marg.spatial.CoordinateProjection;
+import in.marg.spatial.MetricPoint;
+import in.marg.terrain.SlopeRasterProvider;
+import in.marg.utility.UtilityCorridorClass;
+import in.marg.utility.UtilityCorridorTier;
+import in.marg.utility.UtilityNetworkVectorIndex;
+import in.marg.utility.UtilityRasterProvider;
+import in.marg.wildlife.WildlifeCorridorTier;
+import in.marg.wildlife.WildlifeCorridorVectorIndex;
+import in.marg.wildlife.WildlifeRasterProvider;
+import in.marg.wildlife.WildlifeZoneClass;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Post-mainline interchange placement, dedicated A* feeder/spur road router,
+ * grade-separated crossing (ROB / Flyover / VUP) analyzer, and multi-feature GeoJSON builder.
+ */
+@Service
+public class HighwayNetworkPlannerService {
+
+    private static final double SPUR_ROUTING_RESOLUTION_METERS = 250.0;
+    private static final double CHAINAGE_DENSIFY_STEP_METERS = 125.0;
+    private static final double MAX_INTERCHANGE_SLOPE_DEGREES = 12.0;
+
+    private final TransportNetworkVectorIndex vectorIndex;
+    private final TransportNetworkRasterProvider transportRasterProvider;
+    private final SlopeRasterProvider slopeRasterProvider;
+    private final ProtectedAreaRasterProvider protectedAreaRasterProvider;
+    private final GreenfieldAStarRouter router;
+    private final CoordinateProjection projection;
+    private final TransportRoutingProperties transportProperties;
+    private final WaterBodyRasterProvider waterBodyRasterProvider;
+    private final RiverNetworkVectorIndex riverVectorIndex;
+    private final WaterBodyRoutingProperties waterBodyProperties;
+    private final WildlifeRasterProvider wildlifeRasterProvider;
+    private final WildlifeCorridorVectorIndex wildlifeVectorIndex;
+    private final WildlifeRoutingProperties wildlifeProperties;
+    private final GeotechRasterProvider geotechRasterProvider;
+    private final GeotechLineamentVectorIndex geotechVectorIndex;
+    private final GeotechRoutingProperties geotechProperties;
+    private final UtilityRasterProvider utilityRasterProvider;
+    private final UtilityNetworkVectorIndex utilityVectorIndex;
+    private final UtilityRoutingProperties utilityProperties;
+    private final BuildingDensityRasterProvider buildingRasterProvider;
+    private final BuildingFootprintVectorIndex buildingVectorIndex;
+    private final BuildingRoutingProperties buildingProperties;
+    private final PopulationDensityRasterProvider demographicRasterProvider;
+    private final DemographicVectorIndex demographicVectorIndex;
+    private final DemographicRoutingProperties demographicProperties;
+    private final RightOfWayCorridorEngine rowCorridorEngine;
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeVectorIndex,
+                wildlifeProperties,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeVectorIndex,
+                wildlifeProperties,
+                geotechRasterProvider,
+                geotechVectorIndex,
+                geotechProperties,
+                null,
+                null,
+                null);
+    }
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            UtilityRoutingProperties utilityProperties) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeCorridorVectorIndex(wildlifeVectorIndex),
+                wildlifeProperties,
+                geotechRasterProvider,
+                geotechVectorIndex,
+                geotechProperties,
+                utilityRasterProvider,
+                utilityVectorIndex,
+                utilityProperties,
+                new RightOfWayCorridorEngine(projection));
+    }
+
+    private static WildlifeCorridorVectorIndex wildlifeCorridorVectorIndex(WildlifeCorridorVectorIndex w) {
+        return w;
+    }
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            UtilityRoutingProperties utilityProperties,
+            RightOfWayCorridorEngine rowCorridorEngine) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeVectorIndex,
+                wildlifeProperties,
+                geotechRasterProvider,
+                geotechVectorIndex,
+                geotechProperties,
+                utilityRasterProvider,
+                utilityVectorIndex,
+                utilityProperties,
+                null,
+                null,
+                null,
+                rowCorridorEngine);
+    }
+
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            UtilityRoutingProperties utilityProperties,
+            BuildingDensityRasterProvider buildingRasterProvider,
+            BuildingFootprintVectorIndex buildingVectorIndex,
+            BuildingRoutingProperties buildingProperties,
+            RightOfWayCorridorEngine rowCorridorEngine) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeVectorIndex,
+                wildlifeProperties,
+                geotechRasterProvider,
+                geotechVectorIndex,
+                geotechProperties,
+                utilityRasterProvider,
+                utilityVectorIndex,
+                utilityProperties,
+                buildingRasterProvider,
+                buildingVectorIndex,
+                buildingProperties,
+                null,
+                null,
+                null,
+                rowCorridorEngine);
+    }
+
+    @Autowired
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            UtilityRoutingProperties utilityProperties,
+            BuildingDensityRasterProvider buildingRasterProvider,
+            BuildingFootprintVectorIndex buildingVectorIndex,
+            BuildingRoutingProperties buildingProperties,
+            PopulationDensityRasterProvider demographicRasterProvider,
+            DemographicVectorIndex demographicVectorIndex,
+            DemographicRoutingProperties demographicProperties,
+            RightOfWayCorridorEngine rowCorridorEngine) {
+        this.vectorIndex = vectorIndex;
+        this.transportRasterProvider = transportRasterProvider;
+        this.slopeRasterProvider = slopeRasterProvider;
+        this.protectedAreaRasterProvider = protectedAreaRasterProvider;
+        this.router = router;
+        this.projection = projection;
+        this.transportProperties = transportProperties;
+        this.waterBodyRasterProvider = waterBodyRasterProvider;
+        this.riverVectorIndex = riverVectorIndex;
+        this.waterBodyProperties = waterBodyProperties;
+        this.wildlifeRasterProvider = wildlifeRasterProvider;
+        this.wildlifeVectorIndex = wildlifeVectorIndex;
+        this.wildlifeProperties = wildlifeProperties;
+        this.geotechRasterProvider = geotechRasterProvider;
+        this.geotechVectorIndex = geotechVectorIndex;
+        this.geotechProperties = geotechProperties;
+        this.utilityRasterProvider = utilityRasterProvider;
+        this.utilityVectorIndex = utilityVectorIndex;
+        this.utilityProperties = utilityProperties;
+        this.buildingRasterProvider = buildingRasterProvider;
+        this.buildingVectorIndex = buildingVectorIndex;
+        this.buildingProperties = buildingProperties;
+        this.demographicRasterProvider = demographicRasterProvider;
+        this.demographicVectorIndex = demographicVectorIndex;
+        this.demographicProperties = demographicProperties;
+        this.rowCorridorEngine = rowCorridorEngine != null
+                ? rowCorridorEngine
+                : new RightOfWayCorridorEngine(projection);
+    }
+
+    public RightOfWayCorridorEngine rowCorridorEngine() {
+        return rowCorridorEngine;
+    }
+
+    public NetworkPlanResult planNetwork(
+            StudyRegion fullRegion,
+            List<GeoPoint> mainline,
+            HubEvaluationService.EvaluationResult hubEvaluation,
+            List<CostLayer> terrainAndSocialSpurLayers) {
+
+        double mainlineLengthKm = router.routeLengthKm(mainline);
+        List<TransportNetworkVectorIndex.RouteCrossing> allCrossings =
+                vectorIndex.findRouteCrossings(mainline);
+        List<ChainageSample> chainageSamples = densifyMainline(mainline);
+
+        FacilityMode mode = hubEvaluation.facilityMode();
+        double minSpacingKm = hubEvaluation.minInterchangeSpacingKmApplied();
+        TransportCostPolicy policy = transportProperties.toPolicy();
+
+        // Build spur cost surface: respects Protected Areas, Slope <= 30 deg, Flood, LULC,
+        // Settlement buffers/cores, and Railway ROB crossings, while permitting tie-in onto target roads.
+        List<CostLayer> spurLayers = new ArrayList<>(terrainAndSocialSpurLayers);
+        spurLayers.add(buildRailwayOnlySpurLayer(policy));
+        CostSurface spurSurface = new CompositeCostSurface(spurLayers);
+
+        List<PlannedInterchange> interchanges = new ArrayList<>();
+        List<PlannedFeederSpur> feederSpurs = new ArrayList<>();
+        Set<Integer> crossingIndicesPromotedToInterchange = new LinkedHashSet<>();
+
+        double activeTrafficPcuHr = hubEvaluation.baseThroughTrafficPcuHr();
+        int activeServedPopulation = 0;
+
+        // Process accepted hub decisions in order (Immutable Overrides first, then HVI-ranked autonomous)
+        List<HubEvaluationService.HubDecision> acceptedDecisions = hubEvaluation.decisions().stream()
+                .filter(HubEvaluationService.HubDecision::accepted)
+                .toList();
+
+        for (HubEvaluationService.HubDecision decision : acceptedDecisions) {
+            RegionalHub hub = decision.hub();
+            boolean immutable = decision.immutableOverride();
+
+            InterchangeCandidate chosen = selectInterchangeLocation(
+                    hub,
+                    immutable,
+                    minSpacingKm,
+                    mainlineLengthKm,
+                    allCrossings,
+                    chainageSamples,
+                    interchanges);
+
+            if (chosen == null) {
+                continue;
+            }
+
+            if (chosen.crossingIndex() != null) {
+                crossingIndicesPromotedToInterchange.add(chosen.crossingIndex());
+            }
+
+            String interchangeId = "IC-" + (interchanges.size() + 1) + "-" + hub.hubId().replace("HUB-", "");
+            PlannedInterchange ic = new PlannedInterchange(
+                    interchangeId,
+                    chosen.point(),
+                    round(chosen.chainageKm()),
+                    chosen.interchangeType(),
+                    chosen.placementRule(),
+                    chosen.connectedRoadRef(),
+                    hub.hubId(),
+                    hub.name(),
+                    immutable);
+            interchanges.add(ic);
+
+            List<GeoPoint> spurPath = routeDedicatedSpur(
+                    fullRegion,
+                    chosen.point(),
+                    hub.bypassTieIn(),
+                    spurSurface);
+            double spurLengthKm = router.routeLengthKm(spurPath);
+
+            feederSpurs.add(new PlannedFeederSpur(
+                    "SPUR-" + hub.hubId().replace("HUB-", ""),
+                    interchangeId,
+                    hub,
+                    spurPath,
+                    round(spurLengthKm),
+                    decision.inducedPeakTrafficPcuHr(),
+                    decision.hvi(),
+                    immutable));
+
+            activeTrafficPcuHr += decision.inducedPeakTrafficPcuHr();
+            activeServedPopulation += hub.catchmentPopulation();
+        }
+
+        // Remaining crossings (railways + non-interchange roads) require ROB / Flyover / VUP without ramps
+        List<GradeSeparatedCrossingStructure> gradeSeparatedStructures = new ArrayList<>();
+        int railwayRobCount = 0;
+        int roadFlyoverCount = 0;
+        double sumCrossingAnglesDeg = 0.0;
+
+        for (int idx = 0; idx < allCrossings.size(); idx++) {
+            TransportNetworkVectorIndex.RouteCrossing rc = allCrossings.get(idx);
+            sumCrossingAnglesDeg += rc.crossingAngleDegrees();
+
+            if (crossingIndicesPromotedToInterchange.contains(idx)
+                    && rc.category() != TransportCategory.RAILWAY) {
+                continue;
+            }
+
+            if (rc.category() == TransportCategory.RAILWAY) {
+                railwayRobCount++;
+            } else {
+                roadFlyoverCount++;
+            }
+
+            double skewMultiplier = policy.skewBridgeMultiplier(rc.sinAngle());
+            double structureCostKmEq = policy.crossingStructureCostKmEq(rc.category(), rc.sinAngle());
+
+            gradeSeparatedStructures.add(new GradeSeparatedCrossingStructure(
+                    "GS-" + (gradeSeparatedStructures.size() + 1) + "-" + rc.corridorRef(),
+                    rc.point(),
+                    round(rc.chainageKm()),
+                    rc.corridorId(),
+                    rc.corridorRef(),
+                    rc.corridorName(),
+                    rc.category(),
+                    rc.category().defaultCrossingStructureType(),
+                    round(rc.crossingAngleDegrees()),
+                    round(skewMultiplier),
+                    round(structureCostKmEq)));
+        }
+
+        double avgCrossingAngleDeg = allCrossings.isEmpty()
+                ? 90.0
+                : round(sumCrossingAnglesDeg / allCrossings.size());
+
+        // Perennial River & Stream Bridge Structures along mainline
+        List<PlannedRiverBridge> riverBridges = new ArrayList<>();
+        double totalRiverBridgeSpanMeters = 0.0;
+        double avgRiverCrossingAngleDeg = 90.0;
+        if (riverVectorIndex != null) {
+            WaterBodyCostPolicy waterPolicy = waterBodyProperties != null
+                    ? waterBodyProperties.toPolicy()
+                    : WaterBodyCostPolicy.defaultPolicy();
+            List<RiverNetworkVectorIndex.RouteRiverCrossing> riverCrossings =
+                    riverVectorIndex.findRouteRiverCrossings(mainline);
+            double sumRiverAngles = 0.0;
+            for (RiverNetworkVectorIndex.RouteRiverCrossing rrc : riverCrossings) {
+                sumRiverAngles += rrc.crossingAngleDegrees();
+                totalRiverBridgeSpanMeters += rrc.effectiveSkewSpanMeters();
+                double hydraulicSkewMult = waterPolicy.hydraulicSkewMultiplier(rrc.sinAngle());
+                double bridgeCostKmEq = waterPolicy.riverBridgeCostKmEq(rrc.riverClass(), rrc.sinAngle());
+                riverBridges.add(new PlannedRiverBridge(
+                        "RB-" + (riverBridges.size() + 1) + "-" + rrc.riverId().replace("RIV-", ""),
+                        rrc.point(),
+                        round(rrc.chainageKm()),
+                        rrc.riverId(),
+                        rrc.riverName(),
+                        rrc.riverClass(),
+                        rrc.basin(),
+                        rrc.riverClass().bridgeStructureType(),
+                        round(rrc.designChannelWidthMeters()),
+                        round(rrc.effectiveSkewSpanMeters()),
+                        round(rrc.crossingAngleDegrees()),
+                        round(hydraulicSkewMult),
+                        round(bridgeCostKmEq)));
+            }
+            if (!riverCrossings.isEmpty()) {
+                avgRiverCrossingAngleDeg = round(sumRiverAngles / riverCrossings.size());
+            }
+        }
+
+        // Wildlife Migration Corridor Passages (Elevated Wildlife Viaducts & Animal Underpasses)
+        List<PlannedWildlifePassage> wildlifePassages = new ArrayList<>();
+        double totalWildlifePassageSpanMeters = 0.0;
+        double avgWildlifeCrossingAngleDeg = 90.0;
+        if (wildlifeVectorIndex != null) {
+            WildlifeCostPolicy wildlifePolicy = wildlifeProperties != null
+                    ? wildlifeProperties.toPolicy()
+                    : WildlifeCostPolicy.defaultPolicy();
+            List<WildlifeCorridorVectorIndex.RouteWildlifeCrossing> wildlifeCrossings =
+                    wildlifeVectorIndex.findRouteCorridorCrossings(mainline);
+            double sumWildlifeAngles = 0.0;
+            for (WildlifeCorridorVectorIndex.RouteWildlifeCrossing rwc : wildlifeCrossings) {
+                sumWildlifeAngles += rwc.crossingAngleDegrees();
+                totalWildlifePassageSpanMeters += rwc.recommendedPassageSpanMeters();
+                double barrierSkewMult = wildlifePolicy.barrierSkewMultiplier(rwc.sinAngle());
+                double passageCostKmEq = wildlifePolicy.wildlifePassageCostKmEq(
+                        rwc.corridorTier(), rwc.sinAngle());
+                wildlifePassages.add(new PlannedWildlifePassage(
+                        "WP-" + (wildlifePassages.size() + 1) + "-" + rwc.corridorId().replace("WLC-", ""),
+                        rwc.point(),
+                        round(rwc.chainageKm()),
+                        rwc.corridorId(),
+                        rwc.corridorName(),
+                        rwc.corridorTier(),
+                        rwc.targetSpecies(),
+                        rwc.corridorTier().passageStructureType(),
+                        round(rwc.designCorridorWidthMeters()),
+                        round(rwc.recommendedPassageSpanMeters()),
+                        round(rwc.minimumClearHeightMeters()),
+                        round(rwc.crossingAngleDegrees()),
+                        round(barrierSkewMult),
+                        round(passageCostKmEq)));
+            }
+            if (!wildlifeCrossings.isEmpty()) {
+                avgWildlifeCrossingAngleDeg = round(sumWildlifeAngles / wildlifeCrossings.size());
+            }
+        }
+
+        // Geotechnical Fault/Landslide Scarp & Liquefaction Trough Mitigation Works
+        List<PlannedGeotechMitigation> geotechMitigations = new ArrayList<>();
+        double totalGeotechStabilizationMeters = 0.0;
+        double avgGeotechCrossingAngleDeg = 90.0;
+        if (geotechVectorIndex != null) {
+            GeotechCostPolicy geotechPolicy = geotechProperties != null
+                    ? geotechProperties.toPolicy()
+                    : GeotechCostPolicy.defaultPolicy();
+            List<GeotechLineamentVectorIndex.RouteGeotechCrossing> geotechCrossings =
+                    geotechVectorIndex.findRouteLineamentCrossings(mainline);
+            double sumGeotechAngles = 0.0;
+            for (GeotechLineamentVectorIndex.RouteGeotechCrossing rgc : geotechCrossings) {
+                sumGeotechAngles += rgc.crossingAngleDegrees();
+                totalGeotechStabilizationMeters += rgc.recommendedStabilizationLengthMeters();
+                double scarpSkewMult = geotechPolicy.scarpSkewMultiplier(rgc.sinAngle());
+                double mitigationCostKmEq = geotechPolicy.geotechMitigationCostKmEq(
+                        rgc.hazardTier(), rgc.sinAngle());
+                geotechMitigations.add(new PlannedGeotechMitigation(
+                        "GM-" + (geotechMitigations.size() + 1) + "-" + rgc.lineamentId().replace("GEO-", ""),
+                        rgc.point(),
+                        round(rgc.chainageKm()),
+                        rgc.lineamentId(),
+                        rgc.lineamentName(),
+                        rgc.hazardTier(),
+                        rgc.lithologyAndSoil(),
+                        rgc.engineeringHazard(),
+                        rgc.hazardTier().mitigationStructureType(),
+                        round(rgc.designHazardWidthMeters()),
+                        round(rgc.recommendedStabilizationLengthMeters()),
+                        round(rgc.crossingAngleDegrees()),
+                        round(scarpSkewMult),
+                        round(mitigationCostKmEq)));
+            }
+            if (!geotechCrossings.isEmpty()) {
+                avgGeotechCrossingAngleDeg = round(sumGeotechAngles / geotechCrossings.size());
+            }
+        }
+
+        // Overhead High-Voltage Power Transmission Line Crossings & Protective Works
+        List<PlannedUtilityCrossing> utilityCrossings = new ArrayList<>();
+        double totalUtilityProtectiveSpanMeters = 0.0;
+        double avgUtilityCrossingAngleDeg = 90.0;
+        if (utilityVectorIndex != null) {
+            UtilityCostPolicy utilityPolicy = utilityProperties != null
+                    ? utilityProperties.toPolicy()
+                    : UtilityCostPolicy.defaultPolicy();
+            List<UtilityNetworkVectorIndex.RouteUtilityCrossing> rucList =
+                    utilityVectorIndex.findRouteUtilityCrossings(mainline);
+            double sumUtilityAngles = 0.0;
+            for (UtilityNetworkVectorIndex.RouteUtilityCrossing ruc : rucList) {
+                sumUtilityAngles += ruc.crossingAngleDegrees();
+                totalUtilityProtectiveSpanMeters += ruc.recommendedProtectiveSpanMeters();
+                double skewMult = utilityPolicy.crossingSkewMultiplier(ruc.sinAngle());
+                double crossingCostKmEq = utilityPolicy.utilityCrossingProtectionCostKmEq(
+                        ruc.tier(), ruc.sinAngle(), ruc.nearestTowerDistanceMeters());
+                utilityCrossings.add(new PlannedUtilityCrossing(
+                        "UC-" + (utilityCrossings.size() + 1) + "-" + ruc.lineId().replace("PWR-", ""),
+                        ruc.point(),
+                        round(ruc.chainageKm()),
+                        ruc.lineId(),
+                        ruc.lineName(),
+                        ruc.tier(),
+                        ruc.voltageKv(),
+                        ruc.circuit(),
+                        ruc.tier().crossingProtectionStructureType(),
+                        round(ruc.designRowWidthMeters()),
+                        round(ruc.minimumConductorClearanceMeters()),
+                        round(ruc.recommendedProtectiveSpanMeters()),
+                        round(ruc.crossingAngleDegrees()),
+                        round(skewMult),
+                        round(ruc.nearestTowerDistanceMeters()),
+                        round(crossingCostKmEq)));
+            }
+            if (!rucList.isEmpty()) {
+                avgUtilityCrossingAngleDeg = round(sumUtilityAngles / rucList.size());
+            }
+        }
+
+        double totalSpurLengthKm = round(
+                feederSpurs.stream().mapToDouble(PlannedFeederSpur::spurLengthKm).sum());
+        double finalVcRatio = round(activeTrafficPcuHr / hubEvaluation.designCapacityPcuHr());
+        String finalLos = HubEvaluationService.classifyLevelOfService(finalVcRatio);
+        boolean overCapacity = finalVcRatio > hubEvaluation.maxVcRatioCapApplied() + 1e-9;
+
+        List<List<GeoPoint>> spurPaths = feederSpurs.stream()
+                .map(PlannedFeederSpur::path)
+                .toList();
+        List<GeoPoint> icPoints = interchanges.stream()
+                .map(PlannedInterchange::point)
+                .toList();
+        RightOfWayCorridorEngine.CorridorFootprint rowCorridorFootprint =
+                rowCorridorEngine.buildCorridorFootprint(mainline, mode, spurPaths, icPoints);
+
+        List<PlannedSettlementConflictZone> settlementConflictZones = new ArrayList<>();
+        int buildingsInDirectRowCount = 0;
+        int settlementsIntersectingDirectRowCount = 0;
+        if (buildingVectorIndex != null) {
+            BuildingFootprintVectorIndex.RouteBuildingAndSettlementImpact rowImpact =
+                    buildingVectorIndex.evaluateCorridorFootprintImpact(mainline, rowCorridorFootprint);
+            buildingsInDirectRowCount = rowImpact.buildingsInDirectRowCount();
+            settlementsIntersectingDirectRowCount = rowImpact.settlementsIntersectingDirectRowCount();
+            for (BuildingFootprintVectorIndex.RouteSettlementConflict rsc : rowImpact.settlementConflicts()) {
+                settlementConflictZones.add(new PlannedSettlementConflictZone(
+                        "SCZ-" + (settlementConflictZones.size() + 1) + "-" + rsc.settlementId(),
+                        rsc.point(),
+                        rsc.chainageKm(),
+                        rsc.settlementId(),
+                        rsc.settlementName(),
+                        rsc.settlementClassification(),
+                        rsc.settlementSubtype(),
+                        rsc.district(),
+                        rsc.builtUpDensityBuildingsPerHa(),
+                        rsc.builtUpDensityClass(),
+                        rsc.buildingsInDirectRowCount(),
+                        rsc.buildingsInConstructionZoneCount(),
+                        rsc.buildingsInDirectRowByType(),
+                        rsc.affectedDirectRowFootprintSqMeters(),
+                        rsc.areaInDirectRowHectares(),
+                        rsc.areaInConstructionZoneHectares(),
+                        rsc.distanceToCenterlineMeters(),
+                        rsc.distanceToRowEdgeMeters(),
+                        rsc.recommendedEngineeringMitigation(),
+                        rsc.conflictCostKmEquivalent()));
+            }
+        }
+
+        List<PlannedDemographicExposureZone> demographicExposureZones = new ArrayList<>();
+        int populationWithinDirectRow = 0;
+        int estimatedDirectlyDisplacedPopulation = 0;
+        int populationWithin250mEnvironmentalBuffer = 0;
+        int populationWithin500mSecondaryBuffer = 0;
+        if (demographicVectorIndex != null) {
+            DemographicVectorIndex.RouteDemographicImpact demoImpact =
+                    demographicVectorIndex.evaluateCorridorFootprintDemographicImpact(
+                            mainline, rowCorridorFootprint, buildingVectorIndex);
+            populationWithinDirectRow = demoImpact.populationWithinDirectRow();
+            estimatedDirectlyDisplacedPopulation = demoImpact.estimatedDirectlyDisplacedPopulation();
+            populationWithin250mEnvironmentalBuffer = demoImpact.populationWithin250mEnvironmentalBuffer();
+            populationWithin500mSecondaryBuffer = demoImpact.populationWithin500mSecondaryBuffer();
+            for (DemographicVectorIndex.RouteDemographicExposureZone rdez : demoImpact.exposureZones()) {
+                demographicExposureZones.add(new PlannedDemographicExposureZone(
+                        "DEZ-" + (demographicExposureZones.size() + 1) + "-" + rdez.tractId(),
+                        rdez.point(),
+                        rdez.chainageKm(),
+                        rdez.tractId(),
+                        rdez.settlementId(),
+                        rdez.settlementName(),
+                        rdez.district(),
+                        rdez.settlementClassification().name(),
+                        rdez.settlementClassification().name(),
+                        rdez.totalSettlementPopulation(),
+                        0,
+                        0,
+                        rdez.populationDensityPerSqKm(),
+                        rdez.populationDensityClass().name(),
+                        rdez.vulnerabilityTier(),
+                        rdez.socialVulnerabilityIndex(),
+                        rdez.populationWithinDirectRow(),
+                        rdez.populationWithin100mBuffer(),
+                        rdez.populationWithin250mBuffer(),
+                        rdez.populationWithin500mBuffer(),
+                        rdez.estimatedDirectlyDisplacedPopulation(),
+                        0,
+                        Math.max(0, rdez.populationWithin250mBuffer() - rdez.estimatedDirectlyDisplacedPopulation()),
+                        rdez.vulnerableAgeExposedWithin250m(),
+                        rdez.scheduledTribeAndCastesExposedWithin250m(),
+                        rdez.distanceToCenterlineMeters(),
+                        rdez.distanceToRowEdgeMeters(),
+                        rdez.recommendedSocialMitigationMeasure(),
+                        rdez.exposureCostIndex()));
+            }
+        }
+
+        return new NetworkPlanResult(
+                mode,
+                round(mainlineLengthKm),
+                totalSpurLengthKm,
+                round(mainlineLengthKm + totalSpurLengthKm),
+                interchanges,
+                feederSpurs,
+                gradeSeparatedStructures,
+                List.copyOf(riverBridges),
+                List.copyOf(wildlifePassages),
+                List.copyOf(geotechMitigations),
+                List.copyOf(utilityCrossings),
+                List.copyOf(settlementConflictZones),
+                List.copyOf(demographicExposureZones),
+                allCrossings.size(),
+                railwayRobCount,
+                roadFlyoverCount,
+                avgCrossingAngleDeg,
+                round(totalRiverBridgeSpanMeters),
+                avgRiverCrossingAngleDeg,
+                round(totalWildlifePassageSpanMeters),
+                avgWildlifeCrossingAngleDeg,
+                round(totalGeotechStabilizationMeters),
+                avgGeotechCrossingAngleDeg,
+                round(totalUtilityProtectiveSpanMeters),
+                avgUtilityCrossingAngleDeg,
+                buildingsInDirectRowCount,
+                settlementsIntersectingDirectRowCount,
+                populationWithinDirectRow,
+                estimatedDirectlyDisplacedPopulation,
+                populationWithin250mEnvironmentalBuffer,
+                populationWithin500mSecondaryBuffer,
+                round(activeTrafficPcuHr),
+                hubEvaluation.designCapacityPcuHr(),
+                finalVcRatio,
+                finalLos,
+                overCapacity,
+                activeServedPopulation,
+                rowCorridorFootprint);
+    }
+
+    private InterchangeCandidate selectInterchangeLocation(
+            RegionalHub hub,
+            boolean immutable,
+            double minSpacingKm,
+            double mainlineLengthKm,
+            List<TransportNetworkVectorIndex.RouteCrossing> allCrossings,
+            List<ChainageSample> chainageSamples,
+            List<PlannedInterchange> existingInterchanges) {
+
+        MetricPoint tieMetric = hub.bypassTieInMetric();
+        double maxNhShReachKm = immutable ? 30.0 : 18.0;
+        double maxMdrReachKm = immutable ? 20.0 : 12.0;
+
+        // 1. Primary Rule: Spawn interchange where mainline intersects an existing NH or SH corridor
+        InterchangeCandidate bestNhSh = null;
+        double bestNhShDistKm = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < allCrossings.size(); i++) {
+            TransportNetworkVectorIndex.RouteCrossing rc = allCrossings.get(i);
+            if (!rc.category().isHighCapacityInterchangeEligible()) {
+                continue;
+            }
+            if (isInsideWaterChannelOrWetland(rc.point())
+                    || isInsideWildlifeInterchangeExclusionZone(rc.point())
+                    || isInsideUnsafeGeotechInterchangeSubgrade(rc.point())
+                    || isInsideUtilityInterchangeExclusionZone(rc.point())
+                    || isInsideBuildingInterchangeExclusionZone(rc.point())
+                    || isInsideDemographicInterchangeExclusionZone(rc.point())) {
+                continue;
+            }
+            if (!immutable && !passesChainageSpacing(
+                    rc.chainageKm(), minSpacingKm, mainlineLengthKm, existingInterchanges)) {
+                continue;
+            }
+            double distKm = Math.hypot(
+                    rc.metricPoint().x() - tieMetric.x(),
+                    rc.metricPoint().y() - tieMetric.y()) / 1000.0;
+            if (distKm <= maxNhShReachKm && distKm < bestNhShDistKm) {
+                bestNhShDistKm = distKm;
+                bestNhSh = new InterchangeCandidate(
+                        rc.point(),
+                        rc.chainageKm(),
+                        i,
+                        "GRADE_SEPARATED_CORRIDOR_INTERCHANGE",
+                        "HIGH_CAPACITY_NH_SH_INTERSECTION",
+                        rc.corridorRef());
+            }
+        }
+        if (bestNhSh != null) {
+            return bestNhSh;
+        }
+
+        // 2. Secondary Rule: Arterial MDR intersection upgrade if one crosses near the hub
+        InterchangeCandidate bestMdr = null;
+        double bestMdrDistKm = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < allCrossings.size(); i++) {
+            TransportNetworkVectorIndex.RouteCrossing rc = allCrossings.get(i);
+            if (rc.category() != TransportCategory.MAJOR_DISTRICT_ROAD) {
+                continue;
+            }
+            if (isInsideWaterChannelOrWetland(rc.point())
+                    || isInsideWildlifeInterchangeExclusionZone(rc.point())
+                    || isInsideUnsafeGeotechInterchangeSubgrade(rc.point())
+                    || isInsideUtilityInterchangeExclusionZone(rc.point())
+                    || isInsideBuildingInterchangeExclusionZone(rc.point())
+                    || isInsideDemographicInterchangeExclusionZone(rc.point())) {
+                continue;
+            }
+            if (!immutable && !passesChainageSpacing(
+                    rc.chainageKm(), minSpacingKm, mainlineLengthKm, existingInterchanges)) {
+                continue;
+            }
+            double distKm = Math.hypot(
+                    rc.metricPoint().x() - tieMetric.x(),
+                    rc.metricPoint().y() - tieMetric.y()) / 1000.0;
+            if (distKm <= maxMdrReachKm && distKm < bestMdrDistKm) {
+                bestMdrDistKm = distKm;
+                bestMdr = new InterchangeCandidate(
+                        rc.point(),
+                        rc.chainageKm(),
+                        i,
+                        "UPGRADED_ARTERIAL_DIAMOND_INTERCHANGE",
+                        "ARTERIAL_ROAD_INTERSECTION",
+                        rc.corridorRef());
+            }
+        }
+        if (bestMdr != null) {
+            return bestMdr;
+        }
+
+        // 3. Fallback for parallel-corridor bypassed hubs: nearest terrain-safe Trumpet Interchange on mainline
+        ChainageSample bestSample = null;
+        double bestSampleDistKm = Double.POSITIVE_INFINITY;
+        for (ChainageSample sample : chainageSamples) {
+            if (!immutable && !passesChainageSpacing(
+                    sample.chainageKm(), minSpacingKm, mainlineLengthKm, existingInterchanges)) {
+                continue;
+            }
+            if (!isTerrainSafeForInterchange(sample.point())) {
+                continue;
+            }
+            double distKm = Math.hypot(
+                    sample.metric().x() - tieMetric.x(),
+                    sample.metric().y() - tieMetric.y()) / 1000.0;
+            if (distKm < bestSampleDistKm) {
+                bestSampleDistKm = distKm;
+                bestSample = sample;
+            }
+        }
+        if (bestSample == null) {
+            return null;
+        }
+        return new InterchangeCandidate(
+                bestSample.point(),
+                bestSample.chainageKm(),
+                null,
+                "TRUMPET_SPUR_INTERCHANGE",
+                "BYPASSED_PARALLEL_CORRIDOR_SHORTEST_SPUR",
+                hub.tieInRoadRef());
+    }
+
+    private boolean passesChainageSpacing(
+            double candidateChainageKm,
+            double minSpacingKm,
+            double mainlineLengthKm,
+            List<PlannedInterchange> existing) {
+        if (candidateChainageKm < minSpacingKm
+                || (mainlineLengthKm - candidateChainageKm) < minSpacingKm) {
+            return false;
+        }
+        for (PlannedInterchange ic : existing) {
+            if (Math.abs(candidateChainageKm - ic.chainageKm()) < minSpacingKm) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isInsideWaterChannelOrWetland(GeoPoint pt) {
+        if (waterBodyRasterProvider == null) {
+            return false;
+        }
+        WaterBodyClass wc = waterBodyRasterProvider.sampleClass(pt.lat(), pt.lon());
+        return wc == WaterBodyClass.MINOR_PERENNIAL_STREAM
+                || wc == WaterBodyClass.MEDIUM_PERENNIAL_RIVER
+                || wc == WaterBodyClass.MAJOR_PERENNIAL_RIVER
+                || wc == WaterBodyClass.INLAND_WETLAND_WATERBODY;
+    }
+
+    private boolean isInsideWildlifeInterchangeExclusionZone(GeoPoint pt) {
+        if (wildlifeRasterProvider == null) {
+            return false;
+        }
+        return wildlifeRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeExcludedZone();
+    }
+
+    private boolean isInsideUnsafeGeotechInterchangeSubgrade(GeoPoint pt) {
+        if (geotechRasterProvider == null) {
+            return false;
+        }
+        return geotechRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeUnsafeSubgrade();
+    }
+
+    private boolean isInsideUtilityInterchangeExclusionZone(GeoPoint pt) {
+        if (utilityRasterProvider == null) {
+            return false;
+        }
+        return utilityRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeExcludedZone();
+    }
+
+    private boolean isInsideBuildingInterchangeExclusionZone(GeoPoint pt) {
+        if (buildingRasterProvider == null) {
+            return false;
+        }
+        return buildingRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeExcludedZone();
+    }
+
+    private boolean isInsideDemographicInterchangeExclusionZone(GeoPoint pt) {
+        if (demographicRasterProvider == null) {
+            return false;
+        }
+        return demographicRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeExcludedZone();
+    }
+
+    private boolean isTerrainSafeForInterchange(GeoPoint pt) {
+        Double pa = protectedAreaRasterProvider.sampleOrNull(pt.lat(), pt.lon());
+        if (pa == null || Math.round(pa) == 1L) {
+            return false;
+        }
+        Double slope = slopeRasterProvider.sampleOrNull(pt.lat(), pt.lon());
+        if (slope == null || slope > MAX_INTERCHANGE_SLOPE_DEGREES) {
+            return false;
+        }
+        if (waterBodyRasterProvider != null
+                && waterBodyRasterProvider.sampleClass(pt.lat(), pt.lon())
+                        .isChannelOrWetlandOrInnerScourZone()) {
+            return false;
+        }
+        if (isInsideWildlifeInterchangeExclusionZone(pt)
+                || isInsideUnsafeGeotechInterchangeSubgrade(pt)
+                || isInsideUtilityInterchangeExclusionZone(pt)
+                || isInsideBuildingInterchangeExclusionZone(pt)
+                || isInsideDemographicInterchangeExclusionZone(pt)) {
+            return false;
+        }
+        TransportCorridorClass tc = transportRasterProvider.sampleClass(pt.lat(), pt.lon());
+        return tc != TransportCorridorClass.RAILWAY_CORRIDOR
+                && tc != TransportCorridorClass.RAILWAY_BUFFER;
+    }
+
+    private List<GeoPoint> routeDedicatedSpur(
+            StudyRegion fullRegion,
+            GeoPoint interchangePoint,
+            GeoPoint hubBypassTieIn,
+            CostSurface spurSurface) {
+
+        double directMeters = projection.distanceMeters(interchangePoint, hubBypassTieIn);
+        if (directMeters <= 300.0) {
+            return List.of(interchangePoint, hubBypassTieIn);
+        }
+
+        for (double bufferDeg : new double[]{0.06, 0.12, 0.20}) {
+            StudyRegion localWindow = localWindow(fullRegion, interchangePoint, hubBypassTieIn, bufferDeg);
+            try {
+                return router.route(
+                        fullRegion,
+                        interchangePoint,
+                        hubBypassTieIn,
+                        spurSurface,
+                        SPUR_ROUTING_RESOLUTION_METERS,
+                        localWindow);
+            } catch (RuntimeException ignored) {
+                // Expand local spur window on steep ridges or protected-area detours
+            }
+        }
+        return List.of(interchangePoint, hubBypassTieIn);
+    }
+
+    private CostLayer buildRailwayOnlySpurLayer(TransportCostPolicy policy) {
+        return new CostLayer() {
+            @Override
+            public CostAssessment assess(GeoPoint point) {
+                TransportCorridorClass c =
+                        transportRasterProvider.sampleClass(point.lat(), point.lon());
+                if (c == TransportCorridorClass.RAILWAY_CORRIDOR
+                        || c == TransportCorridorClass.RAILWAY_BUFFER) {
+                    return new CostAssessment(
+                            false,
+                            policy.nodePenalty(c),
+                            "infrastructure:spur-railway-avoidance",
+                            c.name());
+                }
+                return CostAssessment.FREE;
+            }
+
+            @Override
+            public boolean hasEdgeCost() {
+                return true;
+            }
+
+            @Override
+            public CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
+                List<TransportNetworkVectorIndex.SegmentCrossing> crossings =
+                        vectorIndex.findStepCrossings(from, to);
+                double railCostKmEq = 0.0;
+                for (TransportNetworkVectorIndex.SegmentCrossing sc : crossings) {
+                    if (sc.category() == TransportCategory.RAILWAY) {
+                        railCostKmEq += policy.crossingStructureCostKmEq(sc.category(), sc.sinAngle());
+                    }
+                }
+                if (railCostKmEq <= 0.0) {
+                    return CostAssessment.FREE;
+                }
+                double stepKm = Math.max(0.05, projection.distanceMeters(from, to) / 1000.0);
+                return new CostAssessment(
+                        false,
+                        railCostKmEq / stepKm,
+                        "infrastructure:spur-railway-rob",
+                        "RAIL_OVER_BRIDGE_ROB");
+            }
+        };
+    }
+
+    private List<ChainageSample> densifyMainline(List<GeoPoint> mainline) {
+        List<ChainageSample> samples = new ArrayList<>();
+        if (mainline.isEmpty()) {
+            return samples;
+        }
+        double cumulativeKm = 0.0;
+        MetricPoint firstM = projection.forward(mainline.get(0));
+        samples.add(new ChainageSample(mainline.get(0), firstM, 0.0));
+
+        for (int i = 1; i < mainline.size(); i++) {
+            MetricPoint a = projection.forward(mainline.get(i - 1));
+            MetricPoint b = projection.forward(mainline.get(i));
+            double dx = b.x() - a.x();
+            double dy = b.y() - a.y();
+            double segMeters = Math.hypot(dx, dy);
+            if (segMeters <= 0.0) {
+                continue;
+            }
+            int parts = Math.max(1, (int) Math.ceil(segMeters / CHAINAGE_DENSIFY_STEP_METERS));
+            for (int j = 1; j <= parts; j++) {
+                double t = (double) j / parts;
+                MetricPoint mp = new MetricPoint(a.x() + t * dx, a.y() + t * dy);
+                GeoPoint gp = j == parts ? mainline.get(i) : projection.inverse(mp);
+                double chKm = cumulativeKm + (t * segMeters) / 1000.0;
+                samples.add(new ChainageSample(gp, mp, chKm));
+            }
+            cumulativeKm += segMeters / 1000.0;
+        }
+        return samples;
+    }
+
+    private static StudyRegion localWindow(
+            StudyRegion full, GeoPoint a, GeoPoint b, double bufferDeg) {
+        double minLat = Math.max(full.minLat(), Math.min(a.lat(), b.lat()) - bufferDeg);
+        double maxLat = Math.min(full.maxLat(), Math.max(a.lat(), b.lat()) + bufferDeg);
+        double minLon = Math.max(full.minLon(), Math.min(a.lon(), b.lon()) - bufferDeg);
+        double maxLon = Math.min(full.maxLon(), Math.max(a.lon(), b.lon()) + bufferDeg);
+        return new StudyRegion(full.name() + " / spur window", minLat, minLon, maxLat, maxLon, a, b);
+    }
+
+    /**
+     * Builds the rich multi-feature GeoJSON list:
+     * MAINLINE + DEDICATED_FEEDER_SPURs + INTERCHANGEs + ROAD_TIE_INs + GRADE_SEPARATED_CROSSINGs.
+     */
+    public List<Map<String, Object>> buildGeoJsonFeatures(
+            List<GeoPoint> mainline,
+            Map<String, Object> mainlineProperties,
+            NetworkPlanResult plan) {
+
+        List<Map<String, Object>> features = new ArrayList<>();
+
+        // 1. Mainline alignment feature
+        Map<String, Object> mlProps = new LinkedHashMap<>(mainlineProperties);
+        mlProps.put("featureRole", "MAINLINE");
+        mlProps.put("facilityMode", plan.facilityMode().name());
+        mlProps.put("plannedInterchangeCount", plan.interchanges().size());
+        mlProps.put("totalFeederSpurLengthKm", plan.totalFeederSpurLengthKm());
+        mlProps.put("railwayRobCount", plan.railwayRobCount());
+        mlProps.put("highwayFlyoverVupCount", plan.roadFlyoverCount());
+        mlProps.put("riverBridgeCount", plan.riverBridges().size());
+        mlProps.put("totalRiverBridgeSpanMeters", plan.totalEstimatedRiverBridgeSpanMeters());
+        mlProps.put("wildlifePassageCount", plan.wildlifePassages().size());
+        mlProps.put("totalWildlifePassageSpanMeters", plan.totalRecommendedWildlifePassageSpanMeters());
+        mlProps.put("geotechMitigationZoneCount", plan.geotechMitigations().size());
+        mlProps.put("totalGeotechStabilizationMeters", plan.totalRecommendedGeotechStabilizationMeters());
+        mlProps.put("utilityCrossingCount", plan.utilityCrossings().size());
+        mlProps.put("totalUtilityProtectiveSpanMeters", plan.totalRecommendedUtilityProtectiveSpanMeters());
+        mlProps.put("settlementConflictZonesCount", plan.settlementConflictZones().size());
+        mlProps.put("buildingsInDirectRowCount", plan.buildingsInDirectRowCount());
+        mlProps.put("settlementsIntersectingDirectRowCount", plan.settlementsIntersectingDirectRowCount());
+        mlProps.put("demographicExposureZonesCount", plan.demographicExposureZones().size());
+        mlProps.put("populationWithinDirectRow", plan.populationWithinDirectRow());
+        mlProps.put("estimatedDirectlyDisplacedPopulation", plan.estimatedDirectlyDisplacedPopulation());
+        mlProps.put("populationWithin250mEnvironmentalBuffer", plan.populationWithin250mEnvironmentalBuffer());
+        mlProps.put("populationWithin500mSecondaryBuffer", plan.populationWithin500mSecondaryBuffer());
+        if (plan.rowCorridorFootprint() != null) {
+            mlProps.put("designRowWidthMeters", plan.rowCorridorFootprint().mainlineRowWidthMeters());
+            mlProps.put("ircRowStandard", plan.rowCorridorFootprint().ircStandard());
+            mlProps.put("mainlineRowAreaHectares", plan.rowCorridorFootprint().mainlineRowAreaHectares());
+            mlProps.put("totalDirectRowAcquisitionHectares", plan.rowCorridorFootprint().totalDirectRowAcquisitionHectares());
+        }
+        mlProps.put("projectedVcRatio", plan.projectedVcRatio());
+        mlProps.put("levelOfService", plan.levelOfService());
+
+        features.add(Map.of(
+                "type", "Feature",
+                "properties", mlProps,
+                "geometry", Map.of(
+                        "type", "LineString",
+                        "coordinates", toLonLatList(mainline))));
+
+        // 2. Dedicated Feeder / Spur Road LineStrings
+        for (PlannedFeederSpur spur : plan.feederSpurs()) {
+            Map<String, Object> spProps = new LinkedHashMap<>();
+            spProps.put("featureRole", "DEDICATED_FEEDER_SPUR");
+            spProps.put("spurId", spur.spurId());
+            spProps.put("interchangeId", spur.interchangeId());
+            spProps.put("servedHubId", spur.hub().hubId());
+            spProps.put("servedHubName", spur.hub().name());
+            spProps.put("tieInRoadRef", spur.hub().tieInRoadRef());
+            spProps.put("tieInJunctionName", spur.hub().tieInName());
+            spProps.put("spurLengthKm", spur.spurLengthKm());
+            spProps.put("catchmentPopulationServed", spur.hub().catchmentPopulation());
+            spProps.put("inducedPeakTrafficPcuHr", round(spur.inducedPeakTrafficPcuHr()));
+            spProps.put("hviScore", round(spur.hviScore()));
+            spProps.put("immutableUserOverride", spur.immutableOverride());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", spProps,
+                    "geometry", Map.of(
+                            "type", "LineString",
+                            "coordinates", toLonLatList(spur.path()))));
+        }
+
+        // 3. Grade-Separated Mainline Interchange Points
+        for (PlannedInterchange ic : plan.interchanges()) {
+            Map<String, Object> icProps = new LinkedHashMap<>();
+            icProps.put("featureRole", "INTERCHANGE");
+            icProps.put("interchangeId", ic.interchangeId());
+            icProps.put("chainageKm", ic.chainageKm());
+            icProps.put("interchangeType", ic.interchangeType());
+            icProps.put("placementRule", ic.placementRule());
+            icProps.put("connectedCorridorRef", ic.connectedRoadRef());
+            icProps.put("servedHubId", ic.servedHubId());
+            icProps.put("servedHubName", ic.servedHubName());
+            icProps.put("immutableUserOverride", ic.immutableOverride());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", icProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(ic.point().lon(), ic.point().lat()))));
+        }
+
+        // 4. Existing Ring-Road / Major Bypass Tie-In Points (Rule of Continuity endpoints)
+        for (PlannedFeederSpur spur : plan.feederSpurs()) {
+            RegionalHub hub = spur.hub();
+            Map<String, Object> tieProps = new LinkedHashMap<>();
+            tieProps.put("featureRole", "ROAD_TIE_IN");
+            tieProps.put("spurId", spur.spurId());
+            tieProps.put("hubId", hub.hubId());
+            tieProps.put("hubName", hub.name());
+            tieProps.put("existingRoadRef", hub.tieInRoadRef());
+            tieProps.put("tieInJunctionName", hub.tieInName());
+            tieProps.put("continuityRule", "Ties into existing bypass/arterial outside URBAN_CORE");
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", tieProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(hub.bypassTieIn().lon(), hub.bypassTieIn().lat()))));
+        }
+
+        // 5. Non-Interchange Grade-Separated Crossings (ROBs & Flyovers/Underpasses)
+        for (GradeSeparatedCrossingStructure gs : plan.gradeSeparatedCrossings()) {
+            Map<String, Object> gsProps = new LinkedHashMap<>();
+            gsProps.put("featureRole", "GRADE_SEPARATED_CROSSING");
+            gsProps.put("structureId", gs.structureId());
+            gsProps.put("structureType", gs.structureType());
+            gsProps.put("crossedCategory", gs.category().name());
+            gsProps.put("crossedCorridorRef", gs.corridorRef());
+            gsProps.put("crossedCorridorName", gs.corridorName());
+            gsProps.put("chainageKm", gs.chainageKm());
+            gsProps.put("crossingAngleDegrees", gs.crossingAngleDegrees());
+            gsProps.put("skewBridgeMultiplier", gs.skewBridgeMultiplier());
+            gsProps.put("structureCostKmEquivalent", gs.structureCostKmEquivalent());
+            gsProps.put("hasAccessRamps", false);
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", gsProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(gs.point().lon(), gs.point().lat()))));
+        }
+
+        // 6. Perennial River & Stream Bridge Structures (High-Level Bridges & Box Culverts)
+        for (PlannedRiverBridge rb : plan.riverBridges()) {
+            Map<String, Object> rbProps = new LinkedHashMap<>();
+            rbProps.put("featureRole", "RIVER_BRIDGE");
+            rbProps.put("bridgeId", rb.bridgeId());
+            rbProps.put("structureType", rb.structureType());
+            rbProps.put("riverId", rb.riverId());
+            rbProps.put("riverName", rb.riverName());
+            rbProps.put("riverClass", rb.riverClass().name());
+            rbProps.put("basin", rb.basin());
+            rbProps.put("chainageKm", rb.chainageKm());
+            rbProps.put("designChannelWidthMeters", rb.designChannelWidthMeters());
+            rbProps.put("estimatedSkewSpanMeters", rb.estimatedSkewSpanMeters());
+            rbProps.put("crossingAngleDegrees", rb.crossingAngleDegrees());
+            rbProps.put("hydraulicSkewMultiplier", rb.hydraulicSkewMultiplier());
+            rbProps.put("bridgeCostKmEquivalent", rb.bridgeCostKmEquivalent());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", rbProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(rb.point().lon(), rb.point().lat()))));
+        }
+
+        // 7. Wildlife Migration Corridor Passages (Elevated Wildlife Viaducts & Animal Underpasses)
+        for (PlannedWildlifePassage wp : plan.wildlifePassages()) {
+            Map<String, Object> wpProps = new LinkedHashMap<>();
+            wpProps.put("featureRole", "WILDLIFE_PASSAGE");
+            wpProps.put("passageId", wp.passageId());
+            wpProps.put("structureType", wp.structureType());
+            wpProps.put("corridorId", wp.corridorId());
+            wpProps.put("corridorName", wp.corridorName());
+            wpProps.put("corridorTier", wp.corridorTier().name());
+            wpProps.put("targetSpecies", wp.targetSpecies());
+            wpProps.put("chainageKm", wp.chainageKm());
+            wpProps.put("designCorridorWidthMeters", wp.designCorridorWidthMeters());
+            wpProps.put("recommendedClearSpanMeters", wp.recommendedClearSpanMeters());
+            wpProps.put("minimumClearHeightMeters", wp.minimumClearHeightMeters());
+            wpProps.put("crossingAngleDegrees", wp.crossingAngleDegrees());
+            wpProps.put("barrierSkewMultiplier", wp.barrierSkewMultiplier());
+            wpProps.put("passageCostKmEquivalent", wp.passageCostKmEquivalent());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", wpProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(wp.point().lon(), wp.point().lat()))));
+        }
+
+        // 8. Geotechnical Fault/Landslide Scarp & Liquefaction Trough Mitigation Zones
+        for (PlannedGeotechMitigation gm : plan.geotechMitigations()) {
+            Map<String, Object> gmProps = new LinkedHashMap<>();
+            gmProps.put("featureRole", "GEOTECH_MITIGATION_ZONE");
+            gmProps.put("mitigationId", gm.mitigationId());
+            gmProps.put("structureType", gm.structureType());
+            gmProps.put("lineamentId", gm.lineamentId());
+            gmProps.put("lineamentName", gm.lineamentName());
+            gmProps.put("hazardTier", gm.hazardTier().name());
+            gmProps.put("lithologyAndSoil", gm.lithologyAndSoil());
+            gmProps.put("engineeringHazard", gm.engineeringHazard());
+            gmProps.put("chainageKm", gm.chainageKm());
+            gmProps.put("designHazardWidthMeters", gm.designHazardWidthMeters());
+            gmProps.put("recommendedStabilizationLengthMeters", gm.recommendedStabilizationLengthMeters());
+            gmProps.put("crossingAngleDegrees", gm.crossingAngleDegrees());
+            gmProps.put("scarpSkewMultiplier", gm.scarpSkewMultiplier());
+            gmProps.put("mitigationCostKmEquivalent", gm.mitigationCostKmEquivalent());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", gmProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(gm.point().lon(), gm.point().lat()))));
+        }
+
+        // 9. Overhead Power Transmission Line Crossings & Protection Works
+        for (PlannedUtilityCrossing uc : plan.utilityCrossings()) {
+            Map<String, Object> ucProps = new LinkedHashMap<>();
+            ucProps.put("featureRole", "UTILITY_CROSSING_PROTECTION");
+            ucProps.put("crossingId", uc.crossingId());
+            ucProps.put("lineId", uc.lineId());
+            ucProps.put("lineName", uc.lineName());
+            ucProps.put("utilityTier", uc.tier().name());
+            ucProps.put("voltageKv", uc.voltageKv());
+            ucProps.put("circuitConfiguration", uc.circuit());
+            ucProps.put("protectionStructureType", uc.protectionStructureType());
+            ucProps.put("chainageKm", uc.chainageKm());
+            ucProps.put("designRowWidthMeters", uc.designRowWidthMeters());
+            ucProps.put("minimumConductorClearanceMeters", uc.minimumConductorClearanceMeters());
+            ucProps.put("recommendedProtectiveSpanMeters", uc.recommendedProtectiveSpanMeters());
+            ucProps.put("crossingAngleDegrees", uc.crossingAngleDegrees());
+            ucProps.put("skewMultiplier", uc.skewMultiplier());
+            ucProps.put("nearestTowerDistanceMeters", uc.nearestTowerDistanceMeters());
+            ucProps.put("crossingCostKmEquivalent", uc.crossingCostKmEquivalent());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", ucProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(uc.point().lon(), uc.point().lat()))));
+        }
+
+        // 10. 2D Right-of-Way (RoW) Corridor Polygons (Mainline & Dedicated Feeder Spurs)
+        if (plan.rowCorridorFootprint() != null) {
+            RightOfWayCorridorEngine.CorridorFootprint rowFp = plan.rowCorridorFootprint();
+            Map<String, Object> rowProps = new LinkedHashMap<>();
+            rowProps.put("featureRole", "MAINLINE_ROW_CORRIDOR");
+            rowProps.put("facilityMode", plan.facilityMode().name());
+            rowProps.put("ircStandard", rowFp.ircStandard());
+            rowProps.put("designRowWidthMeters", rowFp.mainlineRowWidthMeters());
+            rowProps.put("mainlineRowAreaHectares", rowFp.mainlineRowAreaHectares());
+            rowProps.put("feederSpursRowAreaHectares", rowFp.feederSpursRowAreaHectares());
+            rowProps.put("interchangeLoopsAdditionalHectares", rowFp.interchangeLoopsAdditionalHectares());
+            rowProps.put("totalDirectRowAcquisitionHectares", rowFp.totalDirectRowAcquisitionHectares());
+            rowProps.put("constructionZoneGrossHectares", rowFp.constructionZoneGrossHectares());
+            rowProps.put("environmentalBufferGrossHectares", rowFp.environmentalBufferGrossHectares());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", rowProps,
+                    "geometry", rowCorridorEngine.toGeoJsonGeometry(rowFp.mainlineRowMetric())));
+
+            int spurCount = Math.min(plan.feederSpurs().size(), rowFp.spurRowsMetric().size());
+            for (int i = 0; i < spurCount; i++) {
+                PlannedFeederSpur spur = plan.feederSpurs().get(i);
+                var spurGeom = rowFp.spurRowsMetric().get(i);
+                Map<String, Object> spurRowProps = new LinkedHashMap<>();
+                spurRowProps.put("featureRole", "FEEDER_SPUR_ROW_CORRIDOR");
+                spurRowProps.put("spurId", spur.spurId());
+                spurRowProps.put("interchangeId", spur.interchangeId());
+                spurRowProps.put("servedHubId", spur.hub().hubId());
+                spurRowProps.put("servedHubName", spur.hub().name());
+                spurRowProps.put("designRowWidthMeters", rowFp.feederSpurRowWidthMeters());
+                spurRowProps.put("spurRowAreaHectares", round(spurGeom.getArea() / 10_000.0));
+
+                features.add(Map.of(
+                        "type", "Feature",
+                        "properties", spurRowProps,
+                        "geometry", rowCorridorEngine.toGeoJsonGeometry(spurGeom)));
+            }
+        }
+
+        // 11. Settlement & Building Footprint Conflict Zones along the corridor
+        for (PlannedSettlementConflictZone scz : plan.settlementConflictZones()) {
+            Map<String, Object> sczProps = new LinkedHashMap<>();
+            sczProps.put("featureRole", "SETTLEMENT_BUILDING_CONFLICT_ZONE");
+            sczProps.put("conflictId", scz.conflictId());
+            sczProps.put("settlementId", scz.settlementId());
+            sczProps.put("settlementName", scz.settlementName());
+            sczProps.put("settlementClassification", scz.settlementClassification().name());
+            sczProps.put("settlementSubtype", scz.settlementSubtype());
+            sczProps.put("district", scz.district());
+            sczProps.put("chainageKm", scz.chainageKm());
+            sczProps.put("builtUpDensityBuildingsPerHa", scz.builtUpDensityBuildingsPerHa());
+            sczProps.put("builtUpDensityClass", scz.builtUpDensityClass());
+            sczProps.put("buildingsInDirectRowCount", scz.buildingsInDirectRowCount());
+            sczProps.put("buildingsInConstructionZoneCount", scz.buildingsInConstructionZoneCount());
+            sczProps.put("buildingsInDirectRowByType", scz.buildingsInDirectRowByType());
+            sczProps.put("affectedDirectRowFootprintSqMeters", scz.affectedDirectRowFootprintSqMeters());
+            sczProps.put("areaInDirectRowHectares", scz.areaInDirectRowHectares());
+            sczProps.put("areaInConstructionZoneHectares", scz.areaInConstructionZoneHectares());
+            sczProps.put("distanceToCenterlineMeters", scz.distanceToCenterlineMeters());
+            sczProps.put("distanceToRowEdgeMeters", scz.distanceToRowEdgeMeters());
+            sczProps.put("recommendedEngineeringMitigation", scz.recommendedEngineeringMitigation());
+            sczProps.put("conflictCostKmEquivalent", scz.conflictCostKmEquivalent());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", sczProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(scz.point().lon(), scz.point().lat()))));
+        }
+
+        // 12. Population Density & Demographic Exposure Mitigation Zones along the corridor
+        for (PlannedDemographicExposureZone dez : plan.demographicExposureZones()) {
+            Map<String, Object> dezProps = new LinkedHashMap<>();
+            dezProps.put("featureRole", "DEMOGRAPHIC_EXPOSURE_MITIGATION_ZONE");
+            dezProps.put("exposureZoneId", dez.exposureZoneId());
+            dezProps.put("tractId", dez.tractId());
+            dezProps.put("settlementId", dez.settlementId());
+            dezProps.put("settlementName", dez.settlementName());
+            dezProps.put("district", dez.district());
+            dezProps.put("settlementClassification", dez.settlementClassification());
+            dezProps.put("ruralOrUrbanCategory", dez.ruralOrUrbanCategory());
+            dezProps.put("chainageKm", dez.chainageKm());
+            dezProps.put("totalTractPopulation", dez.totalPopulation());
+            dezProps.put("ruralPopulation", dez.ruralPopulation());
+            dezProps.put("urbanPopulation", dez.urbanPopulation());
+            dezProps.put("populationDensityPerSqKm", dez.populationDensityPerSqKm());
+            dezProps.put("populationDensityClass", dez.populationDensityClass());
+            dezProps.put("vulnerabilityTier", dez.vulnerabilityTier().name());
+            dezProps.put("socialVulnerabilityIndex", dez.socialVulnerabilityIndex());
+            dezProps.put("populationInDirectRow", dez.populationInDirectRow());
+            dezProps.put("populationWithin100mBuffer", dez.populationWithin100mBuffer());
+            dezProps.put("populationWithin250mBuffer", dez.populationWithin250mBuffer());
+            dezProps.put("populationWithin500mBuffer", dez.populationWithin500mBuffer());
+            dezProps.put("estimatedDirectlyDisplacedPopulation", dez.estimatedDirectlyDisplacedPopulation());
+            dezProps.put("estimatedDirectlyDisplacedHouseholds", dez.estimatedDirectlyDisplacedHouseholds());
+            dezProps.put("nonDisplacedBufferExposedWithin250m", dez.nonDisplacedBufferExposedWithin250m());
+            dezProps.put("vulnerableAgePopulationWithin250m", dez.vulnerableAgePopulationWithin250m());
+            dezProps.put("scheduledTribeAndCastesWithin250m", dez.scheduledTribeAndCastesWithin250m());
+            dezProps.put("distanceToCenterlineMeters", dez.distanceToCenterlineMeters());
+            dezProps.put("distanceToRowEdgeMeters", dez.distanceToRowEdgeMeters());
+            dezProps.put("recommendedSocialMitigation", dez.recommendedSocialMitigation());
+            dezProps.put("demographicExposureScoreKmEq", dez.demographicExposureScoreKmEq());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", dezProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(dez.point().lon(), dez.point().lat()))));
+        }
+
+        return List.copyOf(features);
+    }
+
+    private static List<List<Double>> toLonLatList(List<GeoPoint> points) {
+        return points.stream()
+                .map(p -> List.of(p.lon(), p.lat()))
+                .toList();
+    }
+
+    private static double round(double v) {
+        return Math.round(v * 100.0) / 100.0;
+    }
+
+    private record ChainageSample(GeoPoint point, MetricPoint metric, double chainageKm) {}
+
+    private record InterchangeCandidate(
+            GeoPoint point,
+            double chainageKm,
+            Integer crossingIndex,
+            String interchangeType,
+            String placementRule,
+            String connectedRoadRef
+    ) {}
+
+    public record PlannedInterchange(
+            String interchangeId,
+            GeoPoint point,
+            double chainageKm,
+            String interchangeType,
+            String placementRule,
+            String connectedRoadRef,
+            String servedHubId,
+            String servedHubName,
+            boolean immutableOverride
+    ) {}
+
+    public record PlannedFeederSpur(
+            String spurId,
+            String interchangeId,
+            RegionalHub hub,
+            List<GeoPoint> path,
+            double spurLengthKm,
+            double inducedPeakTrafficPcuHr,
+            double hviScore,
+            boolean immutableOverride
+    ) {}
+
+    public record GradeSeparatedCrossingStructure(
+            String structureId,
+            GeoPoint point,
+            double chainageKm,
+            String corridorId,
+            String corridorRef,
+            String corridorName,
+            TransportCategory category,
+            String structureType,
+            double crossingAngleDegrees,
+            double skewBridgeMultiplier,
+            double structureCostKmEquivalent
+    ) {}
+
+    public record PlannedRiverBridge(
+            String bridgeId,
+            GeoPoint point,
+            double chainageKm,
+            String riverId,
+            String riverName,
+            RiverHierarchyClass riverClass,
+            String basin,
+            String structureType,
+            double designChannelWidthMeters,
+            double estimatedSkewSpanMeters,
+            double crossingAngleDegrees,
+            double hydraulicSkewMultiplier,
+            double bridgeCostKmEquivalent
+    ) {}
+
+    public record PlannedWildlifePassage(
+            String passageId,
+            GeoPoint point,
+            double chainageKm,
+            String corridorId,
+            String corridorName,
+            WildlifeCorridorTier corridorTier,
+            String targetSpecies,
+            String structureType,
+            double designCorridorWidthMeters,
+            double recommendedClearSpanMeters,
+            double minimumClearHeightMeters,
+            double crossingAngleDegrees,
+            double barrierSkewMultiplier,
+            double passageCostKmEquivalent
+    ) {}
+
+    public record PlannedGeotechMitigation(
+            String mitigationId,
+            GeoPoint point,
+            double chainageKm,
+            String lineamentId,
+            String lineamentName,
+            GeotechHazardTier hazardTier,
+            String lithologyAndSoil,
+            String engineeringHazard,
+            String structureType,
+            double designHazardWidthMeters,
+            double recommendedStabilizationLengthMeters,
+            double crossingAngleDegrees,
+            double scarpSkewMultiplier,
+            double mitigationCostKmEquivalent
+    ) {}
+
+    public record PlannedUtilityCrossing(
+            String crossingId,
+            GeoPoint point,
+            double chainageKm,
+            String lineId,
+            String lineName,
+            UtilityCorridorTier tier,
+            Integer voltageKv,
+            String circuit,
+            String protectionStructureType,
+            double designRowWidthMeters,
+            double minimumConductorClearanceMeters,
+            double recommendedProtectiveSpanMeters,
+            double crossingAngleDegrees,
+            double skewMultiplier,
+            double nearestTowerDistanceMeters,
+            double crossingCostKmEquivalent
+    ) {}
+
+    public record PlannedSettlementConflictZone(
+            String conflictId,
+            GeoPoint point,
+            double chainageKm,
+            String settlementId,
+            String settlementName,
+            SettlementClassification settlementClassification,
+            String settlementSubtype,
+            String district,
+            double builtUpDensityBuildingsPerHa,
+            String builtUpDensityClass,
+            int buildingsInDirectRowCount,
+            int buildingsInConstructionZoneCount,
+            Map<String, Integer> buildingsInDirectRowByType,
+            double affectedDirectRowFootprintSqMeters,
+            double areaInDirectRowHectares,
+            double areaInConstructionZoneHectares,
+            double distanceToCenterlineMeters,
+            double distanceToRowEdgeMeters,
+            String recommendedEngineeringMitigation,
+            double conflictCostKmEquivalent
+    ) {}
+
+    public record PlannedDemographicExposureZone(
+            String exposureZoneId,
+            GeoPoint point,
+            double chainageKm,
+            String tractId,
+            String settlementId,
+            String settlementName,
+            String district,
+            String settlementClassification,
+            String ruralOrUrbanCategory,
+            int totalPopulation,
+            int ruralPopulation,
+            int urbanPopulation,
+            double populationDensityPerSqKm,
+            String populationDensityClass,
+            DemographicVulnerabilityTier vulnerabilityTier,
+            double socialVulnerabilityIndex,
+            int populationInDirectRow,
+            int populationWithin100mBuffer,
+            int populationWithin250mBuffer,
+            int populationWithin500mBuffer,
+            int estimatedDirectlyDisplacedPopulation,
+            int estimatedDirectlyDisplacedHouseholds,
+            int nonDisplacedBufferExposedWithin250m,
+            int vulnerableAgePopulationWithin250m,
+            int scheduledTribeAndCastesWithin250m,
+            double distanceToCenterlineMeters,
+            double distanceToRowEdgeMeters,
+            String recommendedSocialMitigation,
+            double demographicExposureScoreKmEq
+    ) {}
+
+    public record NetworkPlanResult(
+            FacilityMode facilityMode,
+            double mainlineLengthKm,
+            double totalFeederSpurLengthKm,
+            double totalConstructedHighwayAndSpurKm,
+            List<PlannedInterchange> interchanges,
+            List<PlannedFeederSpur> feederSpurs,
+            List<GradeSeparatedCrossingStructure> gradeSeparatedCrossings,
+            List<PlannedRiverBridge> riverBridges,
+            List<PlannedWildlifePassage> wildlifePassages,
+            List<PlannedGeotechMitigation> geotechMitigations,
+            List<PlannedUtilityCrossing> utilityCrossings,
+            List<PlannedSettlementConflictZone> settlementConflictZones,
+            List<PlannedDemographicExposureZone> demographicExposureZones,
+            int totalInfrastructureCrossingsCount,
+            int railwayRobCount,
+            int roadFlyoverCount,
+            double averageCrossingAngleDegrees,
+            double totalEstimatedRiverBridgeSpanMeters,
+            double averageRiverCrossingAngleDegrees,
+            double totalRecommendedWildlifePassageSpanMeters,
+            double averageWildlifeCrossingAngleDegrees,
+            double totalRecommendedGeotechStabilizationMeters,
+            double averageGeotechCrossingAngleDegrees,
+            double totalRecommendedUtilityProtectiveSpanMeters,
+            double averageUtilityCrossingAngleDegrees,
+            int buildingsInDirectRowCount,
+            int settlementsIntersectingDirectRowCount,
+            int populationWithinDirectRow,
+            int estimatedDirectlyDisplacedPopulation,
+            int populationWithin250mEnvironmentalBuffer,
+            int populationWithin500mSecondaryBuffer,
+            double projectedTrafficVolumePcuHr,
+            double designCapacityPcuHr,
+            double projectedVcRatio,
+            String levelOfService,
+            boolean overCapacityWarning,
+            int totalCatchmentPopulationServed,
+            RightOfWayCorridorEngine.CorridorFootprint rowCorridorFootprint
+    ) {}
+}

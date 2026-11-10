@@ -6,4 +6,9 @@ import in.marg.model.GeoPoint;
 @FunctionalInterface
 public interface CostSurface {
     CostAssessment assess(GeoPoint point);
+
+    /** Optional transition assessment across step [from -> to] (for linear crossings & skew angles). */
+    default CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
+        return CostAssessment.FREE;
+    }
 }

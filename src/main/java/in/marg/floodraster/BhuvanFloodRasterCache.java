@@ -282,8 +282,9 @@ public class BhuvanFloodRasterCache {
             return lon >= minLon() && lon <= maxLon() && lat >= minLat() && lat <= maxLat();
         }
 
-        public boolean contains(double minLat, double minLon, double maxLat, double maxLon) {
-            return minLat >= minLat() && maxLat <= maxLat() && minLon >= minLon() && maxLon <= maxLon();
+        public boolean contains(double queryMinLat, double queryMinLon, double queryMaxLat, double queryMaxLon) {
+            return queryMinLat >= this.minLat() && queryMaxLat <= this.maxLat()
+                    && queryMinLon >= this.minLon() && queryMaxLon <= this.maxLon();
         }
 
         public FloodRasterSample sample(GeoPoint point) {

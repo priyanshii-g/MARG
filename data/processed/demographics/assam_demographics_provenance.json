@@ -1,0 +1,53 @@
+{
+  "layerName": "MARG Layer 12: Population Density, Village/Urban Population & Demographic Vulnerability Layer",
+  "rasterFile": "data\\processed\\demographics\\assam_population_density_utm46.tif",
+  "demographicsGeoJsonFile": "data\\processed\\demographics\\assam_population_demographics.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "sources": [
+    "Census of India Primary Census Abstract (PCA) Village & Ward Directory (Assam: Karbi Anglong, Golaghat, Nagaon, Hojai)",
+    "Sixth Schedule Autonomous Council Demographic & Tribal Habitation Indicators",
+    "High-Resolution Dasymetric Population Distribution & Settlement Footprint Synthesis"
+  ],
+  "demographicSummary": {
+    "totalEnumerationTracts": 120,
+    "totalStudyRegionPopulation": 509317,
+    "totalRuralVillagePopulation": 209094,
+    "totalUrbanMunicipalPopulation": 300223,
+    "totalHouseholdsCount": 105051,
+    "highPopulationTractsOver3000Count": 54,
+    "lowPopulationHamletsUnder500Count": 12
+  },
+  "encoding": {
+    "0": "UNINHABITED_OR_BACKGROUND (<25 persons/km2)",
+    "1": "SPARSE_RURAL_DISPERSED (25-150 persons/km2)",
+    "2": "LOW_DENSITY_VILLAGE (150-450 persons/km2)",
+    "3": "MODERATE_DENSITY_SETTLEMENT (450-1200 persons/km2)",
+    "4": "HIGH_DENSITY_POPULATION_CLUSTER (1200-3000 persons/km2)",
+    "5": "VERY_HIGH_URBAN_DENSITY_CORE (>3000 persons/km2)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "UNINHABITED_OR_BACKGROUND_0": 7112698,
+    "SPARSE_RURAL_DISPERSED_1": 36125,
+    "LOW_DENSITY_VILLAGE_2": 28866,
+    "MODERATE_DENSITY_SETTLEMENT_3": 26457,
+    "HIGH_DENSITY_POPULATION_CLUSTER_4": 13870,
+    "VERY_HIGH_URBAN_DENSITY_CORE_5": 15047,
+    "NODATA_255": 13017
+  },
+  "areaKm2ByClass": {
+    "UNINHABITED_OR_BACKGROUND_0": 6401.43,
+    "SPARSE_RURAL_DISPERSED_1": 32.51,
+    "LOW_DENSITY_VILLAGE_2": 25.98,
+    "MODERATE_DENSITY_SETTLEMENT_3": 23.81,
+    "HIGH_DENSITY_POPULATION_CLUSTER_4": 12.48,
+    "VERY_HIGH_URBAN_DENSITY_CORE_5": 13.54,
+    "NODATA_255": 11.72
+  },
+  "generatedAtUtc": "2026-11-10T15:50:21.870702+00:00"
+}

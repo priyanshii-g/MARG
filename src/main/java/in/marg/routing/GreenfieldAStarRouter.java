@@ -86,9 +86,13 @@ public class GreenfieldAStarRouter {
                 }
                 CostAssessment assessment = costCache.computeIfAbsent(next, n -> surface.assess(nextPoint));
                 if (assessment.blocked()) continue;
+                CostAssessment edgeAssessment = surface.assessEdge(currentPoint, nextPoint);
+                if (edgeAssessment.blocked()) continue;
 
                 double stepKm = projection.distanceMeters(currentPoint, nextPoint) / 1000.0;
-                double multiplier = 1.0 + Math.max(0.0, assessment.penaltyMultiplier());
+                double multiplier = 1.0
+                        + Math.max(0.0, assessment.penaltyMultiplier())
+                        + Math.max(0.0, edgeAssessment.penaltyMultiplier());
                 double nextG = currentEntry.g() + stepKm * multiplier;
                 if (nextG + EPS < gScore.getOrDefault(next, Double.POSITIVE_INFINITY)) {
                     gScore.put(next, nextG);
@@ -205,9 +209,14 @@ public class GreenfieldAStarRouter {
                 CostAssessment assessment = sharedCostCache.computeIfAbsent(next,
                         n -> surface.assess(nextPoint));
                 if (assessment.blocked()) continue;
+                CostAssessment edgeAssessment = surface.assessEdge(currentPoint, nextPoint);
+                if (edgeAssessment.blocked()) continue;
 
                 double stepKm = projection.distanceMeters(currentPoint, nextPoint) / 1000.0;
-                double multiplier = 1.0 + Math.max(0.0, assessment.penaltyMultiplier()) + lambda;
+                double multiplier = 1.0
+                        + Math.max(0.0, assessment.penaltyMultiplier())
+                        + Math.max(0.0, edgeAssessment.penaltyMultiplier())
+                        + lambda;
                 double nextG = currentEntry.g() + stepKm * multiplier;
                 if (nextG + EPS < gScore.getOrDefault(next, Double.POSITIVE_INFINITY)) {
                     gScore.put(next, nextG);
@@ -225,11 +234,14 @@ public class GreenfieldAStarRouter {
         double originalCost = 0.0;
         for (int i = 1; i < path.size(); i++) {
             CostAssessment assessment = surface.assess(path.get(i));
-            if (assessment.blocked()) {
+            CostAssessment edgeAssessment = surface.assessEdge(path.get(i - 1), path.get(i));
+            if (assessment.blocked() || edgeAssessment.blocked()) {
                 return new WeightedPath(path, Double.POSITIVE_INFINITY, physical);
             }
             double stepKm = projection.distanceMeters(path.get(i - 1), path.get(i)) / 1000.0;
-            originalCost += stepKm * (1.0 + Math.max(0.0, assessment.penaltyMultiplier()));
+            originalCost += stepKm * (1.0
+                    + Math.max(0.0, assessment.penaltyMultiplier())
+                    + Math.max(0.0, edgeAssessment.penaltyMultiplier()));
         }
         return new WeightedPath(path, originalCost, physical);
     }

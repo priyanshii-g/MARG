@@ -21,10 +21,23 @@ public class BhuvanFloodWmsRasterClient {
     public static final String CRS = "EPSG:4326";
     public static final String FORMAT = "image/png";
 
-    private final HttpClient client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(20))
-            .followRedirects(HttpClient.Redirect.NORMAL)
-            .build();
+    private volatile HttpClient client;
+
+    private HttpClient getClient() {
+        HttpClient c = this.client;
+        if (c == null) {
+            synchronized (this) {
+                c = this.client;
+                if (c == null) {
+                    this.client = c = HttpClient.newBuilder()
+                            .connectTimeout(Duration.ofSeconds(20))
+                            .followRedirects(HttpClient.Redirect.NORMAL)
+                            .build();
+                }
+            }
+        }
+        return c;
+    }
 
     public RasterResponse fetch(double minLon, double minLat, double maxLon, double maxLat,
                                 int width, int height) {
@@ -49,7 +62,7 @@ public class BhuvanFloodWmsRasterClient {
                     .header("User-Agent", "MARG-Prototype/0.5.11 (academic GIS research)")
                     .GET()
                     .build();
-            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response = getClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
             if (response.statusCode() / 100 != 2) {
                 throw new IllegalStateException("Bhuvan Flood WMS HTTP " + response.statusCode());
             }

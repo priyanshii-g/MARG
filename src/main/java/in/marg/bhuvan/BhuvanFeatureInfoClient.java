@@ -1,6 +1,7 @@
 package in.marg.bhuvan;
 
 import in.marg.model.GeoPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,14 +15,32 @@ import java.time.Duration;
 @Service
 public class BhuvanFeatureInfoClient {
     private final BhuvanService bhuvanService;
-    private final HttpClient client;
+    private volatile HttpClient client;
 
+    @Autowired
     public BhuvanFeatureInfoClient(BhuvanService bhuvanService) {
+        this(bhuvanService, null);
+    }
+
+    public BhuvanFeatureInfoClient(BhuvanService bhuvanService, HttpClient client) {
         this.bhuvanService = bhuvanService;
-        this.client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(15))
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .build();
+        this.client = client;
+    }
+
+    private HttpClient getClient() {
+        HttpClient c = this.client;
+        if (c == null) {
+            synchronized (this) {
+                c = this.client;
+                if (c == null) {
+                    this.client = c = HttpClient.newBuilder()
+                            .connectTimeout(Duration.ofSeconds(15))
+                            .followRedirects(HttpClient.Redirect.NORMAL)
+                            .build();
+                }
+            }
+        }
+        return c;
     }
 
     public String query(BhuvanLayer layer, GeoPoint point, double halfSizeDeg) {
@@ -33,7 +52,7 @@ public class BhuvanFeatureInfoClient {
                 .GET()
                 .build();
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() / 100 != 2) {
                 throw new IllegalStateException("Bhuvan GetFeatureInfo HTTP " + response.statusCode());
             }

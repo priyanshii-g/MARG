@@ -29,7 +29,7 @@ marg:
         GRASS_GRAZING: 0.10
         BARREN_WASTELAND: 0.0
         SNOW: 2.5
-        UNKNOWN: 0.0
+        UNKNOWN: 1.0
     slope:
       free-max-degrees: 5.0
       low-max-degrees: 10.0
@@ -55,11 +55,237 @@ marg:
         NOT_IN_HAZARD_LAYER: 0.0
         UNKNOWN: 2.00
 
+    settlement:
+      block-urban-core: false
+      block-no-data: false
+      penalties:
+        NONE: 0.0
+        OUTER_BUFFER: 0.30
+        INNER_BUFFER: 0.80
+        RURAL_CORE: 1.60
+        URBAN_CORE: 2.50
+        NODATA: 0.0
+
+    transport:
+      default-facility-mode: NATIONAL_HIGHWAY
+      block-no-data: false
+      skew-angle-penalty-factor: 1.25
+      parallel-acute-penalty: 2.00
+      parallel-proximity-radius-meters: 150.0
+      expressway-accessibility-pull: 0.0
+      expressway-min-interchange-spacing-km: 15.0
+      expressway-min-hub-population: 40000
+      expressway-design-capacity-pcu-hr: 4800.0
+      expressway-base-through-traffic-pcu-hr: 1400.0
+      national-highway-accessibility-pull: 0.35
+      national-highway-min-interchange-spacing-km: 8.0
+      national-highway-min-hub-population: 22000
+      national-highway-design-capacity-pcu-hr: 3600.0
+      national-highway-base-through-traffic-pcu-hr: 1350.0
+      max-vc-ratio: 0.75
+      peak-trip-generation-pcu-per-1000-pop: 9.5
+      collector-sweet-spot-min-km: 1.5
+      collector-sweet-spot-max-km: 5.0
+      collector-longitudinal-band-km: 10.0
+      node-penalties:
+        NONE: 0.0
+        ROAD_PARALLEL_BUFFER: 0.40
+        MDR_CORRIDOR: 1.10
+        SH_CORRIDOR: 1.60
+        NH_CORRIDOR: 2.20
+        RAILWAY_BUFFER: 0.90
+        RAILWAY_CORRIDOR: 3.50
+        NODATA: 0.0
+      crossing-base-cost-km-eq:
+        RAILWAY: 2.40
+        NATIONAL_HIGHWAY: 1.50
+        STATE_HIGHWAY: 0.95
+        MAJOR_DISTRICT_ROAD: 0.55
+
+    hydrology:
+      block-wetlands: false
+      block-no-data: false
+      hydraulic-skew-penalty-factor: 1.40
+      parallel-bank-penalty: 2.40
+      parallel-bank-radius-meters: 180.0
+      node-penalties:
+        NONE: 0.0
+        RIPARIAN_OUTER_BUFFER: 0.35
+        RIPARIAN_INNER_BUFFER: 0.95
+        MINOR_PERENNIAL_STREAM: 1.60
+        MEDIUM_PERENNIAL_RIVER: 2.60
+        INLAND_WETLAND_WATERBODY: 3.40
+        MAJOR_PERENNIAL_RIVER: 4.00
+        NODATA: 0.0
+      bridge-base-cost-km-eq:
+        MAJOR_PERENNIAL_RIVER: 2.80
+        MEDIUM_PERENNIAL_RIVER: 1.45
+        MINOR_PERENNIAL_STREAM: 0.65
+
+    wildlife:
+      block-critical-corridors: false
+      block-no-data: false
+      barrier-skew-penalty-factor: 1.45
+      parallel-corridor-penalty: 2.60
+      parallel-corridor-radius-meters: 280.0
+      node-penalties:
+        NONE: 0.0
+        ESZ_OUTER_TRANSITION_ZONE: 0.35
+        WILDLIFE_CORRIDOR_FRINGE_BUFFER: 0.75
+        ESZ_INNER_BUFFER_ZONE: 1.15
+        REGIONAL_FOREST_STEPPING_CORRIDOR: 1.65
+        CRITICAL_MIGRATION_CORRIDOR_CORE: 2.90
+        PROTECTED_SANCTUARY_HABITAT: 5.00
+        NODATA: 0.0
+      passage-base-cost-km-eq:
+        CRITICAL_ELEPHANT_RHINO_CORRIDOR: 3.10
+        INTER_SANCTUARY_ELEPHANT_CORRIDOR: 1.85
+        LOCAL_WILDLIFE_DISPERSAL_AXIS: 0.95
+
+    geotech:
+      block-active-landslide-zones: false
+      block-no-data: false
+      scarp-skew-penalty-factor: 1.40
+      parallel-scarp-undercut-penalty: 2.50
+      parallel-scarp-radius-meters: 260.0
+      node-penalties:
+        COMPETENT_BEDROCK_STABLE_SUBGRADE: 0.0
+        WEATHERED_RESIDUAL_MODERATE_SOIL: 0.25
+        SOFT_ALLUVIAL_COMPRESSIBLE_CLAY: 0.85
+        MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY: 1.20
+        LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE: 2.10
+        HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP: 2.65
+        ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE: 4.20
+        NODATA: 0.0
+      mitigation-base-cost-km-eq:
+        ACTIVE_FAULT_SHEAR_ZONE: 2.60
+        UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP: 1.70
+        LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH: 1.15
+
+    utility:
+      block-substations-and-towers: false
+      block-no-data: false
+      crossing-skew-penalty-factor: 1.40
+      parallel-utility-row-penalty: 2.50
+      parallel-utility-radius-meters: 100.0
+      tower-proximity-threshold-meters: 50.0
+      tower-proximity-surcharge-factor: 0.50
+      node-penalties:
+        NONE: 0.0
+        UTILITY_PROXIMITY_SETBACK_ZONE: 0.15
+        DISTRIBUTION_LINE_ROW: 0.50
+        SUBTRANSMISSION_132KV_ROW: 1.10
+        EHV_220KV_ROW: 1.90
+        EHV_400KV_ROW: 2.80
+        SUBSTATION_OR_TOWER_FOOTPRINT: 4.50
+        NODATA: 0.0
+      crossing-protection-base-cost-km-eq:
+        EHV_400KV_TRANSMISSION: 2.80
+        EHV_220KV_TRANSMISSION: 2.00
+        SUBTRANSMISSION_132KV: 1.30
+        DISTRIBUTION_66KV_AND_BELOW: 0.75
+
+    row:
+      expressway-row-width-meters: 60.0
+      national-highway-row-width-meters: 45.0
+      feeder-spur-row-width-meters: 30.0
+      interchange-footprint-radius-meters: 150.0
+      construction-zone-half-width-meters: 100.0
+      environmental-buffer-half-width-meters: 250.0
+      cross-section-sample-step-meters: 125.0
+      geo-json-simplify-tolerance-meters: 8.0
+
+    building:
+      block-institutional-and-religious-compounds: false
+      block-high-density-built-up: false
+      block-no-data: false
+      row-evaluation-half-width-meters: 30.0
+      structure-proximity-buffer-meters: 60.0
+      proximity-surcharge-factor: 0.35
+      node-penalties:
+        NONE: 0.0
+        SPARSE_HOMESTEAD_FRINGE: 0.25
+        LOW_DENSITY_RURAL_RIBBON: 0.70
+        MEDIUM_DENSITY_VILLAGE_CLUSTER: 1.55
+        HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP: 2.85
+        INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT: 4.40
+        NODATA: 0.0
+      structure-demolition-cost-km-eq:
+        RESIDENTIAL: 0.28
+        COMMERCIAL: 0.42
+        INSTITUTIONAL: 0.85
+        RELIGIOUS: 0.95
+        INDUSTRIAL: 0.55
+        VILLAGE_INFRASTRUCTURE: 0.35
+      settlement-severance-penalty:
+        RURAL: 0.45
+        URBAN: 1.15
+        INDUSTRIAL: 0.80
+
+    demographic:
+      block-very-high-urban-density-core: false
+      block-high-density-population-clusters: false
+      block-no-data: false
+      row-evaluation-half-width-meters: 30.0
+      primary-demographic-buffer-meters: 250.0
+      secondary-demographic-buffer-meters: 500.0
+      direct-row-penalty-per1000-pop-km-eq: 0.65
+      primary-buffer-penalty-per1000-pop-km-eq: 0.28
+      secondary-buffer-penalty-per1000-pop-km-eq: 0.10
+      node-penalties:
+        UNINHABITED_OR_BACKGROUND: 0.0
+        SPARSE_RURAL_DISPERSED: 0.15
+        LOW_DENSITY_VILLAGE: 0.45
+        MODERATE_DENSITY_SETTLEMENT: 1.20
+        HIGH_DENSITY_POPULATION_CLUSTER: 2.65
+        VERY_HIGH_URBAN_DENSITY_CORE: 4.20
+        NODATA: 0.0
+      vulnerability-multipliers:
+        LOW_VULNERABILITY: 1.00
+        MODERATE_VULNERABILITY: 1.25
+        HIGH_VULNERABILITY_SIXTH_SCHEDULE_RURAL: 1.55
+        CRITICAL_VULNERABILITY_TRIBAL_LIVELIHOOD_CLUSTER: 1.90
+
   terrain:
     slope-path: data/processed/dem/assam_slope_utm46.tif
 
   protected-area:
     raster-path: data/processed/protected-areas/assam_protected_area_mask_utm46.tif
+
+  settlement:
+    raster-path: data/processed/settlements/assam_settlement_exposure_utm46.tif
+
+  transport:
+    raster-path: data/processed/transport/assam_transport_network_utm46.tif
+    network-geojson-path: data/processed/transport/assam_transport_network.geojson
+    hubs-geojson-path: data/processed/transport/assam_regional_hubs.geojson
+
+  hydrology:
+    raster-path: data/processed/hydrology/assam_water_bodies_utm46.tif
+    rivers-geojson-path: data/processed/hydrology/assam_perennial_rivers.geojson
+    wetlands-geojson-path: data/processed/hydrology/assam_wetlands_catalog.geojson
+
+  wildlife:
+    raster-path: data/processed/wildlife/assam_wildlife_esz_corridors_utm46.tif
+    corridors-geojson-path: data/processed/wildlife/assam_wildlife_corridors.geojson
+
+  geotech:
+    raster-path: data/processed/geotech/assam_geotech_landslide_utm46.tif
+    lineaments-geojson-path: data/processed/geotech/assam_fault_landslide_zones.geojson
+
+  utility:
+    raster-path: data/processed/utilities/assam_utility_corridors_utm46.tif
+    lines-geojson-path: data/processed/utilities/assam_power_transmission_lines.geojson
+    assets-geojson-path: data/processed/utilities/assam_utility_assets.geojson
+
+  building:
+    raster-path: data/processed/buildings/assam_building_density_utm46.tif
+    settlements-geojson-path: data/processed/buildings/assam_settlement_boundaries.geojson
+    footprints-geojson-path: data/processed/buildings/assam_building_footprints.geojson
+
+  demographic:
+    raster-path: data/processed/demographics/assam_population_density_utm46.tif
+    tracts-geojson-path: data/processed/demographics/assam_population_demographics.geojson
   bhuvan:
     lulc:
       sample-resolution-deg: 0.01

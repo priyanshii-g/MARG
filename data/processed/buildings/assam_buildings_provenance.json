@@ -1,0 +1,62 @@
+{
+  "layerName": "MARG Layer 11: Settlement Boundaries, Built-Up Density & Building Footprints Layer",
+  "rasterFile": "data\\processed\\buildings\\assam_building_density_utm46.tif",
+  "settlementBoundariesGeoJsonFile": "data\\processed\\buildings\\assam_settlement_boundaries.geojson",
+  "buildingFootprintsGeoJsonFile": "data\\processed\\buildings\\assam_building_footprints.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "sources": [
+    "Bhuvan / NRSC Assam LULC 1:50,000 Built-Up Polygons (Urban, Rural, Industrial/Mining)",
+    "Kaziranga-Karbi Anglong Study Corridor Settlement & Roadside Habitation Inventory",
+    "2D Building Footprint & Structure Typology Synthesis (Residential, Commercial, Institutional, Religious, Industrial, Village Infrastructure)"
+  ],
+  "featureCounts": {
+    "totalSettlementPolygons": 104,
+    "settlementsByClassification": {
+      "URBAN": 38,
+      "RURAL": 58,
+      "INDUSTRIAL": 8
+    },
+    "totalBuildingFootprints": 1882,
+    "buildingsByType": {
+      "RESIDENTIAL": 908,
+      "COMMERCIAL": 476,
+      "INSTITUTIONAL": 173,
+      "RELIGIOUS": 151,
+      "INDUSTRIAL": 100,
+      "VILLAGE_INFRASTRUCTURE": 74
+    }
+  },
+  "encoding": {
+    "0": "NONE (0 buildings/ha, unbuilt terrain)",
+    "1": "SPARSE_HOMESTEAD_FRINGE (1-4 buildings/ha)",
+    "2": "LOW_DENSITY_RURAL_RIBBON (4-12 buildings/ha)",
+    "3": "MEDIUM_DENSITY_VILLAGE_CLUSTER (12-28 buildings/ha)",
+    "4": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP (>28 buildings/ha)",
+    "5": "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT (Schools, clinics, Namghars, temples)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "NONE_0": 7141034,
+    "SPARSE_HOMESTEAD_FRINGE_1": 31787,
+    "LOW_DENSITY_RURAL_RIBBON_2": 26035,
+    "MEDIUM_DENSITY_VILLAGE_CLUSTER_3": 20813,
+    "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP_4": 12198,
+    "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT_5": 1196,
+    "NODATA_255": 13017
+  },
+  "areaKm2ByClass": {
+    "NONE_0": 6426.93,
+    "SPARSE_HOMESTEAD_FRINGE_1": 28.61,
+    "LOW_DENSITY_RURAL_RIBBON_2": 23.43,
+    "MEDIUM_DENSITY_VILLAGE_CLUSTER_3": 18.73,
+    "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP_4": 10.98,
+    "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT_5": 1.08,
+    "NODATA_255": 11.72
+  },
+  "generatedAtUtc": "2026-11-09T15:35:37.517860+00:00"
+}

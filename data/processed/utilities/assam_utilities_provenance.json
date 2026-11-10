@@ -1,0 +1,67 @@
+{
+  "layerName": "MARG High-Voltage Transmission Lines & Major Utility Corridors Layer",
+  "rasterFile": "data\\processed\\utilities\\assam_utility_corridors_utm46.tif",
+  "linesGeoJsonFile": "data\\processed\\utilities\\assam_power_transmission_lines.geojson",
+  "assetsGeoJsonFile": "data\\processed\\utilities\\assam_utility_assets.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "sources": [
+    "OpenStreetMap power=line/substation via Overpass API (https://overpass-api.de/api/interpreter, acquired 2026-10-31T07:55:02.169214+00:00, OSM base 2026-10-31T07:53:51Z)",
+    "OpenStreetMap power=tower nodes via Overpass API (https://lz4.overpass-api.de/api/interpreter, acquired 2026-10-31T07:57:18.740171+00:00)",
+    "Ministry of Power (GoI) transmission ROW width guidelines (66/132/220/400 kV = 18/27/35/46 m)",
+    "CEA (Measures relating to Safety & Electric Supply) Regulations 2010, Reg. 58 minimum conductor clearance"
+  ],
+  "knownLimitations": [
+    "OSM coverage of Assam power infrastructure is incomplete: 33 kV/11 kV distribution feeders are largely unmapped and are NOT represented.",
+    "No oil/gas pipelines (e.g. Numaligarh-Siliguri product pipeline, Indradhanush NE gas grid) are mapped in OSM inside this bounding box; the layer schema supports them but no pipeline geometry was fabricated.",
+    "Lines without an OSM voltage tag are conservatively treated as 132 kV (voltageInferred=true).",
+    "Tower positions are OSM-mapped nodes; unmapped towers may exist between mapped ones."
+  ],
+  "lineLengthKmInStudyAreaByTier": {
+    "EHV_400KV_TRANSMISSION": 78.95,
+    "EHV_220KV_TRANSMISSION": 217.91,
+    "SUBTRANSMISSION_132KV": 57.86,
+    "DISTRIBUTION_66KV_AND_BELOW": 4.5
+  },
+  "featureCounts": {
+    "transmissionLineFeatures": 19,
+    "substations": 8,
+    "towers": 1333,
+    "towersAssignedToLines": 1323
+  },
+  "encoding": {
+    "0": "NONE",
+    "1": "UTILITY_PROXIMITY_SETBACK_ZONE",
+    "2": "DISTRIBUTION_LINE_ROW",
+    "3": "SUBTRANSMISSION_132KV_ROW",
+    "4": "EHV_220KV_ROW",
+    "5": "EHV_400KV_ROW",
+    "6": "SUBSTATION_OR_TOWER_FOOTPRINT",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "NONE_0": 7155655,
+    "UTILITY_PROXIMITY_SETBACK_ZONE_1": 45300,
+    "DISTRIBUTION_LINE_ROW_2": 111,
+    "SUBTRANSMISSION_132KV_ROW_3": 1518,
+    "EHV_220KV_ROW_4": 17562,
+    "EHV_400KV_ROW_5": 6643,
+    "SUBSTATION_OR_TOWER_FOOTPRINT_6": 6274,
+    "NODATA_255": 13017
+  },
+  "areaKm2ByClass": {
+    "NONE_0": 6440.09,
+    "UTILITY_PROXIMITY_SETBACK_ZONE_1": 40.77,
+    "DISTRIBUTION_LINE_ROW_2": 0.1,
+    "SUBTRANSMISSION_132KV_ROW_3": 1.37,
+    "EHV_220KV_ROW_4": 15.81,
+    "EHV_400KV_ROW_5": 5.98,
+    "SUBSTATION_OR_TOWER_FOOTPRINT_6": 5.65,
+    "NODATA_255": 11.72
+  },
+  "generatedAtUtc": "2026-10-31T07:59:57.590880+00:00"
+}

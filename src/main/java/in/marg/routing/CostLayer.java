@@ -6,4 +6,14 @@ import in.marg.model.GeoPoint;
 @FunctionalInterface
 public interface CostLayer {
     CostAssessment assess(GeoPoint point);
+
+    /** Whether this layer also evaluates direction/intersection-dependent edge transitions. */
+    default boolean hasEdgeCost() {
+        return false;
+    }
+
+    /** Optional edge-level transition cost between two adjacent grid points (e.g., road/rail crossing angle). */
+    default CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
+        return CostAssessment.FREE;
+    }
 }

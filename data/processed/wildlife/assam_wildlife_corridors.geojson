@@ -1,0 +1,357 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong Wildlife Migration Corridors & Animal Passage Axes",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "WLC-PANBARI",
+      "properties": {
+        "id": "WLC-PANBARI",
+        "name": "Panbari Kaziranga-Karbi Hills Corridor",
+        "corridorTier": "CRITICAL_ELEPHANT_RHINO_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Greater One-Horned Rhinoceros, Royal Bengal Tiger",
+        "sourceHabitat": "Kaziranga National Park (Eastern Range)",
+        "destinationHabitat": "Panbari Reserve Forest & North Karbi Hills",
+        "designCorridorWidthMeters": 650.0,
+        "minimumPassageSpanMeters": 450.0,
+        "minimumClearHeightMeters": 6.5,
+        "lengthKm": 14.22
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.51,
+            26.592
+          ],
+          [
+            93.522,
+            26.565
+          ],
+          [
+            93.535,
+            26.535
+          ],
+          [
+            93.52,
+            26.502
+          ],
+          [
+            93.502,
+            26.475
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-HALDIBARI",
+      "properties": {
+        "id": "WLC-HALDIBARI",
+        "name": "Haldibari Seasonal Flood-Escape Corridor",
+        "corridorTier": "CRITICAL_ELEPHANT_RHINO_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Greater One-Horned Rhinoceros, Gaur, Hog Deer",
+        "sourceHabitat": "Kaziranga National Park (Kohora-Haldibari Range)",
+        "destinationHabitat": "East Karbi Anglong Wildlife Sanctuary",
+        "designCorridorWidthMeters": 550.0,
+        "minimumPassageSpanMeters": 400.0,
+        "minimumClearHeightMeters": 6.5,
+        "lengthKm": 11.13
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.452,
+            26.588
+          ],
+          [
+            93.456,
+            26.558
+          ],
+          [
+            93.46,
+            26.525
+          ],
+          [
+            93.462,
+            26.488
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-KANCHANJURI",
+      "properties": {
+        "id": "WLC-KANCHANJURI",
+        "name": "Kanchanjuri-Rutheepahar Elephant & Rhino Corridor",
+        "corridorTier": "CRITICAL_ELEPHANT_RHINO_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Greater One-Horned Rhinoceros, Tiger, Sambar",
+        "sourceHabitat": "Kaziranga National Park (Central-Western Range)",
+        "destinationHabitat": "East Karbi Anglong Wildlife Sanctuary",
+        "designCorridorWidthMeters": 700.0,
+        "minimumPassageSpanMeters": 500.0,
+        "minimumClearHeightMeters": 6.5,
+        "lengthKm": 10.79
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.345,
+            26.582
+          ],
+          [
+            93.348,
+            26.55
+          ],
+          [
+            93.352,
+            26.518
+          ],
+          [
+            93.355,
+            26.485
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-BAGORI-HARMOTI",
+      "properties": {
+        "id": "WLC-BAGORI-HARMOTI",
+        "name": "Bagori-Harmoti-Deosur Western Flood-Escape Corridor",
+        "corridorTier": "CRITICAL_ELEPHANT_RHINO_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Greater One-Horned Rhinoceros, Wild Water Buffalo",
+        "sourceHabitat": "Kaziranga National Park (Bagori Western Range)",
+        "destinationHabitat": "Western Karbi Anglong Hills (Kukurakata-Bagser RF)",
+        "designCorridorWidthMeters": 600.0,
+        "minimumPassageSpanMeters": 420.0,
+        "minimumClearHeightMeters": 6.5,
+        "lengthKm": 11.85
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.235,
+            26.58
+          ],
+          [
+            93.242,
+            26.545
+          ],
+          [
+            93.25,
+            26.51
+          ],
+          [
+            93.258,
+            26.475
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-KALAPAHAR-DOIGRUNG",
+      "properties": {
+        "id": "WLC-KALAPAHAR-DOIGRUNG",
+        "name": "Kalapahar-Doigrung Inter-Sanctuary Elephant Corridor",
+        "corridorTier": "CRITICAL_ELEPHANT_RHINO_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Hoolock Gibbon, Leopard",
+        "sourceHabitat": "East Karbi Anglong Wildlife Sanctuary",
+        "destinationHabitat": "Nambor-Doigrung Wildlife Sanctuary & Reserve Forest",
+        "designCorridorWidthMeters": 500.0,
+        "minimumPassageSpanMeters": 350.0,
+        "minimumClearHeightMeters": 6.5,
+        "lengthKm": 16.69
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.498,
+            26.428
+          ],
+          [
+            93.545,
+            26.425
+          ],
+          [
+            93.605,
+            26.428
+          ],
+          [
+            93.665,
+            26.432
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-KALIANI-NAMBOR",
+      "properties": {
+        "id": "WLC-KALIANI-NAMBOR",
+        "name": "Kaliani-Nambor-Garampani Elephant Corridor",
+        "corridorTier": "INTER_SANCTUARY_ELEPHANT_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Clouded Leopard, Barking Deer",
+        "sourceHabitat": "East Karbi Anglong Wildlife Sanctuary (Southern Ridge)",
+        "destinationHabitat": "Nambor-Garampani Wildlife Sanctuary",
+        "designCorridorWidthMeters": 380.0,
+        "minimumPassageSpanMeters": 220.0,
+        "minimumClearHeightMeters": 6.0,
+        "lengthKm": 25.21
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.435,
+            26.368
+          ],
+          [
+            93.46,
+            26.33
+          ],
+          [
+            93.505,
+            26.29
+          ],
+          [
+            93.575,
+            26.285
+          ],
+          [
+            93.645,
+            26.288
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-CHOKIHOLA-DHANSIRI",
+      "properties": {
+        "id": "WLC-CHOKIHOLA-DHANSIRI",
+        "name": "Central Karbi-Dhansiri Forest Stepping Corridor",
+        "corridorTier": "INTER_SANCTUARY_ELEPHANT_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Gaur, Sambar",
+        "sourceHabitat": "Central Karbi Plateau Forest Block",
+        "destinationHabitat": "Eastern Dhansiri Riparian Forest Belt",
+        "designCorridorWidthMeters": 320.0,
+        "minimumPassageSpanMeters": 180.0,
+        "minimumClearHeightMeters": 6.0,
+        "lengthKm": 33.35
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.375,
+            26.365
+          ],
+          [
+            93.395,
+            26.28
+          ],
+          [
+            93.435,
+            26.21
+          ],
+          [
+            93.505,
+            26.205
+          ],
+          [
+            93.585,
+            26.205
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-LONGNIT-MARAT-LONGRI",
+      "properties": {
+        "id": "WLC-LONGNIT-MARAT-LONGRI",
+        "name": "Marat Longri-North Jamuna Elephant Corridor",
+        "corridorTier": "INTER_SANCTUARY_ELEPHANT_CORRIDOR",
+        "targetSpecies": "Asian Elephant, Himalayan Black Bear, Dhole",
+        "sourceHabitat": "Marat Longri Wildlife Sanctuary (Northern Block)",
+        "destinationHabitat": "Eastern Jamuna-Dhansiri Reserve Forest",
+        "designCorridorWidthMeters": 350.0,
+        "minimumPassageSpanMeters": 200.0,
+        "minimumClearHeightMeters": 6.0,
+        "lengthKm": 17.82
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.398,
+            26.03
+          ],
+          [
+            93.445,
+            26.038
+          ],
+          [
+            93.505,
+            26.042
+          ],
+          [
+            93.575,
+            26.045
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WLC-MANJA-DHANSIRI",
+      "properties": {
+        "id": "WLC-MANJA-DHANSIRI",
+        "name": "Marat Longri-Dhansiri Southern Forest Dispersal Link",
+        "corridorTier": "LOCAL_WILDLIFE_DISPERSAL_AXIS",
+        "targetSpecies": "Asian Elephant, Hog Badger, Leopard Cat, Sambar",
+        "sourceHabitat": "Marat Longri Wildlife Sanctuary (Southeastern Fringe)",
+        "destinationHabitat": "Dhansiri Reserve Forest",
+        "designCorridorWidthMeters": 180.0,
+        "minimumPassageSpanMeters": 90.0,
+        "minimumClearHeightMeters": 5.0,
+        "lengthKm": 18.06
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.398,
+            25.908
+          ],
+          [
+            93.455,
+            25.912
+          ],
+          [
+            93.515,
+            25.915
+          ],
+          [
+            93.578,
+            25.918
+          ]
+        ]
+      }
+    }
+  ]
+}

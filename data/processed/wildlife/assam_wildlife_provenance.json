@@ -1,0 +1,63 @@
+{
+  "layerName": "MARG Wildlife Migration Corridors, Eco-Sensitive Zones (ESZ) & Elevated Animal Passages Layer",
+  "rasterFile": "data\\processed\\wildlife\\assam_wildlife_esz_corridors_utm46.tif",
+  "corridorsGeoJsonFile": "data\\processed\\wildlife\\assam_wildlife_corridors.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "utm46nBounds": {
+    "minX": 509952.053,
+    "maxX": 575232.053,
+    "minY": 2847989.616,
+    "maxY": 2947889.616
+  },
+  "sources": [
+    "Kaziranga-Karbi Anglong Protected Area Boundaries (Kaziranga NP, East Karbi Anglong WLS, Marat Longri WLS)",
+    "MoEFCC Eco-Sensitive Zone (ESZ) 0-1.0 km Inner Setback & 1.0-2.5 km Outer Transition Guidelines",
+    "WII / WTI Right of Passage Kaziranga-Karbi Anglong Elephant & Rhino Migration Corridors (Panbari, Haldibari, Kanchanjuri, Bagori-Harmoti, Kalapahar-Doigrung, Kaliani-Nambor, Longnit-Marat Longri)",
+    "Wildlife Institute of India (WII) 'Eco-Friendly Measures to Mitigate Impacts of Linear Infrastructure on Wildlife' (6.5 m elephant viaduct clearance norms)"
+  ],
+  "corridorLengthKmByTier": {
+    "CRITICAL_ELEPHANT_RHINO_CORRIDOR": 64.68,
+    "INTER_SANCTUARY_ELEPHANT_CORRIDOR": 76.38,
+    "LOCAL_WILDLIFE_DISPERSAL_AXIS": 18.06
+  },
+  "featureCounts": {
+    "wildlifeMigrationCorridors": 9,
+    "protectedSanctuaryClustersBufferedWithEsz": 3
+  },
+  "encoding": {
+    "0": "NONE (Outside ESZ and outside wildlife migration corridors)",
+    "1": "ESZ_OUTER_TRANSITION_ZONE (1,000-2,500 m outer Eco-Sensitive Zone transition ring)",
+    "2": "ESZ_INNER_BUFFER_ZONE (0-1,000 m immediate inner Eco-Sensitive Zone setback around PAs)",
+    "3": "WILDLIFE_CORRIDOR_FRINGE_BUFFER (0-300 m lateral wildlife funnel buffer)",
+    "4": "REGIONAL_FOREST_STEPPING_CORRIDOR (Inter-sanctuary elephant & forest dispersal corridor)",
+    "5": "CRITICAL_MIGRATION_CORRIDOR_CORE (Notified Kaziranga-Karbi critical elephant/rhino migration corridor)",
+    "6": "PROTECTED_SANCTUARY_HABITAT (Notified Protected Area habitat core, PA==1)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "NONE_0": 5446007,
+    "ESZ_OUTER_TRANSITION_ZONE_1": 403274,
+    "ESZ_INNER_BUFFER_ZONE_2": 280862,
+    "WILDLIFE_CORRIDOR_FRINGE_BUFFER_3": 110871,
+    "REGIONAL_FOREST_STEPPING_CORRIDOR_4": 37511,
+    "CRITICAL_MIGRATION_CORRIDOR_CORE_5": 45810,
+    "PROTECTED_SANCTUARY_HABITAT_6": 921745,
+    "NODATA_255": 0
+  },
+  "areaKm2ByClass": {
+    "NONE_0": 4901.41,
+    "ESZ_OUTER_TRANSITION_ZONE_1": 362.95,
+    "ESZ_INNER_BUFFER_ZONE_2": 252.78,
+    "WILDLIFE_CORRIDOR_FRINGE_BUFFER_3": 99.78,
+    "REGIONAL_FOREST_STEPPING_CORRIDOR_4": 33.76,
+    "CRITICAL_MIGRATION_CORRIDOR_CORE_5": 41.23,
+    "PROTECTED_SANCTUARY_HABITAT_6": 829.57,
+    "NODATA_255": 0.0
+  },
+  "generatedAtUtc": "2026-10-30T07:54:58.593797+00:00"
+}

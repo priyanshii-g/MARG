@@ -11,37 +11,92 @@ public enum LulcClass {
     SNOW,
     UNKNOWN;
 
-    public static LulcClass fromFeatureInfo(String raw) {
-        if (raw == null || raw.isBlank()) return UNKNOWN;
-        String s = raw.toLowerCase()
-                .replace('_', ' ')
-                .replace('-', ' ')
-                .replaceAll("\\s+", " ");
+private static final java.util.regex.Pattern DESCRIPTION_FIELD =
+    java.util.regex.Pattern.compile(
+            "(?im)^\\s*DESCR_[12]\\s*=\\s*(.*?)\\s*$"
+    );
 
-        // Order matters: forestry plantations should not be mistaken for generic plantation/agriculture.
-        if (containsAny(s, "evergreen", "semi evergreen", "deciduous", "scrub forest", "forest plantation", "tree clad", "forest")) {
-            return FOREST;
-        }
-        if (containsAny(s, "water body", "water bodies", "river", "stream", "canal", "lake", "pond", "reservoir", "wetland", "mangrove", "swamp", "waterlogged")) {
-            return WETLAND_WATER;
-        }
-        if (containsAny(s, "built up", "builtup", "urban", "industrial area", "rural settlement", "settlement", "mining", "quarry")) {
-            return BUILT_UP;
-        }
-        if (containsAny(s, "crop land", "cropland", "kharif", "rabi", "zaid", "fallow", "agriculture", "shifting cultivation", "plantation", "orchard")) {
-            return AGRICULTURE;
-        }
-        if (containsAny(s, "grassland", "grass grazing", "grazing")) {
-            return GRASS_GRAZING;
-        }
-        if (containsAny(s, "barren", "wasteland", "waste land", "sandy area", "barren rocky", "scrub land", "ravinous", "gullied")) {
-            return BARREN_WASTELAND;
-        }
-        if (containsAny(s, "snow", "glacial")) {
-            return SNOW;
-        }
+public static LulcClass fromFeatureInfo(String raw) {
+    if (raw == null || raw.isBlank()) {
         return UNKNOWN;
     }
+
+    String trimmed = raw.trim();
+
+    // A successful WMS response does not guarantee a feature was found.
+    if (trimmed.matches("(?is)^no\\s+features?\\s+were\\s+found\\.?$")) {
+        return UNKNOWN;
+    }
+
+    // Parse only the land-cover description fields.
+    java.util.regex.Matcher matcher =
+            DESCRIPTION_FIELD.matcher(raw);
+
+    StringBuilder descriptions = new StringBuilder();
+
+    while (matcher.find()) {
+        descriptions.append(' ')
+                .append(matcher.group(1));
+    }
+
+    if (descriptions.isEmpty()) {
+        return UNKNOWN;
+    }
+
+    String text = descriptions.toString()
+            .toLowerCase(java.util.Locale.ROOT)
+            .replace('_', ' ')
+            .replace('-', ' ')
+            .replaceAll("\\s+", " ")
+            .trim();
+
+    // Check forest before agriculture so forest plantations
+    // are not classified as agricultural plantations.
+    if (containsAny(text,
+            "evergreen", "deciduous", "scrub forest",
+            "forest plantation", "tree clad", "forest")) {
+        return FOREST;
+    }
+
+    if (containsAny(text,
+            "water body", "water bodies", "waterbodies",
+            "river", "stream", "canal", "lake", "pond",
+            "reservoir", "wetland", "mangrove", "swamp",
+            "waterlogged")) {
+        return WETLAND_WATER;
+    }
+
+    if (containsAny(text,
+            "built up", "builtup", "urban", "industrial",
+            "settlement", "mining", "quarry")) {
+        return BUILT_UP;
+    }
+
+    if (containsAny(text,
+            "crop land", "cropland", "kharif", "rabi",
+            "zaid", "fallow", "agriculture",
+            "shifting cultivation", "plantation", "orchard")) {
+        return AGRICULTURE;
+    }
+
+    if (containsAny(text,
+            "grassland", "grass grazing", "grazing")) {
+        return GRASS_GRAZING;
+    }
+
+    if (containsAny(text,
+            "barren", "wasteland", "waste land",
+            "sandy area", "scrub land", "ravinous",
+            "gullied", "unculturable")) {
+        return BARREN_WASTELAND;
+    }
+
+    if (containsAny(text, "snow", "glacial")) {
+        return SNOW;
+    }
+
+    return UNKNOWN;
+}
 
     private static boolean containsAny(String s, String... needles) {
         for (String n : needles) if (s.contains(n)) return true;

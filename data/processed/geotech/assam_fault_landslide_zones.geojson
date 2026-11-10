@@ -1,0 +1,311 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong Tectonic Shear Zones, Landslide Scarps & Liquefaction Troughs",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "GEO-KALIANI-SHEAR",
+      "properties": {
+        "id": "GEO-KALIANI-SHEAR",
+        "name": "Kaliani Active Strike-Slip Shear Zone",
+        "hazardTier": "ACTIVE_FAULT_SHEAR_ZONE",
+        "lithologyAndSoil": "Crushed Precambrian mylonite, fault gouge & deep saprolite (Seismic Zone V)",
+        "engineeringHazard": "Deep-seated rotational/wedge failure & seismic fault-displacement hazard",
+        "designHazardWidthMeters": 260.0,
+        "minimumStabilizationLengthMeters": 180.0,
+        "lengthKm": 47.9
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.18,
+            26.398
+          ],
+          [
+            93.36,
+            26.393
+          ],
+          [
+            93.49,
+            26.39
+          ],
+          [
+            93.66,
+            26.386
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-KARBI-NORTH-BOUNDARY-FAULT",
+      "properties": {
+        "id": "GEO-KARBI-NORTH-BOUNDARY-FAULT",
+        "name": "Northern Karbi Boundary Escarpment Fault",
+        "hazardTier": "ACTIVE_FAULT_SHEAR_ZONE",
+        "lithologyAndSoil": "Fractured gneissic boundary fault scarp & saturated colluvial talus apron",
+        "engineeringHazard": "Monsoon pore-pressure translational rock/debris slide along fault dip",
+        "designHazardWidthMeters": 220.0,
+        "minimumStabilizationLengthMeters": 160.0,
+        "lengthKm": 41.88
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.18,
+            26.555
+          ],
+          [
+            93.33,
+            26.55
+          ],
+          [
+            93.455,
+            26.556
+          ],
+          [
+            93.6,
+            26.562
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-JAMUNA-DIPHU-PIEDMONT-FAULT",
+      "properties": {
+        "id": "GEO-JAMUNA-DIPHU-PIEDMONT-FAULT",
+        "name": "Southern Jamuna-Diphu Piedmont Fault Lineament",
+        "hazardTier": "ACTIVE_FAULT_SHEAR_ZONE",
+        "lithologyAndSoil": "Sheared Tertiary sandstone-mudstone & Precambrian basement contact",
+        "engineeringHazard": "Differential foundation settlement & side-hill cut wedge instability",
+        "designHazardWidthMeters": 180.0,
+        "minimumStabilizationLengthMeters": 130.0,
+        "lengthKm": 37.1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.24,
+            25.882
+          ],
+          [
+            93.38,
+            25.888
+          ],
+          [
+            93.495,
+            25.892
+          ],
+          [
+            93.61,
+            25.896
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-CHOKIHOLA-DEOPANI-SCARP",
+      "properties": {
+        "id": "GEO-CHOKIHOLA-DEOPANI-SCARP",
+        "name": "Chokihola-Deopani Colluvial Landslide Scarp",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Deeply weathered granite-gneiss colluvium & perched water-table hollow",
+        "engineeringHazard": "Toe-undercutting debris avalanche & high-cut retaining wall surcharge",
+        "designHazardWidthMeters": 190.0,
+        "minimumStabilizationLengthMeters": 140.0,
+        "lengthKm": 29.01
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.31,
+            26.235
+          ],
+          [
+            93.41,
+            26.215
+          ],
+          [
+            93.505,
+            26.198
+          ],
+          [
+            93.595,
+            26.185
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-BORJAN-BARAIL-SHALE-SCARP",
+      "properties": {
+        "id": "GEO-BORJAN-BARAIL-SHALE-SCARP",
+        "name": "Borjan-Longnit Tertiary Barail Shale Slide Belt",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Fissile Tertiary Barail/Surma mudstone-shale & expansive residual clay",
+        "engineeringHazard": "Slaking & planar bedding-plane slump under monsoon saturation",
+        "designHazardWidthMeters": 170.0,
+        "minimumStabilizationLengthMeters": 125.0,
+        "lengthKm": 28.65
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.315,
+            26.065
+          ],
+          [
+            93.425,
+            26.052
+          ],
+          [
+            93.515,
+            26.046
+          ],
+          [
+            93.6,
+            26.04
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-RONGMONGVE-DISSECTED-SCARP",
+      "properties": {
+        "id": "GEO-RONGMONGVE-DISSECTED-SCARP",
+        "name": "Rongmongve-Dolamara Fractured Gneiss Scarp",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Jointed quartzofeldspathic gneiss & boulder-colluvium talus",
+        "engineeringHazard": "Rockfall & steep cut-slope block toppling",
+        "designHazardWidthMeters": 160.0,
+        "minimumStabilizationLengthMeters": 120.0,
+        "lengthKm": 22.56
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.32,
+            26.472
+          ],
+          [
+            93.435,
+            26.462
+          ],
+          [
+            93.545,
+            26.45
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-DOKMOKA-FOOTHILL-SLIDE",
+      "properties": {
+        "id": "GEO-DOKMOKA-FOOTHILL-SLIDE",
+        "name": "Dokmoka-Howraghat Western Colluvial Scarp",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Weathered lateritic hillwash & colluvial clay-gravel contact",
+        "engineeringHazard": "Shallow rotational slump & embankment toe erosion",
+        "designHazardWidthMeters": 150.0,
+        "minimumStabilizationLengthMeters": 110.0,
+        "lengthKm": 20.27
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.16,
+            26.14
+          ],
+          [
+            93.265,
+            26.125
+          ],
+          [
+            93.36,
+            26.11
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-KOHORA-LIQUEFACTION-TROUGH",
+      "properties": {
+        "id": "GEO-KOHORA-LIQUEFACTION-TROUGH",
+        "name": "Kaziranga-Diphlu Quaternary Liquefiable Silt Paleochannel",
+        "hazardTier": "LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH",
+        "lithologyAndSoil": "Loose saturated fine micaceous sand & organic backswamp silt (CBR < 3%)",
+        "engineeringHazard": "Seismic Zone V cyclic liquefaction & lateral embankment spreading",
+        "designHazardWidthMeters": 240.0,
+        "minimumStabilizationLengthMeters": 175.0,
+        "lengthKm": 29.88
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.26,
+            26.576
+          ],
+          [
+            93.41,
+            26.574
+          ],
+          [
+            93.56,
+            26.578
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GEO-JAMUNA-SANTIPUR-CLAY-TROUGH",
+      "properties": {
+        "id": "GEO-JAMUNA-SANTIPUR-CLAY-TROUGH",
+        "name": "Jamuna-Santipur Compressible Backswamp Clay Trough",
+        "hazardTier": "LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH",
+        "lithologyAndSoil": "High-plasticity compressible alluvial silty clay & marsh peat (SBC < 75 kPa)",
+        "engineeringHazard": "Long-term primary consolidation settlement & bearing capacity failure",
+        "designHazardWidthMeters": 210.0,
+        "minimumStabilizationLengthMeters": 150.0,
+        "lengthKm": 20.04
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.385,
+            26.108
+          ],
+          [
+            93.475,
+            26.114
+          ],
+          [
+            93.585,
+            26.12
+          ]
+        ]
+      }
+    }
+  ]
+}

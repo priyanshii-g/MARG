@@ -16,14 +16,26 @@ import java.time.Duration;
 @Service
 public class BhuvanService {
     private final BhuvanCatalog catalog;
-    private final HttpClient client;
+    private volatile HttpClient client;
 
     public BhuvanService(BhuvanCatalog catalog) {
         this.catalog = catalog;
-        this.client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(20))
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .build();
+    }
+
+    private HttpClient getClient() {
+        HttpClient c = this.client;
+        if (c == null) {
+            synchronized (this) {
+                c = this.client;
+                if (c == null) {
+                    this.client = c = HttpClient.newBuilder()
+                            .connectTimeout(Duration.ofSeconds(20))
+                            .followRedirects(HttpClient.Redirect.NORMAL)
+                            .build();
+                }
+            }
+        }
+        return c;
     }
 
     public String buildGetMapUrl(String layerId, double minLon, double minLat,
@@ -81,7 +93,7 @@ public class BhuvanService {
                     .header("User-Agent", "MARG-Prototype/0.2 (academic GIS research)")
                     .GET()
                     .build();
-            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response = getClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
             if (response.statusCode() / 100 != 2) {
                 return ResponseEntity.status(response.statusCode()).body(response.body());
             }

@@ -32,6 +32,10 @@ public class BhuvanLulcSampler {
     private final java.nio.file.Path cacheFile;
     private final ObjectMapper objectMapper;
     private final Map<SampleKey, SampleResult> cache = new ConcurrentHashMap<>();
+    private final Map<SampleKey, TimedFailure> recentFailures =
+            new ConcurrentHashMap<>();
+    // Keep failed requests in memory for 60 seconds before retrying.
+    private final long failureCacheTtlMillis = 60_000L;
 
     public BhuvanLulcSampler(
             BhuvanCatalog catalog,
@@ -58,9 +62,12 @@ public class BhuvanLulcSampler {
                     java.nio.file.Files.readString(cacheFile),
                     new TypeReference<List<PersistedSample>>() {});
             for (PersistedSample s : saved) {
+                if (!s.remoteSuccess()) {
+                    continue;
+                }
                 SampleResult result = new SampleResult(s.lat(), s.lon(), s.type(),
                         s.rawFeatureInfo() == null ? "" : s.rawFeatureInfo(),
-                        s.remoteSuccess(), s.error());
+                        true, s.error());
                 cache.put(new SampleKey(s.lat(), s.lon()), result);
             }
         } catch (Exception ignored) {
@@ -68,14 +75,53 @@ public class BhuvanLulcSampler {
         }
     }
 
+    // public LulcClass sample(GeoPoint point) {
+    //     SampleKey key = key(point);
+    //     return cache.computeIfAbsent(key, this::load).type();
+    // }
     public LulcClass sample(GeoPoint point) {
-        SampleKey key = key(point);
-        return cache.computeIfAbsent(key, this::load).type();
+        return sampleDetailed(point).type();
     }
 
     public SampleResult sampleDetailed(GeoPoint point) {
-        return cache.computeIfAbsent(key(point), this::load);
+        SampleKey key = key(point);
+
+        SampleResult known = cache.get(key);
+        if (known != null) {
+            return known;
+        }
+
+        long now = System.currentTimeMillis();
+        TimedFailure failed = recentFailures.get(key);
+
+        if (failed != null) {
+            if (failed.expiresAtMillis() > now) {
+                return failed.result();
+            }
+            recentFailures.remove(key, failed);
+        }
+
+        SampleResult result = load(key);
+
+        if (result.remoteSuccess()) {
+            SampleResult prior = cache.putIfAbsent(key, result);
+            recentFailures.remove(key);
+            return prior == null ? result : prior;
+        }
+
+        // Avoid repeated remote calls for this cell during the current run.
+        recentFailures.put(
+                key,
+                new TimedFailure(result, now + failureCacheTtlMillis)
+        );
+
+        return result;
     }
+
+    private record TimedFailure(
+            SampleResult result,
+            long expiresAtMillis
+    ) {}
 
     public int cacheSize() {
         return cache.size();
@@ -100,7 +146,9 @@ public class BhuvanLulcSampler {
         try {
             List<Future<SampleResult>> futures = new ArrayList<>();
             for (SampleKey key : keys) {
-                futures.add(pool.submit(() -> cache.computeIfAbsent(key, this::load)));
+                futures.add(pool.submit(
+                    () -> sampleDetailed(new GeoPoint(key.lat(), key.lon()))
+                ));
             }
             for (Future<SampleResult> future : futures) {
                 try {

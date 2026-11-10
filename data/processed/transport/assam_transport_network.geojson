@@ -1,0 +1,640 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong Existing Roads & Railways Network",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "NFR-MAIN-01",
+      "properties": {
+        "id": "NFR-MAIN-01",
+        "ref": "NFR-BG-MAIN",
+        "name": "Northeast Frontier Railway (Lumding-Diphu-Dimapur-Furkating Trunk Line)",
+        "category": "RAILWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 106.06
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.33,
+            25.758
+          ],
+          [
+            93.401,
+            25.793
+          ],
+          [
+            93.43,
+            25.823
+          ],
+          [
+            93.4385,
+            25.8355
+          ],
+          [
+            93.4685,
+            25.8475
+          ],
+          [
+            93.496,
+            25.898
+          ],
+          [
+            93.532,
+            25.955
+          ],
+          [
+            93.575,
+            26.035
+          ],
+          [
+            93.615,
+            26.135
+          ],
+          [
+            93.655,
+            26.265
+          ],
+          [
+            93.695,
+            26.425
+          ],
+          [
+            93.738,
+            26.605
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NFR-IND-02",
+      "properties": {
+        "id": "NFR-IND-02",
+        "ref": "NFR-BOKAJAN-BORJAN",
+        "name": "NFR Southern Karbi Industrial Freight Line (Bokajan-Dillai-Lahorijan-Borjan)",
+        "category": "RAILWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 19.88
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.532,
+            25.955
+          ],
+          [
+            93.495,
+            25.952
+          ],
+          [
+            93.452,
+            25.946
+          ],
+          [
+            93.412,
+            25.944
+          ],
+          [
+            93.372,
+            25.948
+          ],
+          [
+            93.335,
+            25.954
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NH-715",
+      "properties": {
+        "id": "NH-715",
+        "ref": "NH-715",
+        "name": "National Highway 715 (Old NH-37: Kaliabor-Bagori-Kohora-Bokakhat-Numaligarh)",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 60.84
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.12,
+            26.565
+          ],
+          [
+            93.185,
+            26.572
+          ],
+          [
+            93.225,
+            26.578
+          ],
+          [
+            93.268,
+            26.5835
+          ],
+          [
+            93.305,
+            26.568
+          ],
+          [
+            93.368,
+            26.581
+          ],
+          [
+            93.385,
+            26.5845
+          ],
+          [
+            93.405,
+            26.584
+          ],
+          [
+            93.416,
+            26.584
+          ],
+          [
+            93.442,
+            26.598
+          ],
+          [
+            93.478,
+            26.606
+          ],
+          [
+            93.507,
+            26.612
+          ],
+          [
+            93.532,
+            26.618
+          ],
+          [
+            93.555,
+            26.625
+          ],
+          [
+            93.588,
+            26.6285
+          ],
+          [
+            93.645,
+            26.632
+          ],
+          [
+            93.715,
+            26.632
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NH-129",
+      "properties": {
+        "id": "NH-129",
+        "ref": "NH-129",
+        "name": "National Highway 129 (Old NH-39: Numaligarh-Silonijan-Santipur-Dillai-Manja)",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 91.23
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.715,
+            26.632
+          ],
+          [
+            93.68,
+            26.54
+          ],
+          [
+            93.635,
+            26.44
+          ],
+          [
+            93.592,
+            26.365
+          ],
+          [
+            93.553,
+            26.321
+          ],
+          [
+            93.53,
+            26.28
+          ],
+          [
+            93.505,
+            26.245
+          ],
+          [
+            93.494,
+            26.215
+          ],
+          [
+            93.5,
+            26.13
+          ],
+          [
+            93.506,
+            26.04
+          ],
+          [
+            93.504,
+            25.958
+          ],
+          [
+            93.488,
+            25.915
+          ],
+          [
+            93.476,
+            25.885
+          ],
+          [
+            93.468,
+            25.862
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NH-29-MAIN",
+      "properties": {
+        "id": "NH-29-MAIN",
+        "ref": "NH-29",
+        "name": "National Highway 29 (Old NH-36: Dokmoka-Samelangso-Longnit-Borjan-Manja)",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 58.89
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.135,
+            26.255
+          ],
+          [
+            93.205,
+            26.225
+          ],
+          [
+            93.278,
+            26.198
+          ],
+          [
+            93.296,
+            26.155
+          ],
+          [
+            93.318,
+            26.115
+          ],
+          [
+            93.317,
+            26.065
+          ],
+          [
+            93.348,
+            26.038
+          ],
+          [
+            93.378,
+            26.015
+          ],
+          [
+            93.392,
+            25.968
+          ],
+          [
+            93.412,
+            25.932
+          ],
+          [
+            93.446,
+            25.884
+          ],
+          [
+            93.468,
+            25.862
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NH-29-WEST-SPUR",
+      "properties": {
+        "id": "NH-29-WEST-SPUR",
+        "ref": "NH-29W",
+        "name": "National Highway 29 Western Connector (Dokmoka-Phuloni-Howraghat-Bakalia)",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 31.76
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.278,
+            26.198
+          ],
+          [
+            93.248,
+            26.165
+          ],
+          [
+            93.223,
+            26.143
+          ],
+          [
+            93.242,
+            26.105
+          ],
+          [
+            93.258,
+            26.077
+          ],
+          [
+            93.22,
+            26.048
+          ],
+          [
+            93.192,
+            26.022
+          ],
+          [
+            93.135,
+            25.995
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NH-329",
+      "properties": {
+        "id": "NH-329",
+        "ref": "NH-329",
+        "name": "National Highway 329 (Manja-Diphu Northern Bypass-Doldoli-Lumding)",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": 1,
+        "lengthKm": 18.09
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.468,
+            25.862
+          ],
+          [
+            93.45,
+            25.856
+          ],
+          [
+            93.434,
+            25.851
+          ],
+          [
+            93.414,
+            25.849
+          ],
+          [
+            93.408,
+            25.822
+          ],
+          [
+            93.396,
+            25.798
+          ],
+          [
+            93.345,
+            25.762
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SH-35",
+      "properties": {
+        "id": "SH-35",
+        "ref": "SH-35",
+        "name": "State Highway 35 (Sapjuri-Rongagorah-Kaliani-Dolamara-Silonijan Foothill Road)",
+        "category": "STATE_HIGHWAY",
+        "hierarchyTier": 2,
+        "lengthKm": 38.51
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.507,
+            26.612
+          ],
+          [
+            93.488,
+            26.56
+          ],
+          [
+            93.465,
+            26.515
+          ],
+          [
+            93.488,
+            26.475
+          ],
+          [
+            93.496,
+            26.412
+          ],
+          [
+            93.477,
+            26.357
+          ],
+          [
+            93.515,
+            26.34
+          ],
+          [
+            93.553,
+            26.321
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SH-36",
+      "properties": {
+        "id": "SH-36",
+        "ref": "SH-36",
+        "name": "State Highway 36 (Dokmoka-Chokihola-Nilip-Deopani-Santipur East-West Arterial)",
+        "category": "STATE_HIGHWAY",
+        "hierarchyTier": 2,
+        "lengthKm": 26.45
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.278,
+            26.198
+          ],
+          [
+            93.325,
+            26.178
+          ],
+          [
+            93.372,
+            26.162
+          ],
+          [
+            93.415,
+            26.182
+          ],
+          [
+            93.458,
+            26.208
+          ],
+          [
+            93.505,
+            26.245
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SH-19",
+      "properties": {
+        "id": "SH-19",
+        "ref": "SH-19",
+        "name": "State Highway 19 (Bakalia-Howraghat-Langhin-Longnit-Dillai Connector)",
+        "category": "STATE_HIGHWAY",
+        "hierarchyTier": 2,
+        "lengthKm": 37.38
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.192,
+            26.022
+          ],
+          [
+            93.258,
+            26.077
+          ],
+          [
+            93.317,
+            26.065
+          ],
+          [
+            93.378,
+            26.015
+          ],
+          [
+            93.425,
+            25.995
+          ],
+          [
+            93.465,
+            25.975
+          ],
+          [
+            93.504,
+            25.958
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "MDR-101",
+      "properties": {
+        "id": "MDR-101",
+        "ref": "MDR-101",
+        "name": "Major District Road 101 (Duarbagori-Rongmongve-Dolamara Valley Road)",
+        "category": "MAJOR_DISTRICT_ROAD",
+        "hierarchyTier": 3,
+        "lengthKm": 18.12
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.336,
+            26.452
+          ],
+          [
+            93.362,
+            26.418
+          ],
+          [
+            93.395,
+            26.388
+          ],
+          [
+            93.435,
+            26.372
+          ],
+          [
+            93.477,
+            26.357
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "MDR-102",
+      "properties": {
+        "id": "MDR-102",
+        "ref": "MDR-102",
+        "name": "Major District Road 102 (Rongmongve-Nilip-Chokihola Connector)",
+        "category": "MAJOR_DISTRICT_ROAD",
+        "hierarchyTier": 3,
+        "lengthKm": 22.9
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            93.395,
+            26.388
+          ],
+          [
+            93.402,
+            26.31
+          ],
+          [
+            93.41,
+            26.245
+          ],
+          [
+            93.415,
+            26.182
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "layerName": "MARG Perennial Rivers, Wetlands & Riparian Crossings Layer",
+  "rasterFile": "data\\processed\\hydrology\\assam_water_bodies_utm46.tif",
+  "riversGeoJsonFile": "data\\processed\\hydrology\\assam_perennial_rivers.geojson",
+  "wetlandsGeoJsonFile": "data\\processed\\hydrology\\assam_wetlands_catalog.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "utm46nBounds": {
+    "minX": 509952.053,
+    "maxX": 575232.053,
+    "minY": 2847989.616,
+    "maxY": 2947889.616
+  },
+  "sources": [
+    "Bhuvan / NRSC Assam LULC 1:50,000 (2015-16) River/Stream/Canals (LU_Webcode=22) and Inland Wetlands (LU_Webcode=20)",
+    "Kaziranga-Karbi Anglong Regional Hydrographic Network (Dhansiri, Kaliani, Jamuna, Diphlu, Deopani, Borjan, Kohora, Nambor, Diphu basins)"
+  ],
+  "riverLengthKmByClass": {
+    "MAJOR_PERENNIAL_RIVER": 182.55,
+    "MEDIUM_PERENNIAL_RIVER": 72.03,
+    "MINOR_PERENNIAL_STREAM": 70.39
+  },
+  "featureCounts": {
+    "perennialRiverCorridors": 10,
+    "bhuvanInlandWetlandPolygons": 31,
+    "bhuvanRiverChannelAnchorSamples": 38
+  },
+  "encoding": {
+    "0": "NONE (>250 m from water edge)",
+    "1": "RIPARIAN_OUTER_BUFFER (120-250 m floodplain setback)",
+    "2": "RIPARIAN_INNER_BUFFER (0-120 m immediate riverbank / scour buffer)",
+    "3": "MINOR_PERENNIAL_STREAM (<=45 m stream channel)",
+    "4": "MEDIUM_PERENNIAL_RIVER (<=75 m medium river channel)",
+    "5": "INLAND_WETLAND_WATERBODY (Bhuvan 1:50,000 inland wetlands / beels)",
+    "6": "MAJOR_PERENNIAL_RIVER (<=120 m major river channel: Dhansiri, Kaliani, Jamuna)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "NONE_0": 6956265,
+    "RIPARIAN_OUTER_BUFFER_1": 106713,
+    "RIPARIAN_INNER_BUFFER_2": 93861,
+    "MINOR_PERENNIAL_STREAM_3": 8074,
+    "MEDIUM_PERENNIAL_RIVER_4": 13124,
+    "INLAND_WETLAND_WATERBODY_5": 13542,
+    "MAJOR_PERENNIAL_RIVER_6": 54501
+  },
+  "areaKm2ByClass": {
+    "NONE_0": 6260.64,
+    "RIPARIAN_OUTER_BUFFER_1": 96.04,
+    "RIPARIAN_INNER_BUFFER_2": 84.47,
+    "MINOR_PERENNIAL_STREAM_3": 7.27,
+    "MEDIUM_PERENNIAL_RIVER_4": 11.81,
+    "INLAND_WETLAND_WATERBODY_5": 12.19,
+    "MAJOR_PERENNIAL_RIVER_6": 49.05
+  },
+  "generatedAtUtc": "2026-10-29T11:56:52.337460+00:00"
+}

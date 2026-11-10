@@ -1,0 +1,418 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong Regional Service Hubs & Bypass Tie-Ins",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "HUB-DIPHU",
+      "properties": {
+        "hubId": "HUB-DIPHU",
+        "name": "Diphu",
+        "district": "Karbi Anglong",
+        "centerLat": 25.84,
+        "centerLon": 93.43,
+        "urbanPopulation": 68000,
+        "catchmentPopulation": 92000,
+        "industrialOutputFactor": 1.5,
+        "tieInLat": 25.851,
+        "tieInLon": 93.434,
+        "tieInRoadRef": "NH-329",
+        "tieInName": "Diphu Northern Ring Bypass (NH-329)",
+        "centerUtmX": 543091.8,
+        "centerUtmY": 2858035.5,
+        "tieInUtmX": 543488.6,
+        "tieInUtmY": 2859255.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.434,
+          25.851
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-BOKAKHAT",
+      "properties": {
+        "hubId": "HUB-BOKAKHAT",
+        "name": "Bokakhat",
+        "district": "Golaghat",
+        "centerLat": 26.638,
+        "centerLon": 93.598,
+        "urbanPopulation": 34000,
+        "catchmentPopulation": 64000,
+        "industrialOutputFactor": 1.85,
+        "tieInLat": 26.612,
+        "tieInLon": 93.507,
+        "tieInRoadRef": "NH-715",
+        "tieInName": "Sapjuri-Bokakhat Western Arterial Junction (NH-715 / SH-35)",
+        "centerUtmX": 559520.1,
+        "centerUtmY": 2946480.7,
+        "tieInUtmX": 550474.0,
+        "tieInUtmY": 2943561.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.507,
+          26.612
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-HOWRAGHAT",
+      "properties": {
+        "hubId": "HUB-HOWRAGHAT",
+        "name": "Howraghat",
+        "district": "Karbi Anglong",
+        "centerLat": 26.075,
+        "centerLon": 93.245,
+        "urbanPopulation": 24000,
+        "catchmentPopulation": 52000,
+        "industrialOutputFactor": 1.3,
+        "tieInLat": 26.077,
+        "tieInLon": 93.258,
+        "tieInRoadRef": "NH-29W",
+        "tieInName": "Howraghat Eastern Bypass Junction (NH-29W / SH-19)",
+        "centerUtmX": 524503.5,
+        "centerUtmY": 2884012.7,
+        "tieInUtmX": 525803.2,
+        "tieInUtmY": 2884236.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.258,
+          26.077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-DOKMOKA",
+      "properties": {
+        "hubId": "HUB-DOKMOKA",
+        "name": "Dokmoka",
+        "district": "Karbi Anglong",
+        "centerLat": 26.195,
+        "centerLon": 93.265,
+        "urbanPopulation": 22000,
+        "catchmentPopulation": 48000,
+        "industrialOutputFactor": 1.35,
+        "tieInLat": 26.198,
+        "tieInLon": 93.278,
+        "tieInRoadRef": "NH-29",
+        "tieInName": "Dokmoka Eastern Bypass Interchange (NH-29 / SH-36)",
+        "centerUtmX": 526476.7,
+        "centerUtmY": 2897306.2,
+        "tieInUtmX": 527774.9,
+        "tieInUtmY": 2897641.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.278,
+          26.198
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-DILLAI",
+      "properties": {
+        "hubId": "HUB-DILLAI",
+        "name": "Dillai",
+        "district": "Karbi Anglong",
+        "centerLat": 25.955,
+        "centerLon": 93.515,
+        "urbanPopulation": 19000,
+        "catchmentPopulation": 44000,
+        "industrialOutputFactor": 1.65,
+        "tieInLat": 25.958,
+        "tieInLon": 93.504,
+        "tieInRoadRef": "NH-129",
+        "tieInName": "Dillai Industrial Bypass Junction (NH-129 / SH-19)",
+        "centerUtmX": 551560.1,
+        "centerUtmY": 2870801.8,
+        "tieInUtmX": 550457.5,
+        "tieInUtmY": 2871129.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.504,
+          25.958
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-MANJA",
+      "properties": {
+        "hubId": "HUB-MANJA",
+        "name": "Manja",
+        "district": "Karbi Anglong",
+        "centerLat": 25.855,
+        "centerLon": 93.465,
+        "urbanPopulation": 21000,
+        "catchmentPopulation": 42000,
+        "industrialOutputFactor": 1.55,
+        "tieInLat": 25.862,
+        "tieInLon": 93.468,
+        "tieInRoadRef": "NH-129",
+        "tieInName": "Manja Tri-Highway Northern Bypass (NH-29 / NH-129 / NH-329)",
+        "centerUtmX": 546593.4,
+        "centerUtmY": 2859708.6,
+        "tieInUtmX": 546891.3,
+        "tieInUtmY": 2860484.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.468,
+          25.862
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-SILONIJAN",
+      "properties": {
+        "hubId": "HUB-SILONIJAN",
+        "name": "Silonijan",
+        "district": "Karbi Anglong",
+        "centerLat": 26.325,
+        "centerLon": 93.565,
+        "urbanPopulation": 16000,
+        "catchmentPopulation": 38000,
+        "industrialOutputFactor": 1.3,
+        "tieInLat": 26.321,
+        "tieInLon": 93.553,
+        "tieInRoadRef": "NH-129",
+        "tieInName": "Silonijan Western Bypass Junction (NH-129 / SH-35)",
+        "centerUtmX": 556387.9,
+        "centerUtmY": 2911799.6,
+        "tieInUtmX": 555192.2,
+        "tieInUtmY": 2911351.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.553,
+          26.321
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-LANGHIN",
+      "properties": {
+        "hubId": "HUB-LANGHIN",
+        "name": "Langhin",
+        "district": "Karbi Anglong",
+        "centerLat": 26.065,
+        "centerLon": 93.305,
+        "urbanPopulation": 14500,
+        "catchmentPopulation": 31000,
+        "industrialOutputFactor": 1.2,
+        "tieInLat": 26.065,
+        "tieInLon": 93.317,
+        "tieInRoadRef": "NH-29",
+        "tieInName": "Langhin Eastern Bypass Junction (NH-29 / SH-19)",
+        "centerUtmX": 530507.0,
+        "centerUtmY": 2882917.9,
+        "tieInUtmX": 531707.2,
+        "tieInUtmY": 2882920.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.317,
+          26.065
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-LONGNIT",
+      "properties": {
+        "hubId": "HUB-LONGNIT",
+        "name": "Longnit",
+        "district": "Karbi Anglong",
+        "centerLat": 26.012,
+        "centerLon": 93.368,
+        "urbanPopulation": 13000,
+        "catchmentPopulation": 29000,
+        "industrialOutputFactor": 1.45,
+        "tieInLat": 26.015,
+        "tieInLon": 93.378,
+        "tieInRoadRef": "NH-29",
+        "tieInName": "Longnit Arterial Bypass Junction (NH-29 / SH-19)",
+        "centerUtmX": 536825.0,
+        "centerUtmY": 2877064.6,
+        "tieInUtmX": 537824.7,
+        "tieInUtmY": 2877399.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.378,
+          26.015
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-PHULONI",
+      "properties": {
+        "hubId": "HUB-PHULONI",
+        "name": "Phuloni",
+        "district": "Karbi Anglong",
+        "centerLat": 26.135,
+        "centerLon": 93.215,
+        "urbanPopulation": 13500,
+        "catchmentPopulation": 28000,
+        "industrialOutputFactor": 1.15,
+        "tieInLat": 26.143,
+        "tieInLon": 93.223,
+        "tieInRoadRef": "NH-29W",
+        "tieInName": "Phuloni Eastern Bypass (NH-29W)",
+        "centerUtmX": 521492.1,
+        "centerUtmY": 2890652.1,
+        "tieInUtmX": 522290.3,
+        "tieInUtmY": 2891539.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.223,
+          26.143
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-SANTIPUR",
+      "properties": {
+        "hubId": "HUB-SANTIPUR",
+        "name": "Santipur",
+        "district": "Karbi Anglong",
+        "centerLat": 26.245,
+        "centerLon": 93.515,
+        "urbanPopulation": 12000,
+        "catchmentPopulation": 27000,
+        "industrialOutputFactor": 1.25,
+        "tieInLat": 26.245,
+        "tieInLon": 93.505,
+        "tieInRoadRef": "NH-129",
+        "tieInName": "Santipur Western Bypass Junction (NH-129 / SH-36)",
+        "centerUtmX": 551433.0,
+        "centerUtmY": 2902918.7,
+        "tieInUtmX": 550434.3,
+        "tieInUtmY": 2902914.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.505,
+          26.245
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-CHOKIHOLA",
+      "properties": {
+        "hubId": "HUB-CHOKIHOLA",
+        "name": "Chokihola",
+        "district": "Karbi Anglong",
+        "centerLat": 26.155,
+        "centerLon": 93.362,
+        "urbanPopulation": 11500,
+        "catchmentPopulation": 26000,
+        "industrialOutputFactor": 1.25,
+        "tieInLat": 26.162,
+        "tieInLon": 93.372,
+        "tieInRoadRef": "SH-36",
+        "tieInName": "Chokihola Northern Bypass (SH-36)",
+        "centerUtmX": 536180.6,
+        "centerUtmY": 2892899.7,
+        "tieInUtmX": 537177.8,
+        "tieInUtmY": 2893677.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.372,
+          26.162
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-DOLAMARA",
+      "properties": {
+        "hubId": "HUB-DOLAMARA",
+        "name": "Dolamara",
+        "district": "Karbi Anglong",
+        "centerLat": 26.365,
+        "centerLon": 93.485,
+        "urbanPopulation": 10500,
+        "catchmentPopulation": 24000,
+        "industrialOutputFactor": 1.2,
+        "tieInLat": 26.357,
+        "tieInLon": 93.477,
+        "tieInRoadRef": "SH-35",
+        "tieInName": "Dolamara Western Bypass Junction (SH-35 / MDR-101)",
+        "centerUtmX": 548387.0,
+        "centerUtmY": 2916197.3,
+        "tieInUtmX": 547592.2,
+        "tieInUtmY": 2915308.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.477,
+          26.357
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HUB-KOHORA",
+      "properties": {
+        "hubId": "HUB-KOHORA",
+        "name": "Kohora",
+        "district": "Golaghat",
+        "centerLat": 26.582,
+        "centerLon": 93.408,
+        "urbanPopulation": 8500,
+        "catchmentPopulation": 18000,
+        "industrialOutputFactor": 1.15,
+        "tieInLat": 26.584,
+        "tieInLon": 93.416,
+        "tieInRoadRef": "NH-715",
+        "tieInName": "Kohora Eastern Highway Tie-In (NH-715)",
+        "centerUtmX": 540628.6,
+        "centerUtmY": 2940204.0,
+        "tieInUtmX": 541424.5,
+        "tieInUtmY": 2940428.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.416,
+          26.584
+        ]
+      }
+    }
+  ]
+}

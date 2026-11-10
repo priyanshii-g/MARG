@@ -1,0 +1,49 @@
+{
+  "layerName": "MARG Settlement & Built-Up Exposure Layer",
+  "rasterFile": "data\\processed\\settlements\\assam_settlement_exposure_utm46.tif",
+  "vectorCatalogFile": "data\\processed\\settlements\\assam_settlements_catalog.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "utm46nBounds": {
+    "minX": 509952.053,
+    "maxX": 575232.053,
+    "minY": 2847989.616,
+    "maxY": 2947889.616
+  },
+  "sources": [
+    "Bhuvan / NRSC Assam LULC 1:50,000 (2015-16) Builtup-Urban (LU_Webcode=1), Builtup-Rural (LU_Webcode=2), Builtup-Mining (LU_Webcode=3)",
+    "Kaziranga\u2013Karbi Anglong Study Corridor Gazetteer Settlement Inventory (Golaghat, Nagaon, Karbi Anglong)"
+  ],
+  "featureCounts": {
+    "totalCatalogFeatures": 92,
+    "bhuvanBuiltUpFeatures": 47,
+    "gazetteerSettlementFeatures": 45
+  },
+  "encoding": {
+    "0": "NONE (>1000 m from settlement core)",
+    "1": "OUTER_BUFFER (500\u20131000 m proximity buffer)",
+    "2": "INNER_BUFFER (0\u2013500 m proximity buffer)",
+    "3": "RURAL_CORE (Rural village / industrial built-up core)",
+    "4": "URBAN_CORE (Urban town built-up core)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "NONE_0": 6865942,
+    "OUTER_BUFFER_1": 201938,
+    "INNER_BUFFER_2": 140602,
+    "RURAL_CORE_3": 14170,
+    "URBAN_CORE_4": 23428
+  },
+  "areaKm2ByClass": {
+    "NONE_0": 6179.35,
+    "OUTER_BUFFER_1": 181.74,
+    "INNER_BUFFER_2": 126.54,
+    "RURAL_CORE_3": 12.75,
+    "URBAN_CORE_4": 21.09
+  },
+  "generatedAtUtc": "2026-10-28T18:26:41.659109+00:00"
+}

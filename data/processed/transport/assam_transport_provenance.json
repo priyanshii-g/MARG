@@ -1,0 +1,57 @@
+{
+  "layerName": "MARG Existing Roads, Railways & Regional Hubs Layer",
+  "rasterFile": "data\\processed\\transport\\assam_transport_network_utm46.tif",
+  "vectorNetworkFile": "data\\processed\\transport\\assam_transport_network.geojson",
+  "regionalHubsFile": "data\\processed\\transport\\assam_regional_hubs.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "utm46nBounds": {
+    "minX": 509952.053,
+    "maxX": 575232.053,
+    "minY": 2847989.616,
+    "maxY": 2947889.616
+  },
+  "networkLengthKmByCategory": {
+    "RAILWAY": 125.94,
+    "NATIONAL_HIGHWAY": 260.8,
+    "STATE_HIGHWAY": 102.34,
+    "MAJOR_DISTRICT_ROAD": 41.03
+  },
+  "featureCounts": {
+    "transportCorridors": 12,
+    "regionalServiceHubs": 14
+  },
+  "encoding": {
+    "0": "NONE (>300 m from roads and >250 m from railways)",
+    "1": "ROAD_PARALLEL_BUFFER (90-300 m ROW separation buffer)",
+    "2": "MDR_CORRIDOR (<=90 m Major District Road footprint)",
+    "3": "SH_CORRIDOR (<=90 m State Highway footprint)",
+    "4": "NH_CORRIDOR (<=90 m National Highway footprint)",
+    "5": "RAILWAY_BUFFER (90-250 m Railway ROW separation buffer)",
+    "6": "RAILWAY_CORRIDOR (<=90 m Railway track footprint)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "NONE_0": 6907339,
+    "ROAD_PARALLEL_BUFFER_1": 177805,
+    "MDR_CORRIDOR_2": 9335,
+    "SH_CORRIDOR_3": 20337,
+    "NH_CORRIDOR_4": 58518,
+    "RAILWAY_BUFFER_5": 44136,
+    "RAILWAY_CORRIDOR_6": 28610
+  },
+  "areaKm2ByClass": {
+    "NONE_0": 6216.61,
+    "ROAD_PARALLEL_BUFFER_1": 160.02,
+    "MDR_CORRIDOR_2": 8.4,
+    "SH_CORRIDOR_3": 18.3,
+    "NH_CORRIDOR_4": 52.67,
+    "RAILWAY_BUFFER_5": 39.72,
+    "RAILWAY_CORRIDOR_6": 25.75
+  },
+  "generatedAtUtc": "2026-10-29T07:43:20.782085+00:00"
+}

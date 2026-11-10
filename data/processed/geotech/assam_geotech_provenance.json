@@ -1,0 +1,62 @@
+{
+  "layerName": "MARG Geotechnical, Soil Bearing Capacity & Landslide Susceptibility Layer",
+  "rasterFile": "data\\processed\\geotech\\assam_geotech_landslide_utm46.tif",
+  "lineamentsGeoJsonFile": "data\\processed\\geotech\\assam_fault_landslide_zones.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "utm46nBounds": {
+    "minX": 509952.053,
+    "maxX": 575232.053,
+    "minY": 2847989.616,
+    "maxY": 2947889.616
+  },
+  "sources": [
+    "Co-registered 30 m SRTM/Copernicus Slope & 7x7 Topographic Roughness Variance (assam_slope_utm46.tif)",
+    "Co-registered 30 m Perennial River Channels, Quaternary Floodplains & Bhuvan Inland Wetlands/Beels (assam_water_bodies_utm46.tif)",
+    "Geological Survey of India (GSI) NLSM Assam/Karbi Anglong Tectonic Lineaments (Kaliani Shear Zone, Northern Karbi Boundary Escarpment, Barail Shale Slide Scarps)",
+    "IRC:37 Subgrade CBR Design & BIS IS:1893 Seismic Zone V Alluvial Liquefaction Guidelines"
+  ],
+  "lineamentLengthKmByTier": {
+    "ACTIVE_FAULT_SHEAR_ZONE": 126.87,
+    "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP": 100.5,
+    "LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH": 49.93
+  },
+  "featureCounts": {
+    "geotechHazardLineaments": 9
+  },
+  "encoding": {
+    "0": "COMPETENT_BEDROCK_STABLE_SUBGRADE (CBR >= 10%, SBC >= 250 kPa, stable gneissic upland)",
+    "1": "WEATHERED_RESIDUAL_MODERATE_SOIL (CBR 6-10%, SBC 150-250 kPa, weathered residual slope)",
+    "2": "SOFT_ALLUVIAL_COMPRESSIBLE_CLAY (CBR 3-5%, SBC 80-150 kPa, compressible valley alluvium)",
+    "3": "LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE (CBR < 3%, SBC < 75 kPa, Seismic Zone V liquefaction/marsh)",
+    "4": "MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY (Dissected colluvial slope / outer fracture halo)",
+    "5": "HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP (Steep fractured scarp requiring anchored retaining walls)",
+    "6": "ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE (Crushed fault shear core & active slide crown)",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "COMPETENT_BEDROCK_STABLE_SUBGRADE_0": 3734815,
+    "WEATHERED_RESIDUAL_MODERATE_SOIL_1": 1367230,
+    "SOFT_ALLUVIAL_COMPRESSIBLE_CLAY_2": 345602,
+    "LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE_3": 127873,
+    "MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY_4": 839340,
+    "HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP_5": 676416,
+    "ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE_6": 141787,
+    "NODATA_255": 13017
+  },
+  "areaKm2ByClass": {
+    "COMPETENT_BEDROCK_STABLE_SUBGRADE_0": 3361.33,
+    "WEATHERED_RESIDUAL_MODERATE_SOIL_1": 1230.51,
+    "SOFT_ALLUVIAL_COMPRESSIBLE_CLAY_2": 311.04,
+    "LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE_3": 115.09,
+    "MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY_4": 755.41,
+    "HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP_5": 608.77,
+    "ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE_6": 127.61,
+    "NODATA_255": 11.72
+  },
+  "generatedAtUtc": "2026-10-30T09:26:41.356287+00:00"
+}

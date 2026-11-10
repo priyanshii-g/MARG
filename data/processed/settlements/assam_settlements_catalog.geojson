@@ -1,0 +1,2083 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong Settlements & Built-up Catalog",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-1",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Nagaon Urban Built-up (25.755, 93.205)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Nagaon",
+        "polygonAreaKm2": 28.742,
+        "coreRadiusMeters": 420.0,
+        "utmX": 520558.3,
+        "utmY": 2848568.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.205,
+          25.755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-2",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Nagaon Urban Built-up (25.755, 93.215)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Nagaon",
+        "polygonAreaKm2": 28.742,
+        "coreRadiusMeters": 420.0,
+        "utmX": 521561.2,
+        "utmY": 2848569.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.215,
+          25.755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-3",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Nagaon Urban Built-up (25.755, 93.225)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Nagaon",
+        "polygonAreaKm2": 28.742,
+        "coreRadiusMeters": 420.0,
+        "utmX": 522564.0,
+        "utmY": 2848571.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.225,
+          25.755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-4",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.755, 93.235)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 4.037,
+        "coreRadiusMeters": 420.0,
+        "utmX": 523566.9,
+        "utmY": 2848573.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.235,
+          25.755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-5",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Nagaon Urban Built-up (25.765, 93.205)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Nagaon",
+        "polygonAreaKm2": 28.742,
+        "coreRadiusMeters": 420.0,
+        "utmX": 520556.6,
+        "utmY": 2849675.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.205,
+          25.765
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-6",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Nagaon Urban Built-up (25.765, 93.225)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Nagaon",
+        "polygonAreaKm2": 28.742,
+        "coreRadiusMeters": 420.0,
+        "utmX": 522562.1,
+        "utmY": 2849678.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.225,
+          25.765
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-7",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.785, 93.405)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 1.162,
+        "coreRadiusMeters": 270.0,
+        "utmX": 540605.2,
+        "utmY": 2851936.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.405,
+          25.785
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-8",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.835, 93.415)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 541590.3,
+        "utmY": 2857477.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.415,
+          25.835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-9",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.835, 93.425)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 542592.5,
+        "utmY": 2857480.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.425,
+          25.835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-10",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.835, 93.435)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 543594.7,
+        "utmY": 2857483.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.435,
+          25.835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-11",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.835, 93.455)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 4.963,
+        "coreRadiusMeters": 270.0,
+        "utmX": 545599.1,
+        "utmY": 2857490.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.455,
+          25.835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-12",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.835, 93.465)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 4.963,
+        "coreRadiusMeters": 270.0,
+        "utmX": 546601.3,
+        "utmY": 2857493.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.465,
+          25.835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-13",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.845, 93.405)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 540584.7,
+        "utmY": 2858581.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.405,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-14",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.845, 93.415)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 541586.8,
+        "utmY": 2858584.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.415,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-15",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.845, 93.425)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 542588.9,
+        "utmY": 2858587.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.425,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-16",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.845, 93.435)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 543591.0,
+        "utmY": 2858590.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.435,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-17",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.845, 93.445)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 544593.1,
+        "utmY": 2858594.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.445,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-18",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.845, 93.455)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 545595.2,
+        "utmY": 2858597.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.455,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-19",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.845, 93.475)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 4.963,
+        "coreRadiusMeters": 270.0,
+        "utmX": 547599.4,
+        "utmY": 2858604.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.475,
+          25.845
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-20",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.855, 93.305)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.278,
+        "coreRadiusMeters": 270.0,
+        "utmX": 530561.2,
+        "utmY": 2859661.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.305,
+          25.855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-21",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.855, 93.415)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 541583.3,
+        "utmY": 2859691.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.415,
+          25.855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-22",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.855, 93.425)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 542585.3,
+        "utmY": 2859695.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.425,
+          25.855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-23",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.855, 93.435)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 543587.4,
+        "utmY": 2859698.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.435,
+          25.855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-24",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.855, 93.455)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 4.963,
+        "coreRadiusMeters": 270.0,
+        "utmX": 545591.4,
+        "utmY": 2859705.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.455,
+          25.855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-25",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.865, 93.425)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 542581.7,
+        "utmY": 2860802.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.425,
+          25.865
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-26",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.865, 93.435)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 543583.7,
+        "utmY": 2860805.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.435,
+          25.865
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-27",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (25.865, 93.445)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 14.753,
+        "coreRadiusMeters": 420.0,
+        "utmX": 544585.6,
+        "utmY": 2860809.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.445,
+          25.865
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-28",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Rural Built-up (25.865, 93.455)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 4.963,
+        "coreRadiusMeters": 270.0,
+        "utmX": 545587.6,
+        "utmY": 2860812.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.455,
+          25.865
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-29",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Mining Built-up (25.875, 93.555)",
+        "settlementType": "MINING_INDUSTRIAL",
+        "bhuvanDescr2": "Mining",
+        "luWebcode": 3,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.099,
+        "coreRadiusMeters": 270.0,
+        "utmX": 555602.3,
+        "utmY": 2861958.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.555,
+          25.875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-30",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Mining Built-up (25.895, 93.415)",
+        "settlementType": "MINING_INDUSTRIAL",
+        "bhuvanDescr2": "Mining",
+        "luWebcode": 3,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.232,
+        "coreRadiusMeters": 270.0,
+        "utmX": 541569.3,
+        "utmY": 2864121.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.415,
+          25.895
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-31",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Mining Built-up (25.915, 93.445)",
+        "settlementType": "MINING_INDUSTRIAL",
+        "bhuvanDescr2": "Mining",
+        "luWebcode": 3,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.239,
+        "coreRadiusMeters": 270.0,
+        "utmX": 544566.8,
+        "utmY": 2866346.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.445,
+          25.915
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-32",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Mining Built-up (25.985, 93.555)",
+        "settlementType": "MINING_INDUSTRIAL",
+        "bhuvanDescr2": "Mining",
+        "luWebcode": 3,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.22,
+        "coreRadiusMeters": 270.0,
+        "utmX": 555550.7,
+        "utmY": 2874140.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.555,
+          25.985
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-33",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Mining Built-up (26.565, 93.185)",
+        "settlementType": "MINING_INDUSTRIAL",
+        "bhuvanDescr2": "Mining",
+        "luWebcode": 3,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.856,
+        "coreRadiusMeters": 270.0,
+        "utmX": 518424.9,
+        "utmY": 2938269.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.185,
+          26.565
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-34",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Rural Built-up (26.585, 93.345)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "polygonAreaKm2": 0.178,
+        "coreRadiusMeters": 270.0,
+        "utmX": 534354.1,
+        "utmY": 2940517.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.345,
+          26.585
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-35",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Karbi Anglong Urban Built-up (26.605, 93.585)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "polygonAreaKm2": 0.098,
+        "coreRadiusMeters": 420.0,
+        "utmX": 558242.9,
+        "utmY": 2942819.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.585,
+          26.605
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-36",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Rural Built-up (26.625, 93.595)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "polygonAreaKm2": 0.664,
+        "coreRadiusMeters": 270.0,
+        "utmX": 559228.2,
+        "utmY": 2945039.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.595,
+          26.625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-37",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.625, 93.675)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.495,
+        "coreRadiusMeters": 420.0,
+        "utmX": 567191.9,
+        "utmY": 2945079.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.675,
+          26.625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-38",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.635, 93.595)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.974,
+        "coreRadiusMeters": 420.0,
+        "utmX": 559223.1,
+        "utmY": 2946147.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.595,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-39",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.635, 93.605)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.974,
+        "coreRadiusMeters": 420.0,
+        "utmX": 560218.4,
+        "utmY": 2946151.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.605,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-40",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Rural Built-up (26.635, 93.635)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "polygonAreaKm2": 0.593,
+        "coreRadiusMeters": 270.0,
+        "utmX": 563204.6,
+        "utmY": 2946166.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.635,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-41",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Mining Built-up (26.635, 93.645)",
+        "settlementType": "MINING_INDUSTRIAL",
+        "bhuvanDescr2": "Mining",
+        "luWebcode": 3,
+        "district": "Golaghat",
+        "polygonAreaKm2": 0.076,
+        "coreRadiusMeters": 270.0,
+        "utmX": 564199.9,
+        "utmY": 2946171.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.645,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-42",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.635, 93.665)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.495,
+        "coreRadiusMeters": 420.0,
+        "utmX": 566190.7,
+        "utmY": 2946181.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.665,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-43",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.635, 93.675)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.495,
+        "coreRadiusMeters": 420.0,
+        "utmX": 567186.1,
+        "utmY": 2946186.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.675,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-44",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.635, 93.695)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.495,
+        "coreRadiusMeters": 420.0,
+        "utmX": 569176.8,
+        "utmY": 2946197.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.695,
+          26.635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-45",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Rural Built-up (26.645, 93.515)",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "polygonAreaKm2": 0.096,
+        "coreRadiusMeters": 270.0,
+        "utmX": 551255.7,
+        "utmY": 2947220.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.515,
+          26.645
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-46",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.645, 93.595)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.974,
+        "coreRadiusMeters": 420.0,
+        "utmX": 559217.9,
+        "utmY": 2947254.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.595,
+          26.645
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bhuvan-builtup-47",
+      "properties": {
+        "source": "Bhuvan Assam LULC 1:50,000 (lulc:AS_LULC50K_1516)",
+        "name": "Golaghat Urban Built-up (26.645, 93.615)",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "polygonAreaKm2": 4.974,
+        "coreRadiusMeters": 420.0,
+        "utmX": 561208.5,
+        "utmY": 2947264.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.615,
+          26.645
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-1",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Diphu Town",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 500.0,
+        "utmX": 543091.8,
+        "utmY": 2858035.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.43,
+          25.84
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-2",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Bokakhat Town",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "coreRadiusMeters": 500.0,
+        "utmX": 559520.1,
+        "utmY": 2946480.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.598,
+          26.638
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-3",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Howraghat Town",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 450.0,
+        "utmX": 524503.5,
+        "utmY": 2884012.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.245,
+          26.075
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-4",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Dokmoka Town",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 450.0,
+        "utmX": 526476.7,
+        "utmY": 2897306.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.265,
+          26.195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-5",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Bakalia Town",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 450.0,
+        "utmX": 518010.9,
+        "utmY": 2877911.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.18,
+          26.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-6",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Manja Town",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 400.0,
+        "utmX": 546593.4,
+        "utmY": 2859708.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.465,
+          25.855
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-7",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Phuloni",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 400.0,
+        "utmX": 521492.1,
+        "utmY": 2890652.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.215,
+          26.135
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-8",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Numaligarh Tiniali",
+        "settlementType": "URBAN",
+        "bhuvanDescr2": "Urban",
+        "luWebcode": 1,
+        "district": "Golaghat",
+        "coreRadiusMeters": 450.0,
+        "utmX": 571169.4,
+        "utmY": 2945876.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.715,
+          26.632
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-9",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Kohora",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 260.0,
+        "utmX": 540628.6,
+        "utmY": 2940204.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.408,
+          26.582
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-10",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Mihimukh",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 250.0,
+        "utmX": 541420.2,
+        "utmY": 2941757.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.416,
+          26.596
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-11",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Haldibari",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 250.0,
+        "utmX": 536645.7,
+        "utmY": 2940081.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.368,
+          26.581
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-12",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Sildubi",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 240.0,
+        "utmX": 538337.2,
+        "utmY": 2940529.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.385,
+          26.585
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-13",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Bagori",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Nagaon",
+        "coreRadiusMeters": 300.0,
+        "utmX": 526686.9,
+        "utmY": 2940388.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.268,
+          26.584
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-14",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Harmoti",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Nagaon",
+        "coreRadiusMeters": 260.0,
+        "utmX": 522406.2,
+        "utmY": 2939715.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.225,
+          26.578
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-15",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Kuthori",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Nagaon",
+        "coreRadiusMeters": 280.0,
+        "utmX": 518423.8,
+        "utmY": 2939045.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.185,
+          26.572
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-16",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Deopani Borguri",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Nagaon",
+        "coreRadiusMeters": 250.0,
+        "utmX": 530375.5,
+        "utmY": 2938624.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.305,
+          26.568
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-17",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Lukhurakhonia",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 250.0,
+        "utmX": 544008.2,
+        "utmY": 2941987.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.442,
+          26.598
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-18",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Diffalu Pathar",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 260.0,
+        "utmX": 547589.4,
+        "utmY": 2942886.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.478,
+          26.606
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-19",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Sapjuri",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 250.0,
+        "utmX": 551270.4,
+        "utmY": 2943565.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.515,
+          26.612
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-20",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Methoni",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 260.0,
+        "utmX": 552960.1,
+        "utmY": 2944236.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.532,
+          26.618
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-21",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Latabari",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Golaghat",
+        "coreRadiusMeters": 260.0,
+        "utmX": 555246.4,
+        "utmY": 2945021.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.555,
+          26.625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-22",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Rongagorah",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 545335.2,
+        "utmY": 2932799.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.455,
+          26.515
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-23",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Parkup Pahar",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 549337.9,
+        "utmY": 2928383.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.495,
+          26.475
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-24",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Kaliani",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 300.0,
+        "utmX": 550362.0,
+        "utmY": 2921410.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.505,
+          26.412
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-25",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Dolamara",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 320.0,
+        "utmX": 548387.0,
+        "utmY": 2916197.3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.485,
+          26.365
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-26",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Silonijan",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 320.0,
+        "utmX": 556387.9,
+        "utmY": 2911799.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.565,
+          26.325
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-27",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Santipur",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 300.0,
+        "utmX": 551433.0,
+        "utmY": 2902918.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.515,
+          26.245
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-28",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Deopani Karbi",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 548449.3,
+        "utmY": 2899584.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.485,
+          26.215
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-29",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Rongmongve",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 538403.6,
+        "utmY": 2918378.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.385,
+          26.385
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-30",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Duarbagori",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 260.0,
+        "utmX": 532399.0,
+        "utmY": 2926114.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.325,
+          26.455
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-31",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Nilip",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 540468.0,
+        "utmY": 2896234.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.405,
+          26.185
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-32",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Chokihola",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 320.0,
+        "utmX": 536180.6,
+        "utmY": 2892899.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.362,
+          26.155
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-33",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Samelangso",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 531493.8,
+        "utmY": 2888457.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.315,
+          26.115
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-34",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Langhin",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 320.0,
+        "utmX": 530507.0,
+        "utmY": 2882917.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.305,
+          26.065
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-35",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Longnit",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 300.0,
+        "utmX": 536825.0,
+        "utmY": 2877064.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.368,
+          26.012
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-36",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Borjan",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 300.0,
+        "utmX": 538240.2,
+        "utmY": 2872195.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.382,
+          25.968
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-37",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Jamunamukh Karbi",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 538846.1,
+        "utmY": 2870425.7
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.388,
+          25.952
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-38",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Dillai",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 300.0,
+        "utmX": 551560.1,
+        "utmY": 2870801.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.515,
+          25.955
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-39",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Hidipi",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 260.0,
+        "utmX": 548572.9,
+        "utmY": 2866360.5
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.485,
+          25.915
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-40",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Lahorijan",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 300.0,
+        "utmX": 544062.4,
+        "utmY": 2867452.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.44,
+          25.925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-41",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Birla",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 543879.5,
+        "utmY": 2862246.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.438,
+          25.878
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-42",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Lorulangso",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 260.0,
+        "utmX": 544586.7,
+        "utmY": 2860476.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.445,
+          25.862
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-43",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Rongkhelan",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 280.0,
+        "utmX": 542285.8,
+        "utmY": 2859361.8
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.422,
+          25.852
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-44",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Dharamnala",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 260.0,
+        "utmX": 543297.7,
+        "utmY": 2856375.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.432,
+          25.825
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "gazetteer-settlement-45",
+      "properties": {
+        "source": "Assam Regional Gazetteer / Study Corridor Settlement Inventory",
+        "name": "Doldoli",
+        "settlementType": "RURAL",
+        "bhuvanDescr2": "Rural",
+        "luWebcode": 2,
+        "district": "Karbi Anglong",
+        "coreRadiusMeters": 260.0,
+        "utmX": 540601.8,
+        "utmY": 2853044.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.405,
+          25.795
+        ]
+      }
+    }
+  ]
+}
