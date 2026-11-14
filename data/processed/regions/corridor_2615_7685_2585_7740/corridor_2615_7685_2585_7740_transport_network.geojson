@@ -1,0 +1,55 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRP-CORRIDOR_2615_7685_2585_7740-001",
+        "ref": "NH-Arterial",
+        "name": "Corridor_2615_7685_2585_7740 National Highway Corridor",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": "PRIMARY_ARTERIAL"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            76.65,
+            26.0
+          ],
+          [
+            77.125,
+            25.96
+          ],
+          [
+            77.6,
+            26.04
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRP-CORRIDOR_2615_7685_2585_7740-002",
+        "ref": "IR-Mainline",
+        "name": "Corridor_2615_7685_2585_7740 Railway Trunk Line",
+        "category": "RAILWAY",
+        "hierarchyTier": "PASSENGER_AND_FREIGHT_TRUNK"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.02,
+            25.65
+          ],
+          [
+            77.0725,
+            26.35
+          ]
+        ]
+      }
+    }
+  ]
+}

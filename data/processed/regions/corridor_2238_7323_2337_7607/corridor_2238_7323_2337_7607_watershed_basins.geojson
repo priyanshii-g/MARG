@@ -1,0 +1,137 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-CORRIDOR_2238_7323_2337_7607-01",
+        "watershedCode": "COR-WS-01",
+        "name": "Corridor_2238_7323_2337_7607 Catchment Basin #1",
+        "majorRiverSystem": "Corridor_2238_7323_2337_7607 River System",
+        "latMin": 22.13056,
+        "latMax": 22.62788,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.98486,
+              22.13056
+            ],
+            [
+              76.31934,
+              22.13056
+            ],
+            [
+              76.31934,
+              22.62788
+            ],
+            [
+              72.98486,
+              22.62788
+            ],
+            [
+              72.98486,
+              22.13056
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-CORRIDOR_2238_7323_2337_7607-02",
+        "watershedCode": "COR-WS-02",
+        "name": "Corridor_2238_7323_2337_7607 Catchment Basin #2",
+        "majorRiverSystem": "Corridor_2238_7323_2337_7607 River System",
+        "latMin": 22.62788,
+        "latMax": 23.12519,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.98486,
+              22.62788
+            ],
+            [
+              76.31934,
+              22.62788
+            ],
+            [
+              76.31934,
+              23.12519
+            ],
+            [
+              72.98486,
+              23.12519
+            ],
+            [
+              72.98486,
+              22.62788
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-CORRIDOR_2238_7323_2337_7607-03",
+        "watershedCode": "COR-WS-03",
+        "name": "Corridor_2238_7323_2337_7607 Catchment Basin #3",
+        "majorRiverSystem": "Corridor_2238_7323_2337_7607 River System",
+        "latMin": 23.12519,
+        "latMax": 23.62251,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.98486,
+              23.12519
+            ],
+            [
+              76.31934,
+              23.12519
+            ],
+            [
+              76.31934,
+              23.62251
+            ],
+            [
+              72.98486,
+              23.62251
+            ],
+            [
+              72.98486,
+              23.12519
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

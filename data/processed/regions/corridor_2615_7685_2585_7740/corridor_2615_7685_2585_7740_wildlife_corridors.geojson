@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WLF-CORRIDOR_2615_7685_2585_7740-001",
+        "name": "Corridor_2615_7685_2585_7740 Wildlife Eco-Sensitive Stepping Stone",
+        "corridorTier": "INTER_SANCTUARY_ELEPHANT_CORRIDOR",
+        "targetSpecies": "Wild Ungulates & Carnivores",
+        "designCorridorWidthMeters": 350.0,
+        "minimumPassageSpanMeters": 450.0,
+        "minimumClearHeightMeters": 6.5
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            76.831,
+            26.2
+          ],
+          [
+            76.894,
+            25.96
+          ]
+        ]
+      }
+    }
+  ]
+}

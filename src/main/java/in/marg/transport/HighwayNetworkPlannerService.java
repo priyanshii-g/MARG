@@ -5,6 +5,7 @@ import in.marg.building.BuildingFootprintVectorIndex;
 import in.marg.building.SettlementClassification;
 import in.marg.config.BuildingRoutingProperties;
 import in.marg.config.DemographicRoutingProperties;
+import in.marg.config.DrainageRoutingProperties;
 import in.marg.config.GeotechRoutingProperties;
 import in.marg.config.TransportRoutingProperties;
 import in.marg.config.UtilityRoutingProperties;
@@ -13,6 +14,9 @@ import in.marg.config.WildlifeRoutingProperties;
 import in.marg.demographic.DemographicVectorIndex;
 import in.marg.demographic.DemographicVulnerabilityTier;
 import in.marg.demographic.PopulationDensityRasterProvider;
+import in.marg.drainage.DrainageSublayerType;
+import in.marg.drainage.DrainageWetlandRasterProvider;
+import in.marg.drainage.DrainageWetlandVectorIndex;
 import in.marg.environment.ProtectedAreaRasterProvider;
 import in.marg.geotech.GeotechHazardTier;
 import in.marg.geotech.GeotechLineamentVectorIndex;
@@ -91,6 +95,9 @@ public class HighwayNetworkPlannerService {
     private final PopulationDensityRasterProvider demographicRasterProvider;
     private final DemographicVectorIndex demographicVectorIndex;
     private final DemographicRoutingProperties demographicProperties;
+    private final DrainageWetlandRasterProvider drainageRasterProvider;
+    private final DrainageWetlandVectorIndex drainageVectorIndex;
+    private final DrainageRoutingProperties drainageProperties;
     private final RightOfWayCorridorEngine rowCorridorEngine;
 
     public HighwayNetworkPlannerService(
@@ -378,7 +385,6 @@ public class HighwayNetworkPlannerService {
                 rowCorridorEngine);
     }
 
-    @Autowired
     public HighwayNetworkPlannerService(
             TransportNetworkVectorIndex vectorIndex,
             TransportNetworkRasterProvider transportRasterProvider,
@@ -406,6 +412,69 @@ public class HighwayNetworkPlannerService {
             DemographicVectorIndex demographicVectorIndex,
             DemographicRoutingProperties demographicProperties,
             RightOfWayCorridorEngine rowCorridorEngine) {
+        this(
+                vectorIndex,
+                transportRasterProvider,
+                slopeRasterProvider,
+                protectedAreaRasterProvider,
+                router,
+                projection,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeVectorIndex,
+                wildlifeProperties,
+                geotechRasterProvider,
+                geotechVectorIndex,
+                geotechProperties,
+                utilityRasterProvider,
+                utilityVectorIndex,
+                utilityProperties,
+                buildingRasterProvider,
+                buildingVectorIndex,
+                buildingProperties,
+                demographicRasterProvider,
+                demographicVectorIndex,
+                demographicProperties,
+                null,
+                null,
+                null,
+                rowCorridorEngine);
+    }
+
+    @Autowired
+    public HighwayNetworkPlannerService(
+            TransportNetworkVectorIndex vectorIndex,
+            TransportNetworkRasterProvider transportRasterProvider,
+            SlopeRasterProvider slopeRasterProvider,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            UtilityRoutingProperties utilityProperties,
+            BuildingDensityRasterProvider buildingRasterProvider,
+            BuildingFootprintVectorIndex buildingVectorIndex,
+            BuildingRoutingProperties buildingProperties,
+            PopulationDensityRasterProvider demographicRasterProvider,
+            DemographicVectorIndex demographicVectorIndex,
+            DemographicRoutingProperties demographicProperties,
+            DrainageWetlandRasterProvider drainageRasterProvider,
+            DrainageWetlandVectorIndex drainageVectorIndex,
+            DrainageRoutingProperties drainageProperties,
+            RightOfWayCorridorEngine rowCorridorEngine) {
         this.vectorIndex = vectorIndex;
         this.transportRasterProvider = transportRasterProvider;
         this.slopeRasterProvider = slopeRasterProvider;
@@ -431,6 +500,9 @@ public class HighwayNetworkPlannerService {
         this.demographicRasterProvider = demographicRasterProvider;
         this.demographicVectorIndex = demographicVectorIndex;
         this.demographicProperties = demographicProperties;
+        this.drainageRasterProvider = drainageRasterProvider;
+        this.drainageVectorIndex = drainageVectorIndex;
+        this.drainageProperties = drainageProperties;
         this.rowCorridorEngine = rowCorridorEngine != null
                 ? rowCorridorEngine
                 : new RightOfWayCorridorEngine(projection);
@@ -817,6 +889,60 @@ public class HighwayNetworkPlannerService {
             }
         }
 
+        List<PlannedDrainageStructure> drainageStructures = new ArrayList<>();
+        List<PlannedWetlandMitigationZone> wetlandMitigationZones = new ArrayList<>();
+        int totalWaterCrossingsCount = 0;
+        int wetlandsInDirectRowCount = 0;
+        double wetlandAreaInDirectRowHectares = 0.0;
+        int watershedBoundaryCrossingsCount = 0;
+        double totalDrainageSpanMeters = 0.0;
+        if (drainageVectorIndex != null) {
+            DrainageWetlandVectorIndex.RouteDrainageWetlandImpact dwImpact =
+                    drainageVectorIndex.evaluateCorridorDrainageAndWetlandImpact(mainline, rowCorridorFootprint);
+            totalWaterCrossingsCount = dwImpact.totalWaterCrossingsCount();
+            wetlandsInDirectRowCount = dwImpact.wetlandsInDirectRowCount();
+            wetlandAreaInDirectRowHectares = dwImpact.wetlandAreaInDirectRowHectares();
+            watershedBoundaryCrossingsCount = dwImpact.watershedBoundaryCrossingsCount();
+            totalDrainageSpanMeters = dwImpact.totalRecommendedDrainageSpanMeters();
+            for (DrainageWetlandVectorIndex.DrainageInfrastructureRequirement req :
+                    dwImpact.drainageInfrastructureRequirements()) {
+                drainageStructures.add(new PlannedDrainageStructure(
+                        req.requirementId(),
+                        req.location(),
+                        req.chainageKm(),
+                        req.targetFeatureId(),
+                        req.targetFeatureName(),
+                        req.sublayerType(),
+                        req.structureType(),
+                        req.recommendedClearSpanOrWidthMeters(),
+                        req.designDischargeM3PerSec(),
+                        req.engineeringSpecification()));
+            }
+            for (DrainageWetlandVectorIndex.WetlandIntersectionSummary wi : dwImpact.affectedWetlands()) {
+                DrainageWetlandVectorIndex.WetlandPolygon wp = drainageVectorIndex.allWetlands().stream()
+                        .filter(w -> w.id().equals(wi.wetlandId()))
+                        .findFirst()
+                        .orElse(null);
+                GeoPoint pt = wp != null ? wp.centroidGeo() : mainline.get(mainline.size() / 2);
+                wetlandMitigationZones.add(new PlannedWetlandMitigationZone(
+                        "WMZ-" + (wetlandMitigationZones.size() + 1) + "-" + wi.wetlandId(),
+                        pt,
+                        wi.wetlandId(),
+                        wi.wetlandName(),
+                        wi.wetlandCategory(),
+                        wi.district(),
+                        wi.watershedId(),
+                        wi.isProtectedBeel(),
+                        wi.highestExposureZone(),
+                        wi.directRowAreaSqMeters(),
+                        wi.directRowAreaHectares(),
+                        wi.buffer100mAreaHectares(),
+                        wi.buffer250mAreaHectares(),
+                        wi.clearanceFromDirectRowEdgeMeters(),
+                        wi.recommendedMitigation()));
+            }
+        }
+
         return new NetworkPlanResult(
                 mode,
                 round(mainlineLengthKm),
@@ -831,6 +957,8 @@ public class HighwayNetworkPlannerService {
                 List.copyOf(utilityCrossings),
                 List.copyOf(settlementConflictZones),
                 List.copyOf(demographicExposureZones),
+                List.copyOf(drainageStructures),
+                List.copyOf(wetlandMitigationZones),
                 allCrossings.size(),
                 railwayRobCount,
                 roadFlyoverCount,
@@ -849,6 +977,11 @@ public class HighwayNetworkPlannerService {
                 estimatedDirectlyDisplacedPopulation,
                 populationWithin250mEnvironmentalBuffer,
                 populationWithin500mSecondaryBuffer,
+                totalWaterCrossingsCount,
+                wetlandsInDirectRowCount,
+                wetlandAreaInDirectRowHectares,
+                watershedBoundaryCrossingsCount,
+                round(totalDrainageSpanMeters),
                 round(activeTrafficPcuHr),
                 hubEvaluation.designCapacityPcuHr(),
                 finalVcRatio,
@@ -884,7 +1017,8 @@ public class HighwayNetworkPlannerService {
                     || isInsideUnsafeGeotechInterchangeSubgrade(rc.point())
                     || isInsideUtilityInterchangeExclusionZone(rc.point())
                     || isInsideBuildingInterchangeExclusionZone(rc.point())
-                    || isInsideDemographicInterchangeExclusionZone(rc.point())) {
+                    || isInsideDemographicInterchangeExclusionZone(rc.point())
+                    || isInsideDrainageWetlandInterchangeExclusionZone(rc.point())) {
                 continue;
             }
             if (!immutable && !passesChainageSpacing(
@@ -922,7 +1056,8 @@ public class HighwayNetworkPlannerService {
                     || isInsideUnsafeGeotechInterchangeSubgrade(rc.point())
                     || isInsideUtilityInterchangeExclusionZone(rc.point())
                     || isInsideBuildingInterchangeExclusionZone(rc.point())
-                    || isInsideDemographicInterchangeExclusionZone(rc.point())) {
+                    || isInsideDemographicInterchangeExclusionZone(rc.point())
+                    || isInsideDrainageWetlandInterchangeExclusionZone(rc.point())) {
                 continue;
             }
             if (!immutable && !passesChainageSpacing(
@@ -1041,6 +1176,13 @@ public class HighwayNetworkPlannerService {
         return demographicRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeExcludedZone();
     }
 
+    private boolean isInsideDrainageWetlandInterchangeExclusionZone(GeoPoint pt) {
+        if (drainageRasterProvider == null) {
+            return false;
+        }
+        return drainageRasterProvider.sampleClass(pt.lat(), pt.lon()).isInterchangeExcludedZone();
+    }
+
     private boolean isTerrainSafeForInterchange(GeoPoint pt) {
         Double pa = protectedAreaRasterProvider.sampleOrNull(pt.lat(), pt.lon());
         if (pa == null || Math.round(pa) == 1L) {
@@ -1059,7 +1201,8 @@ public class HighwayNetworkPlannerService {
                 || isInsideUnsafeGeotechInterchangeSubgrade(pt)
                 || isInsideUtilityInterchangeExclusionZone(pt)
                 || isInsideBuildingInterchangeExclusionZone(pt)
-                || isInsideDemographicInterchangeExclusionZone(pt)) {
+                || isInsideDemographicInterchangeExclusionZone(pt)
+                || isInsideDrainageWetlandInterchangeExclusionZone(pt)) {
             return false;
         }
         TransportCorridorClass tc = transportRasterProvider.sampleClass(pt.lat(), pt.lon());
@@ -1215,6 +1358,13 @@ public class HighwayNetworkPlannerService {
         mlProps.put("estimatedDirectlyDisplacedPopulation", plan.estimatedDirectlyDisplacedPopulation());
         mlProps.put("populationWithin250mEnvironmentalBuffer", plan.populationWithin250mEnvironmentalBuffer());
         mlProps.put("populationWithin500mSecondaryBuffer", plan.populationWithin500mSecondaryBuffer());
+        mlProps.put("drainageStructuresCount", plan.drainageStructures().size());
+        mlProps.put("wetlandMitigationZonesCount", plan.wetlandMitigationZones().size());
+        mlProps.put("totalWaterCrossingsCount", plan.totalWaterCrossingsCount());
+        mlProps.put("wetlandsInDirectRowCount", plan.wetlandsInDirectRowCount());
+        mlProps.put("wetlandAreaInDirectRowHectares", plan.wetlandAreaInDirectRowHectares());
+        mlProps.put("watershedBoundaryCrossingsCount", plan.watershedBoundaryCrossingsCount());
+        mlProps.put("totalRecommendedDrainageSpanMeters", plan.totalRecommendedDrainageSpanMeters());
         if (plan.rowCorridorFootprint() != null) {
             mlProps.put("designRowWidthMeters", plan.rowCorridorFootprint().mainlineRowWidthMeters());
             mlProps.put("ircRowStandard", plan.rowCorridorFootprint().ircStandard());
@@ -1332,6 +1482,7 @@ public class HighwayNetworkPlannerService {
             rbProps.put("chainageKm", rb.chainageKm());
             rbProps.put("designChannelWidthMeters", rb.designChannelWidthMeters());
             rbProps.put("estimatedSkewSpanMeters", rb.estimatedSkewSpanMeters());
+            rbProps.put("effectiveSkewSpanMeters", rb.estimatedSkewSpanMeters());
             rbProps.put("crossingAngleDegrees", rb.crossingAngleDegrees());
             rbProps.put("hydraulicSkewMultiplier", rb.hydraulicSkewMultiplier());
             rbProps.put("bridgeCostKmEquivalent", rb.bridgeCostKmEquivalent());
@@ -1342,6 +1493,29 @@ public class HighwayNetworkPlannerService {
                     "geometry", Map.of(
                             "type", "Point",
                             "coordinates", List.of(rb.point().lon(), rb.point().lat()))));
+        }
+
+        // Also emit Corridor River Channels so GIS map can visually display the underlying waterways
+        if (riverVectorIndex != null) {
+            for (RiverNetworkVectorIndex.RiverCorridor river : riverVectorIndex.allRivers()) {
+                Map<String, Object> rivProps = new LinkedHashMap<>();
+                rivProps.put("featureRole", "CORRIDOR_RIVER_CHANNEL");
+                rivProps.put("riverId", river.id());
+                rivProps.put("riverName", river.name());
+                rivProps.put("riverClass", river.riverClass().name());
+                rivProps.put("designChannelWidthMeters", river.designChannelWidthMeters());
+
+                List<List<Double>> coords = river.points().stream()
+                        .map(p -> List.of(p.lon(), p.lat()))
+                        .toList();
+
+                features.add(Map.of(
+                        "type", "Feature",
+                        "properties", rivProps,
+                        "geometry", Map.of(
+                                "type", "LineString",
+                                "coordinates", coords)));
+            }
         }
 
         // 7. Wildlife Migration Corridor Passages (Elevated Wildlife Viaducts & Animal Underpasses)
@@ -1537,6 +1711,55 @@ public class HighwayNetworkPlannerService {
                             "coordinates", List.of(dez.point().lon(), dez.point().lat()))));
         }
 
+        // 13. Cross-Drainage Infrastructure Structures (Culverts, Minor Bridges, Canal Syphon Aqueducts, Viaducts)
+        for (PlannedDrainageStructure ds : plan.drainageStructures()) {
+            Map<String, Object> dsProps = new LinkedHashMap<>();
+            dsProps.put("featureRole", "DRAINAGE_CROSSING_STRUCTURE");
+            dsProps.put("structureId", ds.structureId());
+            dsProps.put("targetFeatureId", ds.targetFeatureId());
+            dsProps.put("targetFeatureName", ds.targetFeatureName());
+            dsProps.put("sublayerType", ds.sublayerType().name());
+            dsProps.put("structureType", ds.structureType());
+            dsProps.put("chainageKm", ds.chainageKm());
+            dsProps.put("recommendedClearSpanOrWidthMeters", ds.recommendedClearSpanOrWidthMeters());
+            dsProps.put("designDischargeM3PerSec", ds.designDischargeM3PerSec());
+            dsProps.put("engineeringSpecification", ds.engineeringSpecification());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", dsProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(ds.point().lon(), ds.point().lat()))));
+        }
+
+        // 14. Wetland Hydrological Mitigation Zones along the corridor
+        for (PlannedWetlandMitigationZone wmz : plan.wetlandMitigationZones()) {
+            Map<String, Object> wmzProps = new LinkedHashMap<>();
+            wmzProps.put("featureRole", "WETLAND_HYDROLOGIC_MITIGATION_ZONE");
+            wmzProps.put("zoneId", wmz.zoneId());
+            wmzProps.put("wetlandId", wmz.wetlandId());
+            wmzProps.put("wetlandName", wmz.wetlandName());
+            wmzProps.put("wetlandCategory", wmz.wetlandCategory());
+            wmzProps.put("district", wmz.district());
+            wmzProps.put("watershedId", wmz.watershedId());
+            wmzProps.put("isProtectedBeel", wmz.isProtectedBeel());
+            wmzProps.put("highestExposureZone", wmz.highestExposureZone());
+            wmzProps.put("directRowAreaSqMeters", wmz.directRowAreaSqMeters());
+            wmzProps.put("directRowAreaHectares", wmz.directRowAreaHectares());
+            wmzProps.put("buffer100mAreaHectares", wmz.buffer100mAreaHectares());
+            wmzProps.put("buffer250mAreaHectares", wmz.buffer250mAreaHectares());
+            wmzProps.put("clearanceFromDirectRowEdgeMeters", wmz.clearanceFromDirectRowEdgeMeters());
+            wmzProps.put("recommendedMitigation", wmz.recommendedMitigation());
+
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", wmzProps,
+                    "geometry", Map.of(
+                            "type", "Point",
+                            "coordinates", List.of(wmz.point().lon(), wmz.point().lat()))));
+        }
+
         return List.copyOf(features);
     }
 
@@ -1722,6 +1945,37 @@ public class HighwayNetworkPlannerService {
             double demographicExposureScoreKmEq
     ) {}
 
+    public record PlannedDrainageStructure(
+            String structureId,
+            GeoPoint point,
+            double chainageKm,
+            String targetFeatureId,
+            String targetFeatureName,
+            DrainageSublayerType sublayerType,
+            String structureType,
+            double recommendedClearSpanOrWidthMeters,
+            double designDischargeM3PerSec,
+            String engineeringSpecification
+    ) {}
+
+    public record PlannedWetlandMitigationZone(
+            String zoneId,
+            GeoPoint point,
+            String wetlandId,
+            String wetlandName,
+            String wetlandCategory,
+            String district,
+            String watershedId,
+            boolean isProtectedBeel,
+            String highestExposureZone,
+            double directRowAreaSqMeters,
+            double directRowAreaHectares,
+            double buffer100mAreaHectares,
+            double buffer250mAreaHectares,
+            double clearanceFromDirectRowEdgeMeters,
+            String recommendedMitigation
+    ) {}
+
     public record NetworkPlanResult(
             FacilityMode facilityMode,
             double mainlineLengthKm,
@@ -1736,6 +1990,8 @@ public class HighwayNetworkPlannerService {
             List<PlannedUtilityCrossing> utilityCrossings,
             List<PlannedSettlementConflictZone> settlementConflictZones,
             List<PlannedDemographicExposureZone> demographicExposureZones,
+            List<PlannedDrainageStructure> drainageStructures,
+            List<PlannedWetlandMitigationZone> wetlandMitigationZones,
             int totalInfrastructureCrossingsCount,
             int railwayRobCount,
             int roadFlyoverCount,
@@ -1754,6 +2010,11 @@ public class HighwayNetworkPlannerService {
             int estimatedDirectlyDisplacedPopulation,
             int populationWithin250mEnvironmentalBuffer,
             int populationWithin500mSecondaryBuffer,
+            int totalWaterCrossingsCount,
+            int wetlandsInDirectRowCount,
+            double wetlandAreaInDirectRowHectares,
+            int watershedBoundaryCrossingsCount,
+            double totalRecommendedDrainageSpanMeters,
             double projectedTrafficVolumePcuHr,
             double designCapacityPcuHr,
             double projectedVcRatio,

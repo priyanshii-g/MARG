@@ -5,6 +5,16 @@
 target/
 **/target/
 
+# ==============================
+# Frontend Dependencies & Output
+# ==============================
+
+node_modules/
+**/node_modules/
+**/dist/
+**/.vite/
+src/main/resources/static/
+
 # Maven wrapper generated files
 .mvn/timing.properties
 

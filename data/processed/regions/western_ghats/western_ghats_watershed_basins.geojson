@@ -1,0 +1,181 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "watershedCode": "WES-WS-01",
+        "name": "Western Ghats Steep Escarpment & High-Rainfall Corridor (Pune-Satara, Maharashtra) Catchment Basin #1",
+        "majorRiverSystem": "Krishna-Bhima Basin",
+        "latMin": 17.6,
+        "latMax": 17.825,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 4.8,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.65,
+              17.6
+            ],
+            [
+              74.3,
+              17.6
+            ],
+            [
+              74.3,
+              17.825
+            ],
+            [
+              73.65,
+              17.825
+            ],
+            [
+              73.65,
+              17.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-WESTERN_GHATS-02",
+        "watershedCode": "WES-WS-02",
+        "name": "Western Ghats Steep Escarpment & High-Rainfall Corridor (Pune-Satara, Maharashtra) Catchment Basin #2",
+        "majorRiverSystem": "Krishna-Bhima Basin",
+        "latMin": 17.825,
+        "latMax": 18.05,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 4.8,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.65,
+              17.825
+            ],
+            [
+              74.3,
+              17.825
+            ],
+            [
+              74.3,
+              18.05
+            ],
+            [
+              73.65,
+              18.05
+            ],
+            [
+              73.65,
+              17.825
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-WESTERN_GHATS-03",
+        "watershedCode": "WES-WS-03",
+        "name": "Western Ghats Steep Escarpment & High-Rainfall Corridor (Pune-Satara, Maharashtra) Catchment Basin #3",
+        "majorRiverSystem": "Krishna-Bhima Basin",
+        "latMin": 18.05,
+        "latMax": 18.275,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 4.8,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.65,
+              18.05
+            ],
+            [
+              74.3,
+              18.05
+            ],
+            [
+              74.3,
+              18.275
+            ],
+            [
+              73.65,
+              18.275
+            ],
+            [
+              73.65,
+              18.05
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-WESTERN_GHATS-04",
+        "watershedCode": "WES-WS-04",
+        "name": "Western Ghats Steep Escarpment & High-Rainfall Corridor (Pune-Satara, Maharashtra) Catchment Basin #4",
+        "majorRiverSystem": "Krishna-Bhima Basin",
+        "latMin": 18.275,
+        "latMax": 18.5,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 4.8,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.65,
+              18.275
+            ],
+            [
+              74.3,
+              18.275
+            ],
+            [
+              74.3,
+              18.5
+            ],
+            [
+              73.65,
+              18.5
+            ],
+            [
+              73.65,
+              18.275
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

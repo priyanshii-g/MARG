@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-CORRIDOR_2238_7323_2337_7607-001",
+        "name": "Corridor_2238_7323_2337_7607 West Commercial Node",
+        "district": "Corridor_2238_7323_2337_7607 West",
+        "centerLat": 22.80194,
+        "centerLon": 74.15193,
+        "tieInLat": 22.82496,
+        "tieInLon": 74.15299,
+        "tieInRoadRef": "SH-Link-West",
+        "tieInName": "West Bypass Tie-In",
+        "urbanPopulation": 65000,
+        "catchmentPopulation": 140000,
+        "industrialOutputFactor": 1.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.15193,
+          22.80194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-CORRIDOR_2238_7323_2337_7607-002",
+        "name": "Corridor_2238_7323_2337_7607 East Logistics Hub",
+        "district": "Corridor_2238_7323_2337_7607 East",
+        "centerLat": 22.95113,
+        "centerLon": 75.319,
+        "tieInLat": 22.8642,
+        "tieInLon": 75.32702,
+        "tieInRoadRef": "MDR-Link-East",
+        "tieInName": "East Agro-Mandi Tie-In",
+        "urbanPopulation": 82000,
+        "catchmentPopulation": 185000,
+        "industrialOutputFactor": 1.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          75.319,
+          22.95113
+        ]
+      }
+    }
+  ]
+}

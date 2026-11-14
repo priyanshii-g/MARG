@@ -1,0 +1,41 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-CORRIDOR_2015_7685_2385_7740-001",
+        "name": "Corridor_2015_7685_2385_7740 400kV Anchor Tower #1",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-CORRIDOR_2015_7685_2385_7740-400KV",
+        "voltageKv": 400.0,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.7,
+          21.16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-CORRIDOR_2015_7685_2385_7740-002",
+        "name": "Corridor_2015_7685_2385_7740 400kV Anchor Tower #2",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-CORRIDOR_2015_7685_2385_7740-400KV",
+        "voltageKv": 400.0,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.55,
+          21.37
+        ]
+      }
+    }
+  ]
+}

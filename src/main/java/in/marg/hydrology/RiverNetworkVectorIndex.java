@@ -78,46 +78,71 @@ public class RiverNetworkVectorIndex {
                 String id = p.get("id").asString();
                 String name = p.get("name").asString();
                 RiverHierarchyClass riverClass =
-                        RiverHierarchyClass.valueOf(p.get("riverClass").asString());
+                        RiverHierarchyClass.fromString(p.get("riverClass").asString());
                 String basin = p.get("basin").asString();
                 double designWidthMeters = p.get("designChannelWidthMeters").asDouble(50.0);
 
-                JsonNode coordsNode = feat.get("geometry").get("coordinates");
-                List<GeoPoint> geoPoints = new ArrayList<>();
-                List<MetricPoint> metricPoints = new ArrayList<>();
-                for (JsonNode pt : coordsNode) {
-                    double lon = pt.get(0).asDouble();
-                    double lat = pt.get(1).asDouble();
-                    GeoPoint gp = new GeoPoint(lat, lon);
-                    geoPoints.add(gp);
-                    metricPoints.add(projection.forward(gp));
+                String geomType = feat.get("geometry") != null && feat.get("geometry").get("type") != null
+                        ? feat.get("geometry").get("type").asString()
+                        : "LineString";
+                JsonNode coordsNode = feat.get("geometry") != null ? feat.get("geometry").get("coordinates") : null;
+                if (coordsNode == null) {
+                    continue;
                 }
 
-                rivers.add(new RiverCorridor(
-                        id, name, riverClass, basin, designWidthMeters, List.copyOf(geoPoints)));
-
-                for (int i = 1; i < metricPoints.size(); i++) {
-                    MetricPoint a = metricPoints.get(i - 1);
-                    MetricPoint b = metricPoints.get(i);
-                    double dx = b.x() - a.x();
-                    double dy = b.y() - a.y();
-                    double len = Math.hypot(dx, dy);
-                    if (len <= EPS) {
-                        continue;
+                List<List<GeoPoint>> lineList = new ArrayList<>();
+                if ("MultiLineString".equalsIgnoreCase(geomType)) {
+                    for (JsonNode lineNode : coordsNode) {
+                        List<GeoPoint> line = new ArrayList<>();
+                        for (JsonNode pt : lineNode) {
+                            line.add(new GeoPoint(pt.get(1).asDouble(), pt.get(0).asDouble()));
+                        }
+                        if (line.size() >= 2) {
+                            lineList.add(line);
+                        }
                     }
-                    IndexedRiverSegment seg = new IndexedRiverSegment(
-                            id,
-                            name,
-                            riverClass,
-                            basin,
-                            designWidthMeters,
-                            a.x(),
-                            a.y(),
-                            b.x(),
-                            b.y(),
-                            dx / len,
-                            dy / len);
-                    insertSegmentIntoBuckets(seg);
+                } else {
+                    List<GeoPoint> line = new ArrayList<>();
+                    for (JsonNode pt : coordsNode) {
+                        line.add(new GeoPoint(pt.get(1).asDouble(), pt.get(0).asDouble()));
+                    }
+                    if (line.size() >= 2) {
+                        lineList.add(line);
+                    }
+                }
+
+                for (List<GeoPoint> geoPoints : lineList) {
+                    List<MetricPoint> metricPoints = new ArrayList<>();
+                    for (GeoPoint gp : geoPoints) {
+                        metricPoints.add(projection.forward(gp));
+                    }
+
+                    rivers.add(new RiverCorridor(
+                            id, name, riverClass, basin, designWidthMeters, List.copyOf(geoPoints)));
+
+                    for (int i = 1; i < metricPoints.size(); i++) {
+                        MetricPoint a = metricPoints.get(i - 1);
+                        MetricPoint b = metricPoints.get(i);
+                        double dx = b.x() - a.x();
+                        double dy = b.y() - a.y();
+                        double len = Math.hypot(dx, dy);
+                        if (len <= EPS) {
+                            continue;
+                        }
+                        IndexedRiverSegment seg = new IndexedRiverSegment(
+                                id,
+                                name,
+                                riverClass,
+                                basin,
+                                designWidthMeters,
+                                a.x(),
+                                a.y(),
+                                b.x(),
+                                b.y(),
+                                dx / len,
+                                dy / len);
+                        insertSegmentIntoBuckets(seg);
+                    }
                 }
             }
         } catch (Exception e) {

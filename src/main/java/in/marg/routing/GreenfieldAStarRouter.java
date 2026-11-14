@@ -24,7 +24,7 @@ import java.util.PriorityQueue;
 public class GreenfieldAStarRouter {
     private static final double EPS = 1e-9;
     private static final int[] DIR = {-1, 0, 1};
-    private static final int MAX_GRID_CELLS = 300_000;
+    private static final int MAX_GRID_CELLS = 500_000;
 
     private final CoordinateProjection projection;
 
@@ -299,14 +299,17 @@ public class GreenfieldAStarRouter {
         double minY = Math.min(Math.min(sw.y(), se.y()), Math.min(nw.y(), ne.y()));
         double maxY = Math.max(Math.max(sw.y(), se.y()), Math.max(nw.y(), ne.y()));
 
-        int cols = (int) Math.ceil((maxX - minX) / resolutionMeters) + 1;
-        int rows = (int) Math.ceil((maxY - minY) / resolutionMeters) + 1;
+        double effRes = resolutionMeters;
+        int cols = (int) Math.ceil((maxX - minX) / effRes) + 1;
+        int rows = (int) Math.ceil((maxY - minY) / effRes) + 1;
         long cells = (long) rows * cols;
         if (cells > MAX_GRID_CELLS) {
-            throw new IllegalArgumentException("Resolution creates " + cells
-                    + " routing cells; increase resolutionMeters or reduce the study corridor.");
+            effRes = Math.ceil(Math.sqrt(((maxX - minX) * (maxY - minY)) / (double) (MAX_GRID_CELLS - 1000)));
+            effRes = Math.max(resolutionMeters, effRes);
+            cols = (int) Math.ceil((maxX - minX) / effRes) + 1;
+            rows = (int) Math.ceil((maxY - minY) / effRes) + 1;
         }
-        return new Grid(minX, minY, rows, cols, resolutionMeters);
+        return new Grid(minX, minY, rows, cols, effRes);
     }
 
     private List<Node> neighbors(Node current, int rows, int cols) {

@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GEO-CORRIDOR_2615_7685_2585_7740-001",
+        "name": "Corridor_2615_7685_2585_7740 Colluvial Scarp Zone",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Jointed Bedrock & Debris Colluvium",
+        "engineeringHazard": "Potential Slope Creep / Cuttings Instability",
+        "designHazardWidthMeters": 180.0,
+        "minimumStabilizationLengthMeters": 240.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.23,
+            25.72
+          ],
+          [
+            77.356,
+            25.904
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-TEST_LONG-01",
+        "watershedCode": "TES-WS-01",
+        "name": "Test_Long Catchment Basin #1",
+        "majorRiverSystem": "Test_Long River System",
+        "latMin": 19.9,
+        "latMax": 21.3,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.6,
+              19.9
+            ],
+            [
+              77.65,
+              19.9
+            ],
+            [
+              77.65,
+              21.3
+            ],
+            [
+              76.6,
+              21.3
+            ],
+            [
+              76.6,
+              19.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-TEST_LONG-02",
+        "watershedCode": "TES-WS-02",
+        "name": "Test_Long Catchment Basin #2",
+        "majorRiverSystem": "Test_Long River System",
+        "latMin": 21.3,
+        "latMax": 22.7,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.6,
+              21.3
+            ],
+            [
+              77.65,
+              21.3
+            ],
+            [
+              77.65,
+              22.7
+            ],
+            [
+              76.6,
+              22.7
+            ],
+            [
+              76.6,
+              21.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-TEST_LONG-03",
+        "watershedCode": "TES-WS-03",
+        "name": "Test_Long Catchment Basin #3",
+        "majorRiverSystem": "Test_Long River System",
+        "latMin": 22.7,
+        "latMax": 24.1,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.6,
+              22.7
+            ],
+            [
+              77.65,
+              22.7
+            ],
+            [
+              77.65,
+              24.1
+            ],
+            [
+              76.6,
+              24.1
+            ],
+            [
+              76.6,
+              22.7
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

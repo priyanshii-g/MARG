@@ -1,0 +1,66 @@
+{
+  "assam_brahmaputra": {
+    "display_name": "Brahmaputra Enterprise, 1, Tezpur University Road, Tezpur, Sonitpur, Assam, 784028, India",
+    "osm_type": "node",
+    "osm_id": 9742686701,
+    "lat": 26.6959166,
+    "lon": 92.8371991,
+    "geojson_type": "Point"
+  },
+  "assam_railway_furkating": {
+    "display_name": "Furkating Junction, SH34;SH-014, Furkating, Golaghat, Assam, 785702, India",
+    "osm_type": "node",
+    "osm_id": 715137958,
+    "lat": 26.4647187,
+    "lon": 94.0018343,
+    "geojson_type": "Point"
+  },
+  "assam_railway_bokajan": {
+    "display_name": "Bokajan, SH44;SH-016, Bokajan, Diphu, Karbi Anglong, Assam, 782490, India",
+    "osm_type": "node",
+    "osm_id": 2084878606,
+    "lat": 26.0193348,
+    "lon": 93.7802127,
+    "geojson_type": "Point"
+  },
+  "wg_railway_jejuri": {
+    "display_name": "Jejuri, Jejuri Morgaon Baramati Road, Jejuri, Purandhar, Pune, Maharashtra, 412303, India",
+    "osm_type": "node",
+    "osm_id": 2429803156,
+    "lat": 18.2871679,
+    "lon": 74.1716695,
+    "geojson_type": "Point"
+  },
+  "wg_railway_shirwal": {
+    "display_name": "Nira, Nira Pune Road, Nira, Purandhar, Pune, Maharashtra, India",
+    "osm_type": "node",
+    "osm_id": 1604806183,
+    "lat": 18.1054456,
+    "lon": 74.208078,
+    "geojson_type": "Point"
+  },
+  "gp_railway_barabanki": {
+    "display_name": "Barabanki Junction, NH727H, Barabanki, Nawabganj, Barabanki, Uttar Pradesh, 225001, India",
+    "osm_type": "node",
+    "osm_id": 2242712141,
+    "lat": 26.9340514,
+    "lon": 81.1787492,
+    "geojson_type": "Point"
+  },
+  "gp_railway_ayodhya": {
+    "display_name": "Ayodhya Cantt, Fatehganj - Chowk - Naka road, Lalbagh, Faizabad, Ayodhya, Uttar Pradesh, 224001, India",
+    "osm_type": "node",
+    "osm_id": 6951223897,
+    "lat": 26.768993,
+    "lon": 82.1358017,
+    "geojson_type": "Point"
+  },
+  "gp_nh27": {
+    "display_name": "National Highway 28, Barabanki, Nawabganj, Barabanki, Uttar Pradesh, 225001, India",
+    "osm_type": "way",
+    "osm_id": 214467455,
+    "lat": 26.9202153,
+    "lon": 81.2222858,
+    "geojson_type": "LineString"
+  }
+}

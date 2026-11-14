@@ -173,10 +173,16 @@ public class UtilityNetworkVectorIndex {
                 String id = p.get("id").asString();
                 String type = p.get("assetType").asString();
                 String name = p.has("name") && !p.get("name").isNull() ? p.get("name").asString() : id;
-                double footprintRadius = p.get("footprintRadiusMeters").asDouble(30.0);
-                double exclusionRadius = p.has("exclusionRadiusMeters")
+                double footprintRadius = p.has("footprintRadiusMeters") && !p.get("footprintRadiusMeters").isNull()
+                        ? p.get("footprintRadiusMeters").asDouble(30.0)
+                        : (p.has("safetyExclusionRadiusMeters") && !p.get("safetyExclusionRadiusMeters").isNull()
+                                ? p.get("safetyExclusionRadiusMeters").asDouble(30.0)
+                                : 30.0);
+                double exclusionRadius = p.has("exclusionRadiusMeters") && !p.get("exclusionRadiusMeters").isNull()
                         ? p.get("exclusionRadiusMeters").asDouble(footprintRadius + 50.0)
-                        : footprintRadius + 50.0;
+                        : (p.has("safetyExclusionRadiusMeters") && !p.get("safetyExclusionRadiusMeters").isNull()
+                                ? p.get("safetyExclusionRadiusMeters").asDouble(footprintRadius + 50.0)
+                                : footprintRadius + 50.0);
 
                 JsonNode coordsNode = feat.get("geometry").get("coordinates");
                 double lon = coordsNode.get(0).asDouble();

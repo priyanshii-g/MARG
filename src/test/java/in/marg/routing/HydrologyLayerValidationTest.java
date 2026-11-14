@@ -71,13 +71,13 @@ class HydrologyLayerValidationTest {
 
         // Independent GeoTIFF point sampling across all water-body hierarchy classes
         assertEquals(WaterBodyClass.MAJOR_PERENNIAL_RIVER,
-                waterRaster.sampleClass(26.3930, 93.4050)); // Kaliani River (140 m channel)
+                waterRaster.sampleClass(26.36303, 93.34322)); // Kaliani River (140 m channel, OSM real centerline)
         assertEquals(WaterBodyClass.MAJOR_PERENNIAL_RIVER,
-                waterRaster.sampleClass(26.2450, 93.6580)); // Dhansiri River (240 m channel)
+                waterRaster.sampleClass(26.61529, 93.73862)); // Dhansiri River (240 m channel, OSM real centerline)
         assertEquals(WaterBodyClass.MEDIUM_PERENNIAL_RIVER,
-                waterRaster.sampleClass(26.1500, 93.3500)); // Deopani River (70 m channel)
+                waterRaster.sampleClass(26.17782, 93.65415)); // Deopani River (70 m channel, OSM real centerline)
         assertEquals(WaterBodyClass.MINOR_PERENNIAL_STREAM,
-                waterRaster.sampleClass(26.5720, 93.3920)); // Kohora-Mora Diphlu Stream (38 m)
+                waterRaster.sampleClass(26.57262, 93.40440)); // Kohora-Mora Diphlu Stream (38 m, OSM real centerline)
         assertEquals(WaterBodyClass.INLAND_WETLAND_WATERBODY,
                 waterRaster.sampleClass(25.7750, 93.2750)); // Bhuvan LU_Webcode=20 Inland Wetland / Beel
         assertEquals(WaterBodyClass.NONE,
@@ -104,16 +104,16 @@ class HydrologyLayerValidationTest {
                 "Inland wetlands/beels must be hard-blocked when blockWetlands=true");
 
         // Verify 90-degree perpendicular river bridge vs <20-degree acute skew bridge across Kaliani River
-        GeoPoint northBankPerp = new GeoPoint(26.3960, 93.4050);
-        GeoPoint southBankPerp = new GeoPoint(26.3900, 93.4050);
+        GeoPoint northBankPerp = new GeoPoint(26.3847, 93.3805);
+        GeoPoint southBankPerp = new GeoPoint(26.3787, 93.3805);
         var perpCrossings = riverIndex.findStepCrossings(northBankPerp, southBankPerp);
         assertEquals(1, perpCrossings.size());
         assertEquals(RiverHierarchyClass.MAJOR_PERENNIAL_RIVER, perpCrossings.get(0).riverClass());
         assertTrue(perpCrossings.get(0).crossingAngleDegrees() > 82.0,
                 "North-south bridge across east-west Kaliani River should be near-perpendicular (>82 deg)");
 
-        GeoPoint acuteBankA = new GeoPoint(26.3942, 93.3960);
-        GeoPoint acuteBankB = new GeoPoint(26.3918, 93.4140);
+        GeoPoint acuteBankA = new GeoPoint(26.3821, 93.3785);
+        GeoPoint acuteBankB = new GeoPoint(26.3813, 93.3825);
         var acuteCrossings = riverIndex.findStepCrossings(acuteBankA, acuteBankB);
         assertEquals(1, acuteCrossings.size());
         assertTrue(acuteCrossings.get(0).crossingAngleDegrees() < 20.0,

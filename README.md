@@ -359,26 +359,25 @@ ordinary LULC A*
 
 The response reports the requested maximum deviation and whether the resulting route satisfies it.
 
-## Frontend
+## Frontend (Unified Workspace)
 
-The `frontend/index.html` page is a small Leaflet diagnostic viewer. It can show:
+The interactive React + Leaflet frontend is located in `MARG_Frontend/`.
 
-- distance baseline
-- LULC-aware route
-- LULC route with a 15% maximum deviation
-- LULC cost surface
-
-Run a simple local server from `frontend` if necessary:
-
+### Development Mode (Vite Hot-Reload)
+Run from the repository root:
 ```cmd
-python -m http.server 5500
+npm run dev
 ```
+*(or inside `MARG_Frontend/`: `npm.cmd run dev`)*
 
-Then open:
+This starts the Vite development server at `http://localhost:5173` with automatic API proxying to `http://localhost:8080`.
 
-```text
-http://localhost:5500
+### Production Build & Single-Port Deployment
+To build the frontend and automatically sync assets into Spring Boot's `src/main/resources/static/`:
+```cmd
+npm run build
 ```
+Once built, running `mvn spring-boot:run` serves the complete frontend application directly on `http://localhost:8080/` without needing a separate frontend server.
 
 ## Testing
 

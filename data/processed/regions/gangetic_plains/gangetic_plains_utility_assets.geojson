@@ -1,0 +1,113 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-GANGETIC_PLAINS-001",
+        "name": "Sohawal-Lucknow 400kV D/C PGCIL Northern Grid Line Tower #1",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-IGP-400KV",
+        "voltageKv": 400,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.62,
+          27.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-GANGETIC_PLAINS-002",
+        "name": "Sohawal-Lucknow 400kV D/C PGCIL Northern Grid Line Tower #2",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-IGP-400KV",
+        "voltageKv": 400,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.625,
+          26.84
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-GANGETIC_PLAINS-003",
+        "name": "Sohawal-Lucknow 400kV D/C PGCIL Northern Grid Line Tower #3",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-IGP-400KV",
+        "voltageKv": 400,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.63,
+          26.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-GANGETIC_PLAINS-004",
+        "name": "Barabanki-Ayodhya 220kV UPPTCL Line Tower #4",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-IGP-220KV",
+        "voltageKv": 220,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.91,
+          27.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-GANGETIC_PLAINS-005",
+        "name": "Barabanki-Ayodhya 220kV UPPTCL Line Tower #5",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-IGP-220KV",
+        "voltageKv": 220,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.915,
+          26.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-GANGETIC_PLAINS-006",
+        "name": "Barabanki-Ayodhya 220kV UPPTCL Line Tower #6",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-IGP-220KV",
+        "voltageKv": 220,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.92,
+          26.58
+        ]
+      }
+    }
+  ]
+}

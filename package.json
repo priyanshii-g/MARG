@@ -1,0 +1,13 @@
+{
+  "name": "marg-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MARG: Multi-Objective AI for Responsible Geospatial Planning (Unified Backend & Frontend)",
+  "scripts": {
+    "dev": "npm --prefix MARG_Frontend run dev",
+    "build:frontend": "npm --prefix MARG_Frontend run build",
+    "build": "npm --prefix MARG_Frontend run build",
+    "preview": "npm --prefix MARG_Frontend run preview",
+    "start": "npm --prefix MARG_Frontend run dev"
+  }
+}

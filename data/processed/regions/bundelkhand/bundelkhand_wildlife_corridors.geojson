@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WLF-BUNDELKHAND-001",
+        "name": "Bundelkhand Wildlife Eco-Sensitive Stepping Stone",
+        "corridorTier": "INTER_SANCTUARY_ELEPHANT_CORRIDOR",
+        "targetSpecies": "Wild Ungulates & Carnivores",
+        "designCorridorWidthMeters": 350.0,
+        "minimumPassageSpanMeters": 450.0,
+        "minimumClearHeightMeters": 6.5
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.728,
+            25.625
+          ],
+          [
+            78.872,
+            25.415
+          ]
+        ]
+      }
+    }
+  ]
+}

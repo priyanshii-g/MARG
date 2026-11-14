@@ -1,0 +1,137 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-BUNDELKHAND-01",
+        "watershedCode": "BUN-WS-01",
+        "name": "Bundelkhand Catchment Basin #1",
+        "majorRiverSystem": "Bundelkhand River System",
+        "latMin": 25.1,
+        "latMax": 25.33333,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.2,
+              25.1
+            ],
+            [
+              80.6,
+              25.1
+            ],
+            [
+              80.6,
+              25.33333
+            ],
+            [
+              78.2,
+              25.33333
+            ],
+            [
+              78.2,
+              25.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-BUNDELKHAND-02",
+        "watershedCode": "BUN-WS-02",
+        "name": "Bundelkhand Catchment Basin #2",
+        "majorRiverSystem": "Bundelkhand River System",
+        "latMin": 25.33333,
+        "latMax": 25.56667,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.2,
+              25.33333
+            ],
+            [
+              80.6,
+              25.33333
+            ],
+            [
+              80.6,
+              25.56667
+            ],
+            [
+              78.2,
+              25.56667
+            ],
+            [
+              78.2,
+              25.33333
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-BUNDELKHAND-03",
+        "watershedCode": "BUN-WS-03",
+        "name": "Bundelkhand Catchment Basin #3",
+        "majorRiverSystem": "Bundelkhand River System",
+        "latMin": 25.56667,
+        "latMax": 25.8,
+        "areaSqKm": 540.0,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 75.0,
+        "meanSlopeDegrees": 3.8,
+        "drainageDensityKmPerSqKm": 2.1,
+        "floodAndBackwaterSensitivity": "MODERATE_FLOODPLAIN_RETENTION"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.2,
+              25.56667
+            ],
+            [
+              80.6,
+              25.56667
+            ],
+            [
+              80.6,
+              25.8
+            ],
+            [
+              78.2,
+              25.8
+            ],
+            [
+              78.2,
+              25.56667
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

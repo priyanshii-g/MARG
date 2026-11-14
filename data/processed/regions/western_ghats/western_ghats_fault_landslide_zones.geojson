@@ -1,0 +1,63 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GEO-WG-01",
+        "name": "Katraj-Khandala Basaltic Escarpment Landslide Zone",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Weathered Deccan Trap Amygdaloidal Basalt & Colluvial Talus",
+        "engineeringHazard": "Monsoon translational rockfall & high cut-slope instability",
+        "designHazardWidthMeters": 220.0,
+        "minimumStabilizationLengthMeters": 180.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.76,
+            18.055
+          ],
+          [
+            73.95,
+            18.06
+          ],
+          [
+            74.15,
+            18.065
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GEO-WG-02",
+        "name": "Koyna-Kurduwadi Lineament Fracture Zone",
+        "hazardTier": "ACTIVE_FAULT_SHEAR_ZONE",
+        "lithologyAndSoil": "Fractured Deccan Basalt Shear Breccia",
+        "engineeringHazard": "Reservoir-triggered seismic shear & differential settlement",
+        "designHazardWidthMeters": 240.0,
+        "minimumStabilizationLengthMeters": 210.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.75,
+            17.81
+          ],
+          [
+            73.99,
+            17.815
+          ],
+          [
+            74.2,
+            17.82
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,449 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-WESTERN_GHATS-001",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "censusCode": "CEN-43-0001",
+        "name": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "totalPopulation": 6800,
+        "ruralPopulation": 6800,
+        "urbanPopulation": 0,
+        "householdsCount": 1416,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 59.35,
+        "populationDensityPerSqKm": 11457.5,
+        "populationDensityPerHectare": 114.58,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.29,
+        "workingAge15To59Share": 0.62,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.61,
+        "scheduledTribeAndCastesShare": 0.28,
+        "literacyRate": 0.78,
+        "agriculturalAndPrimaryLivelihoodShare": 0.58,
+        "socialVulnerabilityIndex": 0.56,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.68,
+        "fringeDispersionRadiusMeters": 696.0,
+        "coreRadiusMeters": 480.0,
+        "mappedBuildingFootprintCount": 10,
+        "residentialBuildingCount": 8,
+        "centroidLat": 18.31,
+        "centroidLon": 73.872
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.876181,
+              18.311688
+            ],
+            [
+              73.875306,
+              18.312807
+            ],
+            [
+              73.873927,
+              18.313499
+            ],
+            [
+              73.872255,
+              18.313658
+            ],
+            [
+              73.870545,
+              18.31326
+            ],
+            [
+              73.869056,
+              18.312366
+            ],
+            [
+              73.868015,
+              18.311112
+            ],
+            [
+              73.867581,
+              18.309688
+            ],
+            [
+              73.867819,
+              18.308312
+            ],
+            [
+              73.868694,
+              18.307193
+            ],
+            [
+              73.870073,
+              18.306501
+            ],
+            [
+              73.871745,
+              18.306342
+            ],
+            [
+              73.873455,
+              18.30674
+            ],
+            [
+              73.874944,
+              18.307634
+            ],
+            [
+              73.875985,
+              18.308888
+            ],
+            [
+              73.876419,
+              18.310312
+            ],
+            [
+              73.876181,
+              18.311688
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-WESTERN_GHATS-002",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "censusCode": "CEN-43-0002",
+        "name": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "totalPopulation": 26500,
+        "ruralPopulation": 0,
+        "urbanPopulation": 26500,
+        "householdsCount": 5520,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 99.03,
+        "populationDensityPerSqKm": 26759.6,
+        "populationDensityPerHectare": 267.6,
+        "populationDensityClass": "VERY_HIGH_URBAN_DENSITY_CORE",
+        "children0To14Share": 0.29,
+        "workingAge15To59Share": 0.62,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.61,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.78,
+        "agriculturalAndPrimaryLivelihoodShare": 0.58,
+        "socialVulnerabilityIndex": 0.56,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.68,
+        "fringeDispersionRadiusMeters": 899.0,
+        "coreRadiusMeters": 620.0,
+        "mappedBuildingFootprintCount": 10,
+        "residentialBuildingCount": 8,
+        "centroidLat": 18.15,
+        "centroidLon": 73.93
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.934072,
+              18.154013
+            ],
+            [
+              73.932439,
+              18.154924
+            ],
+            [
+              73.930434,
+              18.155085
+            ],
+            [
+              73.928364,
+              18.154472
+            ],
+            [
+              73.926543,
+              18.153178
+            ],
+            [
+              73.925248,
+              18.1514
+            ],
+            [
+              73.924676,
+              18.149409
+            ],
+            [
+              73.924915,
+              18.147508
+            ],
+            [
+              73.925928,
+              18.145987
+            ],
+            [
+              73.927561,
+              18.145076
+            ],
+            [
+              73.929566,
+              18.144915
+            ],
+            [
+              73.931636,
+              18.145528
+            ],
+            [
+              73.933457,
+              18.146822
+            ],
+            [
+              73.934752,
+              18.1486
+            ],
+            [
+              73.935324,
+              18.150591
+            ],
+            [
+              73.935085,
+              18.152492
+            ],
+            [
+              73.934072,
+              18.154013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-WESTERN_GHATS-003",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "censusCode": "CEN-43-0003",
+        "name": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "totalPopulation": 8900,
+        "ruralPopulation": 8900,
+        "urbanPopulation": 0,
+        "householdsCount": 1854,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 69.66,
+        "populationDensityPerSqKm": 12776.3,
+        "populationDensityPerHectare": 127.76,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.29,
+        "workingAge15To59Share": 0.62,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.61,
+        "scheduledTribeAndCastesShare": 0.36,
+        "literacyRate": 0.78,
+        "agriculturalAndPrimaryLivelihoodShare": 0.58,
+        "socialVulnerabilityIndex": 0.56,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.68,
+        "fringeDispersionRadiusMeters": 754.0,
+        "coreRadiusMeters": 520.0,
+        "mappedBuildingFootprintCount": 10,
+        "residentialBuildingCount": 8,
+        "centroidLat": 18.025,
+        "centroidLon": 73.952
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.95376,
+              18.029368
+            ],
+            [
+              73.952187,
+              18.029562
+            ],
+            [
+              73.950586,
+              18.029061
+            ],
+            [
+              73.949199,
+              18.027942
+            ],
+            [
+              73.948239,
+              18.026375
+            ],
+            [
+              73.947852,
+              18.024599
+            ],
+            [
+              73.948096,
+              18.022883
+            ],
+            [
+              73.948934,
+              18.02149
+            ],
+            [
+              73.95024,
+              18.020632
+            ],
+            [
+              73.951813,
+              18.020438
+            ],
+            [
+              73.953414,
+              18.020939
+            ],
+            [
+              73.954801,
+              18.022058
+            ],
+            [
+              73.955761,
+              18.023625
+            ],
+            [
+              73.956148,
+              18.025401
+            ],
+            [
+              73.955904,
+              18.027117
+            ],
+            [
+              73.955066,
+              18.02851
+            ],
+            [
+              73.95376,
+              18.029368
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-WESTERN_GHATS-004",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "censusCode": "CEN-43-0004",
+        "name": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "totalPopulation": 7400,
+        "ruralPopulation": 7400,
+        "urbanPopulation": 0,
+        "householdsCount": 1541,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 61.85,
+        "populationDensityPerSqKm": 11964.4,
+        "populationDensityPerHectare": 119.64,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.29,
+        "workingAge15To59Share": 0.62,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.61,
+        "scheduledTribeAndCastesShare": 0.32,
+        "literacyRate": 0.78,
+        "agriculturalAndPrimaryLivelihoodShare": 0.58,
+        "socialVulnerabilityIndex": 0.56,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.68,
+        "fringeDispersionRadiusMeters": 710.5,
+        "coreRadiusMeters": 490.0,
+        "mappedBuildingFootprintCount": 10,
+        "residentialBuildingCount": 8,
+        "centroidLat": 17.875,
+        "centroidLon": 73.978
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.977839,
+              17.879406
+            ],
+            [
+              73.9764,
+              17.879023
+            ],
+            [
+              73.975206,
+              17.878027
+            ],
+            [
+              73.974437,
+              17.87657
+            ],
+            [
+              73.97421,
+              17.874874
+            ],
+            [
+              73.97456,
+              17.873197
+            ],
+            [
+              73.975434,
+              17.871795
+            ],
+            [
+              73.976699,
+              17.870881
+            ],
+            [
+              73.978161,
+              17.870594
+            ],
+            [
+              73.9796,
+              17.870977
+            ],
+            [
+              73.980794,
+              17.871973
+            ],
+            [
+              73.981563,
+              17.87343
+            ],
+            [
+              73.98179,
+              17.875126
+            ],
+            [
+              73.98144,
+              17.876803
+            ],
+            [
+              73.980566,
+              17.878205
+            ],
+            [
+              73.979301,
+              17.879119
+            ],
+            [
+              73.977839,
+              17.879406
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

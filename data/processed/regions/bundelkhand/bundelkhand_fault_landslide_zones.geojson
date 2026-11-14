@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GEO-BUNDELKHAND-001",
+        "name": "Bundelkhand Colluvial Scarp Zone",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Jointed Bedrock & Debris Colluvium",
+        "engineeringHazard": "Potential Slope Creep / Cuttings Instability",
+        "designHazardWidthMeters": 180.0,
+        "minimumStabilizationLengthMeters": 240.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            79.64,
+            25.205
+          ],
+          [
+            79.928,
+            25.366
+          ]
+        ]
+      }
+    }
+  ]
+}

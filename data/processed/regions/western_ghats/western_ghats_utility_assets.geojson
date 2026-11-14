@@ -1,0 +1,113 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-WESTERN_GHATS-001",
+        "name": "Koyna-Lonikand 400kV D/C EHV Transmission Line Tower #1",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-WG-400KV",
+        "voltageKv": 400,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.76,
+          18.105
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-WESTERN_GHATS-002",
+        "name": "Koyna-Lonikand 400kV D/C EHV Transmission Line Tower #2",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-WG-400KV",
+        "voltageKv": 400,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.96,
+          18.11
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-WESTERN_GHATS-003",
+        "name": "Koyna-Lonikand 400kV D/C EHV Transmission Line Tower #3",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-WG-400KV",
+        "voltageKv": 400,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.18,
+          18.115
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-WESTERN_GHATS-004",
+        "name": "Satara-Phaltan 220kV Subtransmission Line Tower #4",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-WG-220KV",
+        "voltageKv": 220,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.78,
+          17.785
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-WESTERN_GHATS-005",
+        "name": "Satara-Phaltan 220kV Subtransmission Line Tower #5",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-WG-220KV",
+        "voltageKv": 220,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.99,
+          17.79
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-WESTERN_GHATS-006",
+        "name": "Satara-Phaltan 220kV Subtransmission Line Tower #6",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-WG-220KV",
+        "voltageKv": 220,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.19,
+          17.795
+        ]
+      }
+    }
+  ]
+}

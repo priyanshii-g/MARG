@@ -5,6 +5,7 @@ import in.marg.building.BuildingDensityRasterProvider;
 import in.marg.building.BuildingFootprintVectorIndex;
 import in.marg.config.BuildingRoutingProperties;
 import in.marg.config.DemographicRoutingProperties;
+import in.marg.config.DrainageRoutingProperties;
 import in.marg.config.FloodRoutingProperties;
 import in.marg.config.LulcRoutingProperties;
 import in.marg.config.SettlementRoutingProperties;
@@ -17,6 +18,9 @@ import in.marg.config.GeotechRoutingProperties;
 import in.marg.demographic.DemographicVectorIndex;
 import in.marg.demographic.PopulationDensityClass;
 import in.marg.demographic.PopulationDensityRasterProvider;
+import in.marg.drainage.DrainageWetlandClass;
+import in.marg.drainage.DrainageWetlandRasterProvider;
+import in.marg.drainage.DrainageWetlandVectorIndex;
 import in.marg.environment.ProtectedAreaRasterProvider;
 import in.marg.flood.FloodHazardClass;
 import in.marg.floodraster.BhuvanFloodRasterCache;
@@ -102,6 +106,9 @@ public class CompositeRouteMetricsService {
     private final PopulationDensityRasterProvider demographicRasterProvider;
     private final DemographicVectorIndex demographicVectorIndex;
     private final DemographicRoutingProperties demographicProperties;
+    private final DrainageWetlandRasterProvider drainageRasterProvider;
+    private final DrainageWetlandVectorIndex drainageVectorIndex;
+    private final DrainageRoutingProperties drainageProperties;
     private final RightOfWayCorridorEngine rowCorridorEngine;
 
     public CompositeRouteMetricsService(
@@ -508,7 +515,6 @@ public class CompositeRouteMetricsService {
                 rowCorridorEngine);
     }
 
-    @Autowired
     public CompositeRouteMetricsService(
             CoordinateProjection projection,
             LulcProvider lulcProvider,
@@ -542,6 +548,81 @@ public class CompositeRouteMetricsService {
             DemographicVectorIndex demographicVectorIndex,
             DemographicRoutingProperties demographicProperties,
             RightOfWayCorridorEngine rowCorridorEngine) {
+        this(
+                projection,
+                lulcProvider,
+                lulcProperties,
+                floodRasterCache,
+                floodProperties,
+                slopeRasterProvider,
+                slopeProperties,
+                protectedAreaRasterProvider,
+                settlementRasterProvider,
+                settlementProperties,
+                transportRasterProvider,
+                transportVectorIndex,
+                transportProperties,
+                waterBodyRasterProvider,
+                riverVectorIndex,
+                waterBodyProperties,
+                wildlifeRasterProvider,
+                wildlifeVectorIndex,
+                wildlifeProperties,
+                geotechRasterProvider,
+                geotechVectorIndex,
+                geotechProperties,
+                utilityRasterProvider,
+                utilityVectorIndex,
+                utilityProperties,
+                buildingRasterProvider,
+                buildingVectorIndex,
+                buildingProperties,
+                demographicRasterProvider,
+                demographicVectorIndex,
+                demographicProperties,
+                null,
+                null,
+                null,
+                rowCorridorEngine);
+    }
+
+    @Autowired
+    public CompositeRouteMetricsService(
+            CoordinateProjection projection,
+            LulcProvider lulcProvider,
+            LulcRoutingProperties lulcProperties,
+            BhuvanFloodRasterCache floodRasterCache,
+            FloodRoutingProperties floodProperties,
+            SlopeRasterProvider slopeRasterProvider,
+            SlopeRoutingProperties slopeProperties,
+            ProtectedAreaRasterProvider protectedAreaRasterProvider,
+            SettlementRasterProvider settlementRasterProvider,
+            SettlementRoutingProperties settlementProperties,
+            TransportNetworkRasterProvider transportRasterProvider,
+            TransportNetworkVectorIndex transportVectorIndex,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRasterProvider waterBodyRasterProvider,
+            RiverNetworkVectorIndex riverVectorIndex,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRasterProvider wildlifeRasterProvider,
+            WildlifeCorridorVectorIndex wildlifeVectorIndex,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRasterProvider geotechRasterProvider,
+            GeotechLineamentVectorIndex geotechVectorIndex,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            UtilityRoutingProperties utilityProperties,
+            BuildingDensityRasterProvider buildingRasterProvider,
+            BuildingFootprintVectorIndex buildingVectorIndex,
+            BuildingRoutingProperties buildingProperties,
+            PopulationDensityRasterProvider demographicRasterProvider,
+            DemographicVectorIndex demographicVectorIndex,
+            DemographicRoutingProperties demographicProperties,
+            DrainageWetlandRasterProvider drainageRasterProvider,
+            DrainageWetlandVectorIndex drainageVectorIndex,
+            DrainageRoutingProperties drainageProperties,
+            RightOfWayCorridorEngine rowCorridorEngine) {
 
         this.projection = projection;
         this.lulcProvider = lulcProvider;
@@ -574,6 +655,9 @@ public class CompositeRouteMetricsService {
         this.demographicRasterProvider = demographicRasterProvider;
         this.demographicVectorIndex = demographicVectorIndex;
         this.demographicProperties = demographicProperties;
+        this.drainageRasterProvider = drainageRasterProvider;
+        this.drainageVectorIndex = drainageVectorIndex;
+        this.drainageProperties = drainageProperties;
         this.rowCorridorEngine = rowCorridorEngine != null
                 ? rowCorridorEngine
                 : new RightOfWayCorridorEngine(projection);
@@ -604,6 +688,8 @@ public class CompositeRouteMetricsService {
                 new EnumMap<>(BuildingDensityClass.class);
         EnumMap<PopulationDensityClass, Double> demographicKm =
                 new EnumMap<>(PopulationDensityClass.class);
+        EnumMap<DrainageWetlandClass, Double> drainageKm =
+                new EnumMap<>(DrainageWetlandClass.class);
 
         double totalKm = 0.0;
 
@@ -625,6 +711,8 @@ public class CompositeRouteMetricsService {
         double buildingConflictPenaltyKm = 0.0;
         double demographicNodePenaltyKm = 0.0;
         double demographicExposurePenaltyKm = 0.0;
+        double drainageNodePenaltyKm = 0.0;
+        double drainageEdgePenaltyKm = 0.0;
         double protectedAreaKm = 0.0;
 
         int diagnosticSamples = 0;
@@ -674,6 +762,11 @@ public class CompositeRouteMetricsService {
                 demographicProperties != null
                         ? demographicProperties.toPolicy()
                         : DemographicCostPolicy.defaultPolicy();
+
+        DrainageWetlandCostPolicy drainagePolicy =
+                drainageProperties != null
+                        ? drainageProperties.toPolicy()
+                        : DrainageWetlandCostPolicy.defaultPolicy();
 
         for (int i = 1; i < route.size(); i++) {
             GeoPoint from = route.get(i - 1);
@@ -825,6 +918,14 @@ public class CompositeRouteMetricsService {
                         veryHighUrbanDensityViolationSamples++;
                     }
                     demographicNodePenaltyKm += sampleLengthKm * demographicPolicy.nodePenalty(pdc);
+                }
+
+                // DRAINAGE, STREAMS & WETLANDS RASTER EXPOSURE (LAYER 13)
+                if (drainageRasterProvider != null) {
+                    DrainageWetlandClass dwc =
+                            drainageRasterProvider.sampleClass(point.lat(), point.lon());
+                    drainageKm.merge(dwc, sampleLengthKm, Double::sum);
+                    drainageNodePenaltyKm += sampleLengthKm * drainagePolicy.nodePenalty(dwc);
                 }
             }
         }
@@ -1003,6 +1104,20 @@ public class CompositeRouteMetricsService {
         }
         double totalDemographicPenaltyKm = demographicNodePenaltyKm + demographicExposurePenaltyKm;
 
+        DrainageWetlandVectorIndex.RouteDrainageWetlandImpact drainageRowImpact = null;
+        if (drainageVectorIndex != null && rowCorridorEngine != null && route.size() >= 2) {
+            FacilityMode effectiveModeForDrainage =
+                    facilityMode != null ? facilityMode : FacilityMode.NATIONAL_HIGHWAY;
+            RightOfWayCorridorEngine.CorridorFootprint drainageFp =
+                    rowCorridorEngine.buildCorridorFootprint(route, effectiveModeForDrainage);
+            drainageRowImpact =
+                    drainageVectorIndex.evaluateCorridorDrainageAndWetlandImpact(route, drainageFp);
+            drainageEdgePenaltyKm =
+                    drainageRowImpact.drainageObstructionRiskIndex()
+                            + (drainageRowImpact.totalWaterCrossingsCount() * 0.65);
+        }
+        double totalDrainagePenaltyKm = drainageNodePenaltyKm + drainageEdgePenaltyKm;
+
         Map<String, Double> lulcExposure = new LinkedHashMap<>();
         for (var entry : lulcKm.entrySet()) {
             lulcExposure.put(entry.getKey().name(), round(entry.getValue()));
@@ -1058,6 +1173,11 @@ public class CompositeRouteMetricsService {
             populationDensityExposure.put(entry.getKey().name(), round(entry.getValue()));
         }
 
+        Map<String, Double> drainageWetlandExposure = new LinkedHashMap<>();
+        for (var entry : drainageKm.entrySet()) {
+            drainageWetlandExposure.put(entry.getKey().name(), round(entry.getValue()));
+        }
+
         double approximateCompositeCostKm =
                 totalKm
                         + lulcPenaltyKm
@@ -1070,7 +1190,8 @@ public class CompositeRouteMetricsService {
                         + totalGeotechPenaltyKm
                         + totalUtilityPenaltyKm
                         + totalBuildingPenaltyKm
-                        + totalDemographicPenaltyKm;
+                        + totalDemographicPenaltyKm
+                        + totalDrainagePenaltyKm;
 
         Map<String, Object> hardConstraints = new LinkedHashMap<>();
         hardConstraints.put("protectedAreaViolationSamples", protectedAreaSamples);
@@ -1137,6 +1258,9 @@ public class CompositeRouteMetricsService {
         }
         if (demographicRasterProvider != null || demographicVectorIndex != null) {
             penaltiesMap.put("POPULATION_DEMOGRAPHICS", round(totalDemographicPenaltyKm));
+        }
+        if (drainageRasterProvider != null || drainageVectorIndex != null) {
+            penaltiesMap.put("DRAINAGE_AND_WETLANDS", round(totalDrainagePenaltyKm));
         }
 
         Map<String, Object> diagnostics = new LinkedHashMap<>();
@@ -1283,6 +1407,19 @@ public class CompositeRouteMetricsService {
                     round(demographicNodePenaltyKm));
             diagnostics.put("populationAndDemographicExposureSummary", demographicSummary);
         }
+        if (drainageRasterProvider != null) {
+            diagnostics.put("drainageWetlandExposureKm", drainageWetlandExposure);
+        }
+        if (drainageRowImpact != null) {
+            Map<String, Object> drainageSummary = new LinkedHashMap<>(drainageRowImpact.toSummaryMap());
+            drainageSummary.put(
+                    "drainageAndWetlandEdgePenaltyKmEquivalent",
+                    round(drainageEdgePenaltyKm));
+            drainageSummary.put(
+                    "drainageAndWetlandRasterPenaltyKmEquivalent",
+                    round(drainageNodePenaltyKm));
+            diagnostics.put("drainageAndWetlandSummary", drainageSummary);
+        }
         diagnostics.put("protectedAreaExposureKm", round(protectedAreaKm));
         diagnostics.put("approximatePenaltyContributionKm", penaltiesMap);
         diagnostics.put("approximateCompositeCostKmEquivalent", round(approximateCompositeCostKm));
@@ -1320,7 +1457,9 @@ public class CompositeRouteMetricsService {
                             buildingRasterProvider,
                             buildingVectorIndex,
                             demographicRasterProvider,
-                            demographicVectorIndex);
+                            demographicVectorIndex,
+                            drainageRasterProvider,
+                            drainageVectorIndex);
 
             Map<String, Object> rowSummary = new LinkedHashMap<>();
             rowSummary.put("activeFacilityMode", effectiveMode.name());

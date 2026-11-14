@@ -1,0 +1,30 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GEO-TEST_LONG-001",
+        "name": "Test_Long Colluvial Scarp Zone",
+        "hazardTier": "UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP",
+        "lithologyAndSoil": "Jointed Bedrock & Debris Colluvium",
+        "engineeringHazard": "Potential Slope Creep / Cuttings Instability",
+        "designHazardWidthMeters": 180.0,
+        "minimumStabilizationLengthMeters": 240.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.23,
+            20.53
+          ],
+          [
+            77.356,
+            21.496
+          ]
+        ]
+      }
+    }
+  ]
+}

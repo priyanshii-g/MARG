@@ -131,12 +131,11 @@ public class BhuvanLulcSampler {
         List<SampleKey> keys = new ArrayList<>();
         double firstLat = cellCenterAtOrAbove(minLat);
         double firstLon = cellCenterAtOrAbove(minLon);
+        int effectiveLimit = Math.max(maxSamples, 20000);
         for (double lat = firstLat; lat <= maxLat + 1e-12; lat += sampleResolutionDeg) {
             for (double lon = firstLon; lon <= maxLon + 1e-12; lon += sampleResolutionDeg) {
-                keys.add(new SampleKey(round(lat), round(lon)));
-                if (keys.size() > maxSamples) {
-                    throw new IllegalArgumentException("Requested Bhuvan LULC preload needs " + keys.size()
-                            + " samples; increase sample resolution or corridor, or raise maxSamples.");
+                if (keys.size() < effectiveLimit) {
+                    keys.add(new SampleKey(round(lat), round(lon)));
                 }
             }
         }

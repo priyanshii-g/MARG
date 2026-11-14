@@ -1,0 +1,338 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-CORRIDOR_2015_7685_2385_7740-001",
+        "settlementId": "STL-CORRIDOR_2015_7685_2385_7740-001",
+        "censusCode": "CEN-43-0001",
+        "name": "Corridor_2015_7685_2385_7740 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2015_7685_2385_7740 Central",
+        "totalPopulation": 42000,
+        "ruralPopulation": 0,
+        "urbanPopulation": 42000,
+        "householdsCount": 8750,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 241.0,
+        "populationDensityPerSqKm": 17427.4,
+        "populationDensityPerHectare": 174.27,
+        "populationDensityClass": "VERY_HIGH_URBAN_DENSITY_CORE",
+        "children0To14Share": 0.28,
+        "workingAge15To59Share": 0.63,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.59,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.76,
+        "agriculturalAndPrimaryLivelihoodShare": 0.54,
+        "socialVulnerabilityIndex": 0.52,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.7,
+        "fringeDispersionRadiusMeters": 1330.0,
+        "coreRadiusMeters": 950.0,
+        "mappedBuildingFootprintCount": 8,
+        "residentialBuildingCount": 6,
+        "centroidLat": 21.79,
+        "centroidLon": 76.9675
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.97583,
+              21.793613
+            ],
+            [
+              76.973932,
+              21.795858
+            ],
+            [
+              76.971055,
+              21.797211
+            ],
+            [
+              76.967637,
+              21.797467
+            ],
+            [
+              76.964198,
+              21.796585
+            ],
+            [
+              76.961262,
+              21.794702
+            ],
+            [
+              76.959276,
+              21.792102
+            ],
+            [
+              76.958541,
+              21.789182
+            ],
+            [
+              76.95917,
+              21.786387
+            ],
+            [
+              76.961068,
+              21.784142
+            ],
+            [
+              76.963945,
+              21.782789
+            ],
+            [
+              76.967363,
+              21.782533
+            ],
+            [
+              76.970802,
+              21.783415
+            ],
+            [
+              76.973738,
+              21.785298
+            ],
+            [
+              76.975724,
+              21.787898
+            ],
+            [
+              76.976459,
+              21.790818
+            ],
+            [
+              76.97583,
+              21.793613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-CORRIDOR_2015_7685_2385_7740-002",
+        "settlementId": "STL-CORRIDOR_2015_7685_2385_7740-002",
+        "censusCode": "CEN-43-0002",
+        "name": "Corridor_2015_7685_2385_7740 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2015_7685_2385_7740 Central",
+        "totalPopulation": 6800,
+        "ruralPopulation": 6800,
+        "urbanPopulation": 0,
+        "householdsCount": 1416,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 80.78,
+        "populationDensityPerSqKm": 8417.9,
+        "populationDensityPerHectare": 84.18,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.28,
+        "workingAge15To59Share": 0.63,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.59,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.76,
+        "agriculturalAndPrimaryLivelihoodShare": 0.54,
+        "socialVulnerabilityIndex": 0.52,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.7,
+        "fringeDispersionRadiusMeters": 770.0,
+        "coreRadiusMeters": 550.0,
+        "mappedBuildingFootprintCount": 8,
+        "residentialBuildingCount": 6,
+        "centroidLat": 21.496,
+        "centroidLon": 77.146
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.150813,
+              21.498092
+            ],
+            [
+              77.149716,
+              21.499391
+            ],
+            [
+              77.148054,
+              21.500175
+            ],
+            [
+              77.146079,
+              21.500323
+            ],
+            [
+              77.144092,
+              21.499813
+            ],
+            [
+              77.142396,
+              21.498722
+            ],
+            [
+              77.141248,
+              21.497217
+            ],
+            [
+              77.140824,
+              21.495527
+            ],
+            [
+              77.141187,
+              21.493908
+            ],
+            [
+              77.142284,
+              21.492609
+            ],
+            [
+              77.143946,
+              21.491825
+            ],
+            [
+              77.145921,
+              21.491677
+            ],
+            [
+              77.147908,
+              21.492187
+            ],
+            [
+              77.149604,
+              21.493278
+            ],
+            [
+              77.150752,
+              21.494783
+            ],
+            [
+              77.151176,
+              21.496473
+            ],
+            [
+              77.150813,
+              21.498092
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-CORRIDOR_2015_7685_2385_7740-003",
+        "settlementId": "STL-CORRIDOR_2015_7685_2385_7740-003",
+        "censusCode": "CEN-43-0003",
+        "name": "Corridor_2015_7685_2385_7740 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2015_7685_2385_7740 Central",
+        "totalPopulation": 8400,
+        "ruralPopulation": 8400,
+        "urbanPopulation": 0,
+        "householdsCount": 1750,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 96.13,
+        "populationDensityPerSqKm": 8738.2,
+        "populationDensityPerHectare": 87.38,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.28,
+        "workingAge15To59Share": 0.63,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.59,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.76,
+        "agriculturalAndPrimaryLivelihoodShare": 0.54,
+        "socialVulnerabilityIndex": 0.52,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.7,
+        "fringeDispersionRadiusMeters": 840.0,
+        "coreRadiusMeters": 600.0,
+        "mappedBuildingFootprintCount": 8,
+        "residentialBuildingCount": 6,
+        "centroidLat": 22.504,
+        "centroidLon": 77.272
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.277288,
+              22.506282
+            ],
+            [
+              77.276083,
+              22.5077
+            ],
+            [
+              77.274257,
+              22.508554
+            ],
+            [
+              77.272087,
+              22.508716
+            ],
+            [
+              77.269904,
+              22.508159
+            ],
+            [
+              77.26804,
+              22.506969
+            ],
+            [
+              77.266779,
+              22.505328
+            ],
+            [
+              77.266313,
+              22.503484
+            ],
+            [
+              77.266712,
+              22.501718
+            ],
+            [
+              77.267917,
+              22.5003
+            ],
+            [
+              77.269743,
+              22.499446
+            ],
+            [
+              77.271913,
+              22.499284
+            ],
+            [
+              77.274096,
+              22.499841
+            ],
+            [
+              77.27596,
+              22.501031
+            ],
+            [
+              77.277221,
+              22.502672
+            ],
+            [
+              77.277687,
+              22.504516
+            ],
+            [
+              77.277288,
+              22.506282
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

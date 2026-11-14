@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-TEST_LONG-001",
+        "name": "Test_Long West Commercial Node",
+        "district": "Test_Long West",
+        "centerLat": 21.79,
+        "centerLon": 76.9675,
+        "tieInLat": 21.81,
+        "tieInLon": 76.9875,
+        "tieInRoadRef": "SH-Link-West",
+        "tieInName": "West Bypass Tie-In",
+        "urbanPopulation": 65000,
+        "catchmentPopulation": 140000,
+        "industrialOutputFactor": 1.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.9675,
+          21.79
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-TEST_LONG-002",
+        "name": "Test_Long East Logistics Hub",
+        "district": "Test_Long East",
+        "centerLat": 22.21,
+        "centerLon": 77.335,
+        "tieInLat": 22.19,
+        "tieInLon": 77.315,
+        "tieInRoadRef": "MDR-Link-East",
+        "tieInName": "East Agro-Mandi Tie-In",
+        "urbanPopulation": 82000,
+        "catchmentPopulation": 185000,
+        "industrialOutputFactor": 1.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.335,
+          22.21
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "catalogRef": "STL-GANGETIC_PLAINS-001",
+        "name": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_MUNICIPAL_TOWN",
+        "district": "Barabanki",
+        "polygonAreaHectares": 105.52,
+        "coreRadiusMeters": 640.0,
+        "builtUpDensityBuildingsPerHa": 14.5,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 10,
+        "centroidLat": 26.862,
+        "centroidLon": 81.46
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.465932,
+              26.86425
+            ],
+            [
+              81.464691,
+              26.865742
+            ],
+            [
+              81.462735,
+              26.866665
+            ],
+            [
+              81.460363,
+              26.866877
+            ],
+            [
+              81.457935,
+              26.866347
+            ],
+            [
+              81.455822,
+              26.865155
+            ],
+            [
+              81.454345,
+              26.863483
+            ],
+            [
+              81.453729,
+              26.861585
+            ],
+            [
+              81.454068,
+              26.85975
+            ],
+            [
+              81.455309,
+              26.858258
+            ],
+            [
+              81.457265,
+              26.857335
+            ],
+            [
+              81.459637,
+              26.857123
+            ],
+            [
+              81.462065,
+              26.857653
+            ],
+            [
+              81.464178,
+              26.858845
+            ],
+            [
+              81.465655,
+              26.860517
+            ],
+            [
+              81.466271,
+              26.862415
+            ],
+            [
+              81.465932,
+              26.86425
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "catalogRef": "STL-GANGETIC_PLAINS-002",
+        "name": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "district": "Barabanki",
+        "polygonAreaHectares": 80.79,
+        "coreRadiusMeters": 560.0,
+        "builtUpDensityBuildingsPerHa": 7.2,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 10,
+        "centroidLat": 26.835,
+        "centroidLon": 81.685
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.688916,
+              26.838625
+            ],
+            [
+              81.687346,
+              26.839447
+            ],
+            [
+              81.685418,
+              26.839593
+            ],
+            [
+              81.683426,
+              26.839039
+            ],
+            [
+              81.681675,
+              26.83787
+            ],
+            [
+              81.680429,
+              26.836265
+            ],
+            [
+              81.679879,
+              26.834467
+            ],
+            [
+              81.680109,
+              26.83275
+            ],
+            [
+              81.681084,
+              26.831375
+            ],
+            [
+              81.682654,
+              26.830553
+            ],
+            [
+              81.684582,
+              26.830407
+            ],
+            [
+              81.686574,
+              26.830961
+            ],
+            [
+              81.688325,
+              26.83213
+            ],
+            [
+              81.689571,
+              26.833735
+            ],
+            [
+              81.690121,
+              26.835533
+            ],
+            [
+              81.689891,
+              26.83725
+            ],
+            [
+              81.688916,
+              26.838625
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "catalogRef": "STL-GANGETIC_PLAINS-003",
+        "name": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 89.67,
+        "coreRadiusMeters": 590.0,
+        "builtUpDensityBuildingsPerHa": 7.2,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 10,
+        "centroidLat": 26.79,
+        "centroidLon": 81.965
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.967128,
+              26.794956
+            ],
+            [
+              81.965226,
+              26.795176
+            ],
+            [
+              81.963291,
+              26.794608
+            ],
+            [
+              81.961615,
+              26.793338
+            ],
+            [
+              81.960455,
+              26.79156
+            ],
+            [
+              81.959986,
+              26.789545
+            ],
+            [
+              81.960281,
+              26.787598
+            ],
+            [
+              81.961295,
+              26.786018
+            ],
+            [
+              81.962872,
+              26.785044
+            ],
+            [
+              81.964774,
+              26.784824
+            ],
+            [
+              81.966709,
+              26.785392
+            ],
+            [
+              81.968385,
+              26.786662
+            ],
+            [
+              81.969545,
+              26.78844
+            ],
+            [
+              81.970014,
+              26.790455
+            ],
+            [
+              81.969719,
+              26.792402
+            ],
+            [
+              81.968705,
+              26.793982
+            ],
+            [
+              81.967128,
+              26.794956
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

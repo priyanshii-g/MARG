@@ -36,6 +36,7 @@ public class CompositeCostSurfaceFactory {
     private final UtilityCorridorCostLayer utilityCorridorCostLayer;
     private final BuildingFootprintCostLayer buildingFootprintCostLayer;
     private final DemographicCostLayer demographicCostLayer;
+    private final DrainageWetlandCostLayer drainageWetlandCostLayer;
 
     private final TransportNetworkRasterProvider transportRasterProvider;
     private final TransportNetworkVectorIndex transportVectorIndex;
@@ -68,6 +69,7 @@ public class CompositeCostSurfaceFactory {
                 waterBodyCostLayer,
                 wildlifeCorridorCostLayer,
                 geotechLandslideCostLayer,
+                null,
                 null,
                 null,
                 null,
@@ -105,6 +107,7 @@ public class CompositeCostSurfaceFactory {
                 wildlifeCorridorCostLayer,
                 geotechLandslideCostLayer,
                 utilityCorridorCostLayer,
+                null,
                 null,
                 null,
                 transportRasterProvider,
@@ -144,6 +147,46 @@ public class CompositeCostSurfaceFactory {
                 utilityCorridorCostLayer,
                 buildingFootprintCostLayer,
                 null,
+                null,
+                transportRasterProvider,
+                transportVectorIndex,
+                transportProperties,
+                projection);
+    }
+
+    public CompositeCostSurfaceFactory(
+            LulcProvider lulcProvider,
+            LulcRoutingProperties lulcProperties,
+            BhuvanFloodRasterCache floodRasterCache,
+            FloodRoutingProperties floodProperties,
+            SlopeCostLayer slopeCostLayer,
+            ProtectedAreaCostLayer protectedAreaCostLayer,
+            SettlementCostLayer settlementCostLayer,
+            WaterBodyCostLayer waterBodyCostLayer,
+            WildlifeCorridorCostLayer wildlifeCorridorCostLayer,
+            GeotechLandslideCostLayer geotechLandslideCostLayer,
+            UtilityCorridorCostLayer utilityCorridorCostLayer,
+            BuildingFootprintCostLayer buildingFootprintCostLayer,
+            DemographicCostLayer demographicCostLayer,
+            TransportNetworkRasterProvider transportRasterProvider,
+            TransportNetworkVectorIndex transportVectorIndex,
+            TransportRoutingProperties transportProperties,
+            CoordinateProjection projection) {
+        this(
+                lulcProvider,
+                lulcProperties,
+                floodRasterCache,
+                floodProperties,
+                slopeCostLayer,
+                protectedAreaCostLayer,
+                settlementCostLayer,
+                waterBodyCostLayer,
+                wildlifeCorridorCostLayer,
+                geotechLandslideCostLayer,
+                utilityCorridorCostLayer,
+                buildingFootprintCostLayer,
+                demographicCostLayer,
+                null,
                 transportRasterProvider,
                 transportVectorIndex,
                 transportProperties,
@@ -165,6 +208,7 @@ public class CompositeCostSurfaceFactory {
             UtilityCorridorCostLayer utilityCorridorCostLayer,
             BuildingFootprintCostLayer buildingFootprintCostLayer,
             DemographicCostLayer demographicCostLayer,
+            DrainageWetlandCostLayer drainageWetlandCostLayer,
             TransportNetworkRasterProvider transportRasterProvider,
             TransportNetworkVectorIndex transportVectorIndex,
             TransportRoutingProperties transportProperties,
@@ -183,6 +227,7 @@ public class CompositeCostSurfaceFactory {
         this.utilityCorridorCostLayer = utilityCorridorCostLayer;
         this.buildingFootprintCostLayer = buildingFootprintCostLayer;
         this.demographicCostLayer = demographicCostLayer;
+        this.drainageWetlandCostLayer = drainageWetlandCostLayer;
         this.transportRasterProvider = transportRasterProvider;
         this.transportVectorIndex = transportVectorIndex;
         this.transportProperties = transportProperties;
@@ -267,6 +312,9 @@ public class CompositeCostSurfaceFactory {
         if (demographicCostLayer != null) {
             baseTerrainList.add(demographicCostLayer);
         }
+        if (drainageWetlandCostLayer != null) {
+            baseTerrainList.add(drainageWetlandCostLayer);
+        }
         List<CostLayer> terrainAndSocialLayers = List.copyOf(baseTerrainList);
 
         double accessibilityPull =
@@ -303,6 +351,9 @@ public class CompositeCostSurfaceFactory {
         }
         if (demographicCostLayer != null) {
             surfaceLayers.add(demographicCostLayer);
+        }
+        if (drainageWetlandCostLayer != null) {
+            surfaceLayers.add(drainageWetlandCostLayer);
         }
         CompositeCostSurface surface = new CompositeCostSurface(surfaceLayers);
 

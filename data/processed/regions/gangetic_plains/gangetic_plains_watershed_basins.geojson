@@ -1,0 +1,181 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "watershedCode": "GAN-WS-01",
+        "name": "Indo-Gangetic Plains High-Density Agricultural & Canal Corridor (Barabanki-Ayodhya, UP) Catchment Basin #1",
+        "majorRiverSystem": "Ganga-Gomti Alluvial Basin",
+        "latMin": 26.55,
+        "latMax": 26.7125,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 1.4,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.1,
+              26.55
+            ],
+            [
+              82.25,
+              26.55
+            ],
+            [
+              82.25,
+              26.7125
+            ],
+            [
+              81.1,
+              26.7125
+            ],
+            [
+              81.1,
+              26.55
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-GANGETIC_PLAINS-02",
+        "watershedCode": "GAN-WS-02",
+        "name": "Indo-Gangetic Plains High-Density Agricultural & Canal Corridor (Barabanki-Ayodhya, UP) Catchment Basin #2",
+        "majorRiverSystem": "Ganga-Gomti Alluvial Basin",
+        "latMin": 26.7125,
+        "latMax": 26.875,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 1.4,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.1,
+              26.7125
+            ],
+            [
+              82.25,
+              26.7125
+            ],
+            [
+              82.25,
+              26.875
+            ],
+            [
+              81.1,
+              26.875
+            ],
+            [
+              81.1,
+              26.7125
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-GANGETIC_PLAINS-03",
+        "watershedCode": "GAN-WS-03",
+        "name": "Indo-Gangetic Plains High-Density Agricultural & Canal Corridor (Barabanki-Ayodhya, UP) Catchment Basin #3",
+        "majorRiverSystem": "Ganga-Gomti Alluvial Basin",
+        "latMin": 26.875,
+        "latMax": 27.0375,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 1.4,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.1,
+              26.875
+            ],
+            [
+              82.25,
+              26.875
+            ],
+            [
+              82.25,
+              27.0375
+            ],
+            [
+              81.1,
+              27.0375
+            ],
+            [
+              81.1,
+              26.875
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "watershedId": "WS-GANGETIC_PLAINS-04",
+        "watershedCode": "GAN-WS-04",
+        "name": "Indo-Gangetic Plains High-Density Agricultural & Canal Corridor (Barabanki-Ayodhya, UP) Catchment Basin #4",
+        "majorRiverSystem": "Ganga-Gomti Alluvial Basin",
+        "latMin": 27.0375,
+        "latMax": 27.2,
+        "areaSqKm": 680.0,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 80.0,
+        "meanSlopeDegrees": 1.4,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.1,
+              27.0375
+            ],
+            [
+              82.25,
+              27.0375
+            ],
+            [
+              82.25,
+              27.2
+            ],
+            [
+              81.1,
+              27.2
+            ],
+            [
+              81.1,
+              27.0375
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

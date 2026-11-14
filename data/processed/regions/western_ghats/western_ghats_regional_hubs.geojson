@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-WG-SHIRWAL",
+        "name": "Shirwal Industrial Belt",
+        "district": "Satara",
+        "centerLat": 18.152,
+        "centerLon": 73.978,
+        "tieInLat": 18.155714,
+        "tieInLon": 73.963482,
+        "tieInRoadRef": "SH-70",
+        "tieInName": "SH-70 / NH-48 Shirwal MIDC Interchange (OSM Vertex)",
+        "urbanPopulation": 48000,
+        "catchmentPopulation": 125000,
+        "industrialOutputFactor": 1.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.978,
+          18.152
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-WG-WAI",
+        "name": "Wai-Surur Agro-Industrial Hub",
+        "district": "Satara",
+        "centerLat": 17.952,
+        "centerLon": 73.915,
+        "tieInLat": 17.95083,
+        "tieInLon": 73.94351,
+        "tieInRoadRef": "SH-58",
+        "tieInName": "SH-58 / SH-63 Wai-Surur Phata Tie-In (OSM Vertex)",
+        "urbanPopulation": 54000,
+        "catchmentPopulation": 142000,
+        "industrialOutputFactor": 1.35
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.915,
+          17.952
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRP-TEST_LONG-001",
+        "ref": "NH-Arterial",
+        "name": "Test_Long National Highway Corridor",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": "PRIMARY_ARTERIAL"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            76.65,
+            22.0
+          ],
+          [
+            77.125,
+            21.79
+          ],
+          [
+            77.6,
+            22.21
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRP-TEST_LONG-002",
+        "ref": "IR-Mainline",
+        "name": "Test_Long Railway Trunk Line",
+        "category": "RAILWAY",
+        "hierarchyTier": "PASSENGER_AND_FREIGHT_TRUNK"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.02,
+            19.95
+          ],
+          [
+            77.0725,
+            24.05
+          ]
+        ]
+      }
+    }
+  ]
+}

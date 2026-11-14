@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-BUNDELKHAND-001",
+        "name": "Bundelkhand West Commercial Node",
+        "district": "Bundelkhand West",
+        "centerLat": 25.415,
+        "centerLon": 79.04,
+        "tieInLat": 25.42595,
+        "tieInLon": 79.04033,
+        "tieInRoadRef": "SH-Link-West",
+        "tieInName": "West Bypass Tie-In",
+        "urbanPopulation": 65000,
+        "catchmentPopulation": 140000,
+        "industrialOutputFactor": 1.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.04,
+          25.415
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-BUNDELKHAND-002",
+        "name": "Bundelkhand East Logistics Hub",
+        "district": "Bundelkhand East",
+        "centerLat": 25.485,
+        "centerLon": 79.88,
+        "tieInLat": 25.44437,
+        "tieInLon": 79.88247,
+        "tieInRoadRef": "MDR-Link-East",
+        "tieInName": "East Agro-Mandi Tie-In",
+        "urbanPopulation": 82000,
+        "catchmentPopulation": 185000,
+        "industrialOutputFactor": 1.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.88,
+          25.485
+        ]
+      }
+    }
+  ]
+}

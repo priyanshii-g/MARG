@@ -1,0 +1,41 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-TEST_LONG-001",
+        "name": "Test_Long 400kV Anchor Tower #1",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-TEST_LONG-400KV",
+        "voltageKv": 400.0,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          76.7,
+          21.16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TWR-TEST_LONG-002",
+        "name": "Test_Long 400kV Anchor Tower #2",
+        "assetType": "TOWER",
+        "parentLineId": "UTL-TEST_LONG-400KV",
+        "voltageKv": 400.0,
+        "safetyExclusionRadiusMeters": 25.0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.55,
+          21.37
+        ]
+      }
+    }
+  ]
+}

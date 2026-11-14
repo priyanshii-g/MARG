@@ -1,0 +1,284 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-CORRIDOR_2615_7685_2585_7740-001",
+        "catalogRef": "STL-CORRIDOR_2615_7685_2585_7740-001",
+        "name": "Corridor_2615_7685_2585_7740 Mandi Town",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_MUNICIPAL_TOWN",
+        "district": "Corridor_2615_7685_2585_7740 Central",
+        "polygonAreaHectares": 241.0,
+        "coreRadiusMeters": 950.0,
+        "builtUpDensityBuildingsPerHa": 12.0,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 8,
+        "centroidLat": 25.96,
+        "centroidLon": 76.9675
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.976102,
+              25.963613
+            ],
+            [
+              76.974143,
+              25.965858
+            ],
+            [
+              76.971172,
+              25.967211
+            ],
+            [
+              76.967642,
+              25.967467
+            ],
+            [
+              76.96409,
+              25.966585
+            ],
+            [
+              76.961058,
+              25.964702
+            ],
+            [
+              76.959006,
+              25.962102
+            ],
+            [
+              76.958248,
+              25.959182
+            ],
+            [
+              76.958898,
+              25.956387
+            ],
+            [
+              76.960857,
+              25.954142
+            ],
+            [
+              76.963828,
+              25.952789
+            ],
+            [
+              76.967358,
+              25.952533
+            ],
+            [
+              76.97091,
+              25.953415
+            ],
+            [
+              76.973942,
+              25.955298
+            ],
+            [
+              76.975994,
+              25.957898
+            ],
+            [
+              76.976752,
+              25.960818
+            ],
+            [
+              76.976102,
+              25.963613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-CORRIDOR_2615_7685_2585_7740-002",
+        "catalogRef": "STL-CORRIDOR_2615_7685_2585_7740-002",
+        "name": "Corridor_2615_7685_2585_7740 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "district": "Corridor_2615_7685_2585_7740 Central",
+        "polygonAreaHectares": 80.78,
+        "coreRadiusMeters": 550.0,
+        "builtUpDensityBuildingsPerHa": 6.5,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 8,
+        "centroidLat": 25.904,
+        "centroidLon": 77.146
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.150978,
+              25.906092
+            ],
+            [
+              77.149844,
+              25.907391
+            ],
+            [
+              77.148125,
+              25.908175
+            ],
+            [
+              77.146082,
+              25.908323
+            ],
+            [
+              77.144027,
+              25.907813
+            ],
+            [
+              77.142272,
+              25.906722
+            ],
+            [
+              77.141085,
+              25.905217
+            ],
+            [
+              77.140646,
+              25.903527
+            ],
+            [
+              77.141022,
+              25.901908
+            ],
+            [
+              77.142156,
+              25.900609
+            ],
+            [
+              77.143875,
+              25.899825
+            ],
+            [
+              77.145918,
+              25.899677
+            ],
+            [
+              77.147973,
+              25.900187
+            ],
+            [
+              77.149728,
+              25.901278
+            ],
+            [
+              77.150915,
+              25.902783
+            ],
+            [
+              77.151354,
+              25.904473
+            ],
+            [
+              77.150978,
+              25.906092
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-CORRIDOR_2615_7685_2585_7740-003",
+        "catalogRef": "STL-CORRIDOR_2615_7685_2585_7740-003",
+        "name": "Corridor_2615_7685_2585_7740 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "district": "Corridor_2615_7685_2585_7740 Central",
+        "polygonAreaHectares": 96.13,
+        "coreRadiusMeters": 600.0,
+        "builtUpDensityBuildingsPerHa": 6.5,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 8,
+        "centroidLat": 26.096,
+        "centroidLon": 77.272
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.277439,
+              26.098282
+            ],
+            [
+              77.2762,
+              26.0997
+            ],
+            [
+              77.274322,
+              26.100554
+            ],
+            [
+              77.27209,
+              26.100716
+            ],
+            [
+              77.269844,
+              26.100159
+            ],
+            [
+              77.267927,
+              26.098969
+            ],
+            [
+              77.266629,
+              26.097328
+            ],
+            [
+              77.26615,
+              26.095484
+            ],
+            [
+              77.266561,
+              26.093718
+            ],
+            [
+              77.2678,
+              26.0923
+            ],
+            [
+              77.269678,
+              26.091446
+            ],
+            [
+              77.27191,
+              26.091284
+            ],
+            [
+              77.274156,
+              26.091841
+            ],
+            [
+              77.276073,
+              26.093031
+            ],
+            [
+              77.277371,
+              26.094672
+            ],
+            [
+              77.27785,
+              26.096516
+            ],
+            [
+              77.277439,
+              26.098282
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

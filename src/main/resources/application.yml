@@ -246,6 +246,34 @@ marg:
         HIGH_VULNERABILITY_SIXTH_SCHEDULE_RURAL: 1.55
         CRITICAL_VULNERABILITY_TRIBAL_LIVELIHOOD_CLUSTER: 1.90
 
+    drainage:
+      block-protected-wetland-core: false
+      block-all-wetland-core: false
+      block-no-data: false
+      row-evaluation-half-width-meters: 30.0
+      wetland-direct-row-step-penalty-km-eq: 1.95
+      wetland-100m-buffer-step-penalty-km-eq: 0.75
+      wetland-250m-buffer-step-penalty-km-eq: 0.25
+      parallel-thalweg-step-penalty-km-eq: 1.65
+      watershed-divide-crossing-penalty-km-eq: 0.18
+      skew-crossing-penalty-factor: 0.45
+      node-penalties:
+        WELL_DRAINED_UPLAND_OR_NONE: 0.0
+        WATERSHED_VALLEY_DRAINAGE_SWALE: 0.18
+        LOCAL_WATERCOURSE_AND_SHEET_FLOW_ZONE: 0.60
+        SEASONAL_STREAM_AND_TORRENT_CORRIDOR: 1.15
+        IRRIGATION_CANAL_COMMAND_ROW: 1.55
+        SEASONAL_MARSH_AND_WETLAND_BUFFER: 1.65
+        NATURAL_OR_DESIGNATED_WETLAND_CORE: 3.85
+        NODATA: 0.0
+      crossing-base-costs-km-eq:
+        WETLAND: 2.40
+        SEASONAL_STREAM: 1.35
+        NATURAL_DRAINAGE_CHANNEL: 0.95
+        IRRIGATION_CANAL: 1.65
+        LOCAL_WATERCOURSE: 0.55
+        WATERSHED: 0.25
+
   terrain:
     slope-path: data/processed/dem/assam_slope_utm46.tif
 
@@ -286,13 +314,19 @@ marg:
   demographic:
     raster-path: data/processed/demographics/assam_population_density_utm46.tif
     tracts-geojson-path: data/processed/demographics/assam_population_demographics.geojson
+
+  drainage:
+    raster-path: data/processed/drainage/assam_drainage_wetland_utm46.tif
+    wetlands-geojson-path: data/processed/drainage/assam_wetlands_polygons.geojson
+    network-geojson-path: data/processed/drainage/assam_drainage_network.geojson
+    watersheds-geojson-path: data/processed/drainage/assam_watershed_basins.geojson
   bhuvan:
     lulc:
       sample-resolution-deg: 0.01
       query-half-size-deg: 0.004
       parallelism: 6
       cache-file: data/cache/bhuvan-lulc-samples.json
-      max-remote-samples: 4000
+      max-remote-samples: 20000
     flood-raster:
       cache-directory: data/cache/bhuvan-flood-wms
       tile-pixels: 512

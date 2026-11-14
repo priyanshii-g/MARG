@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WLC-IGP-01",
+        "name": "Kalyani-Gomti Riparian Nilgai & Sarus Crane Dispersal Corridor",
+        "corridorTier": "LOCAL_WILDLIFE_DISPERSAL_AXIS",
+        "targetSpecies": "Sarus Crane, Nilgai, Gangetic River Dolphin Riparian Buffer",
+        "designCorridorWidthMeters": 220.0,
+        "minimumPassageSpanMeters": 120.0,
+        "minimumClearHeightMeters": 5.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.465,
+            27.12
+          ],
+          [
+            81.49,
+            26.855
+          ],
+          [
+            81.515,
+            26.61
+          ]
+        ]
+      }
+    }
+  ]
+}

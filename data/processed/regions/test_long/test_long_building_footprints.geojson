@@ -1,0 +1,1493 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0001",
+        "name": "Test_Long Mandi Town Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 21.79,
+        "centroidLon": 76.971176
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.971252,
+              21.790013
+            ],
+            [
+              76.971223,
+              21.790046
+            ],
+            [
+              76.971166,
+              21.790053
+            ],
+            [
+              76.971115,
+              21.790029
+            ],
+            [
+              76.9711,
+              21.789987
+            ],
+            [
+              76.971129,
+              21.789954
+            ],
+            [
+              76.971186,
+              21.789947
+            ],
+            [
+              76.971237,
+              21.789971
+            ],
+            [
+              76.971252,
+              21.790013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0002",
+        "name": "Test_Long Mandi Town Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.792418,
+        "centroidLon": 76.970099
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.970175,
+              21.792431
+            ],
+            [
+              76.970146,
+              21.792464
+            ],
+            [
+              76.970089,
+              21.792471
+            ],
+            [
+              76.970038,
+              21.792447
+            ],
+            [
+              76.970023,
+              21.792405
+            ],
+            [
+              76.970052,
+              21.792372
+            ],
+            [
+              76.970109,
+              21.792365
+            ],
+            [
+              76.97016,
+              21.792389
+            ],
+            [
+              76.970175,
+              21.792431
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0003",
+        "name": "Test_Long Mandi Town Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.793419,
+        "centroidLon": 76.9675
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.967576,
+              21.793432
+            ],
+            [
+              76.967547,
+              21.793465
+            ],
+            [
+              76.96749,
+              21.793472
+            ],
+            [
+              76.967439,
+              21.793448
+            ],
+            [
+              76.967424,
+              21.793406
+            ],
+            [
+              76.967453,
+              21.793373
+            ],
+            [
+              76.96751,
+              21.793366
+            ],
+            [
+              76.967561,
+              21.79339
+            ],
+            [
+              76.967576,
+              21.793432
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0004",
+        "name": "Test_Long Mandi Town Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.792418,
+        "centroidLon": 76.964901
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.964977,
+              21.792431
+            ],
+            [
+              76.964948,
+              21.792464
+            ],
+            [
+              76.964891,
+              21.792471
+            ],
+            [
+              76.96484,
+              21.792447
+            ],
+            [
+              76.964825,
+              21.792405
+            ],
+            [
+              76.964854,
+              21.792372
+            ],
+            [
+              76.964911,
+              21.792365
+            ],
+            [
+              76.964962,
+              21.792389
+            ],
+            [
+              76.964977,
+              21.792431
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0005",
+        "name": "Test_Long Mandi Town Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.79,
+        "centroidLon": 76.963824
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.9639,
+              21.790013
+            ],
+            [
+              76.963871,
+              21.790046
+            ],
+            [
+              76.963814,
+              21.790053
+            ],
+            [
+              76.963763,
+              21.790029
+            ],
+            [
+              76.963748,
+              21.789987
+            ],
+            [
+              76.963777,
+              21.789954
+            ],
+            [
+              76.963834,
+              21.789947
+            ],
+            [
+              76.963885,
+              21.789971
+            ],
+            [
+              76.9639,
+              21.790013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0006",
+        "name": "Test_Long Mandi Town Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.787582,
+        "centroidLon": 76.964901
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.964977,
+              21.787595
+            ],
+            [
+              76.964948,
+              21.787628
+            ],
+            [
+              76.964891,
+              21.787635
+            ],
+            [
+              76.96484,
+              21.787611
+            ],
+            [
+              76.964825,
+              21.787569
+            ],
+            [
+              76.964854,
+              21.787536
+            ],
+            [
+              76.964911,
+              21.787529
+            ],
+            [
+              76.964962,
+              21.787553
+            ],
+            [
+              76.964977,
+              21.787595
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0007",
+        "name": "Test_Long Mandi Town Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.786581,
+        "centroidLon": 76.9675
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.967576,
+              21.786594
+            ],
+            [
+              76.967547,
+              21.786627
+            ],
+            [
+              76.96749,
+              21.786634
+            ],
+            [
+              76.967439,
+              21.78661
+            ],
+            [
+              76.967424,
+              21.786568
+            ],
+            [
+              76.967453,
+              21.786535
+            ],
+            [
+              76.96751,
+              21.786528
+            ],
+            [
+              76.967561,
+              21.786552
+            ],
+            [
+              76.967576,
+              21.786594
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0008",
+        "name": "Test_Long Mandi Town Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-001",
+        "settlementName": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.787582,
+        "centroidLon": 76.970099
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.970175,
+              21.787595
+            ],
+            [
+              76.970146,
+              21.787628
+            ],
+            [
+              76.970089,
+              21.787635
+            ],
+            [
+              76.970038,
+              21.787611
+            ],
+            [
+              76.970023,
+              21.787569
+            ],
+            [
+              76.970052,
+              21.787536
+            ],
+            [
+              76.970109,
+              21.787529
+            ],
+            [
+              76.97016,
+              21.787553
+            ],
+            [
+              76.970175,
+              21.787595
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0009",
+        "name": "Test_Long Rural Habitation A Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.496,
+        "centroidLon": 77.148124
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.1482,
+              21.496013
+            ],
+            [
+              77.148171,
+              21.496046
+            ],
+            [
+              77.148114,
+              21.496053
+            ],
+            [
+              77.148063,
+              21.496029
+            ],
+            [
+              77.148048,
+              21.495987
+            ],
+            [
+              77.148077,
+              21.495954
+            ],
+            [
+              77.148134,
+              21.495947
+            ],
+            [
+              77.148185,
+              21.495971
+            ],
+            [
+              77.1482,
+              21.496013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0010",
+        "name": "Test_Long Rural Habitation A Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.4974,
+        "centroidLon": 77.147502
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.147578,
+              21.497413
+            ],
+            [
+              77.147549,
+              21.497446
+            ],
+            [
+              77.147492,
+              21.497453
+            ],
+            [
+              77.147441,
+              21.497429
+            ],
+            [
+              77.147426,
+              21.497387
+            ],
+            [
+              77.147455,
+              21.497354
+            ],
+            [
+              77.147512,
+              21.497347
+            ],
+            [
+              77.147563,
+              21.497371
+            ],
+            [
+              77.147578,
+              21.497413
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0011",
+        "name": "Test_Long Rural Habitation A Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.49798,
+        "centroidLon": 77.146
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.146076,
+              21.497993
+            ],
+            [
+              77.146047,
+              21.498026
+            ],
+            [
+              77.14599,
+              21.498033
+            ],
+            [
+              77.145939,
+              21.498009
+            ],
+            [
+              77.145924,
+              21.497967
+            ],
+            [
+              77.145953,
+              21.497934
+            ],
+            [
+              77.14601,
+              21.497927
+            ],
+            [
+              77.146061,
+              21.497951
+            ],
+            [
+              77.146076,
+              21.497993
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0012",
+        "name": "Test_Long Rural Habitation A Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.4974,
+        "centroidLon": 77.144498
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.144574,
+              21.497413
+            ],
+            [
+              77.144545,
+              21.497446
+            ],
+            [
+              77.144488,
+              21.497453
+            ],
+            [
+              77.144437,
+              21.497429
+            ],
+            [
+              77.144422,
+              21.497387
+            ],
+            [
+              77.144451,
+              21.497354
+            ],
+            [
+              77.144508,
+              21.497347
+            ],
+            [
+              77.144559,
+              21.497371
+            ],
+            [
+              77.144574,
+              21.497413
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0013",
+        "name": "Test_Long Rural Habitation A Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.496,
+        "centroidLon": 77.143876
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.143952,
+              21.496013
+            ],
+            [
+              77.143923,
+              21.496046
+            ],
+            [
+              77.143866,
+              21.496053
+            ],
+            [
+              77.143815,
+              21.496029
+            ],
+            [
+              77.1438,
+              21.495987
+            ],
+            [
+              77.143829,
+              21.495954
+            ],
+            [
+              77.143886,
+              21.495947
+            ],
+            [
+              77.143937,
+              21.495971
+            ],
+            [
+              77.143952,
+              21.496013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0014",
+        "name": "Test_Long Rural Habitation A Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.4946,
+        "centroidLon": 77.144498
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.144574,
+              21.494613
+            ],
+            [
+              77.144545,
+              21.494646
+            ],
+            [
+              77.144488,
+              21.494653
+            ],
+            [
+              77.144437,
+              21.494629
+            ],
+            [
+              77.144422,
+              21.494587
+            ],
+            [
+              77.144451,
+              21.494554
+            ],
+            [
+              77.144508,
+              21.494547
+            ],
+            [
+              77.144559,
+              21.494571
+            ],
+            [
+              77.144574,
+              21.494613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0015",
+        "name": "Test_Long Rural Habitation A Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.49402,
+        "centroidLon": 77.146
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.146076,
+              21.494033
+            ],
+            [
+              77.146047,
+              21.494066
+            ],
+            [
+              77.14599,
+              21.494073
+            ],
+            [
+              77.145939,
+              21.494049
+            ],
+            [
+              77.145924,
+              21.494007
+            ],
+            [
+              77.145953,
+              21.493974
+            ],
+            [
+              77.14601,
+              21.493967
+            ],
+            [
+              77.146061,
+              21.493991
+            ],
+            [
+              77.146076,
+              21.494033
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0016",
+        "name": "Test_Long Rural Habitation A Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-002",
+        "settlementName": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 21.4946,
+        "centroidLon": 77.147502
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.147578,
+              21.494613
+            ],
+            [
+              77.147549,
+              21.494646
+            ],
+            [
+              77.147492,
+              21.494653
+            ],
+            [
+              77.147441,
+              21.494629
+            ],
+            [
+              77.147426,
+              21.494587
+            ],
+            [
+              77.147455,
+              21.494554
+            ],
+            [
+              77.147512,
+              21.494547
+            ],
+            [
+              77.147563,
+              21.494571
+            ],
+            [
+              77.147578,
+              21.494613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0017",
+        "name": "Test_Long Agro Cluster B Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.504,
+        "centroidLon": 77.274334
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.274411,
+              22.504013
+            ],
+            [
+              77.274381,
+              22.504046
+            ],
+            [
+              77.274324,
+              22.504053
+            ],
+            [
+              77.274273,
+              22.504029
+            ],
+            [
+              77.274257,
+              22.503987
+            ],
+            [
+              77.274287,
+              22.503954
+            ],
+            [
+              77.274344,
+              22.503947
+            ],
+            [
+              77.274395,
+              22.503971
+            ],
+            [
+              77.274411,
+              22.504013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0018",
+        "name": "Test_Long Agro Cluster B Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.505527,
+        "centroidLon": 77.27365
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.273727,
+              22.50554
+            ],
+            [
+              77.273697,
+              22.505573
+            ],
+            [
+              77.27364,
+              22.50558
+            ],
+            [
+              77.273589,
+              22.505556
+            ],
+            [
+              77.273573,
+              22.505514
+            ],
+            [
+              77.273603,
+              22.505481
+            ],
+            [
+              77.27366,
+              22.505474
+            ],
+            [
+              77.273711,
+              22.505498
+            ],
+            [
+              77.273727,
+              22.50554
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0019",
+        "name": "Test_Long Agro Cluster B Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.50616,
+        "centroidLon": 77.272
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.272077,
+              22.506173
+            ],
+            [
+              77.272047,
+              22.506206
+            ],
+            [
+              77.27199,
+              22.506213
+            ],
+            [
+              77.271939,
+              22.506189
+            ],
+            [
+              77.271923,
+              22.506147
+            ],
+            [
+              77.271953,
+              22.506114
+            ],
+            [
+              77.27201,
+              22.506107
+            ],
+            [
+              77.272061,
+              22.506131
+            ],
+            [
+              77.272077,
+              22.506173
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0020",
+        "name": "Test_Long Agro Cluster B Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.505527,
+        "centroidLon": 77.27035
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.270427,
+              22.50554
+            ],
+            [
+              77.270397,
+              22.505573
+            ],
+            [
+              77.27034,
+              22.50558
+            ],
+            [
+              77.270289,
+              22.505556
+            ],
+            [
+              77.270273,
+              22.505514
+            ],
+            [
+              77.270303,
+              22.505481
+            ],
+            [
+              77.27036,
+              22.505474
+            ],
+            [
+              77.270411,
+              22.505498
+            ],
+            [
+              77.270427,
+              22.50554
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0021",
+        "name": "Test_Long Agro Cluster B Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.504,
+        "centroidLon": 77.269666
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.269743,
+              22.504013
+            ],
+            [
+              77.269713,
+              22.504046
+            ],
+            [
+              77.269656,
+              22.504053
+            ],
+            [
+              77.269605,
+              22.504029
+            ],
+            [
+              77.269589,
+              22.503987
+            ],
+            [
+              77.269619,
+              22.503954
+            ],
+            [
+              77.269676,
+              22.503947
+            ],
+            [
+              77.269727,
+              22.503971
+            ],
+            [
+              77.269743,
+              22.504013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0022",
+        "name": "Test_Long Agro Cluster B Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.502473,
+        "centroidLon": 77.27035
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.270427,
+              22.502486
+            ],
+            [
+              77.270397,
+              22.502519
+            ],
+            [
+              77.27034,
+              22.502526
+            ],
+            [
+              77.270289,
+              22.502502
+            ],
+            [
+              77.270273,
+              22.50246
+            ],
+            [
+              77.270303,
+              22.502427
+            ],
+            [
+              77.27036,
+              22.50242
+            ],
+            [
+              77.270411,
+              22.502444
+            ],
+            [
+              77.270427,
+              22.502486
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0023",
+        "name": "Test_Long Agro Cluster B Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.50184,
+        "centroidLon": 77.272
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.272077,
+              22.501853
+            ],
+            [
+              77.272047,
+              22.501886
+            ],
+            [
+              77.27199,
+              22.501893
+            ],
+            [
+              77.271939,
+              22.501869
+            ],
+            [
+              77.271923,
+              22.501827
+            ],
+            [
+              77.271953,
+              22.501794
+            ],
+            [
+              77.27201,
+              22.501787
+            ],
+            [
+              77.272061,
+              22.501811
+            ],
+            [
+              77.272077,
+              22.501853
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-TEST_LONG-0024",
+        "name": "Test_Long Agro Cluster B Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-TEST_LONG-003",
+        "settlementName": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Test_Long Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.502473,
+        "centroidLon": 77.27365
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.273727,
+              22.502486
+            ],
+            [
+              77.273697,
+              22.502519
+            ],
+            [
+              77.27364,
+              22.502526
+            ],
+            [
+              77.273589,
+              22.502502
+            ],
+            [
+              77.273573,
+              22.50246
+            ],
+            [
+              77.273603,
+              22.502427
+            ],
+            [
+              77.27366,
+              22.50242
+            ],
+            [
+              77.273711,
+              22.502444
+            ],
+            [
+              77.273727,
+              22.502486
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

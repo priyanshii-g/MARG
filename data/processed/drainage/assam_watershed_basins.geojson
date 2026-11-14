@@ -1,0 +1,366 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong Hydrologic Watershed Catchments (EPSG:32646 / CRS84)",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "WS-01-KOHORA-DIPHLU",
+      "properties": {
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedCode": "BRAH-S-01",
+        "name": "Kohora-Diphlu Northern Foothill Watershed",
+        "majorRiverSystem": "Brahmaputra South Bank / Diphlu System",
+        "latMin": 26.515,
+        "latMax": 26.655,
+        "runoffCoefficient": 0.58,
+        "timeOfConcentrationMinutes": 78.0,
+        "meanSlopeDegrees": 8.4,
+        "drainageDensityKmPerSqKm": 2.45,
+        "floodAndBackwaterSensitivity": "HIGH_FOOTHILL_PIEDMONT_FLASH_RUNOFF",
+        "areaSqKm": 1032.6
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              26.515
+            ],
+            [
+              93.755,
+              26.515
+            ],
+            [
+              93.755,
+              26.655
+            ],
+            [
+              93.095,
+              26.655
+            ],
+            [
+              93.095,
+              26.515
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-02-BAGORI-UPPER-KALIANI",
+      "properties": {
+        "watershedId": "WS-02-BAGORI-UPPER-KALIANI",
+        "watershedCode": "DHAN-W-02",
+        "name": "Bagori-Upper Kaliani Escarpment Watershed",
+        "majorRiverSystem": "Dhansiri-Kaliani Upper Catchment",
+        "latMin": 26.425,
+        "latMax": 26.515,
+        "runoffCoefficient": 0.64,
+        "timeOfConcentrationMinutes": 65.0,
+        "meanSlopeDegrees": 14.2,
+        "drainageDensityKmPerSqKm": 2.85,
+        "floodAndBackwaterSensitivity": "HIGH_HILL_TORRENT_DEBRIS_FLOW",
+        "areaSqKm": 669.73
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              26.425
+            ],
+            [
+              93.755,
+              26.425
+            ],
+            [
+              93.755,
+              26.515
+            ],
+            [
+              93.095,
+              26.515
+            ],
+            [
+              93.095,
+              26.425
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-03-KALIANI-DOLAMARA",
+      "properties": {
+        "watershedId": "WS-03-KALIANI-DOLAMARA",
+        "watershedCode": "DHAN-C-03",
+        "name": "Kaliani-Dolamara Central Plateau Watershed",
+        "majorRiverSystem": "Kaliani River Basin (Dhansiri System)",
+        "latMin": 26.325,
+        "latMax": 26.425,
+        "runoffCoefficient": 0.52,
+        "timeOfConcentrationMinutes": 95.0,
+        "meanSlopeDegrees": 9.8,
+        "drainageDensityKmPerSqKm": 2.3,
+        "floodAndBackwaterSensitivity": "MODERATE_PLATEAU_VALLEY_PONDING",
+        "areaSqKm": 743.08
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              26.325
+            ],
+            [
+              93.755,
+              26.325
+            ],
+            [
+              93.755,
+              26.425
+            ],
+            [
+              93.095,
+              26.425
+            ],
+            [
+              93.095,
+              26.325
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-04-NAMBOR-GARAMPANI",
+      "properties": {
+        "watershedId": "WS-04-NAMBOR-GARAMPANI",
+        "watershedCode": "DHAN-C-04",
+        "name": "Nambor-Garampani Forested Valley Watershed",
+        "majorRiverSystem": "Nambor-Dhansiri Tributary Basin",
+        "latMin": 26.225,
+        "latMax": 26.325,
+        "runoffCoefficient": 0.48,
+        "timeOfConcentrationMinutes": 110.0,
+        "meanSlopeDegrees": 7.6,
+        "drainageDensityKmPerSqKm": 2.15,
+        "floodAndBackwaterSensitivity": "MODERATE_FOREST_SWALE_SHEET_FLOW",
+        "areaSqKm": 743.68
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              26.225
+            ],
+            [
+              93.755,
+              26.225
+            ],
+            [
+              93.755,
+              26.325
+            ],
+            [
+              93.095,
+              26.325
+            ],
+            [
+              93.095,
+              26.225
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-05-DEOPANI-CHOKIHOLA",
+      "properties": {
+        "watershedId": "WS-05-DEOPANI-CHOKIHOLA",
+        "watershedCode": "DHAN-S-05",
+        "name": "Deopani-Chokihola Alluvial Piedmont Watershed",
+        "majorRiverSystem": "Deopani-Dhansiri Tributary Basin",
+        "latMin": 26.135,
+        "latMax": 26.225,
+        "runoffCoefficient": 0.55,
+        "timeOfConcentrationMinutes": 88.0,
+        "meanSlopeDegrees": 6.9,
+        "drainageDensityKmPerSqKm": 2.5,
+        "floodAndBackwaterSensitivity": "HIGH_ALLUVIAL_FAN_BRAIDED_DRAINAGE",
+        "areaSqKm": 671.27
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              26.135
+            ],
+            [
+              93.755,
+              26.135
+            ],
+            [
+              93.755,
+              26.225
+            ],
+            [
+              93.095,
+              26.225
+            ],
+            [
+              93.095,
+              26.135
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-06-UPPER-JAMUNA-DOKMOKA",
+      "properties": {
+        "watershedId": "WS-06-UPPER-JAMUNA-DOKMOKA",
+        "watershedCode": "KOPI-J-06",
+        "name": "Upper Jamuna-Dokmoka Irrigation Command Watershed",
+        "majorRiverSystem": "Jamuna-Kopili River Basin",
+        "latMin": 26.035,
+        "latMax": 26.135,
+        "runoffCoefficient": 0.46,
+        "timeOfConcentrationMinutes": 125.0,
+        "meanSlopeDegrees": 5.2,
+        "drainageDensityKmPerSqKm": 2.65,
+        "floodAndBackwaterSensitivity": "HIGH_IRRIGATION_COMMAND_WATERLOGGING",
+        "areaSqKm": 744.79
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              26.035
+            ],
+            [
+              93.755,
+              26.035
+            ],
+            [
+              93.755,
+              26.135
+            ],
+            [
+              93.095,
+              26.135
+            ],
+            [
+              93.095,
+              26.035
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-07-BORJAN-LONGNIT",
+      "properties": {
+        "watershedId": "WS-07-BORJAN-LONGNIT",
+        "watershedCode": "KOPI-J-07",
+        "name": "Borjan-Longnit Hill Torrent Watershed",
+        "majorRiverSystem": "Borjan-Jamuna Tributary Basin",
+        "latMin": 25.935,
+        "latMax": 26.035,
+        "runoffCoefficient": 0.6,
+        "timeOfConcentrationMinutes": 74.0,
+        "meanSlopeDegrees": 11.5,
+        "drainageDensityKmPerSqKm": 2.7,
+        "floodAndBackwaterSensitivity": "HIGH_MONSOON_NULLAH_SCOUR",
+        "areaSqKm": 745.38
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              25.935
+            ],
+            [
+              93.755,
+              25.935
+            ],
+            [
+              93.755,
+              26.035
+            ],
+            [
+              93.095,
+              26.035
+            ],
+            [
+              93.095,
+              25.935
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WS-08-DIPHU-MANJA-DHANSIRI",
+      "properties": {
+        "watershedId": "WS-08-DIPHU-MANJA-DHANSIRI",
+        "watershedCode": "DHAN-U-08",
+        "name": "Diphu-Manja-Upper Dhansiri Headwater Watershed",
+        "majorRiverSystem": "Diphu-Dillai-Dhansiri Headwater Basin",
+        "latMin": 25.74,
+        "latMax": 25.935,
+        "runoffCoefficient": 0.57,
+        "timeOfConcentrationMinutes": 82.0,
+        "meanSlopeDegrees": 10.4,
+        "drainageDensityKmPerSqKm": 2.55,
+        "floodAndBackwaterSensitivity": "MODERATE_TO_HIGH_VALLEY_THALWEG_DAMMING",
+        "areaSqKm": 1440.99
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.095,
+              25.74
+            ],
+            [
+              93.755,
+              25.74
+            ],
+            [
+              93.755,
+              25.935
+            ],
+            [
+              93.095,
+              25.935
+            ],
+            [
+              93.095,
+              25.74
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

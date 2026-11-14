@@ -1,0 +1,67 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTL-WG-400KV",
+        "name": "Koyna-Lonikand 400kV D/C EHV Transmission Line",
+        "utilityTier": "EHV_400KV_TRANSMISSION",
+        "voltageKv": 400,
+        "voltageInferred": false,
+        "circuitConfiguration": "D/C",
+        "designRowWidthMeters": 46.0,
+        "minimumConductorClearanceMeters": 8.84,
+        "typicalSpanMeters": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.76,
+            18.105
+          ],
+          [
+            73.96,
+            18.11
+          ],
+          [
+            74.18,
+            18.115
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTL-WG-220KV",
+        "name": "Satara-Phaltan 220kV Subtransmission Line",
+        "utilityTier": "EHV_220KV_TRANSMISSION",
+        "voltageKv": 220,
+        "voltageInferred": false,
+        "circuitConfiguration": "D/C",
+        "designRowWidthMeters": 35.0,
+        "minimumConductorClearanceMeters": 7.02,
+        "typicalSpanMeters": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.78,
+            17.785
+          ],
+          [
+            73.99,
+            17.79
+          ],
+          [
+            74.19,
+            17.795
+          ]
+        ]
+      }
+    }
+  ]
+}

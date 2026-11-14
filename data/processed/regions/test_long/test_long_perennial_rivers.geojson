@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIV-TEST_LONG-001",
+        "name": "Test_Long Main River Axis",
+        "riverClass": "MAJOR_PERENNIAL_RIVER",
+        "basin": "Test_Long River Basin",
+        "designChannelWidthMeters": 280.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            76.65,
+            22.924
+          ],
+          [
+            77.125,
+            22.63
+          ],
+          [
+            77.6,
+            22.756
+          ]
+        ]
+      }
+    }
+  ]
+}

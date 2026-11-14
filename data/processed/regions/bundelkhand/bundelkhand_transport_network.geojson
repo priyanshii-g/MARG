@@ -1,0 +1,55 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRP-BUNDELKHAND-001",
+        "ref": "NH-Arterial",
+        "name": "Bundelkhand National Highway Corridor",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": "PRIMARY_ARTERIAL"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.25,
+            25.45
+          ],
+          [
+            79.4,
+            25.415
+          ],
+          [
+            80.55,
+            25.485
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "TRP-BUNDELKHAND-002",
+        "ref": "IR-Mainline",
+        "name": "Bundelkhand Railway Trunk Line",
+        "category": "RAILWAY",
+        "hierarchyTier": "PASSENGER_AND_FREIGHT_TRUNK"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            79.16,
+            25.15
+          ],
+          [
+            79.28,
+            25.75
+          ]
+        ]
+      }
+    }
+  ]
+}

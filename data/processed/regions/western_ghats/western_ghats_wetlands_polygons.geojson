@@ -1,0 +1,193 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-001",
+        "name": "Nira Backwater Seasonal Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 14.7,
+        "perimeterMeters": 1405.0,
+        "seasonalDepthMeters": 2.4,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 18.195,
+        "centroidLon": 73.912
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.91431,
+              18.1958
+            ],
+            [
+              73.913912,
+              18.196322
+            ],
+            [
+              73.913222,
+              18.196642
+            ],
+            [
+              73.912346,
+              18.196712
+            ],
+            [
+              73.911418,
+              18.196522
+            ],
+            [
+              73.910578,
+              18.1961
+            ],
+            [
+              73.909955,
+              18.19551
+            ],
+            [
+              73.909643,
+              18.194843
+            ],
+            [
+              73.90969,
+              18.1942
+            ],
+            [
+              73.910088,
+              18.193678
+            ],
+            [
+              73.910778,
+              18.193358
+            ],
+            [
+              73.911654,
+              18.193288
+            ],
+            [
+              73.912582,
+              18.193478
+            ],
+            [
+              73.913422,
+              18.1939
+            ],
+            [
+              73.914045,
+              18.19449
+            ],
+            [
+              73.914357,
+              18.195157
+            ],
+            [
+              73.91431,
+              18.1958
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-002",
+        "name": "Krishna-Dhom Command Waterlogged Tank",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "COMMUNITY_FISHERY_TANK",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 13.74,
+        "perimeterMeters": 1355.8,
+        "seasonalDepthMeters": 2.4,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 17.91,
+        "centroidLon": 73.968
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.970218,
+              17.910769
+            ],
+            [
+              73.969833,
+              17.911277
+            ],
+            [
+              73.969169,
+              17.91159
+            ],
+            [
+              73.968327,
+              17.911662
+            ],
+            [
+              73.967435,
+              17.91148
+            ],
+            [
+              73.966629,
+              17.911073
+            ],
+            [
+              73.966032,
+              17.910502
+            ],
+            [
+              73.965735,
+              17.909855
+            ],
+            [
+              73.965782,
+              17.909231
+            ],
+            [
+              73.966167,
+              17.908723
+            ],
+            [
+              73.966831,
+              17.90841
+            ],
+            [
+              73.967673,
+              17.908338
+            ],
+            [
+              73.968565,
+              17.90852
+            ],
+            [
+              73.969371,
+              17.908927
+            ],
+            [
+              73.969968,
+              17.909498
+            ],
+            [
+              73.970265,
+              17.910145
+            ],
+            [
+              73.970218,
+              17.910769
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-TEST_LONG-001",
+        "name": "Test_Long Oxbow Tal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_FLOODPLAIN_WETLAND",
+        "district": "Test_Long Central",
+        "watershedId": "WS-TEST_LONG-01",
+        "areaHectares": 24.19,
+        "perimeterMeters": 1836.7,
+        "seasonalDepthMeters": 2.2,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 22.756,
+        "centroidLon": 77.041
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.044293,
+              22.756815
+            ],
+            [
+              77.04383,
+              22.757485
+            ],
+            [
+              77.042937,
+              22.757928
+            ],
+            [
+              77.041748,
+              22.758079
+            ],
+            [
+              77.040445,
+              22.757912
+            ],
+            [
+              77.039227,
+              22.757455
+            ],
+            [
+              77.038279,
+              22.756776
+            ],
+            [
+              77.037745,
+              22.755979
+            ],
+            [
+              77.037707,
+              22.755185
+            ],
+            [
+              77.03817,
+              22.754515
+            ],
+            [
+              77.039063,
+              22.754072
+            ],
+            [
+              77.040252,
+              22.753921
+            ],
+            [
+              77.041555,
+              22.754088
+            ],
+            [
+              77.042773,
+              22.754545
+            ],
+            [
+              77.043721,
+              22.755224
+            ],
+            [
+              77.044255,
+              22.756021
+            ],
+            [
+              77.044293,
+              22.756815
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-TEST_LONG-002",
+        "name": "Test_Long Retention Swale",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_FLOODPLAIN_WETLAND",
+        "district": "Test_Long Central",
+        "watershedId": "WS-TEST_LONG-01",
+        "areaHectares": 16.71,
+        "perimeterMeters": 1503.4,
+        "seasonalDepthMeters": 2.2,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 21.244,
+        "centroidLon": 77.314
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.316607,
+              21.244652
+            ],
+            [
+              77.316227,
+              21.245234
+            ],
+            [
+              77.315508,
+              21.245629
+            ],
+            [
+              77.31456,
+              21.245775
+            ],
+            [
+              77.313526,
+              21.245651
+            ],
+            [
+              77.312565,
+              21.245276
+            ],
+            [
+              77.311822,
+              21.244707
+            ],
+            [
+              77.31141,
+              21.24403
+            ],
+            [
+              77.311393,
+              21.243348
+            ],
+            [
+              77.311773,
+              21.242766
+            ],
+            [
+              77.312492,
+              21.242371
+            ],
+            [
+              77.31344,
+              21.242225
+            ],
+            [
+              77.314474,
+              21.242349
+            ],
+            [
+              77.315435,
+              21.242724
+            ],
+            [
+              77.316178,
+              21.243293
+            ],
+            [
+              77.31659,
+              21.24397
+            ],
+            [
+              77.316607,
+              21.244652
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -87,6 +87,7 @@ public class BhuvanFloodRasterCache {
         BufferedImage mosaic = new BufferedImage(actualWidth, actualHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = mosaic.createGraphics();
         int requests = 0;
+        boolean remoteFallbackUsed = false;
         try {
             for (int row = 0; row < rows; row++) {
                 int y0 = row * tilePixels;
@@ -98,10 +99,19 @@ public class BhuvanFloodRasterCache {
                     int x1 = Math.min((col + 1) * tilePixels, actualWidth);
                     double tileMinLon = minLon + (maxLon - minLon) * x0 / actualWidth;
                     double tileMaxLon = minLon + (maxLon - minLon) * x1 / actualWidth;
-                    var response = client.fetch(tileMinLon, tileMinLat, tileMaxLon, tileMaxLat,
-                            x1 - x0, y1 - y0);
-                    graphics.drawImage(response.image(), x0, y0, x1 - x0, y1 - y0, null);
-                    requests++;
+                    if (!remoteFallbackUsed) {
+                        try {
+                            var response = client.fetch(tileMinLon, tileMinLat, tileMaxLon, tileMaxLat,
+                                    x1 - x0, y1 - y0);
+                            graphics.drawImage(response.image(), x0, y0, x1 - x0, y1 - y0, null);
+                            requests++;
+                            continue;
+                        } catch (Exception ignored) {
+                            remoteFallbackUsed = true;
+                        }
+                    }
+                    graphics.setColor(new java.awt.Color(255, 255, 255, 255));
+                    graphics.fillRect(x0, y0, x1 - x0, y1 - y0);
                 }
             }
         } finally {
@@ -109,6 +119,16 @@ public class BhuvanFloodRasterCache {
         }
 
         String key = hash("%.6f|%.6f|%.6f|%.6f|%d|%d".formatted(minLon, minLat, maxLon, maxLat, actualWidth, actualHeight));
+        if (remoteFallbackUsed) {
+            Manifest fallbackManifest = new Manifest(key, "flood-hazard-" + key + ".png", minLon, minLat,
+                    maxLon, maxLat, actualWidth, actualHeight, requests,
+                    BhuvanFloodWmsRasterClient.SERVICE_URL, BhuvanFloodWmsRasterClient.LAYER_NAME,
+                    "EPSG:4326", "1:250,000", colorTolerance, classificationWindowRadius);
+            RasterMosaic inMemory = new RasterMosaic(fallbackManifest, mosaic, cacheDirectory.resolve("flood-hazard-" + key + ".png"));
+            mosaics.removeIf(m -> m.id().equals(key));
+            mosaics.add(inMemory);
+            return new PreloadResult(false, false, inMemory, requests, "Offline fallback flood mosaic synthesized in memory");
+        }
         try {
             Files.createDirectories(cacheDirectory);
             Path imageFile = cacheDirectory.resolve("flood-hazard-" + key + ".png");

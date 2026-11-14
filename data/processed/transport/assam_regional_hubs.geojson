@@ -20,20 +20,20 @@
         "urbanPopulation": 68000,
         "catchmentPopulation": 92000,
         "industrialOutputFactor": 1.5,
-        "tieInLat": 25.851,
-        "tieInLon": 93.434,
+        "tieInLat": 25.849578,
+        "tieInLon": 93.440105,
         "tieInRoadRef": "NH-329",
-        "tieInName": "Diphu Northern Ring Bypass (NH-329)",
+        "tieInName": "Diphu Northern Highway Tie-In (NH-329 OSM)",
         "centerUtmX": 543091.8,
         "centerUtmY": 2858035.5,
-        "tieInUtmX": 543488.6,
-        "tieInUtmY": 2859255.0
+        "tieInUtmX": 544100.9,
+        "tieInUtmY": 2859099.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.434,
-          25.851
+          93.440105,
+          25.849578
         ]
       }
     },
@@ -49,20 +49,20 @@
         "urbanPopulation": 34000,
         "catchmentPopulation": 64000,
         "industrialOutputFactor": 1.85,
-        "tieInLat": 26.612,
-        "tieInLon": 93.507,
+        "tieInLat": 26.640987,
+        "tieInLon": 93.593946,
         "tieInRoadRef": "NH-715",
-        "tieInName": "Sapjuri-Bokakhat Western Arterial Junction (NH-715 / SH-35)",
+        "tieInName": "Bokakhat Bypass Junction (NH-715 OSM)",
         "centerUtmX": 559520.1,
         "centerUtmY": 2946480.7,
-        "tieInUtmX": 550474.0,
-        "tieInUtmY": 2943561.9
+        "tieInUtmX": 559115.1,
+        "tieInUtmY": 2946809.7
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.507,
-          26.612
+          93.593946,
+          26.640987
         ]
       }
     },
@@ -78,20 +78,20 @@
         "urbanPopulation": 24000,
         "catchmentPopulation": 52000,
         "industrialOutputFactor": 1.3,
-        "tieInLat": 26.077,
-        "tieInLon": 93.258,
+        "tieInLat": 26.061298,
+        "tieInLon": 93.206996,
         "tieInRoadRef": "NH-29W",
-        "tieInName": "Howraghat Eastern Bypass Junction (NH-29W / SH-19)",
+        "tieInName": "Howraghat Western Bypass Junction (NH-29W OSM)",
         "centerUtmX": 524503.5,
         "centerUtmY": 2884012.7,
-        "tieInUtmX": 525803.2,
-        "tieInUtmY": 2884236.7
+        "tieInUtmX": 520704.9,
+        "tieInUtmY": 2882488.7
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.258,
-          26.077
+          93.206996,
+          26.061298
         ]
       }
     },
@@ -107,20 +107,20 @@
         "urbanPopulation": 22000,
         "catchmentPopulation": 48000,
         "industrialOutputFactor": 1.35,
-        "tieInLat": 26.198,
-        "tieInLon": 93.278,
-        "tieInRoadRef": "NH-29",
-        "tieInName": "Dokmoka Eastern Bypass Interchange (NH-29 / SH-36)",
+        "tieInLat": 26.349832,
+        "tieInLon": 93.345871,
+        "tieInRoadRef": "SH-36",
+        "tieInName": "Dokmoka Central Collector Tie-In (SH-36 / SH-017 OSM)",
         "centerUtmX": 526476.7,
         "centerUtmY": 2897306.2,
-        "tieInUtmX": 527774.9,
-        "tieInUtmY": 2897641.1
+        "tieInUtmX": 534510.9,
+        "tieInUtmY": 2914472.7
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.278,
-          26.198
+          93.345871,
+          26.349832
         ]
       }
     },
@@ -136,20 +136,20 @@
         "urbanPopulation": 19000,
         "catchmentPopulation": 44000,
         "industrialOutputFactor": 1.65,
-        "tieInLat": 25.958,
-        "tieInLon": 93.504,
-        "tieInRoadRef": "NH-129",
-        "tieInName": "Dillai Industrial Bypass Junction (NH-129 / SH-19)",
+        "tieInLat": 25.955978,
+        "tieInLon": 93.515354,
+        "tieInRoadRef": "NH-29",
+        "tieInName": "Dillai Industrial Bypass Junction (NH-29 OSM)",
         "centerUtmX": 551560.1,
         "centerUtmY": 2870801.8,
-        "tieInUtmX": 550457.5,
-        "tieInUtmY": 2871129.8
+        "tieInUtmX": 551595.1,
+        "tieInUtmY": 2870910.3
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.504,
-          25.958
+          93.515354,
+          25.955978
         ]
       }
     },
@@ -165,20 +165,20 @@
         "urbanPopulation": 21000,
         "catchmentPopulation": 42000,
         "industrialOutputFactor": 1.55,
-        "tieInLat": 25.862,
-        "tieInLon": 93.468,
-        "tieInRoadRef": "NH-129",
-        "tieInName": "Manja Tri-Highway Northern Bypass (NH-29 / NH-129 / NH-329)",
+        "tieInLat": 25.970036,
+        "tieInLon": 93.436673,
+        "tieInRoadRef": "NH-329",
+        "tieInName": "Manja Tri-Highway Junction (NH-329 / NH-29 OSM)",
         "centerUtmX": 546593.4,
         "centerUtmY": 2859708.6,
-        "tieInUtmX": 546891.3,
-        "tieInUtmY": 2860484.9
+        "tieInUtmX": 543712.6,
+        "tieInUtmY": 2872438.5
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.468,
-          25.862
+          93.436673,
+          25.970036
         ]
       }
     },
@@ -194,20 +194,20 @@
         "urbanPopulation": 16000,
         "catchmentPopulation": 38000,
         "industrialOutputFactor": 1.3,
-        "tieInLat": 26.321,
-        "tieInLon": 93.553,
-        "tieInRoadRef": "NH-129",
-        "tieInName": "Silonijan Western Bypass Junction (NH-129 / SH-35)",
+        "tieInLat": 26.357035,
+        "tieInLon": 93.381013,
+        "tieInRoadRef": "SH-36",
+        "tieInName": "Silonijan Collector Tie-In (SH-36 / SH-017 OSM)",
         "centerUtmX": 556387.9,
         "centerUtmY": 2911799.6,
-        "tieInUtmX": 555192.2,
-        "tieInUtmY": 2911351.5
+        "tieInUtmX": 538015.1,
+        "tieInUtmY": 2915280.3
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.553,
-          26.321
+          93.381013,
+          26.357035
         ]
       }
     },
@@ -223,20 +223,20 @@
         "urbanPopulation": 14500,
         "catchmentPopulation": 31000,
         "industrialOutputFactor": 1.2,
-        "tieInLat": 26.065,
-        "tieInLon": 93.317,
+        "tieInLat": 25.991769,
+        "tieInLon": 93.290319,
         "tieInRoadRef": "NH-29",
-        "tieInName": "Langhin Eastern Bypass Junction (NH-29 / SH-19)",
+        "tieInName": "Langhin Arterial Tie-In (NH-29 OSM)",
         "centerUtmX": 530507.0,
         "centerUtmY": 2882917.9,
-        "tieInUtmX": 531707.2,
-        "tieInUtmY": 2882920.8
+        "tieInUtmX": 529056.5,
+        "tieInUtmY": 2874804.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.317,
-          26.065
+          93.290319,
+          25.991769
         ]
       }
     },
@@ -252,20 +252,20 @@
         "urbanPopulation": 13000,
         "catchmentPopulation": 29000,
         "industrialOutputFactor": 1.45,
-        "tieInLat": 26.015,
-        "tieInLon": 93.378,
+        "tieInLat": 26.006202,
+        "tieInLon": 93.372029,
         "tieInRoadRef": "NH-29",
-        "tieInName": "Longnit Arterial Bypass Junction (NH-29 / SH-19)",
+        "tieInName": "Longnit Arterial Bypass Junction (NH-29 OSM)",
         "centerUtmX": 536825.0,
         "centerUtmY": 2877064.6,
-        "tieInUtmX": 537824.7,
-        "tieInUtmY": 2877399.7
+        "tieInUtmX": 537230.0,
+        "tieInUtmY": 2876423.7
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.378,
-          26.015
+          93.372029,
+          26.006202
         ]
       }
     },
@@ -281,20 +281,20 @@
         "urbanPopulation": 13500,
         "catchmentPopulation": 28000,
         "industrialOutputFactor": 1.15,
-        "tieInLat": 26.143,
-        "tieInLon": 93.223,
+        "tieInLat": 26.019438,
+        "tieInLon": 93.243578,
         "tieInRoadRef": "NH-29W",
-        "tieInName": "Phuloni Eastern Bypass (NH-29W)",
+        "tieInName": "Phuloni Eastern Connector (NH-29W OSM)",
         "centerUtmX": 521492.1,
         "centerUtmY": 2890652.1,
-        "tieInUtmX": 522290.3,
-        "tieInUtmY": 2891539.5
+        "tieInUtmX": 524372.8,
+        "tieInUtmY": 2877859.2
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.223,
-          26.143
+          93.243578,
+          26.019438
         ]
       }
     },
@@ -310,20 +310,20 @@
         "urbanPopulation": 12000,
         "catchmentPopulation": 27000,
         "industrialOutputFactor": 1.25,
-        "tieInLat": 26.245,
-        "tieInLon": 93.505,
-        "tieInRoadRef": "NH-129",
-        "tieInName": "Santipur Western Bypass Junction (NH-129 / SH-36)",
+        "tieInLat": 25.961016,
+        "tieInLon": 93.584029,
+        "tieInRoadRef": "NH-29",
+        "tieInName": "Santipur-Bokajan Eastern Link (NH-29 OSM)",
         "centerUtmX": 551433.0,
         "centerUtmY": 2902918.7,
-        "tieInUtmX": 550434.3,
-        "tieInUtmY": 2902914.8
+        "tieInUtmX": 558468.2,
+        "tieInUtmY": 2871497.1
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.505,
-          26.245
+          93.584029,
+          25.961016
         ]
       }
     },
@@ -339,20 +339,20 @@
         "urbanPopulation": 11500,
         "catchmentPopulation": 26000,
         "industrialOutputFactor": 1.25,
-        "tieInLat": 26.162,
-        "tieInLon": 93.372,
-        "tieInRoadRef": "SH-36",
-        "tieInName": "Chokihola Northern Bypass (SH-36)",
+        "tieInLat": 26.066009,
+        "tieInLon": 93.418263,
+        "tieInRoadRef": "MDR-102",
+        "tieInName": "Chokihola Southern Collector Tie-In (MDR-102 OSM)",
         "centerUtmX": 536180.6,
         "centerUtmY": 2892899.7,
-        "tieInUtmX": 537177.8,
-        "tieInUtmY": 2893677.7
+        "tieInUtmX": 541835.6,
+        "tieInUtmY": 2883061.1
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.372,
-          26.162
+          93.418263,
+          26.066009
         ]
       }
     },
@@ -368,20 +368,20 @@
         "urbanPopulation": 10500,
         "catchmentPopulation": 24000,
         "industrialOutputFactor": 1.2,
-        "tieInLat": 26.357,
-        "tieInLon": 93.477,
-        "tieInRoadRef": "SH-35",
-        "tieInName": "Dolamara Western Bypass Junction (SH-35 / MDR-101)",
+        "tieInLat": 26.548934,
+        "tieInLon": 93.473824,
+        "tieInRoadRef": "MDR-101",
+        "tieInName": "Dolamara Northern Collector Tie-In (MDR-101 OSM)",
         "centerUtmX": 548387.0,
         "centerUtmY": 2916197.3,
-        "tieInUtmX": 547592.2,
-        "tieInUtmY": 2915308.3
+        "tieInUtmX": 547197.0,
+        "tieInUtmY": 2936564.4
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.477,
-          26.357
+          93.473824,
+          26.548934
         ]
       }
     },
@@ -397,20 +397,20 @@
         "urbanPopulation": 8500,
         "catchmentPopulation": 18000,
         "industrialOutputFactor": 1.15,
-        "tieInLat": 26.584,
-        "tieInLon": 93.416,
+        "tieInLat": 26.589425,
+        "tieInLon": 93.41207,
         "tieInRoadRef": "NH-715",
-        "tieInName": "Kohora Eastern Highway Tie-In (NH-715)",
+        "tieInName": "Kohora Eastern Highway Tie-In (NH-715 OSM)",
         "centerUtmX": 540628.6,
         "centerUtmY": 2940204.0,
-        "tieInUtmX": 541424.5,
-        "tieInUtmY": 2940428.1
+        "tieInUtmX": 541031.2,
+        "tieInUtmY": 2941027.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.416,
-          26.584
+          93.41207,
+          26.589425
         ]
       }
     }

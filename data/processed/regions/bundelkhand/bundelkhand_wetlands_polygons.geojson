@@ -1,0 +1,193 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-BUNDELKHAND-001",
+        "name": "Bundelkhand Oxbow Tal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_FLOODPLAIN_WETLAND",
+        "district": "Bundelkhand Central",
+        "watershedId": "WS-BUNDELKHAND-01",
+        "areaHectares": 24.19,
+        "perimeterMeters": 1836.7,
+        "seasonalDepthMeters": 2.2,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 25.576,
+        "centroidLon": 79.208
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.211367,
+              25.576815
+            ],
+            [
+              79.210894,
+              25.577485
+            ],
+            [
+              79.20998,
+              25.577928
+            ],
+            [
+              79.208765,
+              25.578079
+            ],
+            [
+              79.207433,
+              25.577912
+            ],
+            [
+              79.206188,
+              25.577455
+            ],
+            [
+              79.205218,
+              25.576776
+            ],
+            [
+              79.204672,
+              25.575979
+            ],
+            [
+              79.204633,
+              25.575185
+            ],
+            [
+              79.205106,
+              25.574515
+            ],
+            [
+              79.20602,
+              25.574072
+            ],
+            [
+              79.207235,
+              25.573921
+            ],
+            [
+              79.208567,
+              25.574088
+            ],
+            [
+              79.209812,
+              25.574545
+            ],
+            [
+              79.210782,
+              25.575224
+            ],
+            [
+              79.211328,
+              25.576021
+            ],
+            [
+              79.211367,
+              25.576815
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-BUNDELKHAND-002",
+        "name": "Bundelkhand Retention Swale",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_FLOODPLAIN_WETLAND",
+        "district": "Bundelkhand Central",
+        "watershedId": "WS-BUNDELKHAND-01",
+        "areaHectares": 16.71,
+        "perimeterMeters": 1503.4,
+        "seasonalDepthMeters": 2.2,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 25.324,
+        "centroidLon": 79.832
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.834688,
+              25.324652
+            ],
+            [
+              79.834296,
+              25.325234
+            ],
+            [
+              79.833555,
+              25.325629
+            ],
+            [
+              79.832577,
+              25.325775
+            ],
+            [
+              79.831511,
+              25.325651
+            ],
+            [
+              79.83052,
+              25.325276
+            ],
+            [
+              79.829754,
+              25.324707
+            ],
+            [
+              79.82933,
+              25.32403
+            ],
+            [
+              79.829312,
+              25.323348
+            ],
+            [
+              79.829704,
+              25.322766
+            ],
+            [
+              79.830445,
+              25.322371
+            ],
+            [
+              79.831423,
+              25.322225
+            ],
+            [
+              79.832489,
+              25.322349
+            ],
+            [
+              79.83348,
+              25.322724
+            ],
+            [
+              79.834246,
+              25.323293
+            ],
+            [
+              79.83467,
+              25.32397
+            ],
+            [
+              79.834688,
+              25.324652
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

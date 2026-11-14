@@ -1,0 +1,62 @@
+{
+  "layerName": "MARG Layer 13: Wetlands, Seasonal Streams, Natural Drainage Network, Irrigation Canals & Watersheds Layer",
+  "rasterFile": "data\\processed\\drainage\\assam_drainage_wetland_utm46.tif",
+  "drainageNetworkGeoJsonFile": "data\\processed\\drainage\\assam_drainage_network.geojson",
+  "wetlandsPolygonsGeoJsonFile": "data\\processed\\drainage\\assam_wetlands_polygons.geojson",
+  "watershedBasinsGeoJsonFile": "data\\processed\\drainage\\assam_watershed_basins.geojson",
+  "crs": "EPSG:32646 (WGS 84 / UTM zone 46N)",
+  "gridDimensions": {
+    "width": 2176,
+    "height": 3330,
+    "resolutionMeters": 30.0
+  },
+  "utm46nBounds": {
+    "minX": 509952.053,
+    "maxX": 575232.0530000001,
+    "minY": 2847989.616,
+    "maxY": 2947889.616
+  },
+  "sources": [
+    "ISRO VEDAS / Space Applications Centre (SAC) National Wetland Inventory & Assessment (NWIA) Assam Atlas",
+    "Bhuvan / NRSC 1:50,000 Inland Wetlands (LU_Webcode=20) & Seasonal Drainage Network",
+    "HydroSHEDS / CartoDEM 30 m Strahler Stream Order & Watershed Catchment Delineation (Kaziranga-Karbi Anglong)",
+    "Assam Irrigation Department Command Network (Jamuna Irrigation Project LBC/RBC, Kaliani & Dhansiri Canals)",
+    "IRC:SP:13 (Guidelines for the Design of Small Bridges and Culverts) & IRC:SP:42 (Guidelines on Road Drainage)"
+  ],
+  "sublayerSummary": {
+    "wetlandPolygonsCount": 45,
+    "seasonalStreamsCount": 20,
+    "naturalDrainageChannelsCount": 14,
+    "irrigationCanalsCount": 8,
+    "localWatercoursesCount": 10,
+    "totalLinearDrainageFeaturesCount": 52,
+    "watershedBasinsCount": 8,
+    "lengthKmBySublayer": {
+      "SEASONAL_STREAM": 271.46,
+      "NATURAL_DRAINAGE_CHANNEL": 104.9,
+      "IRRIGATION_CANAL": 110.14,
+      "LOCAL_WATERCOURSE": 96.99
+    }
+  },
+  "encoding": {
+    "0": "WELL_DRAINED_UPLAND_OR_NONE",
+    "1": "WATERSHED_VALLEY_DRAINAGE_SWALE",
+    "2": "LOCAL_WATERCOURSE_AND_SHEET_FLOW_ZONE",
+    "3": "SEASONAL_STREAM_AND_TORRENT_CORRIDOR",
+    "4": "IRRIGATION_CANAL_COMMAND_ROW",
+    "5": "SEASONAL_MARSH_AND_WETLAND_BUFFER",
+    "6": "NATURAL_OR_DESIGNATED_WETLAND_CORE",
+    "255": "NODATA"
+  },
+  "pixelCounts": {
+    "WELL_DRAINED_UPLAND_OR_NONE_0": 7084496,
+    "WATERSHED_VALLEY_DRAINAGE_SWALE_1": 38457,
+    "LOCAL_WATERCOURSE_AND_SHEET_FLOW_ZONE_2": 33906,
+    "SEASONAL_STREAM_AND_TORRENT_CORRIDOR_3": 46959,
+    "IRRIGATION_CANAL_COMMAND_ROW_4": 19321,
+    "SEASONAL_MARSH_AND_WETLAND_BUFFER_5": 12187,
+    "NATURAL_OR_DESIGNATED_WETLAND_CORE_6": 10754,
+    "NODATA_255": 0
+  },
+  "generatedAtUtc": "2026-11-11T19:08:53.961954+00:00"
+}

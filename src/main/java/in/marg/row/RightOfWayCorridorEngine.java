@@ -7,6 +7,9 @@ import in.marg.config.RowCorridorProperties;
 import in.marg.demographic.DemographicVectorIndex;
 import in.marg.demographic.PopulationDensityClass;
 import in.marg.demographic.PopulationDensityRasterProvider;
+import in.marg.drainage.DrainageWetlandClass;
+import in.marg.drainage.DrainageWetlandRasterProvider;
+import in.marg.drainage.DrainageWetlandVectorIndex;
 import in.marg.environment.ProtectedAreaRasterProvider;
 import in.marg.geotech.GeotechHazardClass;
 import in.marg.geotech.GeotechRasterProvider;
@@ -479,6 +482,46 @@ public class RightOfWayCorridorEngine {
             BuildingFootprintVectorIndex buildingVectorIndex,
             PopulationDensityRasterProvider demographicRasterProvider,
             DemographicVectorIndex demographicVectorIndex) {
+        return evaluateSwathAudit(
+                mainline,
+                spurPaths,
+                corridor,
+                lulcProvider,
+                slopeProvider,
+                paProvider,
+                settlementProvider,
+                waterProvider,
+                wildlifeProvider,
+                geotechProvider,
+                utilityRasterProvider,
+                utilityVectorIndex,
+                buildingRasterProvider,
+                buildingVectorIndex,
+                demographicRasterProvider,
+                demographicVectorIndex,
+                null,
+                null);
+    }
+
+    public SwathCorridorAudit evaluateSwathAudit(
+            List<GeoPoint> mainline,
+            List<List<GeoPoint>> spurPaths,
+            CorridorFootprint corridor,
+            LulcProvider lulcProvider,
+            SlopeRasterProvider slopeProvider,
+            ProtectedAreaRasterProvider paProvider,
+            SettlementRasterProvider settlementProvider,
+            WaterBodyRasterProvider waterProvider,
+            WildlifeRasterProvider wildlifeProvider,
+            GeotechRasterProvider geotechProvider,
+            UtilityRasterProvider utilityRasterProvider,
+            UtilityNetworkVectorIndex utilityVectorIndex,
+            BuildingDensityRasterProvider buildingRasterProvider,
+            BuildingFootprintVectorIndex buildingVectorIndex,
+            PopulationDensityRasterProvider demographicRasterProvider,
+            DemographicVectorIndex demographicVectorIndex,
+            DrainageWetlandRasterProvider drainageRasterProvider,
+            DrainageWetlandVectorIndex drainageVectorIndex) {
 
         double stepMeters = Math.max(50.0, properties.getCrossSectionSampleStepMeters());
         double halfW = corridor.mainlineRowWidthMeters() / 2.0;
@@ -515,6 +558,10 @@ public class RightOfWayCorridorEngine {
         Map<PopulationDensityClass, Double> demographicWeights = new EnumMap<>(PopulationDensityClass.class);
         for (PopulationDensityClass c : PopulationDensityClass.values()) {
             demographicWeights.put(c, 0.0);
+        }
+        Map<DrainageWetlandClass, Double> drainageWeights = new EnumMap<>(DrainageWetlandClass.class);
+        for (DrainageWetlandClass c : DrainageWetlandClass.values()) {
+            drainageWeights.put(c, 0.0);
         }
 
         double totalWeight = 0.0;
@@ -586,6 +633,10 @@ public class RightOfWayCorridorEngine {
                         PopulationDensityClass pdc = demographicRasterProvider.sampleClass(samplePt.lat(), samplePt.lon());
                         demographicWeights.put(pdc, demographicWeights.get(pdc) + sliceWeight);
                     }
+                    if (drainageRasterProvider != null) {
+                        DrainageWetlandClass dwc = drainageRasterProvider.sampleClass(samplePt.lat(), samplePt.lon());
+                        drainageWeights.put(dwc, drainageWeights.get(dwc) + sliceWeight);
+                    }
 
                     if (paProvider != null) {
                         Double pa = paProvider.sampleOrNull(samplePt.lat(), samplePt.lon());
@@ -622,6 +673,7 @@ public class RightOfWayCorridorEngine {
         Map<String, Double> utilityHa = scaleEnumWeights(utilityWeights, scaleToHa);
         Map<String, Double> buildingDensityHa = scaleEnumWeights(buildingWeights, scaleToHa);
         Map<String, Double> populationDensityHa = scaleEnumWeights(demographicWeights, scaleToHa);
+        Map<String, Double> drainageWetlandHa = scaleEnumWeights(drainageWeights, scaleToHa);
 
         // Vector Asset Overlay on Substations & Transmission Towers
         int towersInDirectRow = 0;
@@ -673,6 +725,12 @@ public class RightOfWayCorridorEngine {
                             mainline, corridor, buildingVectorIndex).toSummaryMap();
         }
 
+        Map<String, Object> drainageAndWetlandOverlay = Map.of();
+        if (drainageVectorIndex != null) {
+            drainageAndWetlandOverlay =
+                    drainageVectorIndex.evaluateCorridorDrainageAndWetlandImpact(mainline, corridor).toSummaryMap();
+        }
+
         return new SwathCorridorAudit(
                 totalCrossSections,
                 lateralOffsets.length,
@@ -684,6 +742,7 @@ public class RightOfWayCorridorEngine {
                 utilityHa,
                 buildingDensityHa,
                 populationDensityHa,
+                drainageWetlandHa,
                 centerlinePaViolations,
                 outerEdgePaEncroachmentSamples,
                 centerlineSlopeOver30Violations,
@@ -694,7 +753,8 @@ public class RightOfWayCorridorEngine {
                 substationsInConstructionZone,
                 minTowerClearanceFromRowEdgeMeters,
                 buildingAndSettlementOverlay,
-                populationAndDemographicOverlay);
+                populationAndDemographicOverlay,
+                drainageAndWetlandOverlay);
     }
 
     /**
@@ -953,6 +1013,7 @@ public class RightOfWayCorridorEngine {
             Map<String, Double> utilityClassHectares,
             Map<String, Double> buildingDensityClassHectares,
             Map<String, Double> populationDensityClassHectares,
+            Map<String, Double> drainageWetlandClassHectares,
             int centerlineProtectedAreaViolations,
             int outerRowEdgeProtectedAreaSamples,
             int centerlineSlopeOver30Violations,
@@ -963,8 +1024,57 @@ public class RightOfWayCorridorEngine {
             int substationsInConstructionZoneCount,
             double minTowerClearanceFromRowEdgeMeters,
             Map<String, Object> buildingAndSettlementOverlay,
-            Map<String, Object> populationAndDemographicOverlay
+            Map<String, Object> populationAndDemographicOverlay,
+            Map<String, Object> drainageAndWetlandOverlay
     ) {
+        public SwathCorridorAudit(
+                int crossSectionsEvaluated,
+                int lateralPointsPerCrossSection,
+                Map<String, Double> lulcAcquisitionHectares,
+                Map<String, Double> settlementExposureHectares,
+                Map<String, Double> waterAndRiparianHectares,
+                Map<String, Double> wildlifeZoneHectares,
+                Map<String, Double> geotechClassHectares,
+                Map<String, Double> utilityClassHectares,
+                Map<String, Double> buildingDensityClassHectares,
+                Map<String, Double> populationDensityClassHectares,
+                int centerlineProtectedAreaViolations,
+                int outerRowEdgeProtectedAreaSamples,
+                int centerlineSlopeOver30Violations,
+                int outerRowEdgeSlopeOver30Samples,
+                int transmissionTowersInDirectRowCount,
+                int transmissionTowersInConstructionZoneCount,
+                int substationsInDirectRowCount,
+                int substationsInConstructionZoneCount,
+                double minTowerClearanceFromRowEdgeMeters,
+                Map<String, Object> buildingAndSettlementOverlay,
+                Map<String, Object> populationAndDemographicOverlay) {
+            this(
+                    crossSectionsEvaluated,
+                    lateralPointsPerCrossSection,
+                    lulcAcquisitionHectares,
+                    settlementExposureHectares,
+                    waterAndRiparianHectares,
+                    wildlifeZoneHectares,
+                    geotechClassHectares,
+                    utilityClassHectares,
+                    buildingDensityClassHectares,
+                    populationDensityClassHectares,
+                    Map.of(),
+                    centerlineProtectedAreaViolations,
+                    outerRowEdgeProtectedAreaSamples,
+                    centerlineSlopeOver30Violations,
+                    outerRowEdgeSlopeOver30Samples,
+                    transmissionTowersInDirectRowCount,
+                    transmissionTowersInConstructionZoneCount,
+                    substationsInDirectRowCount,
+                    substationsInConstructionZoneCount,
+                    minTowerClearanceFromRowEdgeMeters,
+                    buildingAndSettlementOverlay,
+                    populationAndDemographicOverlay,
+                    Map.of());
+        }
+
         public SwathCorridorAudit(
                 int crossSectionsEvaluated,
                 int lateralPointsPerCrossSection,
@@ -996,6 +1106,7 @@ public class RightOfWayCorridorEngine {
                     utilityClassHectares,
                     buildingDensityClassHectares,
                     Map.of(),
+                    Map.of(),
                     centerlineProtectedAreaViolations,
                     outerRowEdgeProtectedAreaSamples,
                     centerlineSlopeOver30Violations,
@@ -1006,6 +1117,7 @@ public class RightOfWayCorridorEngine {
                     substationsInConstructionZoneCount,
                     minTowerClearanceFromRowEdgeMeters,
                     buildingAndSettlementOverlay,
+                    Map.of(),
                     Map.of());
         }
 
@@ -1025,6 +1137,9 @@ public class RightOfWayCorridorEngine {
             if (populationDensityClassHectares != null && !populationDensityClassHectares.isEmpty()) {
                 map.put("populationDensityClassHectares", populationDensityClassHectares);
             }
+            if (drainageWetlandClassHectares != null && !drainageWetlandClassHectares.isEmpty()) {
+                map.put("drainageWetlandClassHectares", drainageWetlandClassHectares);
+            }
             map.put("rowBoundaryHardConstraintAudit", Map.of(
                     "centerlineProtectedAreaViolations", centerlineProtectedAreaViolations,
                     "outerRowEdgeProtectedAreaSamples", outerRowEdgeProtectedAreaSamples,
@@ -1041,6 +1156,9 @@ public class RightOfWayCorridorEngine {
             }
             if (populationAndDemographicOverlay != null && !populationAndDemographicOverlay.isEmpty()) {
                 map.put("populationAndDemographicOverlay", populationAndDemographicOverlay);
+            }
+            if (drainageAndWetlandOverlay != null && !drainageAndWetlandOverlay.isEmpty()) {
+                map.put("drainageAndWetlandOverlay", drainageAndWetlandOverlay);
             }
             return map;
         }

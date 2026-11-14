@@ -1,0 +1,193 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-CORRIDOR_2615_7685_2585_7740-001",
+        "name": "Corridor_2615_7685_2585_7740 Oxbow Tal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_FLOODPLAIN_WETLAND",
+        "district": "Corridor_2615_7685_2585_7740 Central",
+        "watershedId": "WS-CORRIDOR_2615_7685_2585_7740-01",
+        "areaHectares": 24.19,
+        "perimeterMeters": 1836.7,
+        "seasonalDepthMeters": 2.2,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 26.144,
+        "centroidLon": 77.041
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.044383,
+              26.144815
+            ],
+            [
+              77.043908,
+              26.145485
+            ],
+            [
+              77.042989,
+              26.145928
+            ],
+            [
+              77.041768,
+              26.146079
+            ],
+            [
+              77.04043,
+              26.145912
+            ],
+            [
+              77.039179,
+              26.145455
+            ],
+            [
+              77.038205,
+              26.144776
+            ],
+            [
+              77.037656,
+              26.143979
+            ],
+            [
+              77.037617,
+              26.143185
+            ],
+            [
+              77.038092,
+              26.142515
+            ],
+            [
+              77.039011,
+              26.142072
+            ],
+            [
+              77.040232,
+              26.141921
+            ],
+            [
+              77.04157,
+              26.142088
+            ],
+            [
+              77.042821,
+              26.142545
+            ],
+            [
+              77.043795,
+              26.143224
+            ],
+            [
+              77.044344,
+              26.144021
+            ],
+            [
+              77.044383,
+              26.144815
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-CORRIDOR_2615_7685_2585_7740-002",
+        "name": "Corridor_2615_7685_2585_7740 Retention Swale",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_FLOODPLAIN_WETLAND",
+        "district": "Corridor_2615_7685_2585_7740 Central",
+        "watershedId": "WS-CORRIDOR_2615_7685_2585_7740-01",
+        "areaHectares": 16.71,
+        "perimeterMeters": 1503.4,
+        "seasonalDepthMeters": 2.2,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 25.856,
+        "centroidLon": 77.314
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.3167,
+              25.856652
+            ],
+            [
+              77.316306,
+              25.857234
+            ],
+            [
+              77.315562,
+              25.857629
+            ],
+            [
+              77.31458,
+              25.857775
+            ],
+            [
+              77.313509,
+              25.857651
+            ],
+            [
+              77.312513,
+              25.857276
+            ],
+            [
+              77.311744,
+              25.856707
+            ],
+            [
+              77.311318,
+              25.85603
+            ],
+            [
+              77.3113,
+              25.855348
+            ],
+            [
+              77.311694,
+              25.854766
+            ],
+            [
+              77.312438,
+              25.854371
+            ],
+            [
+              77.31342,
+              25.854225
+            ],
+            [
+              77.314491,
+              25.854349
+            ],
+            [
+              77.315487,
+              25.854724
+            ],
+            [
+              77.316256,
+              25.855293
+            ],
+            [
+              77.316682,
+              25.85597
+            ],
+            [
+              77.3167,
+              25.856652
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

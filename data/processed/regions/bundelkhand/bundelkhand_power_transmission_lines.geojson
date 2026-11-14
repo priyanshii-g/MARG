@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTL-BUNDELKHAND-400KV",
+        "name": "Bundelkhand 400kV D/C Inter-Grid Line",
+        "utilityTier": "EHV_400KV_TRANSMISSION",
+        "voltageKv": 400.0,
+        "voltageInferred": false,
+        "circuitConfiguration": "D/C",
+        "designRowWidthMeters": 46.0,
+        "minimumConductorClearanceMeters": 8.84,
+        "typicalSpanMeters": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.3,
+            25.31
+          ],
+          [
+            80.5,
+            25.345
+          ]
+        ]
+      }
+    }
+  ]
+}

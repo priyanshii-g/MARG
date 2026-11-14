@@ -1,0 +1,338 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-BUNDELKHAND-001",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "censusCode": "CEN-44-0001",
+        "name": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "totalPopulation": 42000,
+        "ruralPopulation": 0,
+        "urbanPopulation": 42000,
+        "householdsCount": 8750,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 241.0,
+        "populationDensityPerSqKm": 17427.4,
+        "populationDensityPerHectare": 174.27,
+        "populationDensityClass": "VERY_HIGH_URBAN_DENSITY_CORE",
+        "children0To14Share": 0.28,
+        "workingAge15To59Share": 0.63,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.59,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.76,
+        "agriculturalAndPrimaryLivelihoodShare": 0.54,
+        "socialVulnerabilityIndex": 0.52,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.7,
+        "fringeDispersionRadiusMeters": 1330.0,
+        "coreRadiusMeters": 950.0,
+        "mappedBuildingFootprintCount": 8,
+        "residentialBuildingCount": 6,
+        "centroidLat": 25.415,
+        "centroidLon": 79.04
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.048563,
+              25.418613
+            ],
+            [
+              79.046612,
+              25.420858
+            ],
+            [
+              79.043655,
+              25.422211
+            ],
+            [
+              79.040141,
+              25.422467
+            ],
+            [
+              79.036606,
+              25.421585
+            ],
+            [
+              79.033587,
+              25.419702
+            ],
+            [
+              79.031545,
+              25.417102
+            ],
+            [
+              79.03079,
+              25.414182
+            ],
+            [
+              79.031437,
+              25.411387
+            ],
+            [
+              79.033388,
+              25.409142
+            ],
+            [
+              79.036345,
+              25.407789
+            ],
+            [
+              79.039859,
+              25.407533
+            ],
+            [
+              79.043394,
+              25.408415
+            ],
+            [
+              79.046413,
+              25.410298
+            ],
+            [
+              79.048455,
+              25.412898
+            ],
+            [
+              79.04921,
+              25.415818
+            ],
+            [
+              79.048563,
+              25.418613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-BUNDELKHAND-002",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "censusCode": "CEN-44-0002",
+        "name": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "totalPopulation": 6800,
+        "ruralPopulation": 6800,
+        "urbanPopulation": 0,
+        "householdsCount": 1416,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 80.78,
+        "populationDensityPerSqKm": 8417.9,
+        "populationDensityPerHectare": 84.18,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.28,
+        "workingAge15To59Share": 0.63,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.59,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.76,
+        "agriculturalAndPrimaryLivelihoodShare": 0.54,
+        "socialVulnerabilityIndex": 0.52,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.7,
+        "fringeDispersionRadiusMeters": 770.0,
+        "coreRadiusMeters": 550.0,
+        "mappedBuildingFootprintCount": 8,
+        "residentialBuildingCount": 6,
+        "centroidLat": 25.366,
+        "centroidLon": 79.448
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.452956,
+              25.368092
+            ],
+            [
+              79.451827,
+              25.369391
+            ],
+            [
+              79.450115,
+              25.370175
+            ],
+            [
+              79.448082,
+              25.370323
+            ],
+            [
+              79.446036,
+              25.369813
+            ],
+            [
+              79.444289,
+              25.368722
+            ],
+            [
+              79.443107,
+              25.367217
+            ],
+            [
+              79.44267,
+              25.365527
+            ],
+            [
+              79.443044,
+              25.363908
+            ],
+            [
+              79.444173,
+              25.362609
+            ],
+            [
+              79.445885,
+              25.361825
+            ],
+            [
+              79.447918,
+              25.361677
+            ],
+            [
+              79.449964,
+              25.362187
+            ],
+            [
+              79.451711,
+              25.363278
+            ],
+            [
+              79.452893,
+              25.364783
+            ],
+            [
+              79.45333,
+              25.366473
+            ],
+            [
+              79.452956,
+              25.368092
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tractId": "TRACT-BUNDELKHAND-003",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "censusCode": "CEN-44-0003",
+        "name": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "totalPopulation": 8400,
+        "ruralPopulation": 8400,
+        "urbanPopulation": 0,
+        "householdsCount": 1750,
+        "averageHouseholdSize": 4.8,
+        "polygonAreaHectares": 96.13,
+        "populationDensityPerSqKm": 8738.2,
+        "populationDensityPerHectare": 87.38,
+        "populationDensityClass": "MODERATE_DENSITY_SETTLEMENT",
+        "children0To14Share": 0.28,
+        "workingAge15To59Share": 0.63,
+        "elderly60PlusShare": 0.09,
+        "vulnerableAgeDependencyRatio": 0.59,
+        "scheduledTribeAndCastesShare": 0.24,
+        "literacyRate": 0.76,
+        "agriculturalAndPrimaryLivelihoodShare": 0.54,
+        "socialVulnerabilityIndex": 0.52,
+        "vulnerabilityTier": "MODERATE_VULNERABILITY",
+        "corePopulationShare": 0.7,
+        "fringeDispersionRadiusMeters": 840.0,
+        "coreRadiusMeters": 600.0,
+        "mappedBuildingFootprintCount": 8,
+        "residentialBuildingCount": 6,
+        "centroidLat": 25.534,
+        "centroidLon": 79.736
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.741414,
+              25.536282
+            ],
+            [
+              79.74018,
+              25.5377
+            ],
+            [
+              79.738311,
+              25.538554
+            ],
+            [
+              79.736089,
+              25.538716
+            ],
+            [
+              79.733854,
+              25.538159
+            ],
+            [
+              79.731946,
+              25.536969
+            ],
+            [
+              79.730655,
+              25.535328
+            ],
+            [
+              79.730177,
+              25.533484
+            ],
+            [
+              79.730586,
+              25.531718
+            ],
+            [
+              79.73182,
+              25.5303
+            ],
+            [
+              79.733689,
+              25.529446
+            ],
+            [
+              79.735911,
+              25.529284
+            ],
+            [
+              79.738146,
+              25.529841
+            ],
+            [
+              79.740054,
+              25.531031
+            ],
+            [
+              79.741345,
+              25.532672
+            ],
+            [
+              79.741823,
+              25.534516
+            ],
+            [
+              79.741414,
+              25.536282
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

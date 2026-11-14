@@ -1,0 +1,284 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-TEST_LONG-001",
+        "catalogRef": "STL-TEST_LONG-001",
+        "name": "Test_Long Mandi Town",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_MUNICIPAL_TOWN",
+        "district": "Test_Long Central",
+        "polygonAreaHectares": 241.0,
+        "coreRadiusMeters": 950.0,
+        "builtUpDensityBuildingsPerHa": 12.0,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 8,
+        "centroidLat": 21.79,
+        "centroidLon": 76.9675
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.97583,
+              21.793613
+            ],
+            [
+              76.973932,
+              21.795858
+            ],
+            [
+              76.971055,
+              21.797211
+            ],
+            [
+              76.967637,
+              21.797467
+            ],
+            [
+              76.964198,
+              21.796585
+            ],
+            [
+              76.961262,
+              21.794702
+            ],
+            [
+              76.959276,
+              21.792102
+            ],
+            [
+              76.958541,
+              21.789182
+            ],
+            [
+              76.95917,
+              21.786387
+            ],
+            [
+              76.961068,
+              21.784142
+            ],
+            [
+              76.963945,
+              21.782789
+            ],
+            [
+              76.967363,
+              21.782533
+            ],
+            [
+              76.970802,
+              21.783415
+            ],
+            [
+              76.973738,
+              21.785298
+            ],
+            [
+              76.975724,
+              21.787898
+            ],
+            [
+              76.976459,
+              21.790818
+            ],
+            [
+              76.97583,
+              21.793613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-TEST_LONG-002",
+        "catalogRef": "STL-TEST_LONG-002",
+        "name": "Test_Long Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "district": "Test_Long Central",
+        "polygonAreaHectares": 80.78,
+        "coreRadiusMeters": 550.0,
+        "builtUpDensityBuildingsPerHa": 6.5,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 8,
+        "centroidLat": 21.496,
+        "centroidLon": 77.146
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.150813,
+              21.498092
+            ],
+            [
+              77.149716,
+              21.499391
+            ],
+            [
+              77.148054,
+              21.500175
+            ],
+            [
+              77.146079,
+              21.500323
+            ],
+            [
+              77.144092,
+              21.499813
+            ],
+            [
+              77.142396,
+              21.498722
+            ],
+            [
+              77.141248,
+              21.497217
+            ],
+            [
+              77.140824,
+              21.495527
+            ],
+            [
+              77.141187,
+              21.493908
+            ],
+            [
+              77.142284,
+              21.492609
+            ],
+            [
+              77.143946,
+              21.491825
+            ],
+            [
+              77.145921,
+              21.491677
+            ],
+            [
+              77.147908,
+              21.492187
+            ],
+            [
+              77.149604,
+              21.493278
+            ],
+            [
+              77.150752,
+              21.494783
+            ],
+            [
+              77.151176,
+              21.496473
+            ],
+            [
+              77.150813,
+              21.498092
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-TEST_LONG-003",
+        "catalogRef": "STL-TEST_LONG-003",
+        "name": "Test_Long Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "district": "Test_Long Central",
+        "polygonAreaHectares": 96.13,
+        "coreRadiusMeters": 600.0,
+        "builtUpDensityBuildingsPerHa": 6.5,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 8,
+        "centroidLat": 22.504,
+        "centroidLon": 77.272
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.277288,
+              22.506282
+            ],
+            [
+              77.276083,
+              22.5077
+            ],
+            [
+              77.274257,
+              22.508554
+            ],
+            [
+              77.272087,
+              22.508716
+            ],
+            [
+              77.269904,
+              22.508159
+            ],
+            [
+              77.26804,
+              22.506969
+            ],
+            [
+              77.266779,
+              22.505328
+            ],
+            [
+              77.266313,
+              22.503484
+            ],
+            [
+              77.266712,
+              22.501718
+            ],
+            [
+              77.267917,
+              22.5003
+            ],
+            [
+              77.269743,
+              22.499446
+            ],
+            [
+              77.271913,
+              22.499284
+            ],
+            [
+              77.274096,
+              22.499841
+            ],
+            [
+              77.27596,
+              22.501031
+            ],
+            [
+              77.277221,
+              22.502672
+            ],
+            [
+              77.277687,
+              22.504516
+            ],
+            [
+              77.277288,
+              22.506282
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

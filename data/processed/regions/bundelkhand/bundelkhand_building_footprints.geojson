@@ -1,0 +1,1493 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0001",
+        "name": "Bundelkhand Mandi Town Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 25.415,
+        "centroidLon": 79.043779
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.043857,
+              25.415013
+            ],
+            [
+              79.043827,
+              25.415046
+            ],
+            [
+              79.043769,
+              25.415053
+            ],
+            [
+              79.043716,
+              25.415029
+            ],
+            [
+              79.043701,
+              25.414987
+            ],
+            [
+              79.043731,
+              25.414954
+            ],
+            [
+              79.043789,
+              25.414947
+            ],
+            [
+              79.043842,
+              25.414971
+            ],
+            [
+              79.043857,
+              25.415013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0002",
+        "name": "Bundelkhand Mandi Town Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.417418,
+        "centroidLon": 79.042672
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.04275,
+              25.417431
+            ],
+            [
+              79.04272,
+              25.417464
+            ],
+            [
+              79.042662,
+              25.417471
+            ],
+            [
+              79.042609,
+              25.417447
+            ],
+            [
+              79.042594,
+              25.417405
+            ],
+            [
+              79.042624,
+              25.417372
+            ],
+            [
+              79.042682,
+              25.417365
+            ],
+            [
+              79.042735,
+              25.417389
+            ],
+            [
+              79.04275,
+              25.417431
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0003",
+        "name": "Bundelkhand Mandi Town Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.418419,
+        "centroidLon": 79.04
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.040078,
+              25.418432
+            ],
+            [
+              79.040048,
+              25.418465
+            ],
+            [
+              79.03999,
+              25.418472
+            ],
+            [
+              79.039937,
+              25.418448
+            ],
+            [
+              79.039922,
+              25.418406
+            ],
+            [
+              79.039952,
+              25.418373
+            ],
+            [
+              79.04001,
+              25.418366
+            ],
+            [
+              79.040063,
+              25.41839
+            ],
+            [
+              79.040078,
+              25.418432
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0004",
+        "name": "Bundelkhand Mandi Town Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.417418,
+        "centroidLon": 79.037328
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.037406,
+              25.417431
+            ],
+            [
+              79.037376,
+              25.417464
+            ],
+            [
+              79.037318,
+              25.417471
+            ],
+            [
+              79.037265,
+              25.417447
+            ],
+            [
+              79.03725,
+              25.417405
+            ],
+            [
+              79.03728,
+              25.417372
+            ],
+            [
+              79.037338,
+              25.417365
+            ],
+            [
+              79.037391,
+              25.417389
+            ],
+            [
+              79.037406,
+              25.417431
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0005",
+        "name": "Bundelkhand Mandi Town Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.415,
+        "centroidLon": 79.036221
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.036299,
+              25.415013
+            ],
+            [
+              79.036269,
+              25.415046
+            ],
+            [
+              79.036211,
+              25.415053
+            ],
+            [
+              79.036158,
+              25.415029
+            ],
+            [
+              79.036143,
+              25.414987
+            ],
+            [
+              79.036173,
+              25.414954
+            ],
+            [
+              79.036231,
+              25.414947
+            ],
+            [
+              79.036284,
+              25.414971
+            ],
+            [
+              79.036299,
+              25.415013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0006",
+        "name": "Bundelkhand Mandi Town Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.412582,
+        "centroidLon": 79.037328
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.037406,
+              25.412595
+            ],
+            [
+              79.037376,
+              25.412628
+            ],
+            [
+              79.037318,
+              25.412635
+            ],
+            [
+              79.037265,
+              25.412611
+            ],
+            [
+              79.03725,
+              25.412569
+            ],
+            [
+              79.03728,
+              25.412536
+            ],
+            [
+              79.037338,
+              25.412529
+            ],
+            [
+              79.037391,
+              25.412553
+            ],
+            [
+              79.037406,
+              25.412595
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0007",
+        "name": "Bundelkhand Mandi Town Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.411581,
+        "centroidLon": 79.04
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.040078,
+              25.411594
+            ],
+            [
+              79.040048,
+              25.411627
+            ],
+            [
+              79.03999,
+              25.411634
+            ],
+            [
+              79.039937,
+              25.41161
+            ],
+            [
+              79.039922,
+              25.411568
+            ],
+            [
+              79.039952,
+              25.411535
+            ],
+            [
+              79.04001,
+              25.411528
+            ],
+            [
+              79.040063,
+              25.411552
+            ],
+            [
+              79.040078,
+              25.411594
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0008",
+        "name": "Bundelkhand Mandi Town Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-001",
+        "settlementName": "Bundelkhand Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.412582,
+        "centroidLon": 79.042672
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.04275,
+              25.412595
+            ],
+            [
+              79.04272,
+              25.412628
+            ],
+            [
+              79.042662,
+              25.412635
+            ],
+            [
+              79.042609,
+              25.412611
+            ],
+            [
+              79.042594,
+              25.412569
+            ],
+            [
+              79.042624,
+              25.412536
+            ],
+            [
+              79.042682,
+              25.412529
+            ],
+            [
+              79.042735,
+              25.412553
+            ],
+            [
+              79.04275,
+              25.412595
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0009",
+        "name": "Bundelkhand Rural Habitation A Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.366,
+        "centroidLon": 79.450187
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.450265,
+              25.366013
+            ],
+            [
+              79.450235,
+              25.366046
+            ],
+            [
+              79.450177,
+              25.366053
+            ],
+            [
+              79.450124,
+              25.366029
+            ],
+            [
+              79.450109,
+              25.365987
+            ],
+            [
+              79.450139,
+              25.365954
+            ],
+            [
+              79.450197,
+              25.365947
+            ],
+            [
+              79.45025,
+              25.365971
+            ],
+            [
+              79.450265,
+              25.366013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0010",
+        "name": "Bundelkhand Rural Habitation A Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.3674,
+        "centroidLon": 79.449547
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.449625,
+              25.367413
+            ],
+            [
+              79.449595,
+              25.367446
+            ],
+            [
+              79.449537,
+              25.367453
+            ],
+            [
+              79.449484,
+              25.367429
+            ],
+            [
+              79.449469,
+              25.367387
+            ],
+            [
+              79.449499,
+              25.367354
+            ],
+            [
+              79.449557,
+              25.367347
+            ],
+            [
+              79.44961,
+              25.367371
+            ],
+            [
+              79.449625,
+              25.367413
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0011",
+        "name": "Bundelkhand Rural Habitation A Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.36798,
+        "centroidLon": 79.448
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.448078,
+              25.367993
+            ],
+            [
+              79.448048,
+              25.368026
+            ],
+            [
+              79.44799,
+              25.368033
+            ],
+            [
+              79.447937,
+              25.368009
+            ],
+            [
+              79.447922,
+              25.367967
+            ],
+            [
+              79.447952,
+              25.367934
+            ],
+            [
+              79.44801,
+              25.367927
+            ],
+            [
+              79.448063,
+              25.367951
+            ],
+            [
+              79.448078,
+              25.367993
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0012",
+        "name": "Bundelkhand Rural Habitation A Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.3674,
+        "centroidLon": 79.446453
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.446531,
+              25.367413
+            ],
+            [
+              79.446501,
+              25.367446
+            ],
+            [
+              79.446443,
+              25.367453
+            ],
+            [
+              79.44639,
+              25.367429
+            ],
+            [
+              79.446375,
+              25.367387
+            ],
+            [
+              79.446405,
+              25.367354
+            ],
+            [
+              79.446463,
+              25.367347
+            ],
+            [
+              79.446516,
+              25.367371
+            ],
+            [
+              79.446531,
+              25.367413
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0013",
+        "name": "Bundelkhand Rural Habitation A Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.366,
+        "centroidLon": 79.445813
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.445891,
+              25.366013
+            ],
+            [
+              79.445861,
+              25.366046
+            ],
+            [
+              79.445803,
+              25.366053
+            ],
+            [
+              79.44575,
+              25.366029
+            ],
+            [
+              79.445735,
+              25.365987
+            ],
+            [
+              79.445765,
+              25.365954
+            ],
+            [
+              79.445823,
+              25.365947
+            ],
+            [
+              79.445876,
+              25.365971
+            ],
+            [
+              79.445891,
+              25.366013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0014",
+        "name": "Bundelkhand Rural Habitation A Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.3646,
+        "centroidLon": 79.446453
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.446531,
+              25.364613
+            ],
+            [
+              79.446501,
+              25.364646
+            ],
+            [
+              79.446443,
+              25.364653
+            ],
+            [
+              79.44639,
+              25.364629
+            ],
+            [
+              79.446375,
+              25.364587
+            ],
+            [
+              79.446405,
+              25.364554
+            ],
+            [
+              79.446463,
+              25.364547
+            ],
+            [
+              79.446516,
+              25.364571
+            ],
+            [
+              79.446531,
+              25.364613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0015",
+        "name": "Bundelkhand Rural Habitation A Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.36402,
+        "centroidLon": 79.448
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.448078,
+              25.364033
+            ],
+            [
+              79.448048,
+              25.364066
+            ],
+            [
+              79.44799,
+              25.364073
+            ],
+            [
+              79.447937,
+              25.364049
+            ],
+            [
+              79.447922,
+              25.364007
+            ],
+            [
+              79.447952,
+              25.363974
+            ],
+            [
+              79.44801,
+              25.363967
+            ],
+            [
+              79.448063,
+              25.363991
+            ],
+            [
+              79.448078,
+              25.364033
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0016",
+        "name": "Bundelkhand Rural Habitation A Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-002",
+        "settlementName": "Bundelkhand Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.3646,
+        "centroidLon": 79.449547
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.449625,
+              25.364613
+            ],
+            [
+              79.449595,
+              25.364646
+            ],
+            [
+              79.449537,
+              25.364653
+            ],
+            [
+              79.449484,
+              25.364629
+            ],
+            [
+              79.449469,
+              25.364587
+            ],
+            [
+              79.449499,
+              25.364554
+            ],
+            [
+              79.449557,
+              25.364547
+            ],
+            [
+              79.44961,
+              25.364571
+            ],
+            [
+              79.449625,
+              25.364613
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0017",
+        "name": "Bundelkhand Agro Cluster B Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.534,
+        "centroidLon": 79.738389
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.738467,
+              25.534013
+            ],
+            [
+              79.738437,
+              25.534046
+            ],
+            [
+              79.738379,
+              25.534053
+            ],
+            [
+              79.738326,
+              25.534029
+            ],
+            [
+              79.738311,
+              25.533987
+            ],
+            [
+              79.738341,
+              25.533954
+            ],
+            [
+              79.738399,
+              25.533947
+            ],
+            [
+              79.738452,
+              25.533971
+            ],
+            [
+              79.738467,
+              25.534013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0018",
+        "name": "Bundelkhand Agro Cluster B Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.535527,
+        "centroidLon": 79.737689
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.737767,
+              25.53554
+            ],
+            [
+              79.737737,
+              25.535573
+            ],
+            [
+              79.737679,
+              25.53558
+            ],
+            [
+              79.737626,
+              25.535556
+            ],
+            [
+              79.737611,
+              25.535514
+            ],
+            [
+              79.737641,
+              25.535481
+            ],
+            [
+              79.737699,
+              25.535474
+            ],
+            [
+              79.737752,
+              25.535498
+            ],
+            [
+              79.737767,
+              25.53554
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0019",
+        "name": "Bundelkhand Agro Cluster B Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.53616,
+        "centroidLon": 79.736
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.736078,
+              25.536173
+            ],
+            [
+              79.736048,
+              25.536206
+            ],
+            [
+              79.73599,
+              25.536213
+            ],
+            [
+              79.735937,
+              25.536189
+            ],
+            [
+              79.735922,
+              25.536147
+            ],
+            [
+              79.735952,
+              25.536114
+            ],
+            [
+              79.73601,
+              25.536107
+            ],
+            [
+              79.736063,
+              25.536131
+            ],
+            [
+              79.736078,
+              25.536173
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0020",
+        "name": "Bundelkhand Agro Cluster B Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.535527,
+        "centroidLon": 79.734311
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.734389,
+              25.53554
+            ],
+            [
+              79.734359,
+              25.535573
+            ],
+            [
+              79.734301,
+              25.53558
+            ],
+            [
+              79.734248,
+              25.535556
+            ],
+            [
+              79.734233,
+              25.535514
+            ],
+            [
+              79.734263,
+              25.535481
+            ],
+            [
+              79.734321,
+              25.535474
+            ],
+            [
+              79.734374,
+              25.535498
+            ],
+            [
+              79.734389,
+              25.53554
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0021",
+        "name": "Bundelkhand Agro Cluster B Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.534,
+        "centroidLon": 79.733611
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.733689,
+              25.534013
+            ],
+            [
+              79.733659,
+              25.534046
+            ],
+            [
+              79.733601,
+              25.534053
+            ],
+            [
+              79.733548,
+              25.534029
+            ],
+            [
+              79.733533,
+              25.533987
+            ],
+            [
+              79.733563,
+              25.533954
+            ],
+            [
+              79.733621,
+              25.533947
+            ],
+            [
+              79.733674,
+              25.533971
+            ],
+            [
+              79.733689,
+              25.534013
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0022",
+        "name": "Bundelkhand Agro Cluster B Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.532473,
+        "centroidLon": 79.734311
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.734389,
+              25.532486
+            ],
+            [
+              79.734359,
+              25.532519
+            ],
+            [
+              79.734301,
+              25.532526
+            ],
+            [
+              79.734248,
+              25.532502
+            ],
+            [
+              79.734233,
+              25.53246
+            ],
+            [
+              79.734263,
+              25.532427
+            ],
+            [
+              79.734321,
+              25.53242
+            ],
+            [
+              79.734374,
+              25.532444
+            ],
+            [
+              79.734389,
+              25.532486
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0023",
+        "name": "Bundelkhand Agro Cluster B Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.53184,
+        "centroidLon": 79.736
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.736078,
+              25.531853
+            ],
+            [
+              79.736048,
+              25.531886
+            ],
+            [
+              79.73599,
+              25.531893
+            ],
+            [
+              79.735937,
+              25.531869
+            ],
+            [
+              79.735922,
+              25.531827
+            ],
+            [
+              79.735952,
+              25.531794
+            ],
+            [
+              79.73601,
+              25.531787
+            ],
+            [
+              79.736063,
+              25.531811
+            ],
+            [
+              79.736078,
+              25.531853
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-BUNDELKHAND-0024",
+        "name": "Bundelkhand Agro Cluster B Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-BUNDELKHAND-003",
+        "settlementName": "Bundelkhand Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Bundelkhand Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 25.532473,
+        "centroidLon": 79.737689
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              79.737767,
+              25.532486
+            ],
+            [
+              79.737737,
+              25.532519
+            ],
+            [
+              79.737679,
+              25.532526
+            ],
+            [
+              79.737626,
+              25.532502
+            ],
+            [
+              79.737611,
+              25.53246
+            ],
+            [
+              79.737641,
+              25.532427
+            ],
+            [
+              79.737699,
+              25.53242
+            ],
+            [
+              79.737752,
+              25.532444
+            ],
+            [
+              79.737767,
+              25.532486
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

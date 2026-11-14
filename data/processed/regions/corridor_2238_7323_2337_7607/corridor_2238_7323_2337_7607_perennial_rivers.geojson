@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "RIV-CORRIDOR_2238_7323_2337_7607-001",
+        "name": "Corridor_2238_7323_2337_7607 Main River Axis",
+        "riverClass": "MAJOR_PERENNIAL_RIVER",
+        "basin": "Corridor_2238_7323_2337_7607 River Basin",
+        "designChannelWidthMeters": 280.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.03486,
+            23.20476
+          ],
+          [
+            74.6521,
+            23.10033
+          ],
+          [
+            76.26934,
+            23.14509
+          ]
+        ]
+      }
+    }
+  ]
+}

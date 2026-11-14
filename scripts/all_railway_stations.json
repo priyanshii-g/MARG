@@ -1,0 +1,134 @@
+{
+  "gp": [
+    {
+      "name": "Barabanki Junction",
+      "lat": 26.9340514,
+      "lon": 81.1787492,
+      "display": "Barabanki Junction, NH727H, Barabanki, Nawabganj, Barabanki, Uttar Pradesh, 225001, India"
+    },
+    {
+      "name": "Rasauli railway station",
+      "lat": 26.931321,
+      "lon": 81.253366,
+      "display": "Rasauli, NH27, Barabanki, Nawabganj, Barabanki, Uttar Pradesh, 225001, India"
+    },
+    {
+      "name": "Safdarganj railway station",
+      "lat": 26.9143164,
+      "lon": 81.3616885,
+      "display": "Safdarganj, NH27, Nawabganj, Barabanki, Uttar Pradesh, 225412, India"
+    },
+    {
+      "name": "Daryabad railway station",
+      "lat": 26.8621598,
+      "lon": 81.5500709,
+      "display": "Daryabad, Dariyabad, Ramsanehighat, Barabanki, Uttar Pradesh, 225403, India"
+    },
+    {
+      "name": "Patranga railway station",
+      "lat": 26.8251313,
+      "lon": 81.626136,
+      "display": "Patranga, NH27, Rudauli, Ayodhya, Uttar Pradesh, 224116, India"
+    },
+    {
+      "name": "Rudauli railway station",
+      "lat": 26.762188,
+      "lon": 81.754202,
+      "display": "Rudauli, Bhelsar rode, Rudauli, Ayodhya, Uttar Pradesh, 224120, India"
+    },
+    {
+      "name": "Sohawal railway station",
+      "lat": 26.7530452,
+      "lon": 81.9831112,
+      "display": "Sohawal, NH27, Sohawal, Ayodhya, Uttar Pradesh, 224188, India"
+    },
+    {
+      "name": "Ayodhya Cantt railway station",
+      "lat": 26.768993,
+      "lon": 82.1358017,
+      "display": "Ayodhya Cantt, Fatehganj - Chowk - Naka road, Lalbagh, Faizabad, Ayodhya, Uttar Pradesh, 224001, India"
+    }
+  ],
+  "wg": [
+    {
+      "name": "Pune Junction",
+      "lat": 18.5288773,
+      "lon": 73.8744146,
+      "display": "Pune Junction, Near Jahangir Hospital, Sassoon Marg, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India"
+    },
+    {
+      "name": "Sasvad Road railway station",
+      "lat": 18.472818,
+      "lon": 73.9545184,
+      "display": "Sasvad Road, Saswad Road, Manter Wadi, Haveli Subdistrict, Pune, Maharashtra, 412308, India"
+    },
+    {
+      "name": "Jejuri railway station",
+      "lat": 18.2871679,
+      "lon": 74.1716695,
+      "display": "Jejuri, Jejuri Morgaon Baramati Road, Jejuri, Purandhar, Pune, Maharashtra, 412303, India"
+    },
+    {
+      "name": "Nira railway station",
+      "lat": 18.1054456,
+      "lon": 74.208078,
+      "display": "Nira, Nira Pune Road, Nira, Purandhar, Pune, Maharashtra, India"
+    },
+    {
+      "name": "Lonand railway station",
+      "lat": 18.0406799,
+      "lon": 74.1902209,
+      "display": "Lonand, Shirur Satara Road, Lonand, Khandala, Satara, Maharashtra, 415521, India"
+    },
+    {
+      "name": "Wathar railway station",
+      "lat": 17.8913345,
+      "lon": 74.1365984,
+      "display": "Wathar, SH72, Watar, Koregaon, Satara, Maharashtra, 415634, India"
+    },
+    {
+      "name": "Satara railway station",
+      "lat": 17.6883359,
+      "lon": 74.0631835,
+      "display": "Satara, NH548C, Satara, Maharashtra, 415002, India"
+    }
+  ],
+  "assam": [
+    {
+      "name": "Lumding Junction",
+      "lat": 25.7502262,
+      "lon": 93.1766047,
+      "display": "Lumding Junction, Hospital Road, Lumding, Lanka, Hojai, Assam, 782447, India"
+    },
+    {
+      "name": "Diphu railway station",
+      "lat": 25.8371941,
+      "lon": 93.4383663,
+      "display": "Diphu, NH329, Thesoajur, Diphu, Karbi Anglong, Assam, 782460, India"
+    },
+    {
+      "name": "Bokajan railway station",
+      "lat": 26.0193348,
+      "lon": 93.7802127,
+      "display": "Bokajan, SH44;SH-016, Bokajan, Diphu, Karbi Anglong, Assam, 782490, India"
+    },
+    {
+      "name": "Barpathar railway station",
+      "lat": 26.2750082,
+      "lon": 93.8998677,
+      "display": "Barpathar, SH-016, Barpathar, Sarupathar, Golaghat, Assam, 785602, India"
+    },
+    {
+      "name": "Sarupathar railway station",
+      "lat": 26.1951622,
+      "lon": 93.8621654,
+      "display": "Sarupathar, SH-016, Sarupathar, Golaghat, Assam, India"
+    },
+    {
+      "name": "Furkating Junction",
+      "lat": 26.4647187,
+      "lon": 94.0018343,
+      "display": "Furkating Junction, SH34;SH-014, Furkating, Golaghat, Assam, 785702, India"
+    }
+  ]
+}

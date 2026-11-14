@@ -1,0 +1,4326 @@
+{
+  "type": "FeatureCollection",
+  "name": "Kaziranga-Karbi Anglong 2D Natural & Designated Wetlands, Floodplain Beels & Valley Marshes",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-001",
+      "properties": {
+        "id": "WET-BHUVAN-001",
+        "name": "Karbi Anglong Bhuvan Inland Beel #1",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-08-DIPHU-MANJA-DHANSIRI",
+        "watershedName": "Diphu-Manja-Upper Dhansiri Headwater Watershed",
+        "areaHectares": 21.77,
+        "equivalentRadiusMeters": 263.2,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 527573.64,
+        "utmY": 2850795.67
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.277157,
+              25.772397
+            ],
+            [
+              93.27784,
+              25.773063
+            ],
+            [
+              93.277682,
+              25.774202
+            ],
+            [
+              93.277106,
+              25.775207
+            ],
+            [
+              93.276565,
+              25.776063
+            ],
+            [
+              93.275891,
+              25.776953
+            ],
+            [
+              93.274903,
+              25.777574
+            ],
+            [
+              93.273925,
+              25.777569
+            ],
+            [
+              93.273223,
+              25.777144
+            ],
+            [
+              93.272636,
+              25.776612
+            ],
+            [
+              93.272187,
+              25.775837
+            ],
+            [
+              93.27234,
+              25.774738
+            ],
+            [
+              93.273207,
+              25.773782
+            ],
+            [
+              93.274232,
+              25.773317
+            ],
+            [
+              93.275075,
+              25.773001
+            ],
+            [
+              93.276029,
+              25.77254
+            ],
+            [
+              93.277157,
+              25.772397
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-002",
+      "properties": {
+        "id": "WET-BHUVAN-002",
+        "name": "Nagaon Bhuvan Inland Beel #2",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 25.64,
+        "equivalentRadiusMeters": 285.7,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 524396.36,
+        "utmY": 2940494.87
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.248529,
+              26.584084
+            ],
+            [
+              93.248364,
+              26.58501
+            ],
+            [
+              93.247682,
+              26.585835
+            ],
+            [
+              93.246861,
+              26.586587
+            ],
+            [
+              93.245724,
+              26.587255
+            ],
+            [
+              93.244304,
+              26.587456
+            ],
+            [
+              93.24321,
+              26.58701
+            ],
+            [
+              93.242677,
+              26.586326
+            ],
+            [
+              93.242187,
+              26.58573
+            ],
+            [
+              93.241607,
+              26.58499
+            ],
+            [
+              93.24169,
+              26.583969
+            ],
+            [
+              93.242833,
+              26.583152
+            ],
+            [
+              93.244342,
+              26.582953
+            ],
+            [
+              93.245543,
+              26.583083
+            ],
+            [
+              93.246635,
+              26.583163
+            ],
+            [
+              93.247811,
+              26.583396
+            ],
+            [
+              93.248529,
+              26.584084
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-003",
+      "properties": {
+        "id": "WET-BHUVAN-003",
+        "name": "Nagaon Bhuvan Inland Beel #3",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 29.81,
+        "equivalentRadiusMeters": 308.1,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 525392.13,
+        "utmY": 2940496.81
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.258211,
+              26.586102
+            ],
+            [
+              93.257383,
+              26.586634
+            ],
+            [
+              93.256614,
+              26.58718
+            ],
+            [
+              93.255493,
+              26.587708
+            ],
+            [
+              93.253885,
+              26.587628
+            ],
+            [
+              93.252593,
+              26.586749
+            ],
+            [
+              93.252177,
+              26.58566
+            ],
+            [
+              93.252114,
+              26.584798
+            ],
+            [
+              93.251905,
+              26.583938
+            ],
+            [
+              93.252037,
+              26.582969
+            ],
+            [
+              93.253048,
+              26.582363
+            ],
+            [
+              93.254534,
+              26.582439
+            ],
+            [
+              93.255894,
+              26.582894
+            ],
+            [
+              93.257142,
+              26.583444
+            ],
+            [
+              93.258267,
+              26.584236
+            ],
+            [
+              93.258704,
+              26.585259
+            ],
+            [
+              93.258211,
+              26.586102
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-004",
+      "properties": {
+        "id": "WET-BHUVAN-004",
+        "name": "Nagaon Bhuvan Inland Beel #4",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 24.5,
+        "equivalentRadiusMeters": 279.3,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 518420.13,
+        "utmY": 2941592.37
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.186783,
+              26.597557
+            ],
+            [
+              93.186033,
+              26.597539
+            ],
+            [
+              93.185254,
+              26.597644
+            ],
+            [
+              93.18414,
+              26.597247
+            ],
+            [
+              93.183076,
+              26.596085
+            ],
+            [
+              93.18257,
+              26.594738
+            ],
+            [
+              93.182484,
+              26.593653
+            ],
+            [
+              93.182509,
+              26.592687
+            ],
+            [
+              93.182839,
+              26.591901
+            ],
+            [
+              93.183694,
+              26.591791
+            ],
+            [
+              93.184751,
+              26.592405
+            ],
+            [
+              93.185683,
+              26.593215
+            ],
+            [
+              93.186657,
+              26.594066
+            ],
+            [
+              93.187685,
+              26.59529
+            ],
+            [
+              93.188157,
+              26.596689
+            ],
+            [
+              93.187685,
+              26.597493
+            ],
+            [
+              93.186783,
+              26.597557
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-005",
+      "properties": {
+        "id": "WET-BHUVAN-005",
+        "name": "Nagaon Bhuvan Inland Beel #5",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 20.04,
+        "equivalentRadiusMeters": 252.6,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 529372.68,
+        "utmY": 2941612.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.295224,
+              26.592632
+            ],
+            [
+              93.296016,
+              26.592773
+            ],
+            [
+              93.296781,
+              26.593225
+            ],
+            [
+              93.297177,
+              26.594138
+            ],
+            [
+              93.297077,
+              26.595159
+            ],
+            [
+              93.296782,
+              26.59606
+            ],
+            [
+              93.296409,
+              26.597002
+            ],
+            [
+              93.295704,
+              26.597836
+            ],
+            [
+              93.294719,
+              26.597968
+            ],
+            [
+              93.293957,
+              26.597286
+            ],
+            [
+              93.293584,
+              26.596411
+            ],
+            [
+              93.29322,
+              26.595705
+            ],
+            [
+              93.292773,
+              26.59483
+            ],
+            [
+              93.292755,
+              26.593664
+            ],
+            [
+              93.293433,
+              26.592773
+            ],
+            [
+              93.294389,
+              26.592538
+            ],
+            [
+              93.295224,
+              26.592632
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-006",
+      "properties": {
+        "id": "WET-BHUVAN-006",
+        "name": "Golaghat Bhuvan Inland Beel #6",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 23.75,
+        "equivalentRadiusMeters": 275.0,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 540325.3,
+        "utmY": 2941642.86
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.407201,
+              26.592789
+            ],
+            [
+              93.407985,
+              26.593409
+            ],
+            [
+              93.407991,
+              26.594483
+            ],
+            [
+              93.407262,
+              26.59548
+            ],
+            [
+              93.406451,
+              26.596167
+            ],
+            [
+              93.405756,
+              26.596902
+            ],
+            [
+              93.404761,
+              26.597722
+            ],
+            [
+              93.4035,
+              26.597987
+            ],
+            [
+              93.402658,
+              26.597353
+            ],
+            [
+              93.402509,
+              26.596328
+            ],
+            [
+              93.40259,
+              26.595416
+            ],
+            [
+              93.402674,
+              26.594506
+            ],
+            [
+              93.403135,
+              26.5935
+            ],
+            [
+              93.404116,
+              26.592776
+            ],
+            [
+              93.405214,
+              26.592569
+            ],
+            [
+              93.406199,
+              26.592612
+            ],
+            [
+              93.407201,
+              26.592789
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-007",
+      "properties": {
+        "id": "WET-BHUVAN-007",
+        "name": "Golaghat Bhuvan Inland Beel #7",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 27.77,
+        "equivalentRadiusMeters": 297.3,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 541321.0,
+        "utmY": 2941646.05
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.418816,
+              26.594322
+            ],
+            [
+              93.418925,
+              26.595395
+            ],
+            [
+              93.417893,
+              26.596281
+            ],
+            [
+              93.416552,
+              26.596685
+            ],
+            [
+              93.41543,
+              26.596956
+            ],
+            [
+              93.41422,
+              26.597258
+            ],
+            [
+              93.412854,
+              26.597187
+            ],
+            [
+              93.411928,
+              26.596516
+            ],
+            [
+              93.411712,
+              26.595584
+            ],
+            [
+              93.411823,
+              26.59468
+            ],
+            [
+              93.412152,
+              26.593739
+            ],
+            [
+              93.413072,
+              26.592907
+            ],
+            [
+              93.414478,
+              26.592628
+            ],
+            [
+              93.415718,
+              26.592922
+            ],
+            [
+              93.416664,
+              26.593304
+            ],
+            [
+              93.417762,
+              26.593637
+            ],
+            [
+              93.418816,
+              26.594322
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-008",
+      "properties": {
+        "id": "WET-BHUVAN-008",
+        "name": "Golaghat Bhuvan Inland Beel #8",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 22.93,
+        "equivalentRadiusMeters": 270.2,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 542316.7,
+        "utmY": 2941649.31
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.428654,
+              26.596588
+            ],
+            [
+              93.427923,
+              26.597098
+            ],
+            [
+              93.426686,
+              26.597127
+            ],
+            [
+              93.425437,
+              26.596971
+            ],
+            [
+              93.4241,
+              26.596673
+            ],
+            [
+              93.422787,
+              26.596018
+            ],
+            [
+              93.42207,
+              26.595134
+            ],
+            [
+              93.422042,
+              26.594385
+            ],
+            [
+              93.42213,
+              26.593752
+            ],
+            [
+              93.422236,
+              26.593016
+            ],
+            [
+              93.422984,
+              26.592456
+            ],
+            [
+              93.424469,
+              26.592606
+            ],
+            [
+              93.425869,
+              26.593384
+            ],
+            [
+              93.426731,
+              26.594204
+            ],
+            [
+              93.427507,
+              26.594885
+            ],
+            [
+              93.428375,
+              26.595702
+            ],
+            [
+              93.428654,
+              26.596588
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-009",
+      "properties": {
+        "id": "WET-BHUVAN-009",
+        "name": "Nagaon Bhuvan Inland Beel #9",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 26.95,
+        "equivalentRadiusMeters": 292.9,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 518418.52,
+        "utmY": 2942699.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.186742,
+              26.608062
+            ],
+            [
+              93.185796,
+              26.607885
+            ],
+            [
+              93.18488,
+              26.60763
+            ],
+            [
+              93.183784,
+              26.60718
+            ],
+            [
+              93.182674,
+              26.606069
+            ],
+            [
+              93.18221,
+              26.604594
+            ],
+            [
+              93.182548,
+              26.603541
+            ],
+            [
+              93.183067,
+              26.602946
+            ],
+            [
+              93.183435,
+              26.602248
+            ],
+            [
+              93.184057,
+              26.601583
+            ],
+            [
+              93.185149,
+              26.601729
+            ],
+            [
+              93.186224,
+              26.602804
+            ],
+            [
+              93.186896,
+              26.604129
+            ],
+            [
+              93.187352,
+              26.605343
+            ],
+            [
+              93.187677,
+              26.606592
+            ],
+            [
+              93.187509,
+              26.607665
+            ],
+            [
+              93.186742,
+              26.608062
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-010",
+      "properties": {
+        "id": "WET-BHUVAN-010",
+        "name": "Nagaon Bhuvan Inland Beel #10",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 21.87,
+        "equivalentRadiusMeters": 263.8,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 519414.12,
+        "utmY": 2942701.38
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.195435,
+              26.602762
+            ],
+            [
+              93.196103,
+              26.603199
+            ],
+            [
+              93.196894,
+              26.603547
+            ],
+            [
+              93.197661,
+              26.604283
+            ],
+            [
+              93.197773,
+              26.605436
+            ],
+            [
+              93.197115,
+              26.606407
+            ],
+            [
+              93.196227,
+              26.606933
+            ],
+            [
+              93.195408,
+              26.607312
+            ],
+            [
+              93.194499,
+              26.607575
+            ],
+            [
+              93.193573,
+              26.607329
+            ],
+            [
+              93.193004,
+              26.606531
+            ],
+            [
+              93.19281,
+              26.60559
+            ],
+            [
+              93.192705,
+              26.604639
+            ],
+            [
+              93.192798,
+              26.603535
+            ],
+            [
+              93.193462,
+              26.602576
+            ],
+            [
+              93.194532,
+              26.602345
+            ],
+            [
+              93.195435,
+              26.602762
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-011",
+      "properties": {
+        "id": "WET-BHUVAN-011",
+        "name": "Nagaon Bhuvan Inland Beel #11",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 25.73,
+        "equivalentRadiusMeters": 286.2,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 520409.72,
+        "utmY": 2942702.93
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.207034,
+              26.603289
+            ],
+            [
+              93.207531,
+              26.603977
+            ],
+            [
+              93.20791,
+              26.604837
+            ],
+            [
+              93.207669,
+              26.605885
+            ],
+            [
+              93.206783,
+              26.606713
+            ],
+            [
+              93.205722,
+              26.6072
+            ],
+            [
+              93.204629,
+              26.607575
+            ],
+            [
+              93.203398,
+              26.607704
+            ],
+            [
+              93.202411,
+              26.607177
+            ],
+            [
+              93.202213,
+              26.606127
+            ],
+            [
+              93.202583,
+              26.605135
+            ],
+            [
+              93.202892,
+              26.6043
+            ],
+            [
+              93.203216,
+              26.603285
+            ],
+            [
+              93.204108,
+              26.602283
+            ],
+            [
+              93.205433,
+              26.601988
+            ],
+            [
+              93.206467,
+              26.602523
+            ],
+            [
+              93.207034,
+              26.603289
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-012",
+      "properties": {
+        "id": "WET-BHUVAN-012",
+        "name": "Nagaon Bhuvan Inland Beel #12",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 21.36,
+        "equivalentRadiusMeters": 260.8,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 523396.52,
+        "utmY": 2942708.07
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.238406,
+              26.604672
+            ],
+            [
+              93.238497,
+              26.605419
+            ],
+            [
+              93.237742,
+              26.606116
+            ],
+            [
+              93.236411,
+              26.606446
+            ],
+            [
+              93.235178,
+              26.606493
+            ],
+            [
+              93.234025,
+              26.606578
+            ],
+            [
+              93.232595,
+              26.606604
+            ],
+            [
+              93.231345,
+              26.606183
+            ],
+            [
+              93.231156,
+              26.60537
+            ],
+            [
+              93.231947,
+              26.604634
+            ],
+            [
+              93.232856,
+              26.604127
+            ],
+            [
+              93.233651,
+              26.603618
+            ],
+            [
+              93.234779,
+              26.603144
+            ],
+            [
+              93.236191,
+              26.603072
+            ],
+            [
+              93.237288,
+              26.603474
+            ],
+            [
+              93.237933,
+              26.604051
+            ],
+            [
+              93.238406,
+              26.604672
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-013",
+      "properties": {
+        "id": "WET-BHUVAN-013",
+        "name": "Golaghat Bhuvan Inland Beel #13",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 25.23,
+        "equivalentRadiusMeters": 283.4,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 531361.33,
+        "utmY": 2942725.19
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.318534,
+              26.606898
+            ],
+            [
+              93.317956,
+              26.607646
+            ],
+            [
+              93.316531,
+              26.607581
+            ],
+            [
+              93.315139,
+              26.606965
+            ],
+            [
+              93.314072,
+              26.606396
+            ],
+            [
+              93.312907,
+              26.605863
+            ],
+            [
+              93.311734,
+              26.605011
+            ],
+            [
+              93.311295,
+              26.603992
+            ],
+            [
+              93.311783,
+              26.603272
+            ],
+            [
+              93.312637,
+              26.602885
+            ],
+            [
+              93.313587,
+              26.602618
+            ],
+            [
+              93.314833,
+              26.602643
+            ],
+            [
+              93.316175,
+              26.603233
+            ],
+            [
+              93.317071,
+              26.604146
+            ],
+            [
+              93.317584,
+              26.604991
+            ],
+            [
+              93.318162,
+              26.60586
+            ],
+            [
+              93.318534,
+              26.606898
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-014",
+      "properties": {
+        "id": "WET-BHUVAN-014",
+        "name": "Golaghat Bhuvan Inland Beel #14",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 29.41,
+        "equivalentRadiusMeters": 305.9,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 538330.58,
+        "utmY": 2942744.26
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.38667,
+              26.608684
+            ],
+            [
+              93.385575,
+              26.608739
+            ],
+            [
+              93.384463,
+              26.607904
+            ],
+            [
+              93.383605,
+              26.606868
+            ],
+            [
+              93.382829,
+              26.605795
+            ],
+            [
+              93.382267,
+              26.604488
+            ],
+            [
+              93.382333,
+              26.603244
+            ],
+            [
+              93.382955,
+              26.602513
+            ],
+            [
+              93.383681,
+              26.602091
+            ],
+            [
+              93.384487,
+              26.601664
+            ],
+            [
+              93.385614,
+              26.601678
+            ],
+            [
+              93.386743,
+              26.602667
+            ],
+            [
+              93.387245,
+              26.604178
+            ],
+            [
+              93.387188,
+              26.60541
+            ],
+            [
+              93.387165,
+              26.606425
+            ],
+            [
+              93.38718,
+              26.607651
+            ],
+            [
+              93.38667,
+              26.608684
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-015",
+      "properties": {
+        "id": "WET-BHUVAN-015",
+        "name": "Nagaon Bhuvan Inland Beel #15",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 23.69,
+        "equivalentRadiusMeters": 274.6,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 520407.95,
+        "utmY": 2943810.47
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.205762,
+              26.612426
+            ],
+            [
+              93.206558,
+              26.613021
+            ],
+            [
+              93.207158,
+              26.61373
+            ],
+            [
+              93.20773,
+              26.614572
+            ],
+            [
+              93.207907,
+              26.615696
+            ],
+            [
+              93.207276,
+              26.616699
+            ],
+            [
+              93.206178,
+              26.61708
+            ],
+            [
+              93.20522,
+              26.617071
+            ],
+            [
+              93.204355,
+              26.617179
+            ],
+            [
+              93.203262,
+              26.617208
+            ],
+            [
+              93.202288,
+              26.616596
+            ],
+            [
+              93.202075,
+              26.615458
+            ],
+            [
+              93.202553,
+              26.614414
+            ],
+            [
+              93.203161,
+              26.613628
+            ],
+            [
+              93.203799,
+              26.612878
+            ],
+            [
+              93.204717,
+              26.612343
+            ],
+            [
+              93.205762,
+              26.612426
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-016",
+      "properties": {
+        "id": "WET-BHUVAN-016",
+        "name": "Nagaon Bhuvan Inland Beel #16",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 19.79,
+        "equivalentRadiusMeters": 251.0,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 522398.97,
+        "utmY": 2943813.82
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.227213,
+              26.61344
+            ],
+            [
+              93.227248,
+              26.614127
+            ],
+            [
+              93.227427,
+              26.614783
+            ],
+            [
+              93.227337,
+              26.615714
+            ],
+            [
+              93.226477,
+              26.616693
+            ],
+            [
+              93.225208,
+              26.617148
+            ],
+            [
+              93.224189,
+              26.61706
+            ],
+            [
+              93.223413,
+              26.616882
+            ],
+            [
+              93.222615,
+              26.616681
+            ],
+            [
+              93.222089,
+              26.61613
+            ],
+            [
+              93.222274,
+              26.615244
+            ],
+            [
+              93.222982,
+              26.614383
+            ],
+            [
+              93.223808,
+              26.613633
+            ],
+            [
+              93.224796,
+              26.6129
+            ],
+            [
+              93.225998,
+              26.612465
+            ],
+            [
+              93.226927,
+              26.612716
+            ],
+            [
+              93.227213,
+              26.61344
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-017",
+      "properties": {
+        "id": "WET-BHUVAN-017",
+        "name": "Nagaon Bhuvan Inland Beel #17",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 23.5,
+        "equivalentRadiusMeters": 273.5,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 528372.06,
+        "utmY": 2943825.72
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.287946,
+              26.614948
+            ],
+            [
+              93.287713,
+              26.615602
+            ],
+            [
+              93.2874,
+              26.616336
+            ],
+            [
+              93.286455,
+              26.616957
+            ],
+            [
+              93.285046,
+              26.617095
+            ],
+            [
+              93.283764,
+              26.616813
+            ],
+            [
+              93.282683,
+              26.616406
+            ],
+            [
+              93.281697,
+              26.615859
+            ],
+            [
+              93.281267,
+              26.615066
+            ],
+            [
+              93.281814,
+              26.614292
+            ],
+            [
+              93.282885,
+              26.613822
+            ],
+            [
+              93.283866,
+              26.613475
+            ],
+            [
+              93.284957,
+              26.613036
+            ],
+            [
+              93.286474,
+              26.612838
+            ],
+            [
+              93.287817,
+              26.61329
+            ],
+            [
+              93.288217,
+              26.614164
+            ],
+            [
+              93.287946,
+              26.614948
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-018",
+      "properties": {
+        "id": "WET-BHUVAN-018",
+        "name": "Golaghat Bhuvan Inland Beel #18",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 27.52,
+        "equivalentRadiusMeters": 296.0,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 533349.64,
+        "utmY": 2943837.79
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.337861,
+              26.616858
+            ],
+            [
+              93.337279,
+              26.617538
+            ],
+            [
+              93.336169,
+              26.617762
+            ],
+            [
+              93.334837,
+              26.617298
+            ],
+            [
+              93.333775,
+              26.616524
+            ],
+            [
+              93.332823,
+              26.615788
+            ],
+            [
+              93.331738,
+              26.614871
+            ],
+            [
+              93.331098,
+              26.613681
+            ],
+            [
+              93.331603,
+              26.612794
+            ],
+            [
+              93.332891,
+              26.612652
+            ],
+            [
+              93.334095,
+              26.612862
+            ],
+            [
+              93.335145,
+              26.612952
+            ],
+            [
+              93.336449,
+              26.613197
+            ],
+            [
+              93.337732,
+              26.614011
+            ],
+            [
+              93.33831,
+              26.615131
+            ],
+            [
+              93.338194,
+              26.61608
+            ],
+            [
+              93.337861,
+              26.616858
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-019",
+      "properties": {
+        "id": "WET-BHUVAN-019",
+        "name": "Golaghat Bhuvan Inland Beel #19",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 31.86,
+        "equivalentRadiusMeters": 318.4,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 536336.2,
+        "utmY": 2943845.96
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.366268,
+              26.618691
+            ],
+            [
+              93.365134,
+              26.618984
+            ],
+            [
+              93.363974,
+              26.618107
+            ],
+            [
+              93.363341,
+              26.616717
+            ],
+            [
+              93.362998,
+              26.615556
+            ],
+            [
+              93.362508,
+              26.614413
+            ],
+            [
+              93.3622,
+              26.612951
+            ],
+            [
+              93.362673,
+              26.61173
+            ],
+            [
+              93.363773,
+              26.61143
+            ],
+            [
+              93.364893,
+              26.611802
+            ],
+            [
+              93.365891,
+              26.612301
+            ],
+            [
+              93.36689,
+              26.613044
+            ],
+            [
+              93.367594,
+              26.61428
+            ],
+            [
+              93.36765,
+              26.615624
+            ],
+            [
+              93.367302,
+              26.616684
+            ],
+            [
+              93.366911,
+              26.617686
+            ],
+            [
+              93.366268,
+              26.618691
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-020",
+      "properties": {
+        "id": "WET-BHUVAN-020",
+        "name": "Nagaon Bhuvan Inland Beel #20",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 18.22,
+        "equivalentRadiusMeters": 240.8,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 523392.45,
+        "utmY": 2944923.14
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.236132,
+              26.622188
+            ],
+            [
+              93.236904,
+              26.62263
+            ],
+            [
+              93.237098,
+              26.623654
+            ],
+            [
+              93.236931,
+              26.62466
+            ],
+            [
+              93.236735,
+              26.625564
+            ],
+            [
+              93.236377,
+              26.626522
+            ],
+            [
+              93.23566,
+              26.62726
+            ],
+            [
+              93.234812,
+              26.627447
+            ],
+            [
+              93.234085,
+              26.627273
+            ],
+            [
+              93.233381,
+              26.627014
+            ],
+            [
+              93.232727,
+              26.626458
+            ],
+            [
+              93.23256,
+              26.62543
+            ],
+            [
+              93.23308,
+              26.624375
+            ],
+            [
+              93.233849,
+              26.623727
+            ],
+            [
+              93.234483,
+              26.623227
+            ],
+            [
+              93.235187,
+              26.62257
+            ],
+            [
+              93.236132,
+              26.622188
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-021",
+      "properties": {
+        "id": "WET-BHUVAN-021",
+        "name": "Nagaon Bhuvan Inland Beel #21",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 21.77,
+        "equivalentRadiusMeters": 263.2,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 528369.59,
+        "utmY": 2944933.27
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.2878,
+              26.623358
+            ],
+            [
+              93.287893,
+              26.624205
+            ],
+            [
+              93.28759,
+              26.625073
+            ],
+            [
+              93.287153,
+              26.625952
+            ],
+            [
+              93.28634,
+              26.626846
+            ],
+            [
+              93.285112,
+              26.627348
+            ],
+            [
+              93.284023,
+              26.627179
+            ],
+            [
+              93.283366,
+              26.626705
+            ],
+            [
+              93.282732,
+              26.62633
+            ],
+            [
+              93.281977,
+              26.62583
+            ],
+            [
+              93.281769,
+              26.624909
+            ],
+            [
+              93.282559,
+              26.62392
+            ],
+            [
+              93.283819,
+              26.623373
+            ],
+            [
+              93.284912,
+              26.623154
+            ],
+            [
+              93.285927,
+              26.622933
+            ],
+            [
+              93.287027,
+              26.622884
+            ],
+            [
+              93.2878,
+              26.623358
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-022",
+      "properties": {
+        "id": "WET-BHUVAN-022",
+        "name": "Golaghat Bhuvan Inland Beel #22",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 25.64,
+        "equivalentRadiusMeters": 285.7,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 532351.31,
+        "utmY": 2944942.76
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.328132,
+              26.62519
+            ],
+            [
+              93.327567,
+              26.625847
+            ],
+            [
+              93.327101,
+              26.626533
+            ],
+            [
+              93.326273,
+              26.62729
+            ],
+            [
+              93.324806,
+              26.627594
+            ],
+            [
+              93.323398,
+              26.627114
+            ],
+            [
+              93.32269,
+              26.626265
+            ],
+            [
+              93.322324,
+              26.625531
+            ],
+            [
+              93.321861,
+              26.62481
+            ],
+            [
+              93.321746,
+              26.623927
+            ],
+            [
+              93.322514,
+              26.623186
+            ],
+            [
+              93.323835,
+              26.622905
+            ],
+            [
+              93.325156,
+              26.622924
+            ],
+            [
+              93.326471,
+              26.623058
+            ],
+            [
+              93.327742,
+              26.623498
+            ],
+            [
+              93.328385,
+              26.624329
+            ],
+            [
+              93.328132,
+              26.62519
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-023",
+      "properties": {
+        "id": "WET-BHUVAN-023",
+        "name": "Golaghat Bhuvan Inland Beel #23",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 29.81,
+        "equivalentRadiusMeters": 308.1,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 539319.34,
+        "utmY": 2944962.39
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.397375,
+              26.626844
+            ],
+            [
+              93.396574,
+              26.6272
+            ],
+            [
+              93.395724,
+              26.627665
+            ],
+            [
+              93.394432,
+              26.627714
+            ],
+            [
+              93.393111,
+              26.626966
+            ],
+            [
+              93.392338,
+              26.625824
+            ],
+            [
+              93.391987,
+              26.624746
+            ],
+            [
+              93.391791,
+              26.623693
+            ],
+            [
+              93.392062,
+              26.622719
+            ],
+            [
+              93.393052,
+              26.622277
+            ],
+            [
+              93.394317,
+              26.622483
+            ],
+            [
+              93.395446,
+              26.62287
+            ],
+            [
+              93.396671,
+              26.623261
+            ],
+            [
+              93.398028,
+              26.624063
+            ],
+            [
+              93.398755,
+              26.625317
+            ],
+            [
+              93.398339,
+              26.62636
+            ],
+            [
+              93.397375,
+              26.626844
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-024",
+      "properties": {
+        "id": "WET-BHUVAN-024",
+        "name": "Golaghat Bhuvan Inland Beel #24",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 24.5,
+        "equivalentRadiusMeters": 279.3,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 540314.78,
+        "utmY": 2944965.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.405765,
+              26.628185
+            ],
+            [
+              93.405012,
+              26.628253
+            ],
+            [
+              93.404163,
+              26.627812
+            ],
+            [
+              93.403493,
+              26.626679
+            ],
+            [
+              93.403203,
+              26.625349
+            ],
+            [
+              93.403067,
+              26.624124
+            ],
+            [
+              93.402964,
+              26.622767
+            ],
+            [
+              93.403236,
+              26.621469
+            ],
+            [
+              93.404055,
+              26.621067
+            ],
+            [
+              93.404988,
+              26.621783
+            ],
+            [
+              93.405655,
+              26.622798
+            ],
+            [
+              93.406264,
+              26.623591
+            ],
+            [
+              93.406997,
+              26.624612
+            ],
+            [
+              93.407444,
+              26.626107
+            ],
+            [
+              93.407197,
+              26.62741
+            ],
+            [
+              93.406495,
+              26.627994
+            ],
+            [
+              93.405765,
+              26.628185
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-025",
+      "properties": {
+        "id": "WET-BHUVAN-025",
+        "name": "Golaghat Bhuvan Inland Beel #25",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 20.04,
+        "equivalentRadiusMeters": 252.6,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 547282.86,
+        "utmY": 2944989.48
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.476299,
+              26.622472
+            ],
+            [
+              93.477185,
+              26.622836
+            ],
+            [
+              93.477476,
+              26.623815
+            ],
+            [
+              93.477102,
+              26.624873
+            ],
+            [
+              93.476609,
+              26.625668
+            ],
+            [
+              93.476236,
+              26.626496
+            ],
+            [
+              93.475601,
+              26.627459
+            ],
+            [
+              93.474575,
+              26.627966
+            ],
+            [
+              93.473662,
+              26.627603
+            ],
+            [
+              93.473208,
+              26.626774
+            ],
+            [
+              93.472959,
+              26.625976
+            ],
+            [
+              93.472755,
+              26.625136
+            ],
+            [
+              93.472914,
+              26.624134
+            ],
+            [
+              93.473598,
+              26.623301
+            ],
+            [
+              93.474479,
+              26.622872
+            ],
+            [
+              93.475342,
+              26.622617
+            ],
+            [
+              93.476299,
+              26.622472
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-026",
+      "properties": {
+        "id": "WET-BHUVAN-026",
+        "name": "Golaghat Bhuvan Inland Beel #26",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 23.75,
+        "equivalentRadiusMeters": 275.0,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 562214.6,
+        "utmY": 2945053.72
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.628186,
+              26.623459
+            ],
+            [
+              93.628573,
+              26.624389
+            ],
+            [
+              93.62792,
+              26.625417
+            ],
+            [
+              93.626893,
+              26.626113
+            ],
+            [
+              93.625994,
+              26.626661
+            ],
+            [
+              93.624989,
+              26.627222
+            ],
+            [
+              93.623769,
+              26.627437
+            ],
+            [
+              93.622798,
+              26.627035
+            ],
+            [
+              93.622324,
+              26.626294
+            ],
+            [
+              93.62207,
+              26.625501
+            ],
+            [
+              93.622025,
+              26.624575
+            ],
+            [
+              93.622622,
+              26.623602
+            ],
+            [
+              93.623828,
+              26.623042
+            ],
+            [
+              93.62501,
+              26.623028
+            ],
+            [
+              93.625953,
+              26.623114
+            ],
+            [
+              93.627045,
+              26.62311
+            ],
+            [
+              93.628186,
+              26.623459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-027",
+      "properties": {
+        "id": "WET-BHUVAN-027",
+        "name": "Golaghat Bhuvan Inland Beel #27",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 27.77,
+        "equivalentRadiusMeters": 297.3,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 535334.53,
+        "utmY": 2946058.25
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.358684,
+              26.635515
+            ],
+            [
+              93.35811,
+              26.636389
+            ],
+            [
+              93.357041,
+              26.636916
+            ],
+            [
+              93.355901,
+              26.637273
+            ],
+            [
+              93.354575,
+              26.637455
+            ],
+            [
+              93.353201,
+              26.637123
+            ],
+            [
+              93.352383,
+              26.63628
+            ],
+            [
+              93.352209,
+              26.635385
+            ],
+            [
+              93.352091,
+              26.634593
+            ],
+            [
+              93.351958,
+              26.633642
+            ],
+            [
+              93.352514,
+              26.632666
+            ],
+            [
+              93.353929,
+              26.632297
+            ],
+            [
+              93.355397,
+              26.632707
+            ],
+            [
+              93.356401,
+              26.633346
+            ],
+            [
+              93.357316,
+              26.633867
+            ],
+            [
+              93.358291,
+              26.634546
+            ],
+            [
+              93.358684,
+              26.635515
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-028",
+      "properties": {
+        "id": "WET-BHUVAN-028",
+        "name": "Nagaon Bhuvan Inland Beel #28",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Nagaon",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 22.93,
+        "equivalentRadiusMeters": 270.2,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 525378.88,
+        "utmY": 2947142.04
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.257439,
+              26.647261
+            ],
+            [
+              93.256565,
+              26.647311
+            ],
+            [
+              93.25572,
+              26.647349
+            ],
+            [
+              93.254614,
+              26.64724
+            ],
+            [
+              93.253279,
+              26.646499
+            ],
+            [
+              93.252428,
+              26.645285
+            ],
+            [
+              93.252402,
+              26.644279
+            ],
+            [
+              93.252639,
+              26.643617
+            ],
+            [
+              93.252727,
+              26.642893
+            ],
+            [
+              93.253094,
+              26.642186
+            ],
+            [
+              93.254116,
+              26.642114
+            ],
+            [
+              93.255376,
+              26.642818
+            ],
+            [
+              93.256387,
+              26.643791
+            ],
+            [
+              93.257229,
+              26.644753
+            ],
+            [
+              93.25793,
+              26.645813
+            ],
+            [
+              93.258054,
+              26.646789
+            ],
+            [
+              93.257439,
+              26.647261
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-029",
+      "properties": {
+        "id": "WET-BHUVAN-029",
+        "name": "Golaghat Bhuvan Inland Beel #29",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 26.95,
+        "equivalentRadiusMeters": 292.9,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 547274.62,
+        "utmY": 2947204.6
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.475423,
+              26.648006
+            ],
+            [
+              93.47469,
+              26.647681
+            ],
+            [
+              93.47387,
+              26.647487
+            ],
+            [
+              93.472955,
+              26.646744
+            ],
+            [
+              93.472479,
+              26.645287
+            ],
+            [
+              93.472696,
+              26.643849
+            ],
+            [
+              93.473228,
+              26.642859
+            ],
+            [
+              93.47378,
+              26.642047
+            ],
+            [
+              93.474498,
+              26.641437
+            ],
+            [
+              93.475398,
+              26.641566
+            ],
+            [
+              93.476147,
+              26.642475
+            ],
+            [
+              93.476648,
+              26.643594
+            ],
+            [
+              93.477127,
+              26.644758
+            ],
+            [
+              93.477478,
+              26.646238
+            ],
+            [
+              93.477227,
+              26.64769
+            ],
+            [
+              93.476355,
+              26.648281
+            ],
+            [
+              93.475423,
+              26.648006
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-030",
+      "properties": {
+        "id": "WET-BHUVAN-030",
+        "name": "Golaghat Bhuvan Inland Beel #30",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 21.87,
+        "equivalentRadiusMeters": 263.8,
+        "seasonalDepthMeters": 3.0,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 567180.2,
+        "utmY": 2947294.19
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.67629,
+              26.642967
+            ],
+            [
+              93.676974,
+              26.643437
+            ],
+            [
+              93.677547,
+              26.644136
+            ],
+            [
+              93.677582,
+              26.645126
+            ],
+            [
+              93.67703,
+              26.64604
+            ],
+            [
+              93.676287,
+              26.646733
+            ],
+            [
+              93.675464,
+              26.647387
+            ],
+            [
+              93.6744,
+              26.647831
+            ],
+            [
+              93.673368,
+              26.647572
+            ],
+            [
+              93.672905,
+              26.646658
+            ],
+            [
+              93.672938,
+              26.6457
+            ],
+            [
+              93.672928,
+              26.644899
+            ],
+            [
+              93.672892,
+              26.64392
+            ],
+            [
+              93.673391,
+              26.642833
+            ],
+            [
+              93.674471,
+              26.642278
+            ],
+            [
+              93.675533,
+              26.642483
+            ],
+            [
+              93.67629,
+              26.642967
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-BHUVAN-031",
+      "properties": {
+        "id": "WET-BHUVAN-031",
+        "name": "Golaghat Bhuvan Inland Beel #31",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 25.73,
+        "equivalentRadiusMeters": 286.2,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_INLAND_BEEL_ECOLOGICAL_AND_FLOOD_STORAGE",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 568175.49,
+        "utmY": 2947299.48
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.687978,
+              26.643847
+            ],
+            [
+              93.688425,
+              26.644761
+            ],
+            [
+              93.688008,
+              26.645787
+            ],
+            [
+              93.686919,
+              26.646449
+            ],
+            [
+              93.685844,
+              26.646761
+            ],
+            [
+              93.684861,
+              26.647142
+            ],
+            [
+              93.683575,
+              26.647496
+            ],
+            [
+              93.682265,
+              26.647227
+            ],
+            [
+              93.68174,
+              26.646262
+            ],
+            [
+              93.682085,
+              26.645203
+            ],
+            [
+              93.682616,
+              26.644376
+            ],
+            [
+              93.683093,
+              26.64356
+            ],
+            [
+              93.683929,
+              26.642765
+            ],
+            [
+              93.685167,
+              26.642437
+            ],
+            [
+              93.68631,
+              26.642705
+            ],
+            [
+              93.687186,
+              26.64322
+            ],
+            [
+              93.687978,
+              26.643847
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-032",
+      "properties": {
+        "id": "WET-VALLEY-032",
+        "name": "Hal\u09a7\u09bfbari-Kohora Foothill Seasonal Marsh (Beel)",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Golaghat",
+        "watershedId": "WS-01-KOHORA-DIPHLU",
+        "watershedName": "Kohora-Diphlu Northern Foothill Watershed",
+        "areaHectares": 14.7,
+        "equivalentRadiusMeters": 216.3,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 539913.44,
+        "utmY": 2936436.07
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.403384,
+              26.549116
+            ],
+            [
+              93.402971,
+              26.549764
+            ],
+            [
+              93.401916,
+              26.549858
+            ],
+            [
+              93.400882,
+              26.549539
+            ],
+            [
+              93.400068,
+              26.549229
+            ],
+            [
+              93.399182,
+              26.548931
+            ],
+            [
+              93.398326,
+              26.548372
+            ],
+            [
+              93.398015,
+              26.547625
+            ],
+            [
+              93.39833,
+              26.547014
+            ],
+            [
+              93.398876,
+              26.546583
+            ],
+            [
+              93.399538,
+              26.546225
+            ],
+            [
+              93.400477,
+              26.546115
+            ],
+            [
+              93.401484,
+              26.546476
+            ],
+            [
+              93.402145,
+              26.547114
+            ],
+            [
+              93.402554,
+              26.54771
+            ],
+            [
+              93.403052,
+              26.548328
+            ],
+            [
+              93.403384,
+              26.549116
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-033",
+      "properties": {
+        "id": "WET-VALLEY-033",
+        "name": "Upper Kaliani Oxbow Backwater Swamp",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-03-KALIANI-DOLAMARA",
+        "watershedName": "Kaliani-Dolamara Central Plateau Watershed",
+        "areaHectares": 17.15,
+        "equivalentRadiusMeters": 233.7,
+        "seasonalDepthMeters": 3.1,
+        "ecologicalAndHydrologicalSensitivity": "CRITICAL_OXBOW_HYDROLOGIC_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 539913.98,
+        "utmY": 2920266.02
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.403232,
+              26.401259
+            ],
+            [
+              93.40317,
+              26.402043
+            ],
+            [
+              93.402464,
+              26.402729
+            ],
+            [
+              93.40163,
+              26.403247
+            ],
+            [
+              93.400713,
+              26.403704
+            ],
+            [
+              93.399605,
+              26.403925
+            ],
+            [
+              93.39864,
+              26.403676
+            ],
+            [
+              93.398134,
+              26.40313
+            ],
+            [
+              93.397819,
+              26.402582
+            ],
+            [
+              93.39747,
+              26.401961
+            ],
+            [
+              93.397544,
+              26.401145
+            ],
+            [
+              93.398437,
+              26.400463
+            ],
+            [
+              93.399688,
+              26.400302
+            ],
+            [
+              93.40067,
+              26.400482
+            ],
+            [
+              93.4015,
+              26.400604
+            ],
+            [
+              93.402484,
+              26.400751
+            ],
+            [
+              93.403232,
+              26.401259
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-034",
+      "properties": {
+        "id": "WET-VALLEY-034",
+        "name": "Rongmongve West Valley Waterlogged Swamp",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "VALLEY_WATERLOGGED_SWAMP",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-04-NAMBOR-GARAMPANI",
+        "watershedName": "Nambor-Garampani Forested Valley Watershed",
+        "areaHectares": 13.74,
+        "equivalentRadiusMeters": 209.2,
+        "seasonalDepthMeters": 2.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_VALLEY_THALWEG_RETENTION",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 539910.79,
+        "utmY": 2908415.58
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.401715,
+              26.296439
+            ],
+            [
+              93.401029,
+              26.296642
+            ],
+            [
+              93.400324,
+              26.29674
+            ],
+            [
+              93.399481,
+              26.296772
+            ],
+            [
+              93.398487,
+              26.29642
+            ],
+            [
+              93.397822,
+              26.295634
+            ],
+            [
+              93.397796,
+              26.294847
+            ],
+            [
+              93.398027,
+              26.2943
+            ],
+            [
+              93.398129,
+              26.293744
+            ],
+            [
+              93.398383,
+              26.293107
+            ],
+            [
+              93.399144,
+              26.29282
+            ],
+            [
+              93.400131,
+              26.293162
+            ],
+            [
+              93.400885,
+              26.293828
+            ],
+            [
+              93.401432,
+              26.294477
+            ],
+            [
+              93.401921,
+              26.295162
+            ],
+            [
+              93.402096,
+              26.295906
+            ],
+            [
+              93.401715,
+              26.296439
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-035",
+      "properties": {
+        "id": "WET-VALLEY-035",
+        "name": "Deopani-Tarapung Perennial Marsh & Fishery Beel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-05-DEOPANI-CHOKIHOLA",
+        "watershedName": "Deopani-Chokihola Alluvial Piedmont Watershed",
+        "areaHectares": 16.12,
+        "equivalentRadiusMeters": 226.5,
+        "seasonalDepthMeters": 3.4,
+        "ecologicalAndHydrologicalSensitivity": "CRITICAL_COMMUNITY_FISHERY_AND_RECHARGE_BEEL",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 539917.6,
+        "utmY": 2893242.87
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.401717,
+              26.158438
+            ],
+            [
+              93.401246,
+              26.158889
+            ],
+            [
+              93.400875,
+              26.159426
+            ],
+            [
+              93.400128,
+              26.159944
+            ],
+            [
+              93.39894,
+              26.159983
+            ],
+            [
+              93.397933,
+              26.159455
+            ],
+            [
+              93.397424,
+              26.158768
+            ],
+            [
+              93.397086,
+              26.158162
+            ],
+            [
+              93.396811,
+              26.157511
+            ],
+            [
+              93.397004,
+              26.156847
+            ],
+            [
+              93.397796,
+              26.15645
+            ],
+            [
+              93.398788,
+              26.156366
+            ],
+            [
+              93.399775,
+              26.156381
+            ],
+            [
+              93.400883,
+              26.156529
+            ],
+            [
+              93.401861,
+              26.157043
+            ],
+            [
+              93.402131,
+              26.157809
+            ],
+            [
+              93.401717,
+              26.158438
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-036",
+      "properties": {
+        "id": "WET-VALLEY-036",
+        "name": "Jamuna Command Lowland Waterlogged Beel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-06-UPPER-JAMUNA-DOKMOKA",
+        "watershedName": "Upper Jamuna-Dokmoka Irrigation Command Watershed",
+        "areaHectares": 19.13,
+        "equivalentRadiusMeters": 246.8,
+        "seasonalDepthMeters": 2.9,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 539913.59,
+        "utmY": 2881503.57
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.401225,
+              26.050923
+            ],
+            [
+              93.401403,
+              26.051559
+            ],
+            [
+              93.401493,
+              26.052306
+            ],
+            [
+              93.401021,
+              26.053143
+            ],
+            [
+              93.400017,
+              26.053714
+            ],
+            [
+              93.39894,
+              26.053935
+            ],
+            [
+              93.397911,
+              26.054024
+            ],
+            [
+              93.396859,
+              26.053925
+            ],
+            [
+              93.396167,
+              26.053371
+            ],
+            [
+              93.39627,
+              26.052501
+            ],
+            [
+              93.396875,
+              26.051739
+            ],
+            [
+              93.397418,
+              26.051105
+            ],
+            [
+              93.398014,
+              26.050337
+            ],
+            [
+              93.399073,
+              26.049645
+            ],
+            [
+              93.400299,
+              26.049585
+            ],
+            [
+              93.401016,
+              26.050187
+            ],
+            [
+              93.401225,
+              26.050923
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-037",
+      "properties": {
+        "id": "WET-VALLEY-037",
+        "name": "Birla-Diphu North Depression Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-08-DIPHU-MANJA-DHANSIRI",
+        "watershedName": "Diphu-Manja-Upper Dhansiri Headwater Watershed",
+        "areaHectares": 12.44,
+        "equivalentRadiusMeters": 199.0,
+        "seasonalDepthMeters": 2.0,
+        "ecologicalAndHydrologicalSensitivity": "MODERATE_SEASONAL_PONDING_DEPRESSION",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 540873.67,
+        "utmY": 2865559.09
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.410345,
+              25.908653
+            ],
+            [
+              93.410134,
+              25.909227
+            ],
+            [
+              93.409442,
+              25.909572
+            ],
+            [
+              93.408489,
+              25.909496
+            ],
+            [
+              93.407673,
+              25.909201
+            ],
+            [
+              93.406913,
+              25.908937
+            ],
+            [
+              93.406009,
+              25.908567
+            ],
+            [
+              93.405353,
+              25.907916
+            ],
+            [
+              93.405503,
+              25.907245
+            ],
+            [
+              93.406278,
+              25.9069
+            ],
+            [
+              93.407058,
+              25.90678
+            ],
+            [
+              93.40774,
+              25.906617
+            ],
+            [
+              93.40862,
+              25.906538
+            ],
+            [
+              93.409572,
+              25.906838
+            ],
+            [
+              93.410151,
+              25.907444
+            ],
+            [
+              93.410321,
+              25.908068
+            ],
+            [
+              93.410345,
+              25.908653
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-038",
+      "properties": {
+        "id": "WET-VALLEY-038",
+        "name": "Rongagorah Foothill Spring-Fed Swamp",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "VALLEY_WATERLOGGED_SWAMP",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-02-BAGORI-UPPER-KALIANI",
+        "watershedName": "Bagori-Upper Kaliani Escarpment Watershed",
+        "areaHectares": 7.85,
+        "equivalentRadiusMeters": 158.0,
+        "seasonalDepthMeters": 2.3,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_VALLEY_THALWEG_RETENTION",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 546688.46,
+        "utmY": 2930589.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.470437,
+              26.494358
+            ],
+            [
+              93.470629,
+              26.494886
+            ],
+            [
+              93.470187,
+              26.495433
+            ],
+            [
+              93.469474,
+              26.495741
+            ],
+            [
+              93.468879,
+              26.495925
+            ],
+            [
+              93.468285,
+              26.496173
+            ],
+            [
+              93.467525,
+              26.496317
+            ],
+            [
+              93.466884,
+              26.496097
+            ],
+            [
+              93.466687,
+              26.495601
+            ],
+            [
+              93.466799,
+              26.495091
+            ],
+            [
+              93.466988,
+              26.494612
+            ],
+            [
+              93.467358,
+              26.494131
+            ],
+            [
+              93.468014,
+              26.493812
+            ],
+            [
+              93.46872,
+              26.493799
+            ],
+            [
+              93.469284,
+              26.493941
+            ],
+            [
+              93.469852,
+              26.494083
+            ],
+            [
+              93.470437,
+              26.494358
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-039",
+      "properties": {
+        "id": "WET-VALLEY-039",
+        "name": "Nambor North-East Seasonal Beel & Reed Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-04-NAMBOR-GARAMPANI",
+        "watershedName": "Nambor-Garampani Forested Valley Watershed",
+        "areaHectares": 8.58,
+        "equivalentRadiusMeters": 165.2,
+        "seasonalDepthMeters": 2.6,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 549756.37,
+        "utmY": 2910387.94
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.500648,
+              26.313011
+            ],
+            [
+              93.500339,
+              26.313509
+            ],
+            [
+              93.499602,
+              26.313703
+            ],
+            [
+              93.498861,
+              26.313697
+            ],
+            [
+              93.498161,
+              26.313657
+            ],
+            [
+              93.49742,
+              26.313481
+            ],
+            [
+              93.496868,
+              26.313062
+            ],
+            [
+              93.49672,
+              26.31255
+            ],
+            [
+              93.496789,
+              26.312093
+            ],
+            [
+              93.496899,
+              26.311621
+            ],
+            [
+              93.49727,
+              26.311157
+            ],
+            [
+              93.498045,
+              26.310993
+            ],
+            [
+              93.498862,
+              26.311265
+            ],
+            [
+              93.49938,
+              26.3117
+            ],
+            [
+              93.4998,
+              26.312053
+            ],
+            [
+              93.500336,
+              26.312449
+            ],
+            [
+              93.500648,
+              26.313011
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-040",
+      "properties": {
+        "id": "WET-VALLEY-040",
+        "name": "Chokihola South Alluvial Oxbow Beel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-05-DEOPANI-CHOKIHOLA",
+        "watershedName": "Deopani-Chokihola Alluvial Piedmont Watershed",
+        "areaHectares": 7.35,
+        "equivalentRadiusMeters": 153.0,
+        "seasonalDepthMeters": 2.8,
+        "ecologicalAndHydrologicalSensitivity": "CRITICAL_OXBOW_HYDROLOGIC_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 546509.29,
+        "utmY": 2897362.55
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.467086,
+              26.195887
+            ],
+            [
+              93.466612,
+              26.196132
+            ],
+            [
+              93.466062,
+              26.196232
+            ],
+            [
+              93.465451,
+              26.196284
+            ],
+            [
+              93.464723,
+              26.196131
+            ],
+            [
+              93.464148,
+              26.195659
+            ],
+            [
+              93.464016,
+              26.195095
+            ],
+            [
+              93.464138,
+              26.194668
+            ],
+            [
+              93.464187,
+              26.194266
+            ],
+            [
+              93.464297,
+              26.193775
+            ],
+            [
+              93.464795,
+              26.193454
+            ],
+            [
+              93.465554,
+              26.193586
+            ],
+            [
+              93.466167,
+              26.194029
+            ],
+            [
+              93.466576,
+              26.194476
+            ],
+            [
+              93.466964,
+              26.194907
+            ],
+            [
+              93.467224,
+              26.195421
+            ],
+            [
+              93.467086,
+              26.195887
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-041",
+      "properties": {
+        "id": "WET-VALLEY-041",
+        "name": "Santipur-Jamuna Canal Seepage Wetland & Tank",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "COMMUNITY_FISHERY_TANK",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-06-UPPER-JAMUNA-DOKMOKA",
+        "watershedName": "Upper Jamuna-Dokmoka Irrigation Command Watershed",
+        "areaHectares": 8.36,
+        "equivalentRadiusMeters": 163.1,
+        "seasonalDepthMeters": 2.5,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_COMMUNITY_FISHERY_AND_CANAL_BUFFER",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 547306.97,
+        "utmY": 2884075.49
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.474686,
+              26.074726
+            ],
+            [
+              93.474491,
+              26.07516
+            ],
+            [
+              93.474373,
+              26.07561
+            ],
+            [
+              93.474048,
+              26.076147
+            ],
+            [
+              93.473297,
+              26.07649
+            ],
+            [
+              93.472469,
+              26.076383
+            ],
+            [
+              93.47195,
+              26.076002
+            ],
+            [
+              93.471611,
+              26.075644
+            ],
+            [
+              93.471242,
+              26.075286
+            ],
+            [
+              93.471083,
+              26.074795
+            ],
+            [
+              93.471416,
+              26.074297
+            ],
+            [
+              93.472071,
+              26.073984
+            ],
+            [
+              93.472762,
+              26.073805
+            ],
+            [
+              93.473504,
+              26.073687
+            ],
+            [
+              93.474273,
+              26.073785
+            ],
+            [
+              93.474723,
+              26.074201
+            ],
+            [
+              93.474686,
+              26.074726
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-042",
+      "properties": {
+        "id": "WET-VALLEY-042",
+        "name": "Lahorijan North Valley Bottom Swamp",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "VALLEY_WATERLOGGED_SWAMP",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-07-BORJAN-LONGNIT",
+        "watershedName": "Borjan-Longnit Hill Torrent Watershed",
+        "areaHectares": 6.87,
+        "equivalentRadiusMeters": 147.9,
+        "seasonalDepthMeters": 2.1,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_VALLEY_THALWEG_RETENTION",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 546455.21,
+        "utmY": 2870450.48
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.465393,
+              25.952503
+            ],
+            [
+              93.465109,
+              25.952791
+            ],
+            [
+              93.464796,
+              25.953122
+            ],
+            [
+              93.46421,
+              25.953301
+            ],
+            [
+              93.463499,
+              25.953132
+            ],
+            [
+              93.46296,
+              25.952737
+            ],
+            [
+              93.462581,
+              25.952314
+            ],
+            [
+              93.462278,
+              25.951855
+            ],
+            [
+              93.462251,
+              25.951367
+            ],
+            [
+              93.462662,
+              25.951046
+            ],
+            [
+              93.463276,
+              25.950979
+            ],
+            [
+              93.463836,
+              25.950985
+            ],
+            [
+              93.464456,
+              25.950969
+            ],
+            [
+              93.465215,
+              25.951139
+            ],
+            [
+              93.465748,
+              25.951613
+            ],
+            [
+              93.46573,
+              25.952145
+            ],
+            [
+              93.465393,
+              25.952503
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-043",
+      "properties": {
+        "id": "WET-VALLEY-043",
+        "name": "Dhansiri Morongi Oxbow Wetland Complex",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Golaghat",
+        "watershedId": "WS-02-BAGORI-UPPER-KALIANI",
+        "watershedName": "Bagori-Upper Kaliani Escarpment Watershed",
+        "areaHectares": 28.65,
+        "equivalentRadiusMeters": 302.0,
+        "seasonalDepthMeters": 3.8,
+        "ecologicalAndHydrologicalSensitivity": "CRITICAL_OXBOW_HYDROLOGIC_STORAGE",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 564006.68,
+        "utmY": 2925126.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.645588,
+              26.445266
+            ],
+            [
+              93.64546,
+              26.446095
+            ],
+            [
+              93.644676,
+              26.446815
+            ],
+            [
+              93.643256,
+              26.447078
+            ],
+            [
+              93.641824,
+              26.44692
+            ],
+            [
+              93.640531,
+              26.446695
+            ],
+            [
+              93.639052,
+              26.446385
+            ],
+            [
+              93.637776,
+              26.445667
+            ],
+            [
+              93.637654,
+              26.444677
+            ],
+            [
+              93.6387,
+              26.443955
+            ],
+            [
+              93.639923,
+              26.443592
+            ],
+            [
+              93.640914,
+              26.443202
+            ],
+            [
+              93.642202,
+              26.442792
+            ],
+            [
+              93.643855,
+              26.442861
+            ],
+            [
+              93.64508,
+              26.443553
+            ],
+            [
+              93.645509,
+              26.444446
+            ],
+            [
+              93.645588,
+              26.445266
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-044",
+      "properties": {
+        "id": "WET-VALLEY-044",
+        "name": "Howraghat Jamuna Floodplain Beel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-07-BORJAN-LONGNIT",
+        "watershedName": "Borjan-Longnit Hill Torrent Watershed",
+        "areaHectares": 23.5,
+        "equivalentRadiusMeters": 273.5,
+        "seasonalDepthMeters": 3.2,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 526518.84,
+        "utmY": 2876596.68
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.268007,
+              26.006089
+            ],
+            [
+              93.268568,
+              26.006819
+            ],
+            [
+              93.268102,
+              26.007892
+            ],
+            [
+              93.267001,
+              26.00874
+            ],
+            [
+              93.266012,
+              26.0093
+            ],
+            [
+              93.265094,
+              26.009956
+            ],
+            [
+              93.263838,
+              26.010601
+            ],
+            [
+              93.262571,
+              26.010627
+            ],
+            [
+              93.262004,
+              26.009904
+            ],
+            [
+              93.262114,
+              26.008955
+            ],
+            [
+              93.262375,
+              26.008092
+            ],
+            [
+              93.262785,
+              26.007181
+            ],
+            [
+              93.263685,
+              26.00631
+            ],
+            [
+              93.264897,
+              26.005853
+            ],
+            [
+              93.265977,
+              26.005813
+            ],
+            [
+              93.26697,
+              26.005869
+            ],
+            [
+              93.268007,
+              26.006089
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-VALLEY-045",
+      "properties": {
+        "id": "WET-VALLEY-045",
+        "name": "Dillai-Dhansiri Southern Confluence Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Karbi Anglong",
+        "watershedId": "WS-08-DIPHU-MANJA-DHANSIRI",
+        "watershedName": "Diphu-Manja-Upper Dhansiri Headwater Watershed",
+        "areaHectares": 19.96,
+        "equivalentRadiusMeters": 252.1,
+        "seasonalDepthMeters": 2.7,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "utmX": 554627.99,
+        "utmY": 2855309.66
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93.548437,
+              25.815762
+            ],
+            [
+              93.548043,
+              25.816532
+            ],
+            [
+              93.546852,
+              25.816813
+            ],
+            [
+              93.54563,
+              25.816724
+            ],
+            [
+              93.544565,
+              25.816609
+            ],
+            [
+              93.543413,
+              25.816395
+            ],
+            [
+              93.542412,
+              25.815839
+            ],
+            [
+              93.542036,
+              25.815073
+            ],
+            [
+              93.542177,
+              25.814374
+            ],
+            [
+              93.542461,
+              25.813722
+            ],
+            [
+              93.54305,
+              25.813091
+            ],
+            [
+              93.544204,
+              25.812822
+            ],
+            [
+              93.545497,
+              25.813164
+            ],
+            [
+              93.546362,
+              25.813802
+            ],
+            [
+              93.547012,
+              25.814347
+            ],
+            [
+              93.54785,
+              25.81493
+            ],
+            [
+              93.548437,
+              25.815762
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

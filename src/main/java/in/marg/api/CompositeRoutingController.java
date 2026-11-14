@@ -2,6 +2,7 @@ package in.marg.api;
 
 import in.marg.config.BuildingRoutingProperties;
 import in.marg.config.DemographicRoutingProperties;
+import in.marg.config.DrainageRoutingProperties;
 import in.marg.config.FloodRoutingProperties;
 import in.marg.config.LulcRoutingProperties;
 import in.marg.config.SettlementRoutingProperties;
@@ -12,6 +13,11 @@ import in.marg.config.GeotechRoutingProperties;
 import in.marg.config.UtilityRoutingProperties;
 import in.marg.model.GeoPoint;
 import in.marg.model.StudyRegion;
+import in.marg.region.CorridorIngestionService;
+import in.marg.region.CorridorTierMode;
+import in.marg.region.EndpointSnapService;
+import in.marg.region.RegionalCorridorPreset;
+import in.marg.region.RegionalCorridorRegistry;
 import in.marg.routing.CompositeCostSurfaceFactory;
 import in.marg.routing.CompositeRouteMetricsService;
 import in.marg.routing.DistanceOnlyCostSurface;
@@ -31,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -57,9 +64,16 @@ public class CompositeRoutingController {
     private final UtilityRoutingProperties utilityProperties;
     private final BuildingRoutingProperties buildingProperties;
     private final DemographicRoutingProperties demographicProperties;
+    private final DrainageRoutingProperties drainageProperties;
 
     private final double defaultCorridorBufferDeg;
     private final int defaultMaxLulcSamples;
+
+    @Autowired(required = false)
+    private RegionalCorridorRegistry corridorRegistry;
+
+    @Autowired(required = false)
+    private CorridorIngestionService ingestionService;
 
     public CompositeRoutingController(
             StudyRegion region,
@@ -187,6 +201,51 @@ public class CompositeRoutingController {
                 defaultMaxLulcSamples);
     }
 
+    public CompositeRoutingController(
+            StudyRegion region,
+            GreenfieldAStarRouter router,
+            CoordinateProjection projection,
+            CompositeCostSurfaceFactory factory,
+            CompositeRouteMetricsService routeMetrics,
+            HubEvaluationService hubEvaluationService,
+            HighwayNetworkPlannerService networkPlannerService,
+            LulcRoutingProperties lulcProperties,
+            FloodRoutingProperties floodProperties,
+            SettlementRoutingProperties settlementProperties,
+            TransportRoutingProperties transportProperties,
+            WaterBodyRoutingProperties waterBodyProperties,
+            WildlifeRoutingProperties wildlifeProperties,
+            GeotechRoutingProperties geotechProperties,
+            UtilityRoutingProperties utilityProperties,
+            BuildingRoutingProperties buildingProperties,
+            DemographicRoutingProperties demographicProperties,
+            @Value("${marg.routing.corridor-buffer-deg:0.15}")
+            double defaultCorridorBufferDeg,
+            @Value("${marg.bhuvan.lulc.max-remote-samples:4000}")
+            int defaultMaxLulcSamples) {
+        this(
+                region,
+                router,
+                projection,
+                factory,
+                routeMetrics,
+                hubEvaluationService,
+                networkPlannerService,
+                lulcProperties,
+                floodProperties,
+                settlementProperties,
+                transportProperties,
+                waterBodyProperties,
+                wildlifeProperties,
+                geotechProperties,
+                utilityProperties,
+                buildingProperties,
+                demographicProperties,
+                new DrainageRoutingProperties(),
+                defaultCorridorBufferDeg,
+                defaultMaxLulcSamples);
+    }
+
     @Autowired
     public CompositeRoutingController(
             StudyRegion region,
@@ -206,6 +265,7 @@ public class CompositeRoutingController {
             UtilityRoutingProperties utilityProperties,
             BuildingRoutingProperties buildingProperties,
             DemographicRoutingProperties demographicProperties,
+            DrainageRoutingProperties drainageProperties,
             @Value("${marg.routing.corridor-buffer-deg:0.15}")
             double defaultCorridorBufferDeg,
             @Value("${marg.bhuvan.lulc.max-remote-samples:4000}")
@@ -232,8 +292,111 @@ public class CompositeRoutingController {
         this.demographicProperties = demographicProperties != null
                 ? demographicProperties
                 : new DemographicRoutingProperties();
+        this.drainageProperties = drainageProperties != null
+                ? drainageProperties
+                : new DrainageRoutingProperties();
         this.defaultCorridorBufferDeg = defaultCorridorBufferDeg;
         this.defaultMaxLulcSamples = defaultMaxLulcSamples;
+    }
+
+    public CompositeRoutingController(RegionalCorridorRegistry corridorRegistry, CorridorIngestionService ingestionService) {
+        this(
+                corridorRegistry.getPreset("assam").studyRegion(),
+                null, null, null, null, null, null,
+                new LulcRoutingProperties(), new FloodRoutingProperties(),
+                new SettlementRoutingProperties(), new TransportRoutingProperties(),
+                new WaterBodyRoutingProperties(), new WildlifeRoutingProperties(),
+                new GeotechRoutingProperties(), new UtilityRoutingProperties(),
+                new BuildingRoutingProperties(), new DemographicRoutingProperties(),
+                new DrainageRoutingProperties(), 0.15, 20000);
+        this.corridorRegistry = corridorRegistry;
+        this.ingestionService = ingestionService;
+    }
+
+    public void setCorridorRegistry(RegionalCorridorRegistry corridorRegistry) {
+        this.corridorRegistry = corridorRegistry;
+    }
+
+    public void setIngestionService(CorridorIngestionService ingestionService) {
+        this.ingestionService = ingestionService;
+    }
+
+    private RegionalCorridorRegistry getOrCreateCorridorRegistry() {
+        if (this.corridorRegistry == null) {
+            this.corridorRegistry = new RegionalCorridorRegistry();
+        }
+        return this.corridorRegistry;
+    }
+
+    private CorridorIngestionService getOrCreateIngestionService() {
+        if (this.ingestionService == null) {
+            this.ingestionService = new CorridorIngestionService(getOrCreateCorridorRegistry());
+        }
+        return this.ingestionService;
+    }
+
+    public Map<String, Object> route(
+            Double startLat,
+            Double startLon,
+            Double endLat,
+            Double endLon,
+            Double resolutionMeters,
+            Double corridorBufferDeg,
+            Integer maxLulcSamples,
+            Double maxDeviationPercent,
+            String facilityMode,
+            String targetHubs,
+            Integer minHubPopulation,
+            Double maxVcRatio) {
+        return route(
+                startLat,
+                startLon,
+                endLat,
+                endLon,
+                resolutionMeters,
+                corridorBufferDeg,
+                maxLulcSamples,
+                maxDeviationPercent,
+                facilityMode,
+                targetHubs,
+                minHubPopulation,
+                maxVcRatio,
+                null,
+                null,
+                null);
+    }
+
+    public Map<String, Object> route(
+            Double startLat,
+            Double startLon,
+            Double endLat,
+            Double endLon,
+            Double resolutionMeters,
+            Double corridorBufferDeg,
+            Integer maxLulcSamples,
+            Double maxDeviationPercent,
+            String facilityMode,
+            String targetHubs,
+            Integer minHubPopulation,
+            Double maxVcRatio,
+            String regionParam,
+            String tierMode) {
+        return route(
+                startLat,
+                startLon,
+                endLat,
+                endLon,
+                resolutionMeters,
+                corridorBufferDeg,
+                maxLulcSamples,
+                maxDeviationPercent,
+                facilityMode,
+                targetHubs,
+                minHubPopulation,
+                maxVcRatio,
+                regionParam,
+                tierMode,
+                null);
     }
 
     @GetMapping
@@ -249,21 +412,105 @@ public class CompositeRoutingController {
             @RequestParam(required = false) String facilityMode,
             @RequestParam(required = false) String targetHubs,
             @RequestParam(required = false) Integer minHubPopulation,
-            @RequestParam(required = false) Double maxVcRatio) {
+            @RequestParam(required = false) Double maxVcRatio,
+            @RequestParam(value = "region", required = false) String regionParam,
+            @RequestParam(required = false) String tierMode,
+            @RequestParam(required = false) Boolean deep) {
 
-        GeoPoint start =
+        String normalizedRegion = RegionalCorridorRegistry.normalizeRegionId(regionParam);
+        CorridorTierMode explicitTier = CorridorTierMode.fromParam(tierMode);
+
+        // Auto-Ingestion on the fly: If user/evaluator requests in-depth 13-layer analysis (deep=true)
+        // for any custom coordinates outside existing presets, the backend automatically provisions
+        // and caches the 13-layer corridor in this single request without requiring manual region IDs!
+        if (Boolean.TRUE.equals(deep) && startLat != null && endLat != null && normalizedRegion == null) {
+            double sLon = require("startLon", startLon);
+            double eLon = require("endLon", endLon);
+            GeoPoint reqStart = new GeoPoint(startLat, sLon);
+            GeoPoint reqGoal = new GeoPoint(endLat, eLon);
+            var registry = getOrCreateCorridorRegistry();
+            RegionalCorridorPreset matching = registry.findContainingPreset(reqStart, reqGoal);
+            if (matching == null) {
+                String autoId = String.format(Locale.ROOT, "corridor_%04d_%04d_%04d_%04d",
+                        (int) Math.round(startLat * 100),
+                        (int) Math.round(sLon * 100),
+                        (int) Math.round(endLat * 100),
+                        (int) Math.round(eLon * 100));
+                if (!registry.hasPreset(autoId)) {
+                    getOrCreateIngestionService().ingestCorridor(new CorridorIngestionService.IngestionRequest(
+                            autoId,
+                            "On-Demand 13-Layer Corridor (" + startLat + "," + sLon + " to " + endLat + "," + eLon + ")",
+                            null,
+                            null,
+                            startLat, sLon, endLat, eLon,
+                            null, null, null, null
+                    ));
+                }
+                normalizedRegion = autoId;
+            }
+        }
+
+        // Dispatch to RegionalCorridorRegistry when Tier-1 Pan-India or any preset region is requested,
+        // or when custom start/destination coordinates are provided.
+        if (explicitTier == CorridorTierMode.TIER_1_DYNAMIC_PAN_INDIA
+                || normalizedRegion != null
+                || startLat != null
+                || endLat != null) {
+            return getOrCreateCorridorRegistry().route(
+                    normalizedRegion,
+                    tierMode,
+                    startLat,
+                    startLon,
+                    endLat,
+                    endLon,
+                    resolutionMeters,
+                    corridorBufferDeg,
+                    maxLulcSamples,
+                    maxDeviationPercent,
+                    facilityMode,
+                    targetHubs,
+                    minHubPopulation,
+                    maxVcRatio);
+        }
+
+        GeoPoint requestedStart =
                 startLat == null
-                        ? region.origin()
+                        ? this.region.origin()
                         : new GeoPoint(
                                 startLat,
                                 require("startLon", startLon));
 
-        GeoPoint goal =
+        GeoPoint requestedGoal =
                 endLat == null
-                        ? region.destination()
+                        ? this.region.destination()
                         : new GeoPoint(
                                 endLat,
                                 require("endLon", endLon));
+
+        // If region wasn't explicitly locked to Assam and coordinates fall in another preset or Pan-India, dispatch cleanly
+        if (normalizedRegion == null
+                && (!this.region.contains(requestedStart) || !this.region.contains(requestedGoal))) {
+            var registry = getOrCreateCorridorRegistry();
+            if (registry.findContainingPreset(requestedStart, requestedGoal) != null
+                    || (explicitTier != CorridorTierMode.TIER_2_PRECACHED_BENCHMARK
+                            && PanIndiaCoordCheck.isWithinIndia(requestedStart, requestedGoal))) {
+                return registry.route(
+                        null,
+                        tierMode,
+                        startLat,
+                        startLon,
+                        endLat,
+                        endLon,
+                        resolutionMeters,
+                        corridorBufferDeg,
+                        maxLulcSamples,
+                        maxDeviationPercent,
+                        facilityMode,
+                        targetHubs,
+                        minHubPopulation,
+                        maxVcRatio);
+            }
+        }
 
         double resolution =
                 resolutionMeters == null
@@ -275,7 +522,7 @@ public class CompositeRoutingController {
                     "Composite routing is fixed at the canonical 250 m grid.");
         }
 
-        validateEndpoints(start, goal);
+        validateEndpoints(requestedStart, requestedGoal);
 
         FacilityMode mode =
                 FacilityMode.fromParam(
@@ -300,8 +547,8 @@ public class CompositeRoutingController {
                         ? defaultCorridorBufferDeg
                         : corridorBufferDeg;
 
-        StudyRegion searchWindow =
-                corridorWindow(region, start, goal, buffer);
+        StudyRegion initialWindow =
+                corridorWindow(this.region, requestedStart, requestedGoal, buffer);
 
         int maxSamples =
                 maxLulcSamples == null
@@ -314,30 +561,55 @@ public class CompositeRoutingController {
         }
 
         // Stage 1: Three-Tier Hub Evaluation Pipeline (Immutable Overrides -> HVI -> Spacing & V/C Gates)
-        HubEvaluationService.EvaluationResult hubEvaluation =
+        HubEvaluationService.EvaluationResult initialHubEvaluation =
                 hubEvaluationService.evaluate(
-                        start,
-                        goal,
-                        searchWindow,
+                        requestedStart,
+                        requestedGoal,
+                        initialWindow,
                         mode,
                         targetHubList,
                         minHubPopulation,
                         maxVcRatio);
 
-        // Stage 2: Build 6-Layer Mode-Aware Cost Surface
-        CompositeCostSurfaceFactory.BuildResult built =
+        // Stage 2: Build 13-Layer Mode-Aware Cost Surface
+        CompositeCostSurfaceFactory.BuildResult initialBuilt =
                 factory.build(
-                        searchWindow,
+                        initialWindow,
                         maxSamples,
                         mode,
-                        hubEvaluation.approvedHubs(),
-                        start,
-                        goal);
+                        initialHubEvaluation.approvedHubs(),
+                        requestedStart,
+                        requestedGoal);
+
+        // Smart Endpoint Snapping for any arbitrary clicked coordinates inside the corridor region
+        EndpointSnapService snapService = new EndpointSnapService(projection);
+        EndpointSnapService.EndpointResolution endpointResolution = snapService.resolveEndpoints(
+                this.region,
+                initialWindow,
+                initialBuilt.surface(),
+                requestedStart,
+                requestedGoal);
+
+        GeoPoint start = endpointResolution.resolvedStart();
+        GeoPoint goal = endpointResolution.resolvedGoal();
+        StudyRegion searchWindow = corridorWindow(this.region, start, goal, buffer);
+
+        HubEvaluationService.EvaluationResult hubEvaluation =
+                (endpointResolution.startSnapped() || endpointResolution.goalSnapped())
+                        ? hubEvaluationService.evaluate(
+                                start, goal, searchWindow, mode, targetHubList, minHubPopulation, maxVcRatio)
+                        : initialHubEvaluation;
+
+        CompositeCostSurfaceFactory.BuildResult built =
+                (endpointResolution.startSnapped() || endpointResolution.goalSnapped())
+                        ? factory.build(
+                                searchWindow, maxSamples, mode, hubEvaluation.approvedHubs(), start, goal)
+                        : initialBuilt;
 
         // Baseline is computed with the exact same search window and 250 m grid.
         List<GeoPoint> baseline =
                 router.route(
-                        region,
+                        this.region,
                         start,
                         goal,
                         new DistanceOnlyCostSurface(),
@@ -361,7 +633,7 @@ public class CompositeRoutingController {
         // Stage 3: Route Greenfield Mainline
         List<GeoPoint> mainline =
                 router.route(
-                        region,
+                        this.region,
                         start,
                         goal,
                         built.surface(),
@@ -378,7 +650,7 @@ public class CompositeRoutingController {
         // Stage 4: Interchange Placement, Dedicated A* Feeder/Spur Roads & ROB/Flyover Structures
         HighwayNetworkPlannerService.NetworkPlanResult networkPlan =
                 networkPlannerService.planNetwork(
-                        region,
+                        this.region,
                         mainline,
                         hubEvaluation,
                         built.terrainAndSocialLayers());
@@ -388,6 +660,9 @@ public class CompositeRoutingController {
         var flood = built.floodPreload().mosaic();
 
         Map<String, Object> metadata = new LinkedHashMap<>();
+        metadata.put("corridorTierMode", CorridorTierMode.TIER_2_PRECACHED_BENCHMARK.name());
+        metadata.put("regionId", "assam");
+        metadata.put("endpointResolution", endpointResolution.toMetadataMap());
         metadata.put("routeDiagnostics", routeDiagnostics);
         metadata.put("facilityMode", mode.name());
         metadata.put("accessibilityPullApplied", built.accessibilityPullApplied());
@@ -410,19 +685,22 @@ public class CompositeRoutingController {
                         "GEOTECH_SOIL_AND_LANDSLIDE",
                         "HIGH_VOLTAGE_UTILITY_CORRIDORS",
                         "SETTLEMENT_AND_BUILDING_FOOTPRINTS",
-                        "POPULATION_DENSITY_AND_DEMOGRAPHICS"));
+                        "POPULATION_DENSITY_AND_DEMOGRAPHICS",
+                        "WETLANDS_SEASONAL_STREAMS_AND_DRAINAGE"));
 
         metadata.put(
                 "compositeCost",
                 "stepKm * (1 + LULC_penalty + Flood_penalty + Slope_penalty "
                         + "+ Settlement_penalty + TransportNode_penalty + HydrologyNode_penalty "
                         + "+ WildlifeEszNode_penalty + GeotechSubgradeLandslide_penalty "
-                        + "+ UtilityRoWNode_penalty + BuildingDensityNode_penalty + PopulationDensityNode_penalty) "
+                        + "+ UtilityRoWNode_penalty + BuildingDensityNode_penalty + PopulationDensityNode_penalty "
+                        + "+ DrainageWetlandNode_penalty) "
                         + "+ GradeSeparatedCrossingSkewCostKmEq + RiverBridgeHydraulicSkewCostKmEq "
                         + "+ WildlifeElevatedPassageSkewCostKmEq + GeotechFaultScarpMitigationSkewCostKmEq "
                         + "+ UtilityOverheadCrossingProtectionSkewCostKmEq "
                         + "+ RowBuildingAcquisitionAndSettlementSeveranceCostKmEq "
-                        + "+ DemographicExposureAndSocialVulnerabilityCostKmEq");
+                        + "+ DemographicExposureAndSocialVulnerabilityCostKmEq "
+                        + "+ WetlandEncroachmentDrainageObstructionAndCulvertSpanCostKmEq");
 
         metadata.put(
                 "protectedAreaRule",
@@ -507,6 +785,27 @@ public class CompositeRoutingController {
         networkAndCapacitySummary.put(
                 "populationWithin500mSecondaryBuffer",
                 networkPlan.populationWithin500mSecondaryBuffer());
+        networkAndCapacitySummary.put(
+                "drainageStructuresCount",
+                networkPlan.drainageStructures().size());
+        networkAndCapacitySummary.put(
+                "wetlandMitigationZonesCount",
+                networkPlan.wetlandMitigationZones().size());
+        networkAndCapacitySummary.put(
+                "totalWaterCrossingsCount",
+                networkPlan.totalWaterCrossingsCount());
+        networkAndCapacitySummary.put(
+                "wetlandsInDirectRowCount",
+                networkPlan.wetlandsInDirectRowCount());
+        networkAndCapacitySummary.put(
+                "wetlandAreaInDirectRowHectares",
+                networkPlan.wetlandAreaInDirectRowHectares());
+        networkAndCapacitySummary.put(
+                "watershedBoundaryCrossingsCount",
+                networkPlan.watershedBoundaryCrossingsCount());
+        networkAndCapacitySummary.put(
+                "totalRecommendedDrainageSpanMeters",
+                networkPlan.totalRecommendedDrainageSpanMeters());
         if (networkPlan.rowCorridorFootprint() != null) {
             var rowFp = networkPlan.rowCorridorFootprint();
             networkAndCapacitySummary.put(
@@ -620,6 +919,20 @@ public class CompositeRoutingController {
                         "demographicsGeoJsonPath", "data/processed/demographics/assam_population_demographics.geojson"));
 
         metadata.put(
+                "drainageAndWetlandPolicy",
+                Map.of(
+                        "nodePenalties", drainageProperties.toPolicy().nodePenalties(),
+                        "crossingBaseCostsKmEq", drainageProperties.toPolicy().crossingBaseCostsKmEq(),
+                        "wetlandDirectRowStepPenaltyKmEq", drainageProperties.getWetlandDirectRowStepPenaltyKmEq(),
+                        "wetland100mBufferStepPenaltyKmEq", drainageProperties.getWetland100mBufferStepPenaltyKmEq(),
+                        "wetland250mBufferStepPenaltyKmEq", drainageProperties.getWetland250mBufferStepPenaltyKmEq(),
+                        "parallelThalwegStepPenaltyKmEq", drainageProperties.getParallelThalwegStepPenaltyKmEq(),
+                        "watershedDivideCrossingPenaltyKmEq", drainageProperties.getWatershedDivideCrossingPenaltyKmEq(),
+                        "rasterPath", "data/processed/drainage/assam_drainage_wetland_utm46.tif",
+                        "wetlandsGeoJsonPath", "data/processed/drainage/assam_wetlands_polygons.geojson",
+                        "drainageNetworkGeoJsonPath", "data/processed/drainage/assam_drainage_network.geojson"));
+
+        metadata.put(
                 "lulc",
                 Map.of(
                         "samplesLoaded", built.lulcSamplesLoaded(),
@@ -673,7 +986,7 @@ public class CompositeRoutingController {
         metadata.put("constraintOptimizationApproximate", maxDeviationPercent != null);
 
         Map<String, Object> mainlineProperties = new LinkedHashMap<>();
-        mainlineProperties.put("profile", "COMPOSITE_12_LAYER");
+        mainlineProperties.put("profile", "COMPOSITE_13_LAYER");
         mainlineProperties.put("routeLengthKm", round(routeLengthKm));
         mainlineProperties.put("distanceBaselineKm", round(baselineLengthKm));
         mainlineProperties.put("deviationPercent", round(deviationPercent));
@@ -691,11 +1004,13 @@ public class CompositeRoutingController {
                         + "+ high-voltage-transmission-lines-and-utility-corridors "
                         + "+ 2D-settlement-boundaries-and-building-footprints "
                         + "+ population-density-and-demographic-vulnerability "
+                        + "+ 2D-wetlands-seasonal-streams-canals-and-watershed-drainage-network "
                         + "with dedicated A* feeder/spur tie-in roads, river bridge spans, "
                         + "WII elevated wildlife viaducts, fault/landslide retaining-wall & liquefaction mitigations, "
                         + "CEA-compliant high-voltage transmission crossing protection spans, "
                         + "2D Right-of-Way (RoW) building footprint & settlement conflict minimization, "
-                        + "and population-scaled & demographic-vulnerability-weighted corridor exposure minimization.");
+                        + "population-scaled & demographic-vulnerability-weighted corridor exposure minimization, "
+                        + "and IRC:SP:13 / IRC:SP:42 cross-drainage structure sizing & wetland/thalweg obstruction avoidance.");
 
         List<Map<String, Object>> features =
                 networkPlannerService.buildGeoJsonFeatures(
@@ -705,10 +1020,10 @@ public class CompositeRoutingController {
 
         return Map.of(
                 "type", "FeatureCollection",
-                "studyRegion", region.name(),
+                "studyRegion", this.region.name(),
                 "start", start,
                 "goal", goal,
-                "mode", "COMPOSITE_12_LAYER",
+                "mode", "COMPOSITE_13_LAYER",
                 "facilityMode", mode.name(),
                 "metadata", metadata,
                 "warning", "Preliminary greenfield planning corridor only; not a legal "
@@ -754,5 +1069,13 @@ public class CompositeRoutingController {
 
     private static double round(double value) {
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    private static final class PanIndiaCoordCheck {
+        static boolean isWithinIndia(GeoPoint a, GeoPoint b) {
+            return a != null && b != null
+                    && a.lat() >= 6.5 && a.lat() <= 37.5 && a.lon() >= 68.0 && a.lon() <= 97.5
+                    && b.lat() >= 6.5 && b.lat() <= 37.5 && b.lon() >= 68.0 && b.lon() <= 97.5;
+        }
     }
 }

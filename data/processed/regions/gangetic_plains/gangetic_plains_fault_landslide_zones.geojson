@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GEO-IGP-01",
+        "name": "Kalyani Paleochannel Liquefiable Silty-Clay Trough",
+        "hazardTier": "LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH",
+        "lithologyAndSoil": "Unconsolidated Indo-Gangetic Fine Micaceous Sand & Soft Silt",
+        "engineeringHazard": "High water-table seismic liquefaction & embankment consolidation settlement",
+        "designHazardWidthMeters": 210.0,
+        "minimumStabilizationLengthMeters": 160.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.695,
+            27.12
+          ],
+          [
+            81.705,
+            26.84
+          ],
+          [
+            81.715,
+            26.6
+          ]
+        ]
+      }
+    }
+  ]
+}

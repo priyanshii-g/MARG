@@ -1,0 +1,2485 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0001",
+        "name": "Khed Shivapur Cluster Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.31,
+        "centroidLon": 73.873908
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.873981,
+              18.310019
+            ],
+            [
+              73.873949,
+              18.31005
+            ],
+            [
+              73.873893,
+              18.310052
+            ],
+            [
+              73.873846,
+              18.310024
+            ],
+            [
+              73.873835,
+              18.309981
+            ],
+            [
+              73.873867,
+              18.30995
+            ],
+            [
+              73.873923,
+              18.309948
+            ],
+            [
+              73.87397,
+              18.309976
+            ],
+            [
+              73.873981,
+              18.310019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0002",
+        "name": "Khed Shivapur Cluster Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.311066,
+        "centroidLon": 73.873543
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.873616,
+              18.311085
+            ],
+            [
+              73.873584,
+              18.311116
+            ],
+            [
+              73.873528,
+              18.311118
+            ],
+            [
+              73.873481,
+              18.31109
+            ],
+            [
+              73.87347,
+              18.311047
+            ],
+            [
+              73.873502,
+              18.311016
+            ],
+            [
+              73.873558,
+              18.311014
+            ],
+            [
+              73.873605,
+              18.311042
+            ],
+            [
+              73.873616,
+              18.311085
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0003",
+        "name": "Khed Shivapur Cluster Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.311725,
+        "centroidLon": 73.872589
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.872662,
+              18.311744
+            ],
+            [
+              73.87263,
+              18.311775
+            ],
+            [
+              73.872574,
+              18.311777
+            ],
+            [
+              73.872527,
+              18.311749
+            ],
+            [
+              73.872516,
+              18.311706
+            ],
+            [
+              73.872548,
+              18.311675
+            ],
+            [
+              73.872604,
+              18.311673
+            ],
+            [
+              73.872651,
+              18.311701
+            ],
+            [
+              73.872662,
+              18.311744
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0004",
+        "name": "Khed Shivapur Cluster Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.311725,
+        "centroidLon": 73.871411
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.871484,
+              18.311744
+            ],
+            [
+              73.871452,
+              18.311775
+            ],
+            [
+              73.871396,
+              18.311777
+            ],
+            [
+              73.871349,
+              18.311749
+            ],
+            [
+              73.871338,
+              18.311706
+            ],
+            [
+              73.87137,
+              18.311675
+            ],
+            [
+              73.871426,
+              18.311673
+            ],
+            [
+              73.871473,
+              18.311701
+            ],
+            [
+              73.871484,
+              18.311744
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0005",
+        "name": "Khed Shivapur Cluster Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.311066,
+        "centroidLon": 73.870457
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.87053,
+              18.311085
+            ],
+            [
+              73.870498,
+              18.311116
+            ],
+            [
+              73.870442,
+              18.311118
+            ],
+            [
+              73.870395,
+              18.31109
+            ],
+            [
+              73.870384,
+              18.311047
+            ],
+            [
+              73.870416,
+              18.311016
+            ],
+            [
+              73.870472,
+              18.311014
+            ],
+            [
+              73.870519,
+              18.311042
+            ],
+            [
+              73.87053,
+              18.311085
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0006",
+        "name": "Khed Shivapur Cluster Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.31,
+        "centroidLon": 73.870092
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.870165,
+              18.310019
+            ],
+            [
+              73.870133,
+              18.31005
+            ],
+            [
+              73.870077,
+              18.310052
+            ],
+            [
+              73.87003,
+              18.310024
+            ],
+            [
+              73.870019,
+              18.309981
+            ],
+            [
+              73.870051,
+              18.30995
+            ],
+            [
+              73.870107,
+              18.309948
+            ],
+            [
+              73.870154,
+              18.309976
+            ],
+            [
+              73.870165,
+              18.310019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0007",
+        "name": "Khed Shivapur Cluster Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.308934,
+        "centroidLon": 73.870457
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.87053,
+              18.308953
+            ],
+            [
+              73.870498,
+              18.308984
+            ],
+            [
+              73.870442,
+              18.308986
+            ],
+            [
+              73.870395,
+              18.308958
+            ],
+            [
+              73.870384,
+              18.308915
+            ],
+            [
+              73.870416,
+              18.308884
+            ],
+            [
+              73.870472,
+              18.308882
+            ],
+            [
+              73.870519,
+              18.30891
+            ],
+            [
+              73.87053,
+              18.308953
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0008",
+        "name": "Khed Shivapur Cluster Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.308275,
+        "centroidLon": 73.871411
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.871484,
+              18.308294
+            ],
+            [
+              73.871452,
+              18.308325
+            ],
+            [
+              73.871396,
+              18.308327
+            ],
+            [
+              73.871349,
+              18.308299
+            ],
+            [
+              73.871338,
+              18.308256
+            ],
+            [
+              73.87137,
+              18.308225
+            ],
+            [
+              73.871426,
+              18.308223
+            ],
+            [
+              73.871473,
+              18.308251
+            ],
+            [
+              73.871484,
+              18.308294
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0009",
+        "name": "Khed Shivapur Cluster Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.308275,
+        "centroidLon": 73.872589
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.872662,
+              18.308294
+            ],
+            [
+              73.87263,
+              18.308325
+            ],
+            [
+              73.872574,
+              18.308327
+            ],
+            [
+              73.872527,
+              18.308299
+            ],
+            [
+              73.872516,
+              18.308256
+            ],
+            [
+              73.872548,
+              18.308225
+            ],
+            [
+              73.872604,
+              18.308223
+            ],
+            [
+              73.872651,
+              18.308251
+            ],
+            [
+              73.872662,
+              18.308294
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0010",
+        "name": "Khed Shivapur Cluster Residential #10",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-001",
+        "settlementName": "Khed Shivapur Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Pune",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.308934,
+        "centroidLon": 73.873543
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.873616,
+              18.308953
+            ],
+            [
+              73.873584,
+              18.308984
+            ],
+            [
+              73.873528,
+              18.308986
+            ],
+            [
+              73.873481,
+              18.308958
+            ],
+            [
+              73.87347,
+              18.308915
+            ],
+            [
+              73.873502,
+              18.308884
+            ],
+            [
+              73.873558,
+              18.308882
+            ],
+            [
+              73.873605,
+              18.30891
+            ],
+            [
+              73.873616,
+              18.308953
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0011",
+        "name": "Shirwal Municipal Town Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 18.15,
+        "centroidLon": 73.932462
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.932535,
+              18.150019
+            ],
+            [
+              73.932503,
+              18.15005
+            ],
+            [
+              73.932447,
+              18.150052
+            ],
+            [
+              73.9324,
+              18.150024
+            ],
+            [
+              73.932389,
+              18.149981
+            ],
+            [
+              73.932421,
+              18.14995
+            ],
+            [
+              73.932477,
+              18.149948
+            ],
+            [
+              73.932524,
+              18.149976
+            ],
+            [
+              73.932535,
+              18.150019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0012",
+        "name": "Shirwal Municipal Town Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.151377,
+        "centroidLon": 73.931992
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.932065,
+              18.151396
+            ],
+            [
+              73.932033,
+              18.151427
+            ],
+            [
+              73.931977,
+              18.151429
+            ],
+            [
+              73.93193,
+              18.151401
+            ],
+            [
+              73.931919,
+              18.151358
+            ],
+            [
+              73.931951,
+              18.151327
+            ],
+            [
+              73.932007,
+              18.151325
+            ],
+            [
+              73.932054,
+              18.151353
+            ],
+            [
+              73.932065,
+              18.151396
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0013",
+        "name": "Shirwal Municipal Town Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.152228,
+        "centroidLon": 73.930761
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.930834,
+              18.152247
+            ],
+            [
+              73.930802,
+              18.152278
+            ],
+            [
+              73.930746,
+              18.15228
+            ],
+            [
+              73.930699,
+              18.152252
+            ],
+            [
+              73.930688,
+              18.152209
+            ],
+            [
+              73.93072,
+              18.152178
+            ],
+            [
+              73.930776,
+              18.152176
+            ],
+            [
+              73.930823,
+              18.152204
+            ],
+            [
+              73.930834,
+              18.152247
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0014",
+        "name": "Shirwal Municipal Town Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.152228,
+        "centroidLon": 73.929239
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.929312,
+              18.152247
+            ],
+            [
+              73.92928,
+              18.152278
+            ],
+            [
+              73.929224,
+              18.15228
+            ],
+            [
+              73.929177,
+              18.152252
+            ],
+            [
+              73.929166,
+              18.152209
+            ],
+            [
+              73.929198,
+              18.152178
+            ],
+            [
+              73.929254,
+              18.152176
+            ],
+            [
+              73.929301,
+              18.152204
+            ],
+            [
+              73.929312,
+              18.152247
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0015",
+        "name": "Shirwal Municipal Town Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.151377,
+        "centroidLon": 73.928008
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.928081,
+              18.151396
+            ],
+            [
+              73.928049,
+              18.151427
+            ],
+            [
+              73.927993,
+              18.151429
+            ],
+            [
+              73.927946,
+              18.151401
+            ],
+            [
+              73.927935,
+              18.151358
+            ],
+            [
+              73.927967,
+              18.151327
+            ],
+            [
+              73.928023,
+              18.151325
+            ],
+            [
+              73.92807,
+              18.151353
+            ],
+            [
+              73.928081,
+              18.151396
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0016",
+        "name": "Shirwal Municipal Town Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.15,
+        "centroidLon": 73.927538
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.927611,
+              18.150019
+            ],
+            [
+              73.927579,
+              18.15005
+            ],
+            [
+              73.927523,
+              18.150052
+            ],
+            [
+              73.927476,
+              18.150024
+            ],
+            [
+              73.927465,
+              18.149981
+            ],
+            [
+              73.927497,
+              18.14995
+            ],
+            [
+              73.927553,
+              18.149948
+            ],
+            [
+              73.9276,
+              18.149976
+            ],
+            [
+              73.927611,
+              18.150019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0017",
+        "name": "Shirwal Municipal Town Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.148623,
+        "centroidLon": 73.928008
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.928081,
+              18.148642
+            ],
+            [
+              73.928049,
+              18.148673
+            ],
+            [
+              73.927993,
+              18.148675
+            ],
+            [
+              73.927946,
+              18.148647
+            ],
+            [
+              73.927935,
+              18.148604
+            ],
+            [
+              73.927967,
+              18.148573
+            ],
+            [
+              73.928023,
+              18.148571
+            ],
+            [
+              73.92807,
+              18.148599
+            ],
+            [
+              73.928081,
+              18.148642
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0018",
+        "name": "Shirwal Municipal Town Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.147772,
+        "centroidLon": 73.929239
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.929312,
+              18.147791
+            ],
+            [
+              73.92928,
+              18.147822
+            ],
+            [
+              73.929224,
+              18.147824
+            ],
+            [
+              73.929177,
+              18.147796
+            ],
+            [
+              73.929166,
+              18.147753
+            ],
+            [
+              73.929198,
+              18.147722
+            ],
+            [
+              73.929254,
+              18.14772
+            ],
+            [
+              73.929301,
+              18.147748
+            ],
+            [
+              73.929312,
+              18.147791
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0019",
+        "name": "Shirwal Municipal Town Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.147772,
+        "centroidLon": 73.930761
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.930834,
+              18.147791
+            ],
+            [
+              73.930802,
+              18.147822
+            ],
+            [
+              73.930746,
+              18.147824
+            ],
+            [
+              73.930699,
+              18.147796
+            ],
+            [
+              73.930688,
+              18.147753
+            ],
+            [
+              73.93072,
+              18.147722
+            ],
+            [
+              73.930776,
+              18.14772
+            ],
+            [
+              73.930823,
+              18.147748
+            ],
+            [
+              73.930834,
+              18.147791
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0020",
+        "name": "Shirwal Municipal Town Residential #10",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-002",
+        "settlementName": "Shirwal Municipal Town",
+        "settlementClassification": "URBAN",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.148623,
+        "centroidLon": 73.931992
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.932065,
+              18.148642
+            ],
+            [
+              73.932033,
+              18.148673
+            ],
+            [
+              73.931977,
+              18.148675
+            ],
+            [
+              73.93193,
+              18.148647
+            ],
+            [
+              73.931919,
+              18.148604
+            ],
+            [
+              73.931951,
+              18.148573
+            ],
+            [
+              73.932007,
+              18.148571
+            ],
+            [
+              73.932054,
+              18.148599
+            ],
+            [
+              73.932065,
+              18.148642
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0021",
+        "name": "Khandala Bazar Foothill Settlement Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.025,
+        "centroidLon": 73.954063
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.954136,
+              18.025019
+            ],
+            [
+              73.954104,
+              18.02505
+            ],
+            [
+              73.954048,
+              18.025052
+            ],
+            [
+              73.954001,
+              18.025024
+            ],
+            [
+              73.95399,
+              18.024981
+            ],
+            [
+              73.954022,
+              18.02495
+            ],
+            [
+              73.954078,
+              18.024948
+            ],
+            [
+              73.954125,
+              18.024976
+            ],
+            [
+              73.954136,
+              18.025019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0022",
+        "name": "Khandala Bazar Foothill Settlement Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.026155,
+        "centroidLon": 73.953669
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.953742,
+              18.026174
+            ],
+            [
+              73.95371,
+              18.026205
+            ],
+            [
+              73.953654,
+              18.026207
+            ],
+            [
+              73.953607,
+              18.026179
+            ],
+            [
+              73.953596,
+              18.026136
+            ],
+            [
+              73.953628,
+              18.026105
+            ],
+            [
+              73.953684,
+              18.026103
+            ],
+            [
+              73.953731,
+              18.026131
+            ],
+            [
+              73.953742,
+              18.026174
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0023",
+        "name": "Khandala Bazar Foothill Settlement Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.026869,
+        "centroidLon": 73.952638
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.952711,
+              18.026888
+            ],
+            [
+              73.952679,
+              18.026919
+            ],
+            [
+              73.952623,
+              18.026921
+            ],
+            [
+              73.952576,
+              18.026893
+            ],
+            [
+              73.952565,
+              18.02685
+            ],
+            [
+              73.952597,
+              18.026819
+            ],
+            [
+              73.952653,
+              18.026817
+            ],
+            [
+              73.9527,
+              18.026845
+            ],
+            [
+              73.952711,
+              18.026888
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0024",
+        "name": "Khandala Bazar Foothill Settlement Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.026869,
+        "centroidLon": 73.951362
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.951435,
+              18.026888
+            ],
+            [
+              73.951403,
+              18.026919
+            ],
+            [
+              73.951347,
+              18.026921
+            ],
+            [
+              73.9513,
+              18.026893
+            ],
+            [
+              73.951289,
+              18.02685
+            ],
+            [
+              73.951321,
+              18.026819
+            ],
+            [
+              73.951377,
+              18.026817
+            ],
+            [
+              73.951424,
+              18.026845
+            ],
+            [
+              73.951435,
+              18.026888
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0025",
+        "name": "Khandala Bazar Foothill Settlement Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.026155,
+        "centroidLon": 73.950331
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.950404,
+              18.026174
+            ],
+            [
+              73.950372,
+              18.026205
+            ],
+            [
+              73.950316,
+              18.026207
+            ],
+            [
+              73.950269,
+              18.026179
+            ],
+            [
+              73.950258,
+              18.026136
+            ],
+            [
+              73.95029,
+              18.026105
+            ],
+            [
+              73.950346,
+              18.026103
+            ],
+            [
+              73.950393,
+              18.026131
+            ],
+            [
+              73.950404,
+              18.026174
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0026",
+        "name": "Khandala Bazar Foothill Settlement Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.025,
+        "centroidLon": 73.949937
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.95001,
+              18.025019
+            ],
+            [
+              73.949978,
+              18.02505
+            ],
+            [
+              73.949922,
+              18.025052
+            ],
+            [
+              73.949875,
+              18.025024
+            ],
+            [
+              73.949864,
+              18.024981
+            ],
+            [
+              73.949896,
+              18.02495
+            ],
+            [
+              73.949952,
+              18.024948
+            ],
+            [
+              73.949999,
+              18.024976
+            ],
+            [
+              73.95001,
+              18.025019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0027",
+        "name": "Khandala Bazar Foothill Settlement Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.023845,
+        "centroidLon": 73.950331
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.950404,
+              18.023864
+            ],
+            [
+              73.950372,
+              18.023895
+            ],
+            [
+              73.950316,
+              18.023897
+            ],
+            [
+              73.950269,
+              18.023869
+            ],
+            [
+              73.950258,
+              18.023826
+            ],
+            [
+              73.95029,
+              18.023795
+            ],
+            [
+              73.950346,
+              18.023793
+            ],
+            [
+              73.950393,
+              18.023821
+            ],
+            [
+              73.950404,
+              18.023864
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0028",
+        "name": "Khandala Bazar Foothill Settlement Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.023131,
+        "centroidLon": 73.951362
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.951435,
+              18.02315
+            ],
+            [
+              73.951403,
+              18.023181
+            ],
+            [
+              73.951347,
+              18.023183
+            ],
+            [
+              73.9513,
+              18.023155
+            ],
+            [
+              73.951289,
+              18.023112
+            ],
+            [
+              73.951321,
+              18.023081
+            ],
+            [
+              73.951377,
+              18.023079
+            ],
+            [
+              73.951424,
+              18.023107
+            ],
+            [
+              73.951435,
+              18.02315
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0029",
+        "name": "Khandala Bazar Foothill Settlement Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.023131,
+        "centroidLon": 73.952638
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.952711,
+              18.02315
+            ],
+            [
+              73.952679,
+              18.023181
+            ],
+            [
+              73.952623,
+              18.023183
+            ],
+            [
+              73.952576,
+              18.023155
+            ],
+            [
+              73.952565,
+              18.023112
+            ],
+            [
+              73.952597,
+              18.023081
+            ],
+            [
+              73.952653,
+              18.023079
+            ],
+            [
+              73.9527,
+              18.023107
+            ],
+            [
+              73.952711,
+              18.02315
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0030",
+        "name": "Khandala Bazar Foothill Settlement Residential #10",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-003",
+        "settlementName": "Khandala Bazar Foothill Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 18.023845,
+        "centroidLon": 73.953669
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.953742,
+              18.023864
+            ],
+            [
+              73.95371,
+              18.023895
+            ],
+            [
+              73.953654,
+              18.023897
+            ],
+            [
+              73.953607,
+              18.023869
+            ],
+            [
+              73.953596,
+              18.023826
+            ],
+            [
+              73.953628,
+              18.023795
+            ],
+            [
+              73.953684,
+              18.023793
+            ],
+            [
+              73.953731,
+              18.023821
+            ],
+            [
+              73.953742,
+              18.023864
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0031",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.875,
+        "centroidLon": 73.979942
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.980015,
+              17.875019
+            ],
+            [
+              73.979983,
+              17.87505
+            ],
+            [
+              73.979927,
+              17.875052
+            ],
+            [
+              73.97988,
+              17.875024
+            ],
+            [
+              73.979869,
+              17.874981
+            ],
+            [
+              73.979901,
+              17.87495
+            ],
+            [
+              73.979957,
+              17.874948
+            ],
+            [
+              73.980004,
+              17.874976
+            ],
+            [
+              73.980015,
+              17.875019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0032",
+        "name": "Bhuinj-Pachwad Valley Habitation Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.876088,
+        "centroidLon": 73.979572
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.979645,
+              17.876107
+            ],
+            [
+              73.979613,
+              17.876138
+            ],
+            [
+              73.979557,
+              17.87614
+            ],
+            [
+              73.97951,
+              17.876112
+            ],
+            [
+              73.979499,
+              17.876069
+            ],
+            [
+              73.979531,
+              17.876038
+            ],
+            [
+              73.979587,
+              17.876036
+            ],
+            [
+              73.979634,
+              17.876064
+            ],
+            [
+              73.979645,
+              17.876107
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0033",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.876761,
+        "centroidLon": 73.9786
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.978673,
+              17.87678
+            ],
+            [
+              73.978641,
+              17.876811
+            ],
+            [
+              73.978585,
+              17.876813
+            ],
+            [
+              73.978538,
+              17.876785
+            ],
+            [
+              73.978527,
+              17.876742
+            ],
+            [
+              73.978559,
+              17.876711
+            ],
+            [
+              73.978615,
+              17.876709
+            ],
+            [
+              73.978662,
+              17.876737
+            ],
+            [
+              73.978673,
+              17.87678
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0034",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.876761,
+        "centroidLon": 73.9774
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.977473,
+              17.87678
+            ],
+            [
+              73.977441,
+              17.876811
+            ],
+            [
+              73.977385,
+              17.876813
+            ],
+            [
+              73.977338,
+              17.876785
+            ],
+            [
+              73.977327,
+              17.876742
+            ],
+            [
+              73.977359,
+              17.876711
+            ],
+            [
+              73.977415,
+              17.876709
+            ],
+            [
+              73.977462,
+              17.876737
+            ],
+            [
+              73.977473,
+              17.87678
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0035",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.876088,
+        "centroidLon": 73.976428
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.976501,
+              17.876107
+            ],
+            [
+              73.976469,
+              17.876138
+            ],
+            [
+              73.976413,
+              17.87614
+            ],
+            [
+              73.976366,
+              17.876112
+            ],
+            [
+              73.976355,
+              17.876069
+            ],
+            [
+              73.976387,
+              17.876038
+            ],
+            [
+              73.976443,
+              17.876036
+            ],
+            [
+              73.97649,
+              17.876064
+            ],
+            [
+              73.976501,
+              17.876107
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0036",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.875,
+        "centroidLon": 73.976058
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.976131,
+              17.875019
+            ],
+            [
+              73.976099,
+              17.87505
+            ],
+            [
+              73.976043,
+              17.875052
+            ],
+            [
+              73.975996,
+              17.875024
+            ],
+            [
+              73.975985,
+              17.874981
+            ],
+            [
+              73.976017,
+              17.87495
+            ],
+            [
+              73.976073,
+              17.874948
+            ],
+            [
+              73.97612,
+              17.874976
+            ],
+            [
+              73.976131,
+              17.875019
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0037",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.873912,
+        "centroidLon": 73.976428
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.976501,
+              17.873931
+            ],
+            [
+              73.976469,
+              17.873962
+            ],
+            [
+              73.976413,
+              17.873964
+            ],
+            [
+              73.976366,
+              17.873936
+            ],
+            [
+              73.976355,
+              17.873893
+            ],
+            [
+              73.976387,
+              17.873862
+            ],
+            [
+              73.976443,
+              17.87386
+            ],
+            [
+              73.97649,
+              17.873888
+            ],
+            [
+              73.976501,
+              17.873931
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0038",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.873239,
+        "centroidLon": 73.9774
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.977473,
+              17.873258
+            ],
+            [
+              73.977441,
+              17.873289
+            ],
+            [
+              73.977385,
+              17.873291
+            ],
+            [
+              73.977338,
+              17.873263
+            ],
+            [
+              73.977327,
+              17.87322
+            ],
+            [
+              73.977359,
+              17.873189
+            ],
+            [
+              73.977415,
+              17.873187
+            ],
+            [
+              73.977462,
+              17.873215
+            ],
+            [
+              73.977473,
+              17.873258
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0039",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.873239,
+        "centroidLon": 73.9786
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.978673,
+              17.873258
+            ],
+            [
+              73.978641,
+              17.873289
+            ],
+            [
+              73.978585,
+              17.873291
+            ],
+            [
+              73.978538,
+              17.873263
+            ],
+            [
+              73.978527,
+              17.87322
+            ],
+            [
+              73.978559,
+              17.873189
+            ],
+            [
+              73.978615,
+              17.873187
+            ],
+            [
+              73.978662,
+              17.873215
+            ],
+            [
+              73.978673,
+              17.873258
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-WESTERN_GHATS-0040",
+        "name": "Bhuinj-Pachwad Valley Habitation Residential #10",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-WESTERN_GHATS-004",
+        "settlementName": "Bhuinj-Pachwad Valley Habitation",
+        "settlementClassification": "RURAL",
+        "district": "Satara",
+        "footprintAreaSqMeters": 115.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 17.873912,
+        "centroidLon": 73.979572
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.979645,
+              17.873931
+            ],
+            [
+              73.979613,
+              17.873962
+            ],
+            [
+              73.979557,
+              17.873964
+            ],
+            [
+              73.97951,
+              17.873936
+            ],
+            [
+              73.979499,
+              17.873893
+            ],
+            [
+              73.979531,
+              17.873862
+            ],
+            [
+              73.979587,
+              17.87386
+            ],
+            [
+              73.979634,
+              17.873888
+            ],
+            [
+              73.979645,
+              17.873931
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "assam_dhansiri": {
+    "display_name": "Dhansiri River, Assam, India",
+    "osm_type": "relation",
+    "osm_id": 16006122,
+    "geojson_type": "MultiLineString",
+    "has_coords": true
+  },
+  "assam_diphlu": {
+    "display_name": "Diphlu, Bokakhat, Golaghat, Assam, India",
+    "osm_type": "way",
+    "osm_id": 221977087,
+    "geojson_type": "LineString",
+    "has_coords": true
+  },
+  "assam_brahmaputra": {
+    "display_name": "Brahmaputra, Mornai, Matia, Goalpara, Assam, India",
+    "osm_type": "way",
+    "osm_id": 1291355485,
+    "geojson_type": "LineString",
+    "has_coords": true
+  },
+  "assam_nh715": {
+    "display_name": "National Highway 44, Karimganj, Assam, 788710, India",
+    "osm_type": "way",
+    "osm_id": 44769327,
+    "geojson_type": "LineString",
+    "has_coords": true
+  },
+  "wg_nira": {
+    "display_name": "Nira, Maharashtra, India",
+    "osm_type": "relation",
+    "osm_id": 2863554,
+    "geojson_type": "MultiLineString",
+    "has_coords": true
+  },
+  "wg_venna": {
+    "display_name": "Venna River, Khed, Satara, Maharashtra, India",
+    "osm_type": "way",
+    "osm_id": 314208645,
+    "geojson_type": "LineString",
+    "has_coords": true
+  },
+  "wg_nh48": {
+    "display_name": "National Highway 48, Wai, Satara, Maharashtra, 415536, India",
+    "osm_type": "way",
+    "osm_id": 998144638,
+    "geojson_type": "LineString",
+    "has_coords": true
+  },
+  "wg_sh70": {
+    "display_name": "State Highway, Mayani, Khatav, Satara, Maharashtra, 415102, India",
+    "osm_type": "way",
+    "osm_id": 22840335,
+    "geojson_type": "LineString",
+    "has_coords": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTL-CORRIDOR_2238_7323_2337_7607-400KV",
+        "name": "Corridor_2238_7323_2337_7607 400kV D/C Inter-Grid Line",
+        "utilityTier": "EHV_400KV_TRANSMISSION",
+        "voltageKv": 400.0,
+        "voltageInferred": false,
+        "circuitConfiguration": "D/C",
+        "designRowWidthMeters": 46.0,
+        "minimumConductorClearanceMeters": 8.84,
+        "typicalSpanMeters": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.08486,
+            22.57814
+          ],
+          [
+            76.21934,
+            22.65274
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTL-IGP-400KV",
+        "name": "Sohawal-Lucknow 400kV D/C PGCIL Northern Grid Line",
+        "utilityTier": "EHV_400KV_TRANSMISSION",
+        "voltageKv": 400,
+        "voltageInferred": false,
+        "circuitConfiguration": "D/C",
+        "designRowWidthMeters": 46.0,
+        "minimumConductorClearanceMeters": 8.84,
+        "typicalSpanMeters": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.62,
+            27.14
+          ],
+          [
+            81.625,
+            26.84
+          ],
+          [
+            81.63,
+            26.58
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "UTL-IGP-220KV",
+        "name": "Barabanki-Ayodhya 220kV UPPTCL Line",
+        "utilityTier": "EHV_220KV_TRANSMISSION",
+        "voltageKv": 220,
+        "voltageInferred": false,
+        "circuitConfiguration": "D/C",
+        "designRowWidthMeters": 35.0,
+        "minimumConductorClearanceMeters": 7.02,
+        "typicalSpanMeters": 350.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.91,
+            27.14
+          ],
+          [
+            81.915,
+            26.82
+          ],
+          [
+            81.92,
+            26.58
+          ]
+        ]
+      }
+    }
+  ]
+}

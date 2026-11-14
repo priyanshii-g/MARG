@@ -115,6 +115,30 @@ public class Wgs84UtmProjection implements CoordinateProjection {
         return zone;
     }
 
+    /**
+     * Computes standard WGS84 UTM zone (1..60) for any longitude in [-180, 180].
+     */
+    public static int utmZoneForLongitude(double lon) {
+        int computed = (int) Math.floor((lon + 180.0) / 6.0) + 1;
+        return Math.max(1, Math.min(60, computed));
+    }
+
+    /**
+     * Computes the Indian national UTM zone (42N..47N) for any longitude in India (68E..98E).
+     */
+    public static int indiaUtmZoneForLongitude(double lon) {
+        int computed = utmZoneForLongitude(lon);
+        return Math.max(42, Math.min(47, computed));
+    }
+
+    /**
+     * Dynamically creates a WGS84 UTM projection centered on the corridor midpoint between start and goal.
+     */
+    public static Wgs84UtmProjection forCorridor(GeoPoint start, GeoPoint goal) {
+        double midLon = 0.5 * (start.lon() + goal.lon());
+        return new Wgs84UtmProjection(utmZoneForLongitude(midLon));
+    }
+
     private static double normalizeDeltaLongitude(double value) {
         while (value > Math.PI) value -= 2.0 * Math.PI;
         while (value < -Math.PI) value += 2.0 * Math.PI;

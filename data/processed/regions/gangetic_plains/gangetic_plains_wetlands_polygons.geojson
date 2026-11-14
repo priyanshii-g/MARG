@@ -1,0 +1,193 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-001",
+        "name": "Bhagauli-Kalyani Oxbow Jheel (Taal)",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 17.15,
+        "perimeterMeters": 1516.0,
+        "seasonalDepthMeters": 2.4,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 26.872,
+        "centroidLon": 81.575
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.57765,
+              26.872862
+            ],
+            [
+              81.577191,
+              26.873427
+            ],
+            [
+              81.576399,
+              26.873775
+            ],
+            [
+              81.575393,
+              26.873853
+            ],
+            [
+              81.574328,
+              26.873649
+            ],
+            [
+              81.573365,
+              26.873194
+            ],
+            [
+              81.572651,
+              26.872557
+            ],
+            [
+              81.572295,
+              26.871835
+            ],
+            [
+              81.57235,
+              26.871138
+            ],
+            [
+              81.572809,
+              26.870573
+            ],
+            [
+              81.573601,
+              26.870225
+            ],
+            [
+              81.574607,
+              26.870147
+            ],
+            [
+              81.575672,
+              26.870351
+            ],
+            [
+              81.576635,
+              26.870806
+            ],
+            [
+              81.577349,
+              26.871443
+            ],
+            [
+              81.577705,
+              26.872165
+            ],
+            [
+              81.57765,
+              26.872862
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-002",
+        "name": "Rudauli Command Waterlogged Taal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Ayodhya",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 15.11,
+        "perimeterMeters": 1417.7,
+        "seasonalDepthMeters": 2.4,
+        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "centroidLat": 26.805,
+        "centroidLon": 81.845
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.847459,
+              26.8058
+            ],
+            [
+              81.847028,
+              26.806338
+            ],
+            [
+              81.846288,
+              26.806672
+            ],
+            [
+              81.845353,
+              26.806751
+            ],
+            [
+              81.844363,
+              26.806564
+            ],
+            [
+              81.843471,
+              26.806139
+            ],
+            [
+              81.842811,
+              26.80554
+            ],
+            [
+              81.842484,
+              26.804859
+            ],
+            [
+              81.842541,
+              26.8042
+            ],
+            [
+              81.842972,
+              26.803662
+            ],
+            [
+              81.843712,
+              26.803328
+            ],
+            [
+              81.844647,
+              26.803249
+            ],
+            [
+              81.845637,
+              26.803436
+            ],
+            [
+              81.846529,
+              26.803861
+            ],
+            [
+              81.847189,
+              26.80446
+            ],
+            [
+              81.847516,
+              26.805141
+            ],
+            [
+              81.847459,
+              26.8058
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

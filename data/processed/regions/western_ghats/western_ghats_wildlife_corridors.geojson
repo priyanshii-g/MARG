@@ -1,0 +1,63 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WLC-WG-01",
+        "name": "Rajgad-Bhor-Sahyadri Escarpment Wildlife Corridor",
+        "corridorTier": "INTER_SANCTUARY_ELEPHANT_CORRIDOR",
+        "targetSpecies": "Indian Gaur, Leopard, Sambar Deer",
+        "designCorridorWidthMeters": 320.0,
+        "minimumPassageSpanMeters": 220.0,
+        "minimumClearHeightMeters": 6.0
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.72,
+            18.235
+          ],
+          [
+            73.92,
+            18.24
+          ],
+          [
+            74.14,
+            18.245
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "WLC-WG-02",
+        "name": "Mahabaleshwar-Koyna-Kamalgad Forest Dispersal Axis",
+        "corridorTier": "LOCAL_WILDLIFE_DISPERSAL_AXIS",
+        "targetSpecies": "Indian Gaur, Barking Deer, Giant Squirrel",
+        "designCorridorWidthMeters": 240.0,
+        "minimumPassageSpanMeters": 140.0,
+        "minimumClearHeightMeters": 5.5
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            73.74,
+            17.855
+          ],
+          [
+            73.96,
+            17.86
+          ],
+          [
+            74.18,
+            17.865
+          ]
+        ]
+      }
+    }
+  ]
+}
