@@ -53,6 +53,28 @@ public class HubEvaluationService {
             List<String> userTargetHubTokens,
             Integer minHubPopulationOverride,
             Double maxVcRatioOverride) {
+        return evaluate(
+                start,
+                goal,
+                searchWindow,
+                mode,
+                userTargetHubTokens,
+                minHubPopulationOverride,
+                maxVcRatioOverride,
+                true,
+                null);
+    }
+
+    public EvaluationResult evaluate(
+            GeoPoint start,
+            GeoPoint goal,
+            StudyRegion searchWindow,
+            FacilityMode mode,
+            List<String> userTargetHubTokens,
+            Integer minHubPopulationOverride,
+            Double maxVcRatioOverride,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs) {
 
         MetricPoint a = projection.forward(start);
         MetricPoint b = projection.forward(goal);
@@ -62,9 +84,12 @@ public class HubEvaluationService {
         double ux = (dx / 1000.0) / corridorLengthKm;
         double uy = (dy / 1000.0) / corridorLengthKm;
 
+        boolean enableAuto = autoConnectHubs == null || Boolean.TRUE.equals(autoConnectHubs);
+        int autoLimit = (maxAutoHubs != null && maxAutoHubs >= 0) ? maxAutoHubs : Integer.MAX_VALUE;
+
         int effectiveMinPop = minHubPopulationOverride != null
                 ? Math.max(0, minHubPopulationOverride)
-                : properties.minHubPopulationFor(mode);
+                : (enableAuto ? Math.min(20000, properties.minHubPopulationFor(mode)) : properties.minHubPopulationFor(mode));
         double minSpacingKm = properties.minInterchangeSpacingKmFor(mode);
         double effectiveMaxVc = maxVcRatioOverride != null
                 ? maxVcRatioOverride
@@ -80,39 +105,18 @@ public class HubEvaluationService {
             immutableIds.add(h.hubId());
         }
 
-        // Pre-score all regional hubs
+        // Pre-score all regional hubs plus any dynamically synthesized user hubs
         List<ScoredCandidate> allScored = new ArrayList<>();
+        Set<String> scoredIds = new LinkedHashSet<>();
         for (RegionalHub hub : vectorIndex.allHubs()) {
-            MetricPoint p = hub.centerMetric();
-            double relXKm = (p.x() - a.x()) / 1000.0;
-            double relYKm = (p.y() - a.y()) / 1000.0;
-
-            double projKm = relXKm * ux + relYKm * uy;
-            double clampedProjKm = Math.max(0.0, Math.min(corridorLengthKm, projKm));
-            double closestXKm = clampedProjKm * ux;
-            double closestYKm = clampedProjKm * uy;
-            double distCenterlineKm = Math.hypot(relXKm - closestXKm, relYKm - closestYKm);
-
-            double distToStartKm = Math.hypot(p.x() - a.x(), p.y() - a.y()) / 1000.0;
-            double distToGoalKm = Math.hypot(p.x() - b.x(), p.y() - b.y()) / 1000.0;
-
-            double effectiveDistForHvi = Math.max(1.0, distCenterlineKm);
-            double hvi = (hub.catchmentPopulation() * hub.industrialOutputFactor())
-                    / (effectiveDistForHvi * effectiveDistForHvi);
-
-            double inducedPcuHr = (hub.catchmentPopulation() / 1000.0)
-                    * tripRatePer1000
-                    * hub.industrialOutputFactor();
-
-            allScored.add(new ScoredCandidate(
-                    hub,
-                    immutableIds.contains(hub.hubId()),
-                    projKm,
-                    distCenterlineKm,
-                    distToStartKm,
-                    distToGoalKm,
-                    hvi,
-                    inducedPcuHr));
+            allScored.add(scoreHub(hub, a, b, ux, uy, corridorLengthKm, tripRatePer1000, immutableIds.contains(hub.hubId())));
+            scoredIds.add(hub.hubId());
+        }
+        for (RegionalHub imm : immutableHubs) {
+            if (!scoredIds.contains(imm.hubId())) {
+                allScored.add(scoreHub(imm, a, b, ux, uy, corridorLengthKm, tripRatePer1000, true));
+                scoredIds.add(imm.hubId());
+            }
         }
 
         List<HubDecision> decisions = new ArrayList<>();
@@ -151,8 +155,39 @@ public class HubEvaluationService {
                 .sorted(Comparator.comparingDouble(ScoredCandidate::hvi).reversed())
                 .toList();
 
+        int autonomousApprovedCount = 0;
         for (ScoredCandidate sc : autonomousPool) {
             RegionalHub hub = sc.hub();
+
+            if (!enableAuto) {
+                decisions.add(new HubDecision(
+                        hub,
+                        false,
+                        false,
+                        "AUTONOMOUS_HUB_DISABLED",
+                        "Auto-connect intermediate hubs feature is turned off by user.",
+                        round(sc.hvi()),
+                        round(sc.distCenterlineKm()),
+                        round(sc.axisProjectionKm()),
+                        round(sc.inducedPcuHr()),
+                        round(currentVolumePcuHr / designCapacityPcuHr)));
+                continue;
+            }
+
+            if (autonomousApprovedCount >= autoLimit) {
+                decisions.add(new HubDecision(
+                        hub,
+                        false,
+                        false,
+                        "AUTONOMOUS_CAP_REACHED",
+                        "Autonomous hub connection cap reached (" + autoLimit + " cities maximum).",
+                        round(sc.hvi()),
+                        round(sc.distCenterlineKm()),
+                        round(sc.axisProjectionKm()),
+                        round(sc.inducedPcuHr()),
+                        round(currentVolumePcuHr / designCapacityPcuHr)));
+                continue;
+            }
 
             // Exclude hubs coinciding with origin/destination terminals
             if (sc.distToStartKm() <= TERMINAL_EXCLUSION_RADIUS_KM
@@ -213,20 +248,31 @@ public class HubEvaluationService {
             // Step 3 Gate A: Carrying Capacity Gate (V/C Ratio <= maxVcRatio)
             double projectedVolume = currentVolumePcuHr + sc.inducedPcuHr();
             double projectedVc = projectedVolume / designCapacityPcuHr;
-            if (projectedVc > effectiveMaxVc + 1e-9) {
-                decisions.add(new HubDecision(
-                        hub,
-                        false,
-                        false,
-                        "CAPACITY_VC_GATE_REJECTED",
-                        "Adding " + round(sc.inducedPcuHr()) + " PCU/hr would push V/C to "
-                                + round(projectedVc) + " (> " + round(effectiveMaxVc) + " cap).",
-                        round(sc.hvi()),
-                        round(sc.distCenterlineKm()),
-                        round(sc.axisProjectionKm()),
-                        round(sc.inducedPcuHr()),
-                        round(projectedVc)));
-                continue;
+            boolean capacityExceeded = projectedVc > effectiveMaxVc + 1e-9;
+            if (capacityExceeded) {
+                // IRC:SP:84 Section 2.2 Standard: When regional connectivity is requested,
+                // expressway corridors accommodate high traffic through 6-lane design capacity (7,200 PCU/hr)
+                // or tolerance up to physical capacity (V/C <= 1.05) with an over-capacity alert,
+                // rather than refusing grade-separated feeder spur access to major economic hubs.
+                double sixLaneCapacity = designCapacityPcuHr * 1.5;
+                double sixLaneVc = projectedVolume / sixLaneCapacity;
+                boolean sixLaneFeasible = sixLaneVc <= 0.85 || projectedVc <= 1.05;
+
+                if (!enableAuto || !sixLaneFeasible) {
+                    decisions.add(new HubDecision(
+                            hub,
+                            false,
+                            false,
+                            "CAPACITY_VC_GATE_REJECTED",
+                            "Adding " + round(sc.inducedPcuHr()) + " PCU/hr would push V/C to "
+                                    + round(projectedVc) + " (> " + round(effectiveMaxVc) + " cap).",
+                            round(sc.hvi()),
+                            round(sc.distCenterlineKm()),
+                            round(sc.axisProjectionKm()),
+                            round(sc.inducedPcuHr()),
+                            round(projectedVc)));
+                    continue;
+                }
             }
 
             // Step 3 Gate B: Spacing Gate (against terminals and already-locked interchanges)
@@ -257,13 +303,18 @@ public class HubEvaluationService {
             currentVolumePcuHr = projectedVolume;
             approvedHubs.add(hub);
             lockedAxisPositionsKm.add(sc.axisProjectionKm());
+            autonomousApprovedCount++;
+            String decisionReason = capacityExceeded
+                    ? "Selected via HVI ranking (IRC:SP:84 Section 2.2: 6-lane capacity recommended: 4-lane V/C "
+                            + round(projectedVc) + ", 6-lane V/C " + round(projectedVolume / (designCapacityPcuHr * 1.5)) + ")."
+                    : "Selected via HVI ranking within " + round(minSpacingKm)
+                            + " km spacing and V/C <= " + round(effectiveMaxVc) + ".";
             decisions.add(new HubDecision(
                     hub,
                     true,
                     false,
                     "AUTONOMOUS_HVI_SELECTED",
-                    "Selected via HVI ranking within " + round(minSpacingKm)
-                            + " km spacing and V/C <= " + round(effectiveMaxVc) + ".",
+                    decisionReason,
                     round(sc.hvi()),
                     round(sc.distCenterlineKm()),
                     round(sc.axisProjectionKm()),
@@ -312,6 +363,47 @@ public class HubEvaluationService {
             double hvi,
             double inducedPcuHr
     ) {}
+
+    private static ScoredCandidate scoreHub(
+            RegionalHub hub,
+            MetricPoint a,
+            MetricPoint b,
+            double ux,
+            double uy,
+            double corridorLengthKm,
+            double tripRatePer1000,
+            boolean immutable) {
+        MetricPoint p = hub.centerMetric();
+        double relXKm = (p.x() - a.x()) / 1000.0;
+        double relYKm = (p.y() - a.y()) / 1000.0;
+
+        double projKm = relXKm * ux + relYKm * uy;
+        double clampedProjKm = Math.max(0.0, Math.min(corridorLengthKm, projKm));
+        double closestXKm = clampedProjKm * ux;
+        double closestYKm = clampedProjKm * uy;
+        double distCenterlineKm = Math.hypot(relXKm - closestXKm, relYKm - closestYKm);
+
+        double distToStartKm = Math.hypot(p.x() - a.x(), p.y() - a.y()) / 1000.0;
+        double distToGoalKm = Math.hypot(p.x() - b.x(), p.y() - b.y()) / 1000.0;
+
+        double effectiveDistForHvi = Math.max(1.0, distCenterlineKm);
+        double hvi = (hub.catchmentPopulation() * hub.industrialOutputFactor())
+                / (effectiveDistForHvi * effectiveDistForHvi);
+
+        double inducedPcuHr = (hub.catchmentPopulation() / 1000.0)
+                * tripRatePer1000
+                * hub.industrialOutputFactor();
+
+        return new ScoredCandidate(
+                hub,
+                immutable,
+                projKm,
+                distCenterlineKm,
+                distToStartKm,
+                distToGoalKm,
+                hvi,
+                inducedPcuHr);
+    }
 
     public record HubDecision(
             RegionalHub hub,

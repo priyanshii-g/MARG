@@ -38,6 +38,15 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             double eszRadiusDeg
     ) {}
 
+    public record SacredHeritageExclusionZone(
+            String id,
+            String name,
+            String state,
+            double centerLat,
+            double centerLon,
+            double exclusionRadiusDeg
+    ) {}
+
     public record UrbanSettlementCenter(
             String id,
             String name,
@@ -82,6 +91,29 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             new ProtectedSanctuaryCore("PA-DUDHWA", "Dudhwa National Park Core", "Uttar Pradesh", 28.485, 80.645, 0.030, 0.070)
     );
 
+    private static final List<SacredHeritageExclusionZone> SACRED_HERITAGE_ZONES = List.of(
+            new SacredHeritageExclusionZone("SAC-RAM-JANMABHOOMI", "Shri Ram Janmabhoomi Mandir Complex, Ayodhya", "Uttar Pradesh", 26.7956, 82.1944, 0.015),
+            new SacredHeritageExclusionZone("SAC-KASHI-VISHWANATH", "Kashi Vishwanath Dham Corridor, Varanasi", "Uttar Pradesh", 25.3109, 83.0107, 0.012),
+            new SacredHeritageExclusionZone("SAC-KRISHNA-JANMASTHAN", "Shri Krishna Janmasthan Precinct, Mathura", "Uttar Pradesh", 27.5048, 77.6696, 0.012),
+            new SacredHeritageExclusionZone("SAC-TAJ-MAHAL", "Taj Mahal ASI Prohibited Precinct, Agra", "Uttar Pradesh", 27.1751, 78.0421, 0.015),
+            new SacredHeritageExclusionZone("SAC-GOLDEN-TEMPLE", "Harmandir Sahib Golden Temple Precinct, Amritsar", "Punjab", 31.6200, 74.8765, 0.012),
+            new SacredHeritageExclusionZone("SAC-JAGANNATH-PURI", "Shree Jagannath Temple Precinct, Puri", "Odisha", 19.8049, 85.8179, 0.012),
+            new SacredHeritageExclusionZone("SAC-TIRUMALA", "Tirumala Venkateswara Temple Precinct, Tirupati", "Andhra Pradesh", 13.6833, 79.3472, 0.018),
+            new SacredHeritageExclusionZone("SAC-SOMNATH", "Somnath Jyotirlinga Temple Precinct", "Gujarat", 20.8880, 70.4012, 0.012),
+            new SacredHeritageExclusionZone("SAC-DWARKADHISH", "Dwarkadhish Temple Precinct", "Gujarat", 22.2376, 68.9675, 0.012),
+            new SacredHeritageExclusionZone("SAC-MAHAKALESHWAR", "Mahakaleshwar Jyotirlinga Precinct, Ujjain", "Madhya Pradesh", 23.1827, 75.7682, 0.012),
+            new SacredHeritageExclusionZone("SAC-KAMAKHYA", "Kamakhya Shakti Peeth Nilachal Precinct, Guwahati", "Assam", 26.1664, 91.7055, 0.012),
+            new SacredHeritageExclusionZone("SAC-MEENAKSHI", "Meenakshi Amman Temple Precinct, Madurai", "Tamil Nadu", 9.9195, 78.1193, 0.012),
+            new SacredHeritageExclusionZone("SAC-MAHABODHI", "Mahabodhi UNESCO Heritage Precinct, Bodh Gaya", "Bihar", 24.6959, 84.9914, 0.012),
+            new SacredHeritageExclusionZone("SAC-KEDARNATH", "Kedarnath Dham Sacred Shrine Precinct", "Uttarakhand", 30.7352, 79.0669, 0.015),
+            new SacredHeritageExclusionZone("SAC-BADRINATH", "Badrinath Dham Sacred Shrine Precinct", "Uttarakhand", 30.7433, 79.4938, 0.015),
+            new SacredHeritageExclusionZone("SAC-HAMPI-ASI", "Hampi UNESCO World Heritage Precinct", "Karnataka", 15.3350, 76.4600, 0.018),
+            new SacredHeritageExclusionZone("SAC-AJANTA-ASI", "Ajanta Caves UNESCO Heritage Precinct", "Maharashtra", 20.5519, 75.7033, 0.015),
+            new SacredHeritageExclusionZone("SAC-ELLORA-ASI", "Ellora Caves UNESCO Heritage Precinct", "Maharashtra", 20.0268, 75.1771, 0.015),
+            new SacredHeritageExclusionZone("SAC-KONARK-ASI", "Konark Sun Temple UNESCO Precinct", "Odisha", 19.8876, 86.0945, 0.014),
+            new SacredHeritageExclusionZone("SAC-KHAJURAHO-ASI", "Khajuraho Monuments UNESCO Precinct", "Madhya Pradesh", 24.8518, 79.9199, 0.015)
+    );
+
     private static final List<UrbanSettlementCenter> URBAN_CENTERS = List.of(
             new UrbanSettlementCenter("URB-DEL", "Delhi NCR Core", "Delhi/NCR", 28.6139, 77.2090, 16800000, 0.08, 0.22),
             new UrbanSettlementCenter("URB-MUM", "Mumbai Metropolitan Core", "Maharashtra", 19.0760, 72.8777, 12500000, 0.07, 0.18),
@@ -109,22 +141,39 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             new UrbanSettlementCenter("URB-CBE", "Coimbatore Industrial Hub", "Tamil Nadu", 11.0168, 76.9558, 2200000, 0.038, 0.09),
             new UrbanSettlementCenter("URB-MDU", "Madurai Regional Hub", "Tamil Nadu", 9.9252, 78.1198, 1650000, 0.035, 0.09),
             new UrbanSettlementCenter("URB-VJA", "Vijayawada Transit Hub", "Andhra Pradesh", 16.5062, 80.6480, 1900000, 0.038, 0.09),
-            new UrbanSettlementCenter("URB-MYS", "Mysuru Regional Hub", "Karnataka", 12.2958, 76.6394, 1280000, 0.032, 0.08)
+            new UrbanSettlementCenter("URB-MYS", "Mysuru Regional Hub", "Karnataka", 12.2958, 76.6394, 1280000, 0.032, 0.08),
+            new UrbanSettlementCenter("URB-AYO", "Ayodhya-Faizabad Urban Hub", "Uttar Pradesh", 26.7850, 82.1700, 256000, 0.025, 0.065)
     );
 
-    private static final List<MajorRiverAxis> MAJOR_RIVERS = List.of(
+    public static final List<MajorRiverAxis> MAJOR_RIVERS = List.of(
             new MajorRiverAxis("RIV-GANGA-UPPER", "Ganga River (Upper-Middle)", 29.95, 78.16, 25.43, 81.88, 0.012, 0.045, 680.0),
             new MajorRiverAxis("RIV-GANGA-LOWER", "Ganga River (Middle-Lower)", 25.43, 81.88, 24.80, 87.92, 0.015, 0.055, 840.0),
             new MajorRiverAxis("RIV-YAMUNA", "Yamuna River", 28.65, 77.24, 25.43, 81.88, 0.010, 0.038, 520.0),
+            new MajorRiverAxis("RIV-GHAGHARA", "Ghaghara/Sarayu River Basin", 28.38, 80.85, 25.75, 84.70, 0.014, 0.050, 750.0),
+            new MajorRiverAxis("RIV-GANDAK", "Gandak River Basin", 27.42, 83.85, 25.68, 85.18, 0.013, 0.045, 620.0),
+            new MajorRiverAxis("RIV-KOSI", "Kosi River Meander Basin", 26.90, 87.05, 25.42, 87.25, 0.016, 0.060, 950.0),
+            new MajorRiverAxis("RIV-SON", "Son River Basin", 24.25, 81.30, 25.65, 84.95, 0.012, 0.040, 580.0),
+            new MajorRiverAxis("RIV-BETWA", "Betwa River Basin", 23.05, 77.40, 25.92, 80.20, 0.010, 0.035, 450.0),
             new MajorRiverAxis("RIV-BRAHMAPUTRA", "Brahmaputra River", 26.18, 90.60, 27.48, 95.32, 0.020, 0.070, 1200.0),
+            new MajorRiverAxis("RIV-BARAK", "Barak River Basin", 25.10, 93.30, 24.85, 92.40, 0.011, 0.038, 490.0),
+            new MajorRiverAxis("RIV-TEESTA", "Teesta River Basin", 27.25, 88.50, 26.25, 89.70, 0.012, 0.040, 560.0),
             new MajorRiverAxis("RIV-NARMADA", "Narmada River", 21.70, 72.98, 23.13, 79.95, 0.010, 0.035, 540.0),
             new MajorRiverAxis("RIV-TAPI", "Tapi River", 21.22, 72.82, 21.10, 76.20, 0.009, 0.030, 420.0),
+            new MajorRiverAxis("RIV-SABARMATI", "Sabarmati River Basin", 24.50, 73.20, 22.25, 72.35, 0.009, 0.032, 400.0),
             new MajorRiverAxis("RIV-GODAVARI", "Godavari River", 19.95, 73.80, 17.00, 81.77, 0.012, 0.042, 650.0),
             new MajorRiverAxis("RIV-KRISHNA", "Krishna River", 17.68, 74.00, 16.50, 80.65, 0.011, 0.038, 580.0),
+            new MajorRiverAxis("RIV-TUNGABHADRA", "Tungabhadra River Basin", 14.00, 75.60, 15.88, 78.20, 0.011, 0.038, 520.0),
             new MajorRiverAxis("RIV-MAHANADI", "Mahanadi River", 21.48, 83.97, 20.46, 86.65, 0.012, 0.042, 620.0),
+            new MajorRiverAxis("RIV-SUBARNAREKHA", "Subarnarekha River Basin", 23.35, 85.30, 21.55, 87.35, 0.010, 0.035, 480.0),
+            new MajorRiverAxis("RIV-DAMODAR", "Damodar River Basin", 23.70, 85.80, 22.28, 88.08, 0.010, 0.035, 460.0),
             new MajorRiverAxis("RIV-KAVERI", "Kaveri River", 12.42, 76.57, 10.82, 78.70, 0.009, 0.032, 440.0),
+            new MajorRiverAxis("RIV-PENNA", "Penna River Basin", 13.55, 77.60, 14.58, 80.15, 0.009, 0.032, 420.0),
+            new MajorRiverAxis("RIV-VAIGAI", "Vaigai River Basin", 9.85, 77.45, 9.35, 79.05, 0.008, 0.028, 320.0),
+            new MajorRiverAxis("RIV-PERIYAR", "Periyar River Basin", 9.50, 77.20, 10.15, 76.20, 0.009, 0.030, 380.0),
             new MajorRiverAxis("RIV-CHAMBAL", "Chambal River", 25.18, 75.85, 26.49, 79.25, 0.009, 0.032, 410.0),
-            new MajorRiverAxis("RIV-LUNI", "Luni Seasonal River Basin", 26.45, 74.62, 24.85, 71.65, 0.008, 0.028, 320.0)
+            new MajorRiverAxis("RIV-LUNI", "Luni Seasonal River Basin", 26.45, 74.62, 24.85, 71.65, 0.008, 0.028, 320.0),
+            new MajorRiverAxis("RIV-BEAS", "Beas River Basin", 32.35, 77.18, 31.17, 74.95, 0.011, 0.038, 510.0),
+            new MajorRiverAxis("RIV-SUTLEJ", "Sutlej River Basin", 31.40, 77.00, 31.00, 74.50, 0.012, 0.042, 580.0)
     );
 
     private final GeoPoint start;
@@ -141,6 +190,14 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
     public CostAssessment assess(GeoPoint point) {
         double lat = point.lat();
         double lon = point.lon();
+
+        // 0. Hard Constraint Check: Sacred, Religious & ASI Heritage Precincts (Zero-Tolerance No-Go)
+        for (SacredHeritageExclusionZone sz : SACRED_HERITAGE_ZONES) {
+            double distDeg = Math.hypot(lat - sz.centerLat(), lon - sz.centerLon());
+            if (distDeg <= sz.exclusionRadiusDeg()) {
+                return CostAssessment.blocked(SOURCE, "SACRED_HERITAGE_EXCLUSION_ZONE:" + sz.id());
+            }
+        }
 
         // 1. Hard Constraint Check: Core Protected Sanctuaries & Tiger Reserves
         for (ProtectedSanctuaryCore pa : PROTECTED_SANCTUARIES) {
@@ -185,15 +242,16 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
-        // 6. Major Perennial River Channel & Floodplain Penalty
+        // 6. Major Perennial River Channel & Statutory Setback (MoEFCC / NGT 500m-1km norms)
         for (MajorRiverAxis river : MAJOR_RIVERS) {
             double distDeg = pointToSegmentDistanceDeg(
                     lat, lon, river.startLat(), river.startLon(), river.endLat(), river.endLon());
             if (distDeg <= river.channelHalfWidthDeg()) {
-                totalPenalty += 2.60;
+                totalPenalty += 4.50; // Active river channel avoidance
                 dominantClass = "PERENNIAL_RIVER_CHANNEL:" + river.id();
-            } else if (distDeg <= river.floodplainHalfWidthDeg()) {
-                totalPenalty += 1.10;
+            } else if (distDeg <= river.floodplainHalfWidthDeg() * 1.5) {
+                totalPenalty += 2.20; // 500m-1km statutory non-encroachment riparian setback
+                dominantClass = "RIVER_FLOODPLAIN_BUFFER:" + river.id();
             }
         }
 
@@ -212,6 +270,23 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
 
     @Override
     public CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
+        // Sub-sample edge to prevent diagonal A* steps from jumping across sacred or sanctuary exclusions
+        double[] fractions = {0.2, 0.4, 0.6, 0.8};
+        for (double t : fractions) {
+            double sLat = from.lat() + t * (to.lat() - from.lat());
+            double sLon = from.lon() + t * (to.lon() - from.lon());
+            for (SacredHeritageExclusionZone sz : SACRED_HERITAGE_ZONES) {
+                if (Math.hypot(sLat - sz.centerLat(), sLon - sz.centerLon()) <= sz.exclusionRadiusDeg()) {
+                    return CostAssessment.blocked(SOURCE, "SACRED_HERITAGE_EXCLUSION_ZONE:" + sz.id());
+                }
+            }
+            for (ProtectedSanctuaryCore pa : PROTECTED_SANCTUARIES) {
+                if (Math.hypot(sLat - pa.centerLat(), sLon - pa.centerLon()) <= pa.coreRadiusDeg()) {
+                    return CostAssessment.blocked(SOURCE, "PROTECTED_AREA_CORE:" + pa.id());
+                }
+            }
+        }
+
         double edgePenalty = 0.0;
         String edgeClass = null;
 
@@ -420,7 +495,7 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         return diagnostics;
     }
 
-    private static double pointToSegmentDistanceDeg(
+    public static double pointToSegmentDistanceDeg(
             double pLat, double pLon, double aLat, double aLon, double bLat, double bLon) {
         double dx = bLon - aLon;
         double dy = bLat - aLat;

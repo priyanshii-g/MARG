@@ -16,8 +16,8 @@ public class WaterBodyRoutingProperties {
     private boolean blockWetlands = false;
     private boolean blockNoData = false;
     private double hydraulicSkewPenaltyFactor = 1.40;
-    private double parallelBankPenalty = 2.40;
-    private double parallelBankRadiusMeters = 180.0;
+    private double parallelBankPenalty = 3.80;
+    private double parallelBankRadiusMeters = 500.0;
 
     private Map<WaterBodyClass, Double> nodePenalties =
             new EnumMap<>(WaterBodyCostPolicy.defaultPolicy().nodePenalties());

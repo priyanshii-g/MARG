@@ -121,8 +121,10 @@ public class ProtectedAreaRasterProvider {
                 return null;
             }
 
+            // 0 = open, 1 = Protected Area / Wildlife Sanctuary, 2 = Sacred / Heritage Precinct Exclusion.
             if (value != 0.0
-                    && value != 1.0) {
+                    && value != 1.0
+                    && value != 2.0) {
 
                 throw new IllegalStateException(
                         "Unexpected protected-area mask value: "

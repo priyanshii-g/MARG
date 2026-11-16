@@ -594,7 +594,9 @@ public class HighwayNetworkPlannerService {
                     round(spurLengthKm),
                     decision.inducedPeakTrafficPcuHr(),
                     decision.hvi(),
-                    immutable));
+                    immutable,
+                    decision.status(),
+                    decision.reason()));
 
             activeTrafficPcuHr += decision.inducedPeakTrafficPcuHr();
             activeServedPopulation += hub.catchmentPopulation();
@@ -1185,7 +1187,7 @@ public class HighwayNetworkPlannerService {
 
     private boolean isTerrainSafeForInterchange(GeoPoint pt) {
         Double pa = protectedAreaRasterProvider.sampleOrNull(pt.lat(), pt.lon());
-        if (pa == null || Math.round(pa) == 1L) {
+        if (pa == null || Math.round(pa) >= 1L) {
             return false;
         }
         Double slope = slopeRasterProvider.sampleOrNull(pt.lat(), pt.lon());
@@ -1396,6 +1398,10 @@ public class HighwayNetworkPlannerService {
             spProps.put("inducedPeakTrafficPcuHr", round(spur.inducedPeakTrafficPcuHr()));
             spProps.put("hviScore", round(spur.hviScore()));
             spProps.put("immutableUserOverride", spur.immutableOverride());
+            spProps.put("decisionStatus", spur.decisionStatus());
+            spProps.put("decisionReason", spur.decisionReason());
+            boolean sixLaneReq = spur.decisionReason() != null && spur.decisionReason().contains("6-lane");
+            spProps.put("sixLaneExpansionRecommended", sixLaneReq);
 
             features.add(Map.of(
                     "type", "Feature",
@@ -1804,8 +1810,22 @@ public class HighwayNetworkPlannerService {
             double spurLengthKm,
             double inducedPeakTrafficPcuHr,
             double hviScore,
-            boolean immutableOverride
-    ) {}
+            boolean immutableOverride,
+            String decisionStatus,
+            String decisionReason
+    ) {
+        public PlannedFeederSpur(
+                String spurId,
+                String interchangeId,
+                RegionalHub hub,
+                List<GeoPoint> path,
+                double spurLengthKm,
+                double inducedPeakTrafficPcuHr,
+                double hviScore,
+                boolean immutableOverride) {
+            this(spurId, interchangeId, hub, path, spurLengthKm, inducedPeakTrafficPcuHr, hviScore, immutableOverride, null, null);
+        }
+    }
 
     public record GradeSeparatedCrossingStructure(
             String structureId,

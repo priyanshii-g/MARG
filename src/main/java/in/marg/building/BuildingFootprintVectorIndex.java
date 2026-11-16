@@ -60,6 +60,7 @@ public class BuildingFootprintVectorIndex {
 
     private boolean initialized = false;
     private final List<SettlementBoundaryPolygon> settlements = new ArrayList<>();
+    private final List<SettlementBoundaryPolygon> sacredExclusions = new ArrayList<>();
     private final Map<String, SettlementBoundaryPolygon> settlementById = new HashMap<>();
     private final List<BuildingFootprint> buildings = new ArrayList<>();
     private final Map<String, List<BuildingFootprint>> buildingsBySettlementId = new HashMap<>();
@@ -125,6 +126,9 @@ public class BuildingFootprintVectorIndex {
                 double densityPerHa = p.get("builtUpDensityBuildingsPerHa").asDouble(8.0);
                 String densityClass = p.get("builtUpDensityClass").asString("MEDIUM_DENSITY_VILLAGE_CLUSTER");
                 int mappedBuildingCount = p.get("mappedBuildingFootprintCount").asInt(0);
+                boolean sacredExclusion = (p.has("sacredExclusion") && p.get("sacredExclusion").asBoolean(false))
+                        || subtype.toUpperCase().contains("SACRED")
+                        || subtype.toUpperCase().contains("HERITAGE");
                 double centroidLat = p.get("centroidLat").asDouble();
                 double centroidLon = p.get("centroidLon").asDouble();
                 GeoPoint centroid = new GeoPoint(centroidLat, centroidLon);
@@ -174,6 +178,7 @@ public class BuildingFootprintVectorIndex {
                         densityPerHa,
                         densityClass,
                         mappedBuildingCount,
+                        sacredExclusion,
                         centroid,
                         centroidMetric,
                         List.copyOf(geoRing),
@@ -185,6 +190,9 @@ public class BuildingFootprintVectorIndex {
                         maxY);
 
                 settlements.add(poly);
+                if (sacredExclusion) {
+                    sacredExclusions.add(poly);
+                }
                 settlementById.put(settlementId, poly);
                 insertSettlementIntoBuckets(poly);
             }
@@ -328,6 +336,65 @@ public class BuildingFootprintVectorIndex {
     public List<BuildingFootprint> buildingsForSettlement(String settlementId) {
         ensureInitialized();
         return List.copyOf(buildingsBySettlementId.getOrDefault(settlementId, List.of()));
+    }
+
+    /**
+     * Checks whether a geographic point lies inside (or within a 30 m setback of) any marked
+     * zero-tolerance sacred/heritage precinct polygon.
+     */
+    public SettlementBoundaryPolygon findContainingSacredExclusion(GeoPoint point) {
+        ensureInitialized();
+        if (sacredExclusions.isEmpty() || point == null) {
+            return null;
+        }
+        MetricPoint mp = projection.forward(point);
+        double x = mp.x();
+        double y = mp.y();
+        for (SettlementBoundaryPolygon s : sacredExclusions) {
+            if (x < s.minX() || x > s.maxX() || y < s.minY() || y > s.maxY()) {
+                continue;
+            }
+            if (pointInPolygon(x, y, s.metricRing())) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks whether a step segment {@code from -> to} intersects or comes within {@code bufferMeters}
+     * of any zero-tolerance sacred/heritage precinct polygon (sampling both endpoints, interior fractions,
+     * and exact JTS segment distance).
+     */
+    public SettlementBoundaryPolygon findIntersectingSacredExclusion(
+            GeoPoint from, GeoPoint to, double bufferMeters) {
+        ensureInitialized();
+        if (sacredExclusions.isEmpty() || from == null || to == null) {
+            return null;
+        }
+        MetricPoint a = projection.forward(from);
+        MetricPoint b = projection.forward(to);
+        double minX = Math.min(a.x(), b.x()) - bufferMeters;
+        double maxX = Math.max(a.x(), b.x()) + bufferMeters;
+        double minY = Math.min(a.y(), b.y()) - bufferMeters;
+        double maxY = Math.max(a.y(), b.y()) + bufferMeters;
+
+        org.locationtech.jts.geom.LineString segGeom = null;
+        for (SettlementBoundaryPolygon s : sacredExclusions) {
+            if (maxX < s.minX() || minX > s.maxX() || maxY < s.minY() || minY > s.maxY()) {
+                continue;
+            }
+            if (segGeom == null) {
+                segGeom = geometryFactory.createLineString(new Coordinate[]{
+                        new Coordinate(a.x(), a.y()),
+                        new Coordinate(b.x(), b.y())
+                });
+            }
+            if (s.jtsPolygonMetric().distance(segGeom) <= bufferMeters) {
+                return s;
+            }
+        }
+        return null;
     }
 
     /**
@@ -867,6 +934,7 @@ public class BuildingFootprintVectorIndex {
             double builtUpDensityBuildingsPerHa,
             String builtUpDensityClass,
             int mappedBuildingFootprintCount,
+            boolean sacredExclusion,
             GeoPoint centroid,
             MetricPoint centroidMetric,
             List<GeoPoint> exteriorRing,

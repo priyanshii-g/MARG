@@ -47,6 +47,10 @@ public class BuildingFootprintCostLayer implements CostLayer {
 
     @Override
     public CostAssessment assess(GeoPoint point) {
+        if (vectorIndex.findContainingSacredExclusion(point) != null) {
+            return CostAssessment.blocked(
+                    SOURCE, "SACRED_RELIGIOUS_PRECINCT_EXCLUSION");
+        }
         BuildingDensityClass densityClass = rasterProvider.sampleClass(point.lat(), point.lon());
         BuildingCostPolicy policy = properties.toPolicy();
 
@@ -86,6 +90,11 @@ public class BuildingFootprintCostLayer implements CostLayer {
 
         double halfRowW = policy.rowEvaluationHalfWidthMeters();
         double proxBuf = policy.structureProximityBufferMeters();
+
+        if (vectorIndex.findIntersectingSacredExclusion(from, to, halfRowW) != null) {
+            return CostAssessment.blocked(
+                    SOURCE, "SACRED_RELIGIOUS_PRECINCT_EXCLUSION");
+        }
 
         BuildingFootprintVectorIndex.StepConflictAssessment stepConflict =
                 vectorIndex.evaluateStepConflictsMetric(a, b, halfRowW, proxBuf);

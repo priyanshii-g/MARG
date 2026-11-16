@@ -829,7 +829,7 @@ public class CompositeRouteMetricsService {
                         protectedAreaRasterProvider.sampleOrNull(point.lat(), point.lon());
                 if (protectedMask == null) {
                     protectedAreaNoDataSamples++;
-                } else if (Math.round(protectedMask) == 1L) {
+                } else if (Math.round(protectedMask) >= 1L) {
                     protectedAreaSamples++;
                     protectedAreaKm += sampleLengthKm;
                 }

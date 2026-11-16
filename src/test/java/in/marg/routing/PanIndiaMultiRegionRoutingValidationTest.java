@@ -262,4 +262,191 @@ class PanIndiaMultiRegionRoutingValidationTest {
         assertEquals("western_ghats", wgCustom.get("regionId"));
         assertTrue(((Number) ((Map<?, ?>) wgCustom.get("metadata")).get("routeLengthKm")).doubleValue() > 20.0);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void validateSacredHeritageExclusionAndExistingRoadTerminalConnectors() {
+        RegionalCorridorRegistry registry = new RegionalCorridorRegistry();
+        CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
+        CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
+
+        // 1. Gangetic Plains: Destination at Shri Ram Janmabhoomi must hard-snap outward
+        Map<String, Object> ramSnapRoute = controller.route(
+                26.915, 81.245, 26.7956, 82.1944,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                "gangetic_plains", null, null
+        );
+        Map<?, ?> ramMeta = (Map<?, ?>) ramSnapRoute.get("metadata");
+        Map<?, ?> ramEndRes = (Map<?, ?>) ramMeta.get("endpointResolution");
+        assertNotNull(ramEndRes);
+        assertTrue(Boolean.TRUE.equals(ramEndRes.get("goalSnapped")),
+                "Shri Ram Janmabhoomi destination must snap outside the sacred exclusion precinct");
+        String ramGoalReason = String.valueOf(ramEndRes.get("goalSnapReason")).toUpperCase();
+        assertTrue(ramGoalReason.contains("SACRED") || ramGoalReason.contains("RELIGIOUS"),
+                "Goal snap reason must reflect sacred/religious exclusion, was: " + ramGoalReason);
+
+        // 2. Gangetic Plains: Cross-Ayodhya route must have 0 mainline vertices inside Ram Janmabhoomi precinct
+        Map<String, Object> ayodhyaBypassRoute = controller.route(
+                26.915, 81.245, 26.785, 82.220,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                "gangetic_plains", null, null
+        );
+        List<Map<String, Object>> bypassFeatures = (List<Map<String, Object>>) ayodhyaBypassRoute.get("features");
+        Map<String, Object> bypassMainline = bypassFeatures.stream()
+                .filter(f -> {
+                    Object role = ((Map<?, ?>) f.get("properties")).get("featureRole");
+                    return "GREENFIELD_MAINLINE".equals(role) || "MAINLINE".equals(role);
+                })
+                .findFirst()
+                .orElseThrow();
+        List<List<Number>> coords = (List<List<Number>>) ((Map<?, ?>) bypassMainline.get("geometry")).get("coordinates");
+        for (List<Number> c : coords) {
+            double lon = c.get(0).doubleValue();
+            double lat = c.get(1).doubleValue();
+            boolean insideSacredBox = lat >= 26.786 && lat <= 26.806 && lon >= 82.182 && lon <= 82.208;
+            assertFalse(insideSacredBox,
+                    "Mainline vertex violated Shri Ram Janmabhoomi sacred exclusion box at lat=" + lat + ", lon=" + lon);
+        }
+
+        // 3. Tier-1 Pan-India: Start directly on Shri Ram Janmabhoomi must snap with SAC-RAM-JANMABHOOMI
+        Map<String, Object> panRamRoute = controller.route(
+                26.7956, 82.1944, 26.850, 82.550,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                null, "TIER_1_DYNAMIC_PAN_INDIA", null
+        );
+        Map<?, ?> panMeta = (Map<?, ?>) panRamRoute.get("metadata");
+        Map<?, ?> panEndRes = (Map<?, ?>) panMeta.get("endpointResolution");
+        assertNotNull(panEndRes);
+        assertTrue(Boolean.TRUE.equals(panEndRes.get("startSnapped")),
+                "Tier-1 Pan-India must snap start coordinate off Shri Ram Janmabhoomi");
+        String panStartReason = String.valueOf(panEndRes.get("startSnapReason"));
+        assertTrue(panStartReason.contains("SACRED_HERITAGE") && panStartReason.contains("SAC-RAM-JANMABHOOMI"),
+                "Tier-1 snap reason should reference SACRED_HERITAGE and SAC-RAM-JANMABHOOMI, was: " + panStartReason);
+
+        // 4. Gangetic Plains: Off-road endpoints must connect via TERMINAL_ACCESS_ROAD & ROAD_TIE_IN and count in stats
+        Map<String, Object> offRoadRoute = controller.route(
+                26.960, 81.320, 26.740, 81.980,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                "gangetic_plains", null, null
+        );
+        Map<?, ?> offMeta = (Map<?, ?>) offRoadRoute.get("metadata");
+        Map<?, ?> termConn = (Map<?, ?>) offMeta.get("terminalRoadConnections");
+        assertNotNull(termConn, "metadata.terminalRoadConnections must be populated");
+        assertTrue(Boolean.TRUE.equals(termConn.get("includedInMainlineAndStatistics")),
+                "Terminal connectors must be flagged as included in mainline & statistics");
+        double termAccessKm = ((Number) termConn.get("totalTerminalAccessRoadLengthKm")).doubleValue();
+        assertTrue(termAccessKm > 0.0, "Off-road terminals should produce non-zero access connector length");
+
+        Map<?, ?> netSummary = (Map<?, ?>) offMeta.get("transportNetworkAndCapacitySummary");
+        assertNotNull(netSummary);
+        assertTrue(((Number) netSummary.get("totalTerminalAccessRoadLengthKm")).doubleValue() > 0.0);
+
+        List<Map<String, Object>> offFeatures = (List<Map<String, Object>>) offRoadRoute.get("features");
+        long tieInCount = offFeatures.stream()
+                .filter(f -> "ROAD_TIE_IN".equals(((Map<?, ?>) f.get("properties")).get("featureRole")))
+                .count();
+        long connectorCount = offFeatures.stream()
+                .filter(f -> "TERMINAL_ACCESS_ROAD".equals(((Map<?, ?>) f.get("properties")).get("featureRole")))
+                .count();
+        assertTrue(tieInCount >= 2, "Expected origin & destination ROAD_TIE_IN markers, got " + tieInCount);
+        assertTrue(connectorCount >= 1, "Expected at least 1 TERMINAL_ACCESS_ROAD geometry, got " + connectorCount);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void validateAutoConnectIntermediateHubsToggleAndCountCapping() {
+        RegionalCorridorRegistry registry = new RegionalCorridorRegistry();
+        CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
+        CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
+
+        // 1. With autoConnectHubs = false and no user targetHubs: 0 autonomous hubs approved
+        Map<String, Object> autoOffRoute = controller.route(
+                26.925, 81.185, 26.790, 82.200,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                false, 2,
+                "gangetic_plains", null, null
+        );
+        Map<?, ?> autoOffMeta = (Map<?, ?>) autoOffRoute.get("metadata");
+        Map<?, ?> autoOffPipeline = (Map<?, ?>) autoOffMeta.get("hubEvaluationPipeline");
+        assertEquals(Boolean.FALSE, autoOffPipeline.get("autoConnectHubs"));
+        List<?> autoOffApproved = (List<?>) autoOffPipeline.get("approvedHubIds");
+        assertTrue(autoOffApproved.isEmpty(), "When autoConnectHubs is false and no user targetHubs, approved hubs must be empty");
+
+        // 2. With autoConnectHubs = true and maxAutoHubs = 1: exactly 1 autonomous hub approved
+        Map<String, Object> auto1Route = controller.route(
+                26.925, 81.185, 26.790, 82.200,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                true, 1,
+                "gangetic_plains", null, null
+        );
+        Map<?, ?> auto1Meta = (Map<?, ?>) auto1Route.get("metadata");
+        Map<?, ?> auto1Pipeline = (Map<?, ?>) auto1Meta.get("hubEvaluationPipeline");
+        assertEquals(Boolean.TRUE, auto1Pipeline.get("autoConnectHubs"));
+        List<?> auto1Approved = (List<?>) auto1Pipeline.get("approvedHubIds");
+        assertEquals(1, auto1Approved.size(), "When maxAutoHubs=1, exactly 1 autonomous hub must be approved");
+
+        // 3. User custom hub (e.g. Ramnagar) is always connected even when autoConnectHubs = false
+        Map<String, Object> customWithAutoOff = controller.route(
+                26.925, 81.185, 26.790, 82.200,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", "Ramnagar", null, null,
+                false, 2,
+                "gangetic_plains", null, null
+        );
+        Map<?, ?> customMeta = (Map<?, ?>) customWithAutoOff.get("metadata");
+        Map<?, ?> customPipeline = (Map<?, ?>) customMeta.get("hubEvaluationPipeline");
+        List<?> customApproved = (List<?>) customPipeline.get("approvedHubIds");
+        assertEquals(1, customApproved.size(), "User specified Ramnagar must be approved even if autoConnectHubs is false");
+        assertTrue(String.valueOf(customApproved.get(0)).toLowerCase().contains("ramnagar"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void validateAssamWithDimapurAndAutoConnect() {
+        RegionalCorridorRegistry registry = new RegionalCorridorRegistry();
+        CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
+        CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
+
+        Map<String, Object> assamRoute = controller.route(
+                26.58970, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", "Dimapur", null, null,
+                true, 2,
+                "assam", null, null
+        );
+        Map<?, ?> meta = (Map<?, ?>) assamRoute.get("metadata");
+        Map<?, ?> pipeline = (Map<?, ?>) meta.get("hubEvaluationPipeline");
+        List<?> approved = (List<?>) pipeline.get("approvedHubIds");
+        assertEquals(3, approved.size(), "When user specifies Dimapur and selects 2 auto hubs, 3 hubs must be approved");
+        assertTrue(approved.stream().anyMatch(h -> String.valueOf(h).contains("Dimapur")), "User hub Dimapur must be approved");
+
+        List<Map<?, ?>> features = (List<Map<?, ?>>) assamRoute.get("features");
+        long spurCount = features.stream()
+                .filter(f -> "DEDICATED_FEEDER_SPUR".equals(((Map<?, ?>) f.get("properties")).get("featureRole")))
+                .count();
+        assertEquals(3, spurCount, "Expected exactly 3 dedicated feeder spurs for Dimapur + 2 autonomous hubs");
+
+        // Verify capacity analysis and 6-lane configuration recommendations
+        Map<?, ?> netSummary = (Map<?, ?>) meta.get("transportNetworkAndCapacitySummary");
+        Map<?, ?> trafficAnalysis = (Map<?, ?>) netSummary.get("trafficCapacityAnalysis");
+        assertEquals(Boolean.TRUE, trafficAnalysis.get("sixLaneRecommended"),
+                "High induced traffic from Dimapur and regional hubs must recommend 6-lane configuration under IRC:SP:84 §2.2");
+        assertEquals("6_LANE_EXPANSION", trafficAnalysis.get("laneConfigurationRecommended"));
+        assertTrue(String.valueOf(trafficAnalysis.get("capacityStandardNote")).contains("6-Lane Expressway"));
+
+        // Verify that feeder spurs carry decisionStatus and decisionReason
+        boolean hasSpurWithReason = features.stream()
+                .filter(f -> "DEDICATED_FEEDER_SPUR".equals(((Map<?, ?>) f.get("properties")).get("featureRole")))
+                .anyMatch(f -> {
+                    Map<?, ?> p = (Map<?, ?>) f.get("properties");
+                    return p.get("decisionReason") != null && !String.valueOf(p.get("decisionReason")).isBlank();
+                });
+        assertTrue(hasSpurWithReason, "Feeder spurs must carry explicit decisionReason for frontend display");
+    }
 }

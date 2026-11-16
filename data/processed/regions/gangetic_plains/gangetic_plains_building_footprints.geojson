@@ -5,59 +5,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0001",
-        "name": "Zaidpur Kasba Habitation Commercial #1",
-        "buildingType": "COMMERCIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Religious #1",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.42,
-        "centroidLat": 26.862,
-        "centroidLon": 81.462707
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7956,
+        "centroidLon": 82.1944
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.462785,
-              26.862019
+              82.194319,
+              26.795528
             ],
             [
-              81.462751,
-              26.86205
+              82.194481,
+              26.795528
             ],
             [
-              81.462691,
-              26.862052
+              82.194481,
+              26.795672
             ],
             [
-              81.462641,
-              26.862024
+              82.194319,
+              26.795672
             ],
             [
-              81.462629,
-              26.861981
-            ],
-            [
-              81.462663,
-              26.86195
-            ],
-            [
-              81.462723,
-              26.861948
-            ],
-            [
-              81.462773,
-              26.861976
-            ],
-            [
-              81.462785,
-              26.862019
+              82.194319,
+              26.795528
             ]
           ]
         ]
@@ -67,59 +51,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0002",
-        "name": "Zaidpur Kasba Habitation Institutional #2",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Institutional #2",
         "buildingType": "INSTITUTIONAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.863422,
-        "centroidLon": 81.46219
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7974,
+        "centroidLon": 82.1962
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.462268,
-              26.863441
+              82.196119,
+              26.797328
             ],
             [
-              81.462234,
-              26.863472
+              82.196281,
+              26.797328
             ],
             [
-              81.462174,
-              26.863474
+              82.196281,
+              26.797472
             ],
             [
-              81.462124,
-              26.863446
+              82.196119,
+              26.797472
             ],
             [
-              81.462112,
-              26.863403
-            ],
-            [
-              81.462146,
-              26.863372
-            ],
-            [
-              81.462206,
-              26.86337
-            ],
-            [
-              81.462256,
-              26.863398
-            ],
-            [
-              81.462268,
-              26.863441
+              82.196119,
+              26.797328
             ]
           ]
         ]
@@ -129,59 +97,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0003",
-        "name": "Zaidpur Kasba Habitation Residential #3",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Religious #3",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.8643,
-        "centroidLon": 81.460836
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7938,
+        "centroidLon": 82.1962
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.460914,
-              26.864319
+              82.196119,
+              26.793728
             ],
             [
-              81.46088,
-              26.86435
+              82.196281,
+              26.793728
             ],
             [
-              81.46082,
-              26.864352
+              82.196281,
+              26.793872
             ],
             [
-              81.46077,
-              26.864324
+              82.196119,
+              26.793872
             ],
             [
-              81.460758,
-              26.864281
-            ],
-            [
-              81.460792,
-              26.86425
-            ],
-            [
-              81.460852,
-              26.864248
-            ],
-            [
-              81.460902,
-              26.864276
-            ],
-            [
-              81.460914,
-              26.864319
+              82.196119,
+              26.793728
             ]
           ]
         ]
@@ -191,59 +143,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0004",
-        "name": "Zaidpur Kasba Habitation Residential #4",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Residential #4",
         "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.8643,
-        "centroidLon": 81.459164
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7974,
+        "centroidLon": 82.1926
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.459242,
-              26.864319
+              82.192519,
+              26.797328
             ],
             [
-              81.459208,
-              26.86435
+              82.192681,
+              26.797328
             ],
             [
-              81.459148,
-              26.864352
+              82.192681,
+              26.797472
             ],
             [
-              81.459098,
-              26.864324
+              82.192519,
+              26.797472
             ],
             [
-              81.459086,
-              26.864281
-            ],
-            [
-              81.45912,
-              26.86425
-            ],
-            [
-              81.45918,
-              26.864248
-            ],
-            [
-              81.45923,
-              26.864276
-            ],
-            [
-              81.459242,
-              26.864319
+              82.192519,
+              26.797328
             ]
           ]
         ]
@@ -253,59 +189,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0005",
-        "name": "Zaidpur Kasba Habitation Residential #5",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Commercial #5",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.863422,
-        "centroidLon": 81.45781
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7938,
+        "centroidLon": 82.1926
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.457888,
-              26.863441
+              82.192519,
+              26.793728
             ],
             [
-              81.457854,
-              26.863472
+              82.192681,
+              26.793728
             ],
             [
-              81.457794,
-              26.863474
+              82.192681,
+              26.793872
             ],
             [
-              81.457744,
-              26.863446
+              82.192519,
+              26.793872
             ],
             [
-              81.457732,
-              26.863403
-            ],
-            [
-              81.457766,
-              26.863372
-            ],
-            [
-              81.457826,
-              26.86337
-            ],
-            [
-              81.457876,
-              26.863398
-            ],
-            [
-              81.457888,
-              26.863441
+              82.192519,
+              26.793728
             ]
           ]
         ]
@@ -315,59 +235,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0006",
-        "name": "Zaidpur Kasba Habitation Residential #6",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Religious #6",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.862,
-        "centroidLon": 81.457293
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7988,
+        "centroidLon": 82.1944
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.457371,
-              26.862019
+              82.194319,
+              26.798728
             ],
             [
-              81.457337,
-              26.86205
+              82.194481,
+              26.798728
             ],
             [
-              81.457277,
-              26.862052
+              82.194481,
+              26.798872
             ],
             [
-              81.457227,
-              26.862024
+              82.194319,
+              26.798872
             ],
             [
-              81.457215,
-              26.861981
-            ],
-            [
-              81.457249,
-              26.86195
-            ],
-            [
-              81.457309,
-              26.861948
-            ],
-            [
-              81.457359,
-              26.861976
-            ],
-            [
-              81.457371,
-              26.862019
+              82.194319,
+              26.798728
             ]
           ]
         ]
@@ -377,59 +281,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0007",
-        "name": "Zaidpur Kasba Habitation Residential #7",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Institutional #7",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.860578,
-        "centroidLon": 81.45781
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7924,
+        "centroidLon": 82.1944
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.457888,
-              26.860597
+              82.194319,
+              26.792328
             ],
             [
-              81.457854,
-              26.860628
+              82.194481,
+              26.792328
             ],
             [
-              81.457794,
-              26.86063
+              82.194481,
+              26.792472
             ],
             [
-              81.457744,
-              26.860602
+              82.194319,
+              26.792472
             ],
             [
-              81.457732,
-              26.860559
-            ],
-            [
-              81.457766,
-              26.860528
-            ],
-            [
-              81.457826,
-              26.860526
-            ],
-            [
-              81.457876,
-              26.860554
-            ],
-            [
-              81.457888,
-              26.860597
+              82.194319,
+              26.792328
             ]
           ]
         ]
@@ -439,59 +327,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0008",
-        "name": "Zaidpur Kasba Habitation Residential #8",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Religious #8",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.8597,
-        "centroidLon": 81.459164
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7956,
+        "centroidLon": 82.1976
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.459242,
-              26.859719
+              82.197519,
+              26.795528
             ],
             [
-              81.459208,
-              26.85975
+              82.197681,
+              26.795528
             ],
             [
-              81.459148,
-              26.859752
+              82.197681,
+              26.795672
             ],
             [
-              81.459098,
-              26.859724
+              82.197519,
+              26.795672
             ],
             [
-              81.459086,
-              26.859681
-            ],
-            [
-              81.45912,
-              26.85965
-            ],
-            [
-              81.45918,
-              26.859648
-            ],
-            [
-              81.45923,
-              26.859676
-            ],
-            [
-              81.459242,
-              26.859719
+              82.197519,
+              26.795528
             ]
           ]
         ]
@@ -501,59 +373,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0009",
-        "name": "Zaidpur Kasba Habitation Residential #9",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Residential #9",
         "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.8597,
-        "centroidLon": 81.460836
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7956,
+        "centroidLon": 82.1912
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.460914,
-              26.859719
+              82.191119,
+              26.795528
             ],
             [
-              81.46088,
-              26.85975
+              82.191281,
+              26.795528
             ],
             [
-              81.46082,
-              26.859752
+              82.191281,
+              26.795672
             ],
             [
-              81.46077,
-              26.859724
+              82.191119,
+              26.795672
             ],
             [
-              81.460758,
-              26.859681
-            ],
-            [
-              81.460792,
-              26.85965
-            ],
-            [
-              81.460852,
-              26.859648
-            ],
-            [
-              81.460902,
-              26.859676
-            ],
-            [
-              81.460914,
-              26.859719
+              82.191119,
+              26.795528
             ]
           ]
         ]
@@ -563,59 +419,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0010",
-        "name": "Zaidpur Kasba Habitation Residential #10",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-001",
-        "settlementName": "Zaidpur Kasba Habitation",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct Commercial #10",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-SAC-001",
+        "settlementName": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
         "settlementClassification": "URBAN",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
         "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.860578,
-        "centroidLon": 81.46219
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7966,
+        "centroidLon": 82.1916
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.462268,
-              26.860597
+              82.191519,
+              26.796528
             ],
             [
-              81.462234,
-              26.860628
+              82.191681,
+              26.796528
             ],
             [
-              81.462174,
-              26.86063
+              82.191681,
+              26.796672
             ],
             [
-              81.462124,
-              26.860602
+              82.191519,
+              26.796672
             ],
             [
-              81.462112,
-              26.860559
-            ],
-            [
-              81.462146,
-              26.860528
-            ],
-            [
-              81.462206,
-              26.860526
-            ],
-            [
-              81.462256,
-              26.860554
-            ],
-            [
-              81.462268,
-              26.860597
+              82.191519,
+              26.796528
             ]
           ]
         ]
@@ -625,59 +465,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0011",
-        "name": "Dariyabad Rural Cluster Residential #1",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Religious #1",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.835,
-        "centroidLon": 81.687368
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7975,
+        "centroidLon": 82.1355
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.687446,
-              26.835019
+              82.135419,
+              26.797428
             ],
             [
-              81.687412,
-              26.83505
+              82.135581,
+              26.797428
             ],
             [
-              81.687352,
-              26.835052
+              82.135581,
+              26.797572
             ],
             [
-              81.687302,
-              26.835024
+              82.135419,
+              26.797572
             ],
             [
-              81.68729,
-              26.834981
-            ],
-            [
-              81.687324,
-              26.83495
-            ],
-            [
-              81.687384,
-              26.834948
-            ],
-            [
-              81.687434,
-              26.834976
-            ],
-            [
-              81.687446,
-              26.835019
+              82.135419,
+              26.797428
             ]
           ]
         ]
@@ -687,59 +511,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0012",
-        "name": "Dariyabad Rural Cluster Institutional #2",
+        "name": "Guptar Ghat Saryu Heritage Precinct Institutional #2",
         "buildingType": "INSTITUTIONAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.836244,
-        "centroidLon": 81.686916
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7993,
+        "centroidLon": 82.1373
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.686994,
-              26.836263
+              82.137219,
+              26.799228
             ],
             [
-              81.68696,
-              26.836294
+              82.137381,
+              26.799228
             ],
             [
-              81.6869,
-              26.836296
+              82.137381,
+              26.799372
             ],
             [
-              81.68685,
-              26.836268
+              82.137219,
+              26.799372
             ],
             [
-              81.686838,
-              26.836225
-            ],
-            [
-              81.686872,
-              26.836194
-            ],
-            [
-              81.686932,
-              26.836192
-            ],
-            [
-              81.686982,
-              26.83622
-            ],
-            [
-              81.686994,
-              26.836263
+              82.137219,
+              26.799228
             ]
           ]
         ]
@@ -749,59 +557,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0013",
-        "name": "Dariyabad Rural Cluster Residential #3",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Religious #3",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.837013,
-        "centroidLon": 81.685732
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7957,
+        "centroidLon": 82.1373
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.68581,
-              26.837032
+              82.137219,
+              26.795628
             ],
             [
-              81.685776,
-              26.837063
+              82.137381,
+              26.795628
             ],
             [
-              81.685716,
-              26.837065
+              82.137381,
+              26.795772
             ],
             [
-              81.685666,
-              26.837037
+              82.137219,
+              26.795772
             ],
             [
-              81.685654,
-              26.836994
-            ],
-            [
-              81.685688,
-              26.836963
-            ],
-            [
-              81.685748,
-              26.836961
-            ],
-            [
-              81.685798,
-              26.836989
-            ],
-            [
-              81.68581,
-              26.837032
+              82.137219,
+              26.795628
             ]
           ]
         ]
@@ -811,59 +603,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0014",
-        "name": "Dariyabad Rural Cluster Residential #4",
+        "name": "Guptar Ghat Saryu Heritage Precinct Residential #4",
         "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.837013,
-        "centroidLon": 81.684268
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7993,
+        "centroidLon": 82.1337
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.684346,
-              26.837032
+              82.133619,
+              26.799228
             ],
             [
-              81.684312,
-              26.837063
+              82.133781,
+              26.799228
             ],
             [
-              81.684252,
-              26.837065
+              82.133781,
+              26.799372
             ],
             [
-              81.684202,
-              26.837037
+              82.133619,
+              26.799372
             ],
             [
-              81.68419,
-              26.836994
-            ],
-            [
-              81.684224,
-              26.836963
-            ],
-            [
-              81.684284,
-              26.836961
-            ],
-            [
-              81.684334,
-              26.836989
-            ],
-            [
-              81.684346,
-              26.837032
+              82.133619,
+              26.799228
             ]
           ]
         ]
@@ -873,59 +649,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0015",
-        "name": "Dariyabad Rural Cluster Residential #5",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Commercial #5",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.836244,
-        "centroidLon": 81.683084
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7957,
+        "centroidLon": 82.1337
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.683162,
-              26.836263
+              82.133619,
+              26.795628
             ],
             [
-              81.683128,
-              26.836294
+              82.133781,
+              26.795628
             ],
             [
-              81.683068,
-              26.836296
+              82.133781,
+              26.795772
             ],
             [
-              81.683018,
-              26.836268
+              82.133619,
+              26.795772
             ],
             [
-              81.683006,
-              26.836225
-            ],
-            [
-              81.68304,
-              26.836194
-            ],
-            [
-              81.6831,
-              26.836192
-            ],
-            [
-              81.68315,
-              26.83622
-            ],
-            [
-              81.683162,
-              26.836263
+              82.133619,
+              26.795628
             ]
           ]
         ]
@@ -935,59 +695,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0016",
-        "name": "Dariyabad Rural Cluster Residential #6",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Religious #6",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.835,
-        "centroidLon": 81.682632
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.8007,
+        "centroidLon": 82.1355
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.68271,
-              26.835019
+              82.135419,
+              26.800628
             ],
             [
-              81.682676,
-              26.83505
+              82.135581,
+              26.800628
             ],
             [
-              81.682616,
-              26.835052
+              82.135581,
+              26.800772
             ],
             [
-              81.682566,
-              26.835024
+              82.135419,
+              26.800772
             ],
             [
-              81.682554,
-              26.834981
-            ],
-            [
-              81.682588,
-              26.83495
-            ],
-            [
-              81.682648,
-              26.834948
-            ],
-            [
-              81.682698,
-              26.834976
-            ],
-            [
-              81.68271,
-              26.835019
+              82.135419,
+              26.800628
             ]
           ]
         ]
@@ -997,59 +741,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0017",
-        "name": "Dariyabad Rural Cluster Residential #7",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Institutional #7",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.833756,
-        "centroidLon": 81.683084
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7943,
+        "centroidLon": 82.1355
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.683162,
-              26.833775
+              82.135419,
+              26.794228
             ],
             [
-              81.683128,
-              26.833806
+              82.135581,
+              26.794228
             ],
             [
-              81.683068,
-              26.833808
+              82.135581,
+              26.794372
             ],
             [
-              81.683018,
-              26.83378
+              82.135419,
+              26.794372
             ],
             [
-              81.683006,
-              26.833737
-            ],
-            [
-              81.68304,
-              26.833706
-            ],
-            [
-              81.6831,
-              26.833704
-            ],
-            [
-              81.68315,
-              26.833732
-            ],
-            [
-              81.683162,
-              26.833775
+              82.135419,
+              26.794228
             ]
           ]
         ]
@@ -1059,59 +787,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0018",
-        "name": "Dariyabad Rural Cluster Residential #8",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Religious #8",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.832987,
-        "centroidLon": 81.684268
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7975,
+        "centroidLon": 82.1387
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.684346,
-              26.833006
+              82.138619,
+              26.797428
             ],
             [
-              81.684312,
-              26.833037
+              82.138781,
+              26.797428
             ],
             [
-              81.684252,
-              26.833039
+              82.138781,
+              26.797572
             ],
             [
-              81.684202,
-              26.833011
+              82.138619,
+              26.797572
             ],
             [
-              81.68419,
-              26.832968
-            ],
-            [
-              81.684224,
-              26.832937
-            ],
-            [
-              81.684284,
-              26.832935
-            ],
-            [
-              81.684334,
-              26.832963
-            ],
-            [
-              81.684346,
-              26.833006
+              82.138619,
+              26.797428
             ]
           ]
         ]
@@ -1121,59 +833,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0019",
-        "name": "Dariyabad Rural Cluster Residential #9",
+        "name": "Guptar Ghat Saryu Heritage Precinct Residential #9",
         "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.832987,
-        "centroidLon": 81.685732
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7975,
+        "centroidLon": 82.1323
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.68581,
-              26.833006
+              82.132219,
+              26.797428
             ],
             [
-              81.685776,
-              26.833037
+              82.132381,
+              26.797428
             ],
             [
-              81.685716,
-              26.833039
+              82.132381,
+              26.797572
             ],
             [
-              81.685666,
-              26.833011
+              82.132219,
+              26.797572
             ],
             [
-              81.685654,
-              26.832968
-            ],
-            [
-              81.685688,
-              26.832937
-            ],
-            [
-              81.685748,
-              26.832935
-            ],
-            [
-              81.685798,
-              26.832963
-            ],
-            [
-              81.68581,
-              26.833006
+              82.132219,
+              26.797428
             ]
           ]
         ]
@@ -1183,59 +879,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0020",
-        "name": "Dariyabad Rural Cluster Residential #10",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-002",
-        "settlementName": "Dariyabad Rural Cluster",
-        "settlementClassification": "RURAL",
-        "district": "Barabanki",
-        "footprintAreaSqMeters": 115.0,
-        "floors": 1,
+        "name": "Guptar Ghat Saryu Heritage Precinct Commercial #10",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-SAC-002",
+        "settlementName": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.833756,
-        "centroidLon": 81.686916
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7985,
+        "centroidLon": 82.1327
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.686994,
-              26.833775
+              82.132619,
+              26.798428
             ],
             [
-              81.68696,
-              26.833806
+              82.132781,
+              26.798428
             ],
             [
-              81.6869,
-              26.833808
+              82.132781,
+              26.798572
             ],
             [
-              81.68685,
-              26.83378
+              82.132619,
+              26.798572
             ],
             [
-              81.686838,
-              26.833737
-            ],
-            [
-              81.686872,
-              26.833706
-            ],
-            [
-              81.686932,
-              26.833704
-            ],
-            [
-              81.686982,
-              26.833732
-            ],
-            [
-              81.686994,
-              26.833775
+              82.132619,
+              26.798428
             ]
           ]
         ]
@@ -1245,59 +925,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0021",
-        "name": "Sohawal Dense Abadi Belt Residential #1",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Religious #1",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 140.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.79,
-        "centroidLon": 81.967494
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7565,
+        "centroidLon": 82.207
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.967572,
-              26.790019
+              82.206919,
+              26.756428
             ],
             [
-              81.967538,
-              26.79005
+              82.207081,
+              26.756428
             ],
             [
-              81.967478,
-              26.790052
+              82.207081,
+              26.756572
             ],
             [
-              81.967428,
-              26.790024
+              82.206919,
+              26.756572
             ],
             [
-              81.967416,
-              26.789981
-            ],
-            [
-              81.96745,
-              26.78995
-            ],
-            [
-              81.96751,
-              26.789948
-            ],
-            [
-              81.96756,
-              26.789976
-            ],
-            [
-              81.967572,
-              26.790019
+              82.206919,
+              26.756428
             ]
           ]
         ]
@@ -1307,59 +971,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0022",
-        "name": "Sohawal Dense Abadi Belt Institutional #2",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Institutional #2",
         "buildingType": "INSTITUTIONAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 140.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.791311,
-        "centroidLon": 81.967017
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7583,
+        "centroidLon": 82.2088
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.967095,
-              26.79133
+              82.208719,
+              26.758228
             ],
             [
-              81.967061,
-              26.791361
+              82.208881,
+              26.758228
             ],
             [
-              81.967001,
-              26.791363
+              82.208881,
+              26.758372
             ],
             [
-              81.966951,
-              26.791335
+              82.208719,
+              26.758372
             ],
             [
-              81.966939,
-              26.791292
-            ],
-            [
-              81.966973,
-              26.791261
-            ],
-            [
-              81.967033,
-              26.791259
-            ],
-            [
-              81.967083,
-              26.791287
-            ],
-            [
-              81.967095,
-              26.79133
+              82.208719,
+              26.758228
             ]
           ]
         ]
@@ -1369,59 +1017,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0023",
-        "name": "Sohawal Dense Abadi Belt Residential #3",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Religious #3",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 140.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.792121,
-        "centroidLon": 81.965771
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7547,
+        "centroidLon": 82.2088
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.965849,
-              26.79214
+              82.208719,
+              26.754628
             ],
             [
-              81.965815,
-              26.792171
+              82.208881,
+              26.754628
             ],
             [
-              81.965755,
-              26.792173
+              82.208881,
+              26.754772
             ],
             [
-              81.965705,
-              26.792145
+              82.208719,
+              26.754772
             ],
             [
-              81.965693,
-              26.792102
-            ],
-            [
-              81.965727,
-              26.792071
-            ],
-            [
-              81.965787,
-              26.792069
-            ],
-            [
-              81.965837,
-              26.792097
-            ],
-            [
-              81.965849,
-              26.79214
+              82.208719,
+              26.754628
             ]
           ]
         ]
@@ -1431,59 +1063,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0024",
-        "name": "Sohawal Dense Abadi Belt Residential #4",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Residential #4",
         "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 110.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.792121,
-        "centroidLon": 81.964229
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7583,
+        "centroidLon": 82.2052
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.964307,
-              26.79214
+              82.205119,
+              26.758228
             ],
             [
-              81.964273,
-              26.792171
+              82.205281,
+              26.758228
             ],
             [
-              81.964213,
-              26.792173
+              82.205281,
+              26.758372
             ],
             [
-              81.964163,
-              26.792145
+              82.205119,
+              26.758372
             ],
             [
-              81.964151,
-              26.792102
-            ],
-            [
-              81.964185,
-              26.792071
-            ],
-            [
-              81.964245,
-              26.792069
-            ],
-            [
-              81.964295,
-              26.792097
-            ],
-            [
-              81.964307,
-              26.79214
+              82.205119,
+              26.758228
             ]
           ]
         ]
@@ -1493,59 +1109,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0025",
-        "name": "Sohawal Dense Abadi Belt Residential #5",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Commercial #5",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 110.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.791311,
-        "centroidLon": 81.962983
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7547,
+        "centroidLon": 82.2052
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.963061,
-              26.79133
+              82.205119,
+              26.754628
             ],
             [
-              81.963027,
-              26.791361
+              82.205281,
+              26.754628
             ],
             [
-              81.962967,
-              26.791363
+              82.205281,
+              26.754772
             ],
             [
-              81.962917,
-              26.791335
+              82.205119,
+              26.754772
             ],
             [
-              81.962905,
-              26.791292
-            ],
-            [
-              81.962939,
-              26.791261
-            ],
-            [
-              81.962999,
-              26.791259
-            ],
-            [
-              81.963049,
-              26.791287
-            ],
-            [
-              81.963061,
-              26.79133
+              82.205119,
+              26.754628
             ]
           ]
         ]
@@ -1555,59 +1155,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0026",
-        "name": "Sohawal Dense Abadi Belt Residential #6",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Religious #6",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 140.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.79,
-        "centroidLon": 81.962506
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7597,
+        "centroidLon": 82.207
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.962584,
-              26.790019
+              82.206919,
+              26.759628
             ],
             [
-              81.96255,
-              26.79005
+              82.207081,
+              26.759628
             ],
             [
-              81.96249,
-              26.790052
+              82.207081,
+              26.759772
             ],
             [
-              81.96244,
-              26.790024
+              82.206919,
+              26.759772
             ],
             [
-              81.962428,
-              26.789981
-            ],
-            [
-              81.962462,
-              26.78995
-            ],
-            [
-              81.962522,
-              26.789948
-            ],
-            [
-              81.962572,
-              26.789976
-            ],
-            [
-              81.962584,
-              26.790019
+              82.206919,
+              26.759628
             ]
           ]
         ]
@@ -1617,59 +1201,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0027",
-        "name": "Sohawal Dense Abadi Belt Residential #7",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Institutional #7",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 140.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.788689,
-        "centroidLon": 81.962983
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7533,
+        "centroidLon": 82.207
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.963061,
-              26.788708
+              82.206919,
+              26.753228
             ],
             [
-              81.963027,
-              26.788739
+              82.207081,
+              26.753228
             ],
             [
-              81.962967,
-              26.788741
+              82.207081,
+              26.753372
             ],
             [
-              81.962917,
-              26.788713
+              82.206919,
+              26.753372
             ],
             [
-              81.962905,
-              26.78867
-            ],
-            [
-              81.962939,
-              26.788639
-            ],
-            [
-              81.962999,
-              26.788637
-            ],
-            [
-              81.963049,
-              26.788665
-            ],
-            [
-              81.963061,
-              26.788708
+              82.206919,
+              26.753228
             ]
           ]
         ]
@@ -1679,59 +1247,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0028",
-        "name": "Sohawal Dense Abadi Belt Residential #8",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Religious #8",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 140.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.787879,
-        "centroidLon": 81.964229
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7565,
+        "centroidLon": 82.2102
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.964307,
-              26.787898
+              82.210119,
+              26.756428
             ],
             [
-              81.964273,
-              26.787929
+              82.210281,
+              26.756428
             ],
             [
-              81.964213,
-              26.787931
+              82.210281,
+              26.756572
             ],
             [
-              81.964163,
-              26.787903
+              82.210119,
+              26.756572
             ],
             [
-              81.964151,
-              26.78786
-            ],
-            [
-              81.964185,
-              26.787829
-            ],
-            [
-              81.964245,
-              26.787827
-            ],
-            [
-              81.964295,
-              26.787855
-            ],
-            [
-              81.964307,
-              26.787898
+              82.210119,
+              26.756428
             ]
           ]
         ]
@@ -1741,59 +1293,43 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0029",
-        "name": "Sohawal Dense Abadi Belt Residential #9",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Residential #9",
         "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 110.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.787879,
-        "centroidLon": 81.965771
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7565,
+        "centroidLon": 82.2038
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.965849,
-              26.787898
+              82.203719,
+              26.756428
             ],
             [
-              81.965815,
-              26.787929
+              82.203881,
+              26.756428
             ],
             [
-              81.965755,
-              26.787931
+              82.203881,
+              26.756572
             ],
             [
-              81.965705,
-              26.787903
+              82.203719,
+              26.756572
             ],
             [
-              81.965693,
-              26.78786
-            ],
-            [
-              81.965727,
-              26.787829
-            ],
-            [
-              81.965787,
-              26.787827
-            ],
-            [
-              81.965837,
-              26.787855
-            ],
-            [
-              81.965849,
-              26.787898
+              82.203719,
+              26.756428
             ]
           ]
         ]
@@ -1803,59 +1339,4643 @@
       "type": "Feature",
       "properties": {
         "buildingId": "BLD-GANGETIC_PLAINS-0030",
-        "name": "Sohawal Dense Abadi Belt Residential #10",
-        "buildingType": "RESIDENTIAL",
-        "settlementId": "STL-GANGETIC_PLAINS-003",
-        "settlementName": "Sohawal Dense Abadi Belt",
-        "settlementClassification": "RURAL",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct Commercial #10",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-SAC-003",
+        "settlementName": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
         "district": "Ayodhya",
-        "footprintAreaSqMeters": 115.0,
+        "footprintAreaSqMeters": 110.0,
         "floors": 1,
         "structureMaterial": "RCC_PUCCA",
-        "equivalentRadiusMeters": 7.0,
-        "demolitionConflictWeightKmEq": 0.28,
-        "centroidLat": 26.788689,
-        "centroidLon": 81.967017
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7575,
+        "centroidLon": 82.2042
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.967095,
-              26.788708
+              82.204119,
+              26.757428
             ],
             [
-              81.967061,
-              26.788739
+              82.204281,
+              26.757428
             ],
             [
-              81.967001,
-              26.788741
+              82.204281,
+              26.757572
             ],
             [
-              81.966951,
-              26.788713
+              82.204119,
+              26.757572
             ],
             [
-              81.966939,
-              26.78867
+              82.204119,
+              26.757428
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0031",
+        "name": "Ayodhya Dham Municipal Urban Core Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.788,
+        "centroidLon": 82.192
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.191919,
+              26.787928
             ],
             [
-              81.966973,
-              26.788639
+              82.192081,
+              26.787928
             ],
             [
-              81.967033,
-              26.788637
+              82.192081,
+              26.788072
             ],
             [
-              81.967083,
-              26.788665
+              82.191919,
+              26.788072
             ],
             [
-              81.967095,
-              26.788708
+              82.191919,
+              26.787928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0032",
+        "name": "Ayodhya Dham Municipal Urban Core Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7898,
+        "centroidLon": 82.1938
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.193719,
+              26.789728
+            ],
+            [
+              82.193881,
+              26.789728
+            ],
+            [
+              82.193881,
+              26.789872
+            ],
+            [
+              82.193719,
+              26.789872
+            ],
+            [
+              82.193719,
+              26.789728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0033",
+        "name": "Ayodhya Dham Municipal Urban Core Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7862,
+        "centroidLon": 82.1938
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.193719,
+              26.786128
+            ],
+            [
+              82.193881,
+              26.786128
+            ],
+            [
+              82.193881,
+              26.786272
+            ],
+            [
+              82.193719,
+              26.786272
+            ],
+            [
+              82.193719,
+              26.786128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0034",
+        "name": "Ayodhya Dham Municipal Urban Core Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7898,
+        "centroidLon": 82.1902
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.190119,
+              26.789728
+            ],
+            [
+              82.190281,
+              26.789728
+            ],
+            [
+              82.190281,
+              26.789872
+            ],
+            [
+              82.190119,
+              26.789872
+            ],
+            [
+              82.190119,
+              26.789728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0035",
+        "name": "Ayodhya Dham Municipal Urban Core Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7862,
+        "centroidLon": 82.1902
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.190119,
+              26.786128
+            ],
+            [
+              82.190281,
+              26.786128
+            ],
+            [
+              82.190281,
+              26.786272
+            ],
+            [
+              82.190119,
+              26.786272
+            ],
+            [
+              82.190119,
+              26.786128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0036",
+        "name": "Ayodhya Dham Municipal Urban Core Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7912,
+        "centroidLon": 82.192
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.191919,
+              26.791128
+            ],
+            [
+              82.192081,
+              26.791128
+            ],
+            [
+              82.192081,
+              26.791272
+            ],
+            [
+              82.191919,
+              26.791272
+            ],
+            [
+              82.191919,
+              26.791128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0037",
+        "name": "Ayodhya Dham Municipal Urban Core Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7848,
+        "centroidLon": 82.192
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.191919,
+              26.784728
+            ],
+            [
+              82.192081,
+              26.784728
+            ],
+            [
+              82.192081,
+              26.784872
+            ],
+            [
+              82.191919,
+              26.784872
+            ],
+            [
+              82.191919,
+              26.784728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0038",
+        "name": "Ayodhya Dham Municipal Urban Core Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.788,
+        "centroidLon": 82.1952
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.195119,
+              26.787928
+            ],
+            [
+              82.195281,
+              26.787928
+            ],
+            [
+              82.195281,
+              26.788072
+            ],
+            [
+              82.195119,
+              26.788072
+            ],
+            [
+              82.195119,
+              26.787928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0039",
+        "name": "Ayodhya Dham Municipal Urban Core Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.788,
+        "centroidLon": 82.1888
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.188719,
+              26.787928
+            ],
+            [
+              82.188881,
+              26.787928
+            ],
+            [
+              82.188881,
+              26.788072
+            ],
+            [
+              82.188719,
+              26.788072
+            ],
+            [
+              82.188719,
+              26.787928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0040",
+        "name": "Ayodhya Dham Municipal Urban Core Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-001",
+        "settlementName": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.789,
+        "centroidLon": 82.1892
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.189119,
+              26.788928
+            ],
+            [
+              82.189281,
+              26.788928
+            ],
+            [
+              82.189281,
+              26.789072
+            ],
+            [
+              82.189119,
+              26.789072
+            ],
+            [
+              82.189119,
+              26.788928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0041",
+        "name": "Faizabad Twin-City Urban Core Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.779,
+        "centroidLon": 82.148
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.147919,
+              26.778928
+            ],
+            [
+              82.148081,
+              26.778928
+            ],
+            [
+              82.148081,
+              26.779072
+            ],
+            [
+              82.147919,
+              26.779072
+            ],
+            [
+              82.147919,
+              26.778928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0042",
+        "name": "Faizabad Twin-City Urban Core Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7808,
+        "centroidLon": 82.1498
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.149719,
+              26.780728
+            ],
+            [
+              82.149881,
+              26.780728
+            ],
+            [
+              82.149881,
+              26.780872
+            ],
+            [
+              82.149719,
+              26.780872
+            ],
+            [
+              82.149719,
+              26.780728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0043",
+        "name": "Faizabad Twin-City Urban Core Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7772,
+        "centroidLon": 82.1498
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.149719,
+              26.777128
+            ],
+            [
+              82.149881,
+              26.777128
+            ],
+            [
+              82.149881,
+              26.777272
+            ],
+            [
+              82.149719,
+              26.777272
+            ],
+            [
+              82.149719,
+              26.777128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0044",
+        "name": "Faizabad Twin-City Urban Core Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7808,
+        "centroidLon": 82.1462
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.146119,
+              26.780728
+            ],
+            [
+              82.146281,
+              26.780728
+            ],
+            [
+              82.146281,
+              26.780872
+            ],
+            [
+              82.146119,
+              26.780872
+            ],
+            [
+              82.146119,
+              26.780728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0045",
+        "name": "Faizabad Twin-City Urban Core Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7772,
+        "centroidLon": 82.1462
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.146119,
+              26.777128
+            ],
+            [
+              82.146281,
+              26.777128
+            ],
+            [
+              82.146281,
+              26.777272
+            ],
+            [
+              82.146119,
+              26.777272
+            ],
+            [
+              82.146119,
+              26.777128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0046",
+        "name": "Faizabad Twin-City Urban Core Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7822,
+        "centroidLon": 82.148
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.147919,
+              26.782128
+            ],
+            [
+              82.148081,
+              26.782128
+            ],
+            [
+              82.148081,
+              26.782272
+            ],
+            [
+              82.147919,
+              26.782272
+            ],
+            [
+              82.147919,
+              26.782128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0047",
+        "name": "Faizabad Twin-City Urban Core Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7758,
+        "centroidLon": 82.148
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.147919,
+              26.775728
+            ],
+            [
+              82.148081,
+              26.775728
+            ],
+            [
+              82.148081,
+              26.775872
+            ],
+            [
+              82.147919,
+              26.775872
+            ],
+            [
+              82.147919,
+              26.775728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0048",
+        "name": "Faizabad Twin-City Urban Core Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.779,
+        "centroidLon": 82.1512
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.151119,
+              26.778928
+            ],
+            [
+              82.151281,
+              26.778928
+            ],
+            [
+              82.151281,
+              26.779072
+            ],
+            [
+              82.151119,
+              26.779072
+            ],
+            [
+              82.151119,
+              26.778928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0049",
+        "name": "Faizabad Twin-City Urban Core Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.779,
+        "centroidLon": 82.1448
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.144719,
+              26.778928
+            ],
+            [
+              82.144881,
+              26.778928
+            ],
+            [
+              82.144881,
+              26.779072
+            ],
+            [
+              82.144719,
+              26.779072
+            ],
+            [
+              82.144719,
+              26.778928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0050",
+        "name": "Faizabad Twin-City Urban Core Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-002",
+        "settlementName": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.78,
+        "centroidLon": 82.1452
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.145119,
+              26.779928
+            ],
+            [
+              82.145281,
+              26.779928
+            ],
+            [
+              82.145281,
+              26.780072
+            ],
+            [
+              82.145119,
+              26.780072
+            ],
+            [
+              82.145119,
+              26.779928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0051",
+        "name": "Barabanki Nawabganj Urban Core Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.931,
+        "centroidLon": 81.193
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.192919,
+              26.930928
+            ],
+            [
+              81.193081,
+              26.930928
+            ],
+            [
+              81.193081,
+              26.931072
+            ],
+            [
+              81.192919,
+              26.931072
+            ],
+            [
+              81.192919,
+              26.930928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0052",
+        "name": "Barabanki Nawabganj Urban Core Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9328,
+        "centroidLon": 81.1948
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.194719,
+              26.932728
+            ],
+            [
+              81.194881,
+              26.932728
+            ],
+            [
+              81.194881,
+              26.932872
+            ],
+            [
+              81.194719,
+              26.932872
+            ],
+            [
+              81.194719,
+              26.932728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0053",
+        "name": "Barabanki Nawabganj Urban Core Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.9292,
+        "centroidLon": 81.1948
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.194719,
+              26.929128
+            ],
+            [
+              81.194881,
+              26.929128
+            ],
+            [
+              81.194881,
+              26.929272
+            ],
+            [
+              81.194719,
+              26.929272
+            ],
+            [
+              81.194719,
+              26.929128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0054",
+        "name": "Barabanki Nawabganj Urban Core Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9328,
+        "centroidLon": 81.1912
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.191119,
+              26.932728
+            ],
+            [
+              81.191281,
+              26.932728
+            ],
+            [
+              81.191281,
+              26.932872
+            ],
+            [
+              81.191119,
+              26.932872
+            ],
+            [
+              81.191119,
+              26.932728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0055",
+        "name": "Barabanki Nawabganj Urban Core Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.9292,
+        "centroidLon": 81.1912
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.191119,
+              26.929128
+            ],
+            [
+              81.191281,
+              26.929128
+            ],
+            [
+              81.191281,
+              26.929272
+            ],
+            [
+              81.191119,
+              26.929272
+            ],
+            [
+              81.191119,
+              26.929128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0056",
+        "name": "Barabanki Nawabganj Urban Core Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9342,
+        "centroidLon": 81.193
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.192919,
+              26.934128
+            ],
+            [
+              81.193081,
+              26.934128
+            ],
+            [
+              81.193081,
+              26.934272
+            ],
+            [
+              81.192919,
+              26.934272
+            ],
+            [
+              81.192919,
+              26.934128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0057",
+        "name": "Barabanki Nawabganj Urban Core Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9278,
+        "centroidLon": 81.193
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.192919,
+              26.927728
+            ],
+            [
+              81.193081,
+              26.927728
+            ],
+            [
+              81.193081,
+              26.927872
+            ],
+            [
+              81.192919,
+              26.927872
+            ],
+            [
+              81.192919,
+              26.927728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0058",
+        "name": "Barabanki Nawabganj Urban Core Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.931,
+        "centroidLon": 81.1962
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.196119,
+              26.930928
+            ],
+            [
+              81.196281,
+              26.930928
+            ],
+            [
+              81.196281,
+              26.931072
+            ],
+            [
+              81.196119,
+              26.931072
+            ],
+            [
+              81.196119,
+              26.930928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0059",
+        "name": "Barabanki Nawabganj Urban Core Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.931,
+        "centroidLon": 81.1898
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.189719,
+              26.930928
+            ],
+            [
+              81.189881,
+              26.930928
+            ],
+            [
+              81.189881,
+              26.931072
+            ],
+            [
+              81.189719,
+              26.931072
+            ],
+            [
+              81.189719,
+              26.930928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0060",
+        "name": "Barabanki Nawabganj Urban Core Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-003",
+        "settlementName": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.932,
+        "centroidLon": 81.1902
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.190119,
+              26.931928
+            ],
+            [
+              81.190281,
+              26.931928
+            ],
+            [
+              81.190281,
+              26.932072
+            ],
+            [
+              81.190119,
+              26.932072
+            ],
+            [
+              81.190119,
+              26.931928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0061",
+        "name": "Rudauli Municipal Town Core Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.753,
+        "centroidLon": 81.75
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.749919,
+              26.752928
+            ],
+            [
+              81.750081,
+              26.752928
+            ],
+            [
+              81.750081,
+              26.753072
+            ],
+            [
+              81.749919,
+              26.753072
+            ],
+            [
+              81.749919,
+              26.752928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0062",
+        "name": "Rudauli Municipal Town Core Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7548,
+        "centroidLon": 81.7518
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.751719,
+              26.754728
+            ],
+            [
+              81.751881,
+              26.754728
+            ],
+            [
+              81.751881,
+              26.754872
+            ],
+            [
+              81.751719,
+              26.754872
+            ],
+            [
+              81.751719,
+              26.754728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0063",
+        "name": "Rudauli Municipal Town Core Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7512,
+        "centroidLon": 81.7518
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.751719,
+              26.751128
+            ],
+            [
+              81.751881,
+              26.751128
+            ],
+            [
+              81.751881,
+              26.751272
+            ],
+            [
+              81.751719,
+              26.751272
+            ],
+            [
+              81.751719,
+              26.751128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0064",
+        "name": "Rudauli Municipal Town Core Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7548,
+        "centroidLon": 81.7482
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.748119,
+              26.754728
+            ],
+            [
+              81.748281,
+              26.754728
+            ],
+            [
+              81.748281,
+              26.754872
+            ],
+            [
+              81.748119,
+              26.754872
+            ],
+            [
+              81.748119,
+              26.754728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0065",
+        "name": "Rudauli Municipal Town Core Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7512,
+        "centroidLon": 81.7482
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.748119,
+              26.751128
+            ],
+            [
+              81.748281,
+              26.751128
+            ],
+            [
+              81.748281,
+              26.751272
+            ],
+            [
+              81.748119,
+              26.751272
+            ],
+            [
+              81.748119,
+              26.751128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0066",
+        "name": "Rudauli Municipal Town Core Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7562,
+        "centroidLon": 81.75
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.749919,
+              26.756128
+            ],
+            [
+              81.750081,
+              26.756128
+            ],
+            [
+              81.750081,
+              26.756272
+            ],
+            [
+              81.749919,
+              26.756272
+            ],
+            [
+              81.749919,
+              26.756128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0067",
+        "name": "Rudauli Municipal Town Core Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7498,
+        "centroidLon": 81.75
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.749919,
+              26.749728
+            ],
+            [
+              81.750081,
+              26.749728
+            ],
+            [
+              81.750081,
+              26.749872
+            ],
+            [
+              81.749919,
+              26.749872
+            ],
+            [
+              81.749919,
+              26.749728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0068",
+        "name": "Rudauli Municipal Town Core Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.753,
+        "centroidLon": 81.7532
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.753119,
+              26.752928
+            ],
+            [
+              81.753281,
+              26.752928
+            ],
+            [
+              81.753281,
+              26.753072
+            ],
+            [
+              81.753119,
+              26.753072
+            ],
+            [
+              81.753119,
+              26.752928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0069",
+        "name": "Rudauli Municipal Town Core Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.753,
+        "centroidLon": 81.7468
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.746719,
+              26.752928
+            ],
+            [
+              81.746881,
+              26.752928
+            ],
+            [
+              81.746881,
+              26.753072
+            ],
+            [
+              81.746719,
+              26.753072
+            ],
+            [
+              81.746719,
+              26.752928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0070",
+        "name": "Rudauli Municipal Town Core Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-004",
+        "settlementName": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.754,
+        "centroidLon": 81.7472
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.747119,
+              26.753928
+            ],
+            [
+              81.747281,
+              26.753928
+            ],
+            [
+              81.747281,
+              26.754072
+            ],
+            [
+              81.747119,
+              26.754072
+            ],
+            [
+              81.747119,
+              26.753928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0071",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.794,
+        "centroidLon": 81.537
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.536919,
+              26.793928
+            ],
+            [
+              81.537081,
+              26.793928
+            ],
+            [
+              81.537081,
+              26.794072
+            ],
+            [
+              81.536919,
+              26.794072
+            ],
+            [
+              81.536919,
+              26.793928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0072",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7958,
+        "centroidLon": 81.5388
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.538719,
+              26.795728
+            ],
+            [
+              81.538881,
+              26.795728
+            ],
+            [
+              81.538881,
+              26.795872
+            ],
+            [
+              81.538719,
+              26.795872
+            ],
+            [
+              81.538719,
+              26.795728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0073",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7922,
+        "centroidLon": 81.5388
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.538719,
+              26.792128
+            ],
+            [
+              81.538881,
+              26.792128
+            ],
+            [
+              81.538881,
+              26.792272
+            ],
+            [
+              81.538719,
+              26.792272
+            ],
+            [
+              81.538719,
+              26.792128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0074",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7958,
+        "centroidLon": 81.5352
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.535119,
+              26.795728
+            ],
+            [
+              81.535281,
+              26.795728
+            ],
+            [
+              81.535281,
+              26.795872
+            ],
+            [
+              81.535119,
+              26.795872
+            ],
+            [
+              81.535119,
+              26.795728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0075",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7922,
+        "centroidLon": 81.5352
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.535119,
+              26.792128
+            ],
+            [
+              81.535281,
+              26.792128
+            ],
+            [
+              81.535281,
+              26.792272
+            ],
+            [
+              81.535119,
+              26.792272
+            ],
+            [
+              81.535119,
+              26.792128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0076",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7972,
+        "centroidLon": 81.537
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.536919,
+              26.797128
+            ],
+            [
+              81.537081,
+              26.797128
+            ],
+            [
+              81.537081,
+              26.797272
+            ],
+            [
+              81.536919,
+              26.797272
+            ],
+            [
+              81.536919,
+              26.797128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0077",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7908,
+        "centroidLon": 81.537
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.536919,
+              26.790728
+            ],
+            [
+              81.537081,
+              26.790728
+            ],
+            [
+              81.537081,
+              26.790872
+            ],
+            [
+              81.536919,
+              26.790872
+            ],
+            [
+              81.536919,
+              26.790728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0078",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.794,
+        "centroidLon": 81.5402
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.540119,
+              26.793928
+            ],
+            [
+              81.540281,
+              26.793928
+            ],
+            [
+              81.540281,
+              26.794072
+            ],
+            [
+              81.540119,
+              26.794072
+            ],
+            [
+              81.540119,
+              26.793928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0079",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.794,
+        "centroidLon": 81.5338
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.533719,
+              26.793928
+            ],
+            [
+              81.533881,
+              26.793928
+            ],
+            [
+              81.533881,
+              26.794072
+            ],
+            [
+              81.533719,
+              26.794072
+            ],
+            [
+              81.533719,
+              26.793928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0080",
+        "name": "Ramsanehighat Tehsil Kasba Cluster Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-URB-005",
+        "settlementName": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.795,
+        "centroidLon": 81.5342
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.534119,
+              26.794928
+            ],
+            [
+              81.534281,
+              26.794928
+            ],
+            [
+              81.534281,
+              26.795072
+            ],
+            [
+              81.534119,
+              26.795072
+            ],
+            [
+              81.534119,
+              26.794928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0081",
+        "name": "Zaidpur Kasba Habitation Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.862,
+        "centroidLon": 81.46
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.459919,
+              26.861928
+            ],
+            [
+              81.460081,
+              26.861928
+            ],
+            [
+              81.460081,
+              26.862072
+            ],
+            [
+              81.459919,
+              26.862072
+            ],
+            [
+              81.459919,
+              26.861928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0082",
+        "name": "Zaidpur Kasba Habitation Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8638,
+        "centroidLon": 81.4618
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.461719,
+              26.863728
+            ],
+            [
+              81.461881,
+              26.863728
+            ],
+            [
+              81.461881,
+              26.863872
+            ],
+            [
+              81.461719,
+              26.863872
+            ],
+            [
+              81.461719,
+              26.863728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0083",
+        "name": "Zaidpur Kasba Habitation Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.8602,
+        "centroidLon": 81.4618
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.461719,
+              26.860128
+            ],
+            [
+              81.461881,
+              26.860128
+            ],
+            [
+              81.461881,
+              26.860272
+            ],
+            [
+              81.461719,
+              26.860272
+            ],
+            [
+              81.461719,
+              26.860128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0084",
+        "name": "Zaidpur Kasba Habitation Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8638,
+        "centroidLon": 81.4582
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.458119,
+              26.863728
+            ],
+            [
+              81.458281,
+              26.863728
+            ],
+            [
+              81.458281,
+              26.863872
+            ],
+            [
+              81.458119,
+              26.863872
+            ],
+            [
+              81.458119,
+              26.863728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0085",
+        "name": "Zaidpur Kasba Habitation Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.8602,
+        "centroidLon": 81.4582
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.458119,
+              26.860128
+            ],
+            [
+              81.458281,
+              26.860128
+            ],
+            [
+              81.458281,
+              26.860272
+            ],
+            [
+              81.458119,
+              26.860272
+            ],
+            [
+              81.458119,
+              26.860128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0086",
+        "name": "Zaidpur Kasba Habitation Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8652,
+        "centroidLon": 81.46
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.459919,
+              26.865128
+            ],
+            [
+              81.460081,
+              26.865128
+            ],
+            [
+              81.460081,
+              26.865272
+            ],
+            [
+              81.459919,
+              26.865272
+            ],
+            [
+              81.459919,
+              26.865128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0087",
+        "name": "Zaidpur Kasba Habitation Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8588,
+        "centroidLon": 81.46
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.459919,
+              26.858728
+            ],
+            [
+              81.460081,
+              26.858728
+            ],
+            [
+              81.460081,
+              26.858872
+            ],
+            [
+              81.459919,
+              26.858872
+            ],
+            [
+              81.459919,
+              26.858728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0088",
+        "name": "Zaidpur Kasba Habitation Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.862,
+        "centroidLon": 81.4632
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.463119,
+              26.861928
+            ],
+            [
+              81.463281,
+              26.861928
+            ],
+            [
+              81.463281,
+              26.862072
+            ],
+            [
+              81.463119,
+              26.862072
+            ],
+            [
+              81.463119,
+              26.861928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0089",
+        "name": "Zaidpur Kasba Habitation Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.862,
+        "centroidLon": 81.4568
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.456719,
+              26.861928
+            ],
+            [
+              81.456881,
+              26.861928
+            ],
+            [
+              81.456881,
+              26.862072
+            ],
+            [
+              81.456719,
+              26.862072
+            ],
+            [
+              81.456719,
+              26.861928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0090",
+        "name": "Zaidpur Kasba Habitation Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GANGETIC_PLAINS-001",
+        "settlementName": "Zaidpur Kasba Habitation",
+        "settlementClassification": "URBAN",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.863,
+        "centroidLon": 81.4572
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.457119,
+              26.862928
+            ],
+            [
+              81.457281,
+              26.862928
+            ],
+            [
+              81.457281,
+              26.863072
+            ],
+            [
+              81.457119,
+              26.863072
+            ],
+            [
+              81.457119,
+              26.862928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0091",
+        "name": "Dariyabad Rural Cluster Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.885,
+        "centroidLon": 81.555
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.554919,
+              26.884928
+            ],
+            [
+              81.555081,
+              26.884928
+            ],
+            [
+              81.555081,
+              26.885072
+            ],
+            [
+              81.554919,
+              26.885072
+            ],
+            [
+              81.554919,
+              26.884928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0092",
+        "name": "Dariyabad Rural Cluster Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8868,
+        "centroidLon": 81.5568
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.556719,
+              26.886728
+            ],
+            [
+              81.556881,
+              26.886728
+            ],
+            [
+              81.556881,
+              26.886872
+            ],
+            [
+              81.556719,
+              26.886872
+            ],
+            [
+              81.556719,
+              26.886728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0093",
+        "name": "Dariyabad Rural Cluster Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.8832,
+        "centroidLon": 81.5568
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.556719,
+              26.883128
+            ],
+            [
+              81.556881,
+              26.883128
+            ],
+            [
+              81.556881,
+              26.883272
+            ],
+            [
+              81.556719,
+              26.883272
+            ],
+            [
+              81.556719,
+              26.883128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0094",
+        "name": "Dariyabad Rural Cluster Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8868,
+        "centroidLon": 81.5532
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.553119,
+              26.886728
+            ],
+            [
+              81.553281,
+              26.886728
+            ],
+            [
+              81.553281,
+              26.886872
+            ],
+            [
+              81.553119,
+              26.886872
+            ],
+            [
+              81.553119,
+              26.886728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0095",
+        "name": "Dariyabad Rural Cluster Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.8832,
+        "centroidLon": 81.5532
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.553119,
+              26.883128
+            ],
+            [
+              81.553281,
+              26.883128
+            ],
+            [
+              81.553281,
+              26.883272
+            ],
+            [
+              81.553119,
+              26.883272
+            ],
+            [
+              81.553119,
+              26.883128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0096",
+        "name": "Dariyabad Rural Cluster Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8882,
+        "centroidLon": 81.555
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.554919,
+              26.888128
+            ],
+            [
+              81.555081,
+              26.888128
+            ],
+            [
+              81.555081,
+              26.888272
+            ],
+            [
+              81.554919,
+              26.888272
+            ],
+            [
+              81.554919,
+              26.888128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0097",
+        "name": "Dariyabad Rural Cluster Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.8818,
+        "centroidLon": 81.555
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.554919,
+              26.881728
+            ],
+            [
+              81.555081,
+              26.881728
+            ],
+            [
+              81.555081,
+              26.881872
+            ],
+            [
+              81.554919,
+              26.881872
+            ],
+            [
+              81.554919,
+              26.881728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0098",
+        "name": "Dariyabad Rural Cluster Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.885,
+        "centroidLon": 81.5582
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.558119,
+              26.884928
+            ],
+            [
+              81.558281,
+              26.884928
+            ],
+            [
+              81.558281,
+              26.885072
+            ],
+            [
+              81.558119,
+              26.885072
+            ],
+            [
+              81.558119,
+              26.884928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0099",
+        "name": "Dariyabad Rural Cluster Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.885,
+        "centroidLon": 81.5518
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.551719,
+              26.884928
+            ],
+            [
+              81.551881,
+              26.884928
+            ],
+            [
+              81.551881,
+              26.885072
+            ],
+            [
+              81.551719,
+              26.885072
+            ],
+            [
+              81.551719,
+              26.884928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0100",
+        "name": "Dariyabad Rural Cluster Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GANGETIC_PLAINS-002",
+        "settlementName": "Dariyabad Rural Cluster",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.886,
+        "centroidLon": 81.5522
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.552119,
+              26.885928
+            ],
+            [
+              81.552281,
+              26.885928
+            ],
+            [
+              81.552281,
+              26.886072
+            ],
+            [
+              81.552119,
+              26.886072
+            ],
+            [
+              81.552119,
+              26.885928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0101",
+        "name": "Sohawal Dense Abadi Belt Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.769,
+        "centroidLon": 81.982
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.981919,
+              26.768928
+            ],
+            [
+              81.982081,
+              26.768928
+            ],
+            [
+              81.982081,
+              26.769072
+            ],
+            [
+              81.981919,
+              26.769072
+            ],
+            [
+              81.981919,
+              26.768928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0102",
+        "name": "Sohawal Dense Abadi Belt Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7708,
+        "centroidLon": 81.9838
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.983719,
+              26.770728
+            ],
+            [
+              81.983881,
+              26.770728
+            ],
+            [
+              81.983881,
+              26.770872
+            ],
+            [
+              81.983719,
+              26.770872
+            ],
+            [
+              81.983719,
+              26.770728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0103",
+        "name": "Sohawal Dense Abadi Belt Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.7672,
+        "centroidLon": 81.9838
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.983719,
+              26.767128
+            ],
+            [
+              81.983881,
+              26.767128
+            ],
+            [
+              81.983881,
+              26.767272
+            ],
+            [
+              81.983719,
+              26.767272
+            ],
+            [
+              81.983719,
+              26.767128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0104",
+        "name": "Sohawal Dense Abadi Belt Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7708,
+        "centroidLon": 81.9802
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.980119,
+              26.770728
+            ],
+            [
+              81.980281,
+              26.770728
+            ],
+            [
+              81.980281,
+              26.770872
+            ],
+            [
+              81.980119,
+              26.770872
+            ],
+            [
+              81.980119,
+              26.770728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0105",
+        "name": "Sohawal Dense Abadi Belt Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.7672,
+        "centroidLon": 81.9802
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.980119,
+              26.767128
+            ],
+            [
+              81.980281,
+              26.767128
+            ],
+            [
+              81.980281,
+              26.767272
+            ],
+            [
+              81.980119,
+              26.767272
+            ],
+            [
+              81.980119,
+              26.767128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0106",
+        "name": "Sohawal Dense Abadi Belt Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7722,
+        "centroidLon": 81.982
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.981919,
+              26.772128
+            ],
+            [
+              81.982081,
+              26.772128
+            ],
+            [
+              81.982081,
+              26.772272
+            ],
+            [
+              81.981919,
+              26.772272
+            ],
+            [
+              81.981919,
+              26.772128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0107",
+        "name": "Sohawal Dense Abadi Belt Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.7658,
+        "centroidLon": 81.982
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.981919,
+              26.765728
+            ],
+            [
+              81.982081,
+              26.765728
+            ],
+            [
+              81.982081,
+              26.765872
+            ],
+            [
+              81.981919,
+              26.765872
+            ],
+            [
+              81.981919,
+              26.765728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0108",
+        "name": "Sohawal Dense Abadi Belt Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.769,
+        "centroidLon": 81.9852
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.985119,
+              26.768928
+            ],
+            [
+              81.985281,
+              26.768928
+            ],
+            [
+              81.985281,
+              26.769072
+            ],
+            [
+              81.985119,
+              26.769072
+            ],
+            [
+              81.985119,
+              26.768928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0109",
+        "name": "Sohawal Dense Abadi Belt Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.769,
+        "centroidLon": 81.9788
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.978719,
+              26.768928
+            ],
+            [
+              81.978881,
+              26.768928
+            ],
+            [
+              81.978881,
+              26.769072
+            ],
+            [
+              81.978719,
+              26.769072
+            ],
+            [
+              81.978719,
+              26.768928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0110",
+        "name": "Sohawal Dense Abadi Belt Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GANGETIC_PLAINS-003",
+        "settlementName": "Sohawal Dense Abadi Belt",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.77,
+        "centroidLon": 81.9792
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.979119,
+              26.769928
+            ],
+            [
+              81.979281,
+              26.769928
+            ],
+            [
+              81.979281,
+              26.770072
+            ],
+            [
+              81.979119,
+              26.770072
+            ],
+            [
+              81.979119,
+              26.769928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0111",
+        "name": "Safdarganj Highway Settlement Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.906,
+        "centroidLon": 81.365
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.364919,
+              26.905928
+            ],
+            [
+              81.365081,
+              26.905928
+            ],
+            [
+              81.365081,
+              26.906072
+            ],
+            [
+              81.364919,
+              26.906072
+            ],
+            [
+              81.364919,
+              26.905928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0112",
+        "name": "Safdarganj Highway Settlement Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9078,
+        "centroidLon": 81.3668
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.366719,
+              26.907728
+            ],
+            [
+              81.366881,
+              26.907728
+            ],
+            [
+              81.366881,
+              26.907872
+            ],
+            [
+              81.366719,
+              26.907872
+            ],
+            [
+              81.366719,
+              26.907728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0113",
+        "name": "Safdarganj Highway Settlement Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.9042,
+        "centroidLon": 81.3668
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.366719,
+              26.904128
+            ],
+            [
+              81.366881,
+              26.904128
+            ],
+            [
+              81.366881,
+              26.904272
+            ],
+            [
+              81.366719,
+              26.904272
+            ],
+            [
+              81.366719,
+              26.904128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0114",
+        "name": "Safdarganj Highway Settlement Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9078,
+        "centroidLon": 81.3632
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.363119,
+              26.907728
+            ],
+            [
+              81.363281,
+              26.907728
+            ],
+            [
+              81.363281,
+              26.907872
+            ],
+            [
+              81.363119,
+              26.907872
+            ],
+            [
+              81.363119,
+              26.907728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0115",
+        "name": "Safdarganj Highway Settlement Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.9042,
+        "centroidLon": 81.3632
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.363119,
+              26.904128
+            ],
+            [
+              81.363281,
+              26.904128
+            ],
+            [
+              81.363281,
+              26.904272
+            ],
+            [
+              81.363119,
+              26.904272
+            ],
+            [
+              81.363119,
+              26.904128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0116",
+        "name": "Safdarganj Highway Settlement Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9092,
+        "centroidLon": 81.365
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.364919,
+              26.909128
+            ],
+            [
+              81.365081,
+              26.909128
+            ],
+            [
+              81.365081,
+              26.909272
+            ],
+            [
+              81.364919,
+              26.909272
+            ],
+            [
+              81.364919,
+              26.909128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0117",
+        "name": "Safdarganj Highway Settlement Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.9028,
+        "centroidLon": 81.365
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.364919,
+              26.902728
+            ],
+            [
+              81.365081,
+              26.902728
+            ],
+            [
+              81.365081,
+              26.902872
+            ],
+            [
+              81.364919,
+              26.902872
+            ],
+            [
+              81.364919,
+              26.902728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0118",
+        "name": "Safdarganj Highway Settlement Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.906,
+        "centroidLon": 81.3682
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.368119,
+              26.905928
+            ],
+            [
+              81.368281,
+              26.905928
+            ],
+            [
+              81.368281,
+              26.906072
+            ],
+            [
+              81.368119,
+              26.906072
+            ],
+            [
+              81.368119,
+              26.905928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0119",
+        "name": "Safdarganj Highway Settlement Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.906,
+        "centroidLon": 81.3618
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.361719,
+              26.905928
+            ],
+            [
+              81.361881,
+              26.905928
+            ],
+            [
+              81.361881,
+              26.906072
+            ],
+            [
+              81.361719,
+              26.906072
+            ],
+            [
+              81.361719,
+              26.905928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0120",
+        "name": "Safdarganj Highway Settlement Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-RUR-004",
+        "settlementName": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "district": "Barabanki",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.907,
+        "centroidLon": 81.3622
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.362119,
+              26.906928
+            ],
+            [
+              81.362281,
+              26.906928
+            ],
+            [
+              81.362281,
+              26.907072
+            ],
+            [
+              81.362119,
+              26.907072
+            ],
+            [
+              81.362119,
+              26.906928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0121",
+        "name": "Bikapur Block Town Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.605,
+        "centroidLon": 82.138
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.137919,
+              26.604928
+            ],
+            [
+              82.138081,
+              26.604928
+            ],
+            [
+              82.138081,
+              26.605072
+            ],
+            [
+              82.137919,
+              26.605072
+            ],
+            [
+              82.137919,
+              26.604928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0122",
+        "name": "Bikapur Block Town Residential #2",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.6068,
+        "centroidLon": 82.1398
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.139719,
+              26.606728
+            ],
+            [
+              82.139881,
+              26.606728
+            ],
+            [
+              82.139881,
+              26.606872
+            ],
+            [
+              82.139719,
+              26.606872
+            ],
+            [
+              82.139719,
+              26.606728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0123",
+        "name": "Bikapur Block Town Institutional #3",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.6032,
+        "centroidLon": 82.1398
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.139719,
+              26.603128
+            ],
+            [
+              82.139881,
+              26.603128
+            ],
+            [
+              82.139881,
+              26.603272
+            ],
+            [
+              82.139719,
+              26.603272
+            ],
+            [
+              82.139719,
+              26.603128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0124",
+        "name": "Bikapur Block Town Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.6068,
+        "centroidLon": 82.1362
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.136119,
+              26.606728
+            ],
+            [
+              82.136281,
+              26.606728
+            ],
+            [
+              82.136281,
+              26.606872
+            ],
+            [
+              82.136119,
+              26.606872
+            ],
+            [
+              82.136119,
+              26.606728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0125",
+        "name": "Bikapur Block Town Religious #5",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.6032,
+        "centroidLon": 82.1362
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.136119,
+              26.603128
+            ],
+            [
+              82.136281,
+              26.603128
+            ],
+            [
+              82.136281,
+              26.603272
+            ],
+            [
+              82.136119,
+              26.603272
+            ],
+            [
+              82.136119,
+              26.603128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0126",
+        "name": "Bikapur Block Town Commercial #6",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.6082,
+        "centroidLon": 82.138
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.137919,
+              26.608128
+            ],
+            [
+              82.138081,
+              26.608128
+            ],
+            [
+              82.138081,
+              26.608272
+            ],
+            [
+              82.137919,
+              26.608272
+            ],
+            [
+              82.137919,
+              26.608128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0127",
+        "name": "Bikapur Block Town Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.6018,
+        "centroidLon": 82.138
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.137919,
+              26.601728
+            ],
+            [
+              82.138081,
+              26.601728
+            ],
+            [
+              82.138081,
+              26.601872
+            ],
+            [
+              82.137919,
+              26.601872
+            ],
+            [
+              82.137919,
+              26.601728
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0128",
+        "name": "Bikapur Block Town Institutional #8",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.85,
+        "centroidLat": 26.605,
+        "centroidLon": 82.1412
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.141119,
+              26.604928
+            ],
+            [
+              82.141281,
+              26.604928
+            ],
+            [
+              82.141281,
+              26.605072
+            ],
+            [
+              82.141119,
+              26.605072
+            ],
+            [
+              82.141119,
+              26.604928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0129",
+        "name": "Bikapur Block Town Residential #9",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 110.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 26.605,
+        "centroidLon": 82.1348
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.134719,
+              26.604928
+            ],
+            [
+              82.134881,
+              26.604928
+            ],
+            [
+              82.134881,
+              26.605072
+            ],
+            [
+              82.134719,
+              26.605072
+            ],
+            [
+              82.134719,
+              26.604928
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-GANGETIC_PLAINS-0130",
+        "name": "Bikapur Block Town Religious #10",
+        "buildingType": "RELIGIOUS",
+        "settlementId": "STL-GP-RUR-005",
+        "settlementName": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "district": "Ayodhya",
+        "footprintAreaSqMeters": 140.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 8.0,
+        "demolitionConflictWeightKmEq": 0.95,
+        "centroidLat": 26.606,
+        "centroidLon": 82.1352
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.135119,
+              26.605928
+            ],
+            [
+              82.135281,
+              26.605928
+            ],
+            [
+              82.135281,
+              26.606072
+            ],
+            [
+              82.135119,
+              26.606072
+            ],
+            [
+              82.135119,
+              26.605928
             ]
           ]
         ]

@@ -311,15 +311,31 @@ out geom;"""
                 })
             else:
                 h_type = tags.get("highway", "primary")
-                cat = "EXPRESSWAY" if h_type == "motorway" else ("NATIONAL_HIGHWAY" if h_type in ["trunk", "primary"] else "STATE_HIGHWAY")
+                if h_type == "motorway":
+                    cat = "EXPRESSWAY"
+                    tier = "ACCESS_CONTROLLED_EXPRESSWAY"
+                elif h_type == "trunk":
+                    cat = "NATIONAL_HIGHWAY"
+                    tier = "PRIMARY_ARTERIAL"
+                elif h_type == "primary":
+                    cat = "STATE_HIGHWAY"
+                    tier = "SECONDARY_ARTERIAL"
+                else:
+                    cat = "MAJOR_DISTRICT_ROAD"
+                    tier = "MAJOR_DISTRICT_CONNECTOR"
+
+                ref_val = tags.get("ref")
+                if not ref_val:
+                    ref_val = "NH" if cat == "NATIONAL_HIGHWAY" else ("SH" if cat == "STATE_HIGHWAY" else "MDR")
+
                 highways.append({
                     "type": "Feature",
                     "properties": {
                         "id": f"TRP-{region_id.upper()}-HWY-{el['id']}",
-                        "ref": tags.get("ref", "NH"),
+                        "ref": ref_val,
                         "name": name,
                         "category": cat,
-                        "hierarchyTier": "PRIMARY_ARTERIAL" if cat in ["EXPRESSWAY", "NATIONAL_HIGHWAY"] else "SECONDARY_ARTERIAL"
+                        "hierarchyTier": tier
                     },
                     "geometry": {"type": "LineString", "coordinates": simplified}
                 })
@@ -327,6 +343,62 @@ out geom;"""
     except Exception as ex:
         print(f"[WARN] Live OSM transport fetch failed ({ex}); falling back to parameterized alignments.")
         return None, None
+
+
+def fetch_osm_sacred_and_settlements(min_lat, min_lon, max_lat, max_lon):
+    try:
+        import urllib.request
+        import urllib.parse
+        bbox = f"{min_lat},{min_lon},{max_lat},{max_lon}"
+        query = f"""[out:json][timeout:4];
+(
+  way["landuse"="religious"]({bbox});
+  way["amenity"="place_of_worship"]["name"]({bbox});
+  node["amenity"="place_of_worship"]["name"]({bbox});
+  way["historic"~"monument|memorial|archaeological_site|temple|fort"]({bbox});
+  node["historic"~"monument|memorial|archaeological_site|temple|fort"]["name"]({bbox});
+  node["place"~"city|town|suburb|village"]({bbox});
+  way["landuse"~"residential|commercial"]({bbox});
+);
+out center 250;"""
+        url = "https://overpass-api.de/api/interpreter"
+        data = urllib.parse.urlencode({"data": query}).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers={"User-Agent": "MARG-Ingestion/1.0", "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            res = json.loads(resp.read().decode("utf-8"))
+        elements = res.get("elements", [])
+        sacred_list = []
+        settlement_list = []
+        for el in elements:
+            tags = el.get("tags", {})
+            center = el.get("center")
+            lat = center["lat"] if center else el.get("lat")
+            lon = center["lon"] if center else el.get("lon")
+            if lat is None or lon is None:
+                continue
+            name = tags.get("name") or tags.get("alt_name") or f"Site #{el['id']}"
+            is_sacred = (
+                tags.get("landuse") == "religious"
+                or "amenity" in tags and tags.get("amenity") == "place_of_worship"
+                or "historic" in tags
+            )
+            if is_sacred:
+                sacred_list.append({"name": name, "lat": float(lat), "lon": float(lon), "rad": 420.0, "class": "URBAN", "pop": 4500, "sacred": True})
+            else:
+                place = tags.get("place", "")
+                if place == "city":
+                    rad_m, pop, s_cls = 1600.0, 120000, "URBAN"
+                elif place in ("town", "suburb"):
+                    rad_m, pop, s_cls = 950.0, 38000, "URBAN"
+                elif tags.get("landuse") in ("commercial", "residential"):
+                    rad_m, pop, s_cls = 450.0, 6500, "URBAN" if tags.get("landuse") == "commercial" else "RURAL"
+                else:
+                    rad_m, pop, s_cls = 480.0, 5200, "RURAL"
+                settlement_list.append({"name": name, "lat": float(lat), "lon": float(lon), "rad": rad_m, "class": s_cls, "pop": pop, "sacred": False})
+        return sacred_list[:80], settlement_list[:120]
+    except Exception as ex:
+        print(f"[WARN] Live OSM sacred/settlement fetch failed ({ex}); using parameterized settlement layout.")
+        return [], []
 
 
 def snap_point_to_road(lat, lon, transport_features):
@@ -494,7 +566,7 @@ def ingest_corridor(
     px, py = wgs84_to_utm(pa_lat, pa_lon, zone)
     burn_circle(pa_mask, min_x, max_y, res, px, py, 6500.0, 1, overwrite_higher=True)
 
-    # Ensure endpoints have safe slope (< 6.0 deg) and zero PA
+    # Ensure endpoints have safe slope (< 6.0 deg) and zero regular PA mask=1
     for slat, slon in [(start_lat, start_lon), (end_lat, end_lon)]:
         sx, sy = wgs84_to_utm(slat, slon, zone)
         c0 = max(0, int((sx - 1800.0 - min_x) / res))
@@ -502,7 +574,15 @@ def ingest_corridor(
         r0 = max(0, int((max_y - (sy + 1800.0)) / res))
         r1 = min(height - 1, int((max_y - (sy - 1800.0)) / res))
         slope[r0 : r1 + 1, c0 : c1 + 1] = np.minimum(slope[r0 : r1 + 1, c0 : c1 + 1], 5.5)
-        pa_mask[r0 : r1 + 1, c0 : c1 + 1] = 0
+        pa_mask[r0 : r1 + 1, c0 : c1 + 1] = np.where(pa_mask[r0 : r1 + 1, c0 : c1 + 1] == 1, 0, pa_mask[r0 : r1 + 1, c0 : c1 + 1])
+
+    # Burn OSM Sacred/Heritage Exclusion Zones as mask=2 (with 300 m protection buffer, never cleared by endpoint pockets)
+    osm_sacred, osm_settlements = fetch_osm_sacred_and_settlements(min_lat, min_lon, max_lat, max_lon)
+    if osm_sacred:
+        print(f"[{region_id}] Burning {len(osm_sacred)} OSM sacred/heritage zero-tolerance exclusion precincts (mask=2).")
+        for sac in osm_sacred:
+            sx, sy = wgs84_to_utm(sac["lat"], sac["lon"], zone)
+            burn_circle(pa_mask, min_x, max_y, res, sx, sy, sac["rad"] + 300.0, 2, overwrite_higher=True)
 
     save_geotiff_float32(out_dir / f"{region_id}_slope_utm{zone}.tif", slope, min_x, max_y, res, epsg)
     save_geotiff_uint8(out_dir / f"{region_id}_protected_area_mask_utm{zone}.tif", pa_mask, min_x, max_y, res, epsg)
@@ -795,10 +875,12 @@ def ingest_corridor(
     demo_features = []
 
     settlements_data = [
-        {"name": f"{region_id.title()} Mandi Town", "lat": hub_1_lat, "lon": hub_1_lon, "rad": 950.0, "class": "URBAN", "pop": 42000},
-        {"name": f"{region_id.title()} Rural Habitation A", "lat": round(min_lat + 0.38 * (max_lat - min_lat), 5), "lon": round(min_lon + 0.52 * (max_lon - min_lon), 5), "rad": 550.0, "class": "RURAL", "pop": 6800},
-        {"name": f"{region_id.title()} Agro Cluster B", "lat": round(min_lat + 0.62 * (max_lat - min_lat), 5), "lon": round(min_lon + 0.64 * (max_lon - min_lon), 5), "rad": 600.0, "class": "RURAL", "pop": 8400},
+        {"name": f"{region_id.title()} Mandi Town", "lat": hub_1_lat, "lon": hub_1_lon, "rad": 950.0, "class": "URBAN", "pop": 42000, "sacred": False},
+        {"name": f"{region_id.title()} Rural Habitation A", "lat": round(min_lat + 0.38 * (max_lat - min_lat), 5), "lon": round(min_lon + 0.52 * (max_lon - min_lon), 5), "rad": 550.0, "class": "RURAL", "pop": 6800, "sacred": False},
+        {"name": f"{region_id.title()} Agro Cluster B", "lat": round(min_lat + 0.62 * (max_lat - min_lat), 5), "lon": round(min_lon + 0.64 * (max_lon - min_lon), 5), "rad": 600.0, "class": "RURAL", "pop": 8400, "sacred": False},
     ]
+    if osm_sacred or osm_settlements:
+        settlements_data = (osm_sacred or []) + (osm_settlements or []) + settlements_data[:1]
 
     bld_seq = 1
     for idx, st in enumerate(settlements_data, start=1):
@@ -809,12 +891,13 @@ def ingest_corridor(
         rad_m = st["rad"]
         s_class = st["class"]
         pop = st["pop"]
+        is_sacred = bool(st.get("sacred", False))
 
         burn_circle(settlement_raster, min_x, max_y, res, sx, sy, rad_m * 1.8, 1, overwrite_higher=False)
         burn_circle(settlement_raster, min_x, max_y, res, sx, sy, rad_m * 1.25, 2, overwrite_higher=False)
-        burn_circle(settlement_raster, min_x, max_y, res, sx, sy, rad_m, 4 if s_class == "URBAN" else 3, overwrite_higher=True)
-        burn_circle(building_raster, min_x, max_y, res, sx, sy, rad_m, 4 if s_class == "URBAN" else 3, overwrite_higher=True)
-        burn_circle(demo_raster, min_x, max_y, res, sx, sy, rad_m * 1.3, 5 if s_class == "URBAN" else 4, overwrite_higher=True)
+        burn_circle(settlement_raster, min_x, max_y, res, sx, sy, rad_m, 4 if (s_class == "URBAN" or is_sacred) else 3, overwrite_higher=True)
+        burn_circle(building_raster, min_x, max_y, res, sx, sy, rad_m, 5 if is_sacred else (4 if s_class == "URBAN" else 3), overwrite_higher=True)
+        burn_circle(demo_raster, min_x, max_y, res, sx, sy, rad_m * 1.3, 5 if (s_class == "URBAN" or is_sacred) else 4, overwrite_higher=True)
 
         ring = make_ellipse_ring(slat, slon, rad_m, rad_m * 0.85, angle_deg=25.0)
         area_ha = round((math.pi * rad_m * (rad_m * 0.85)) / 10000.0, 2)
@@ -828,13 +911,14 @@ def ingest_corridor(
                     "catalogRef": sid,
                     "name": st["name"],
                     "settlementClassification": s_class,
-                    "settlementSubtype": "URBAN_MUNICIPAL_TOWN" if s_class == "URBAN" else "RURAL_VILLAGE_HABITATION",
+                    "settlementSubtype": "SACRED_HERITAGE_TEMPLE_COMPLEX" if is_sacred else ("URBAN_MUNICIPAL_TOWN" if s_class == "URBAN" else "RURAL_VILLAGE_HABITATION"),
                     "district": f"{region_id.title()} Central",
                     "polygonAreaHectares": area_ha,
                     "coreRadiusMeters": rad_m,
-                    "builtUpDensityBuildingsPerHa": 12.0 if s_class == "URBAN" else 6.5,
-                    "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP" if s_class == "URBAN" else "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+                    "builtUpDensityBuildingsPerHa": 18.0 if is_sacred else (12.0 if s_class == "URBAN" else 6.5),
+                    "builtUpDensityClass": "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT" if is_sacred else ("HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP" if s_class == "URBAN" else "MEDIUM_DENSITY_VILLAGE_CLUSTER"),
                     "mappedBuildingFootprintCount": b_count,
+                    "sacredExclusion": is_sacred,
                     "centroidLat": slat,
                     "centroidLon": slon,
                 },

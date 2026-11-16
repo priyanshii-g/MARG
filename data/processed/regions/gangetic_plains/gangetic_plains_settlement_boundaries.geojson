@@ -4,6 +4,774 @@
     {
       "type": "Feature",
       "properties": {
+        "settlementId": "STL-GP-SAC-001",
+        "catalogRef": "STL-GP-SAC-001",
+        "name": "Shri Ram Janmabhoomi Mandir Complex & Ramkot Sacred Precinct",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "SACRED_HERITAGE_TEMPLE_COMPLEX",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 588.0,
+        "coreRadiusMeters": 1200.0,
+        "builtUpDensityBuildingsPerHa": 24.0,
+        "builtUpDensityClass": "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": true,
+        "centroidLat": 26.7956,
+        "centroidLon": 82.1944
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.182,
+              26.786
+            ],
+            [
+              82.208,
+              26.786
+            ],
+            [
+              82.208,
+              26.8065
+            ],
+            [
+              82.182,
+              26.8065
+            ],
+            [
+              82.182,
+              26.786
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-SAC-002",
+        "catalogRef": "STL-GP-SAC-002",
+        "name": "Guptar Ghat Saryu Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "SACRED_HERITAGE_GHAT_PRECINCT",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 182.0,
+        "coreRadiusMeters": 650.0,
+        "builtUpDensityBuildingsPerHa": 16.0,
+        "builtUpDensityClass": "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": true,
+        "centroidLat": 26.7975,
+        "centroidLon": 82.1355
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.128,
+              26.792
+            ],
+            [
+              82.143,
+              26.792
+            ],
+            [
+              82.143,
+              26.803
+            ],
+            [
+              82.128,
+              26.803
+            ],
+            [
+              82.128,
+              26.792
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-SAC-003",
+        "catalogRef": "STL-GP-SAC-003",
+        "name": "Surya Kund Darshan Nagar Heritage Precinct",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "SACRED_HERITAGE_PRECINCT",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 98.0,
+        "coreRadiusMeters": 450.0,
+        "builtUpDensityBuildingsPerHa": 14.0,
+        "builtUpDensityClass": "INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": true,
+        "centroidLat": 26.7565,
+        "centroidLon": 82.207
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.202,
+              26.752
+            ],
+            [
+              82.212,
+              26.752
+            ],
+            [
+              82.212,
+              26.761
+            ],
+            [
+              82.202,
+              26.761
+            ],
+            [
+              82.202,
+              26.752
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-URB-001",
+        "catalogRef": "STL-GP-URB-001",
+        "name": "Ayodhya Dham Municipal Urban Core",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_MUNICIPAL_CORE",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 540.0,
+        "coreRadiusMeters": 1400.0,
+        "builtUpDensityBuildingsPerHa": 22.0,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.788,
+        "centroidLon": 82.192
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.211,
+              26.788
+            ],
+            [
+              82.210353,
+              26.791365
+            ],
+            [
+              82.208454,
+              26.7945
+            ],
+            [
+              82.205435,
+              26.797192
+            ],
+            [
+              82.2015,
+              26.799258
+            ],
+            [
+              82.196918,
+              26.800557
+            ],
+            [
+              82.192,
+              26.801
+            ],
+            [
+              82.187082,
+              26.800557
+            ],
+            [
+              82.1825,
+              26.799258
+            ],
+            [
+              82.178565,
+              26.797192
+            ],
+            [
+              82.175546,
+              26.7945
+            ],
+            [
+              82.173647,
+              26.791365
+            ],
+            [
+              82.173,
+              26.788
+            ],
+            [
+              82.173647,
+              26.784635
+            ],
+            [
+              82.175546,
+              26.7815
+            ],
+            [
+              82.178565,
+              26.778808
+            ],
+            [
+              82.1825,
+              26.776742
+            ],
+            [
+              82.187082,
+              26.775443
+            ],
+            [
+              82.192,
+              26.775
+            ],
+            [
+              82.196918,
+              26.775443
+            ],
+            [
+              82.2015,
+              26.776742
+            ],
+            [
+              82.205435,
+              26.778808
+            ],
+            [
+              82.208454,
+              26.7815
+            ],
+            [
+              82.210353,
+              26.784635
+            ],
+            [
+              82.211,
+              26.788
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-URB-002",
+        "catalogRef": "STL-GP-URB-002",
+        "name": "Faizabad Twin-City Urban Core",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_MUNICIPAL_CORPORATION",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 620.0,
+        "coreRadiusMeters": 1500.0,
+        "builtUpDensityBuildingsPerHa": 25.0,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.779,
+        "centroidLon": 82.148
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.17,
+              26.779
+            ],
+            [
+              82.16925,
+              26.781847
+            ],
+            [
+              82.167053,
+              26.7845
+            ],
+            [
+              82.163556,
+              26.786778
+            ],
+            [
+              82.159,
+              26.788526
+            ],
+            [
+              82.153694,
+              26.789625
+            ],
+            [
+              82.148,
+              26.79
+            ],
+            [
+              82.142306,
+              26.789625
+            ],
+            [
+              82.137,
+              26.788526
+            ],
+            [
+              82.132444,
+              26.786778
+            ],
+            [
+              82.128947,
+              26.7845
+            ],
+            [
+              82.12675,
+              26.781847
+            ],
+            [
+              82.126,
+              26.779
+            ],
+            [
+              82.12675,
+              26.776153
+            ],
+            [
+              82.128947,
+              26.7735
+            ],
+            [
+              82.132444,
+              26.771222
+            ],
+            [
+              82.137,
+              26.769474
+            ],
+            [
+              82.142306,
+              26.768375
+            ],
+            [
+              82.148,
+              26.768
+            ],
+            [
+              82.153694,
+              26.768375
+            ],
+            [
+              82.159,
+              26.769474
+            ],
+            [
+              82.163556,
+              26.771222
+            ],
+            [
+              82.167053,
+              26.7735
+            ],
+            [
+              82.16925,
+              26.776153
+            ],
+            [
+              82.17,
+              26.779
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-URB-003",
+        "catalogRef": "STL-GP-URB-003",
+        "name": "Barabanki Nawabganj Urban Core",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_DISTRICT_HEADQUARTERS",
+        "district": "Barabanki",
+        "polygonAreaHectares": 460.0,
+        "coreRadiusMeters": 1300.0,
+        "builtUpDensityBuildingsPerHa": 21.0,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.931,
+        "centroidLon": 81.193
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.211,
+              26.931
+            ],
+            [
+              81.210387,
+              26.934106
+            ],
+            [
+              81.208588,
+              26.937
+            ],
+            [
+              81.205728,
+              26.939485
+            ],
+            [
+              81.202,
+              26.941392
+            ],
+            [
+              81.197659,
+              26.942591
+            ],
+            [
+              81.193,
+              26.943
+            ],
+            [
+              81.188341,
+              26.942591
+            ],
+            [
+              81.184,
+              26.941392
+            ],
+            [
+              81.180272,
+              26.939485
+            ],
+            [
+              81.177412,
+              26.937
+            ],
+            [
+              81.175613,
+              26.934106
+            ],
+            [
+              81.175,
+              26.931
+            ],
+            [
+              81.175613,
+              26.927894
+            ],
+            [
+              81.177412,
+              26.925
+            ],
+            [
+              81.180272,
+              26.922515
+            ],
+            [
+              81.184,
+              26.920608
+            ],
+            [
+              81.188341,
+              26.919409
+            ],
+            [
+              81.193,
+              26.919
+            ],
+            [
+              81.197659,
+              26.919409
+            ],
+            [
+              81.202,
+              26.920608
+            ],
+            [
+              81.205728,
+              26.922515
+            ],
+            [
+              81.208588,
+              26.925
+            ],
+            [
+              81.210387,
+              26.927894
+            ],
+            [
+              81.211,
+              26.931
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-URB-004",
+        "catalogRef": "STL-GP-URB-004",
+        "name": "Rudauli Municipal Town Core",
+        "settlementClassification": "URBAN",
+        "settlementSubtype": "URBAN_MUNICIPAL_TOWN",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 240.0,
+        "coreRadiusMeters": 950.0,
+        "builtUpDensityBuildingsPerHa": 17.5,
+        "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.753,
+        "centroidLon": 81.75
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.763,
+              26.753
+            ],
+            [
+              81.762557,
+              26.755588
+            ],
+            [
+              81.761258,
+              26.758
+            ],
+            [
+              81.759192,
+              26.760071
+            ],
+            [
+              81.7565,
+              26.76166
+            ],
+            [
+              81.753365,
+              26.762659
+            ],
+            [
+              81.75,
+              26.763
+            ],
+            [
+              81.746635,
+              26.762659
+            ],
+            [
+              81.7435,
+              26.76166
+            ],
+            [
+              81.740808,
+              26.760071
+            ],
+            [
+              81.738742,
+              26.758
+            ],
+            [
+              81.737443,
+              26.755588
+            ],
+            [
+              81.737,
+              26.753
+            ],
+            [
+              81.737443,
+              26.750412
+            ],
+            [
+              81.738742,
+              26.748
+            ],
+            [
+              81.740808,
+              26.745929
+            ],
+            [
+              81.7435,
+              26.74434
+            ],
+            [
+              81.746635,
+              26.743341
+            ],
+            [
+              81.75,
+              26.743
+            ],
+            [
+              81.753365,
+              26.743341
+            ],
+            [
+              81.7565,
+              26.74434
+            ],
+            [
+              81.759192,
+              26.745929
+            ],
+            [
+              81.761258,
+              26.748
+            ],
+            [
+              81.762557,
+              26.750412
+            ],
+            [
+              81.763,
+              26.753
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-URB-005",
+        "catalogRef": "STL-GP-URB-005",
+        "name": "Ramsanehighat Tehsil Kasba Cluster",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "SEMI_URBAN_TEHSIL_CENTER",
+        "district": "Barabanki",
+        "polygonAreaHectares": 140.0,
+        "coreRadiusMeters": 700.0,
+        "builtUpDensityBuildingsPerHa": 13.5,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.794,
+        "centroidLon": 81.537
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.547,
+              26.794
+            ],
+            [
+              81.546659,
+              26.795812
+            ],
+            [
+              81.54566,
+              26.7975
+            ],
+            [
+              81.544071,
+              26.79895
+            ],
+            [
+              81.542,
+              26.800062
+            ],
+            [
+              81.539588,
+              26.800761
+            ],
+            [
+              81.537,
+              26.801
+            ],
+            [
+              81.534412,
+              26.800761
+            ],
+            [
+              81.532,
+              26.800062
+            ],
+            [
+              81.529929,
+              26.79895
+            ],
+            [
+              81.52834,
+              26.7975
+            ],
+            [
+              81.527341,
+              26.795812
+            ],
+            [
+              81.527,
+              26.794
+            ],
+            [
+              81.527341,
+              26.792188
+            ],
+            [
+              81.52834,
+              26.7905
+            ],
+            [
+              81.529929,
+              26.78905
+            ],
+            [
+              81.532,
+              26.787938
+            ],
+            [
+              81.534412,
+              26.787239
+            ],
+            [
+              81.537,
+              26.787
+            ],
+            [
+              81.539588,
+              26.787239
+            ],
+            [
+              81.542,
+              26.787938
+            ],
+            [
+              81.544071,
+              26.78905
+            ],
+            [
+              81.54566,
+              26.7905
+            ],
+            [
+              81.546659,
+              26.792188
+            ],
+            [
+              81.547,
+              26.794
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "settlementId": "STL-GANGETIC_PLAINS-001",
         "catalogRef": "STL-GANGETIC_PLAINS-001",
         "name": "Zaidpur Kasba Habitation",
@@ -15,6 +783,7 @@
         "builtUpDensityBuildingsPerHa": 14.5,
         "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
         "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
         "centroidLat": 26.862,
         "centroidLon": 81.46
       },
@@ -23,72 +792,104 @@
         "coordinates": [
           [
             [
-              81.465932,
-              26.86425
+              81.4663,
+              26.862
             ],
             [
-              81.464691,
-              26.865742
+              81.466085,
+              26.863346
             ],
             [
-              81.462735,
-              26.866665
+              81.465456,
+              26.8646
             ],
             [
-              81.460363,
-              26.866877
+              81.464455,
+              26.865677
             ],
             [
-              81.457935,
-              26.866347
+              81.46315,
+              26.866503
             ],
             [
-              81.455822,
-              26.865155
+              81.461631,
+              26.867023
             ],
             [
-              81.454345,
-              26.863483
+              81.46,
+              26.8672
             ],
             [
-              81.453729,
-              26.861585
+              81.458369,
+              26.867023
             ],
             [
-              81.454068,
-              26.85975
+              81.45685,
+              26.866503
             ],
             [
-              81.455309,
-              26.858258
+              81.455545,
+              26.865677
             ],
             [
-              81.457265,
-              26.857335
+              81.454544,
+              26.8646
             ],
             [
-              81.459637,
-              26.857123
+              81.453915,
+              26.863346
             ],
             [
-              81.462065,
-              26.857653
+              81.4537,
+              26.862
             ],
             [
-              81.464178,
-              26.858845
+              81.453915,
+              26.860654
             ],
             [
-              81.465655,
-              26.860517
+              81.454544,
+              26.8594
             ],
             [
-              81.466271,
-              26.862415
+              81.455545,
+              26.858323
             ],
             [
-              81.465932,
-              26.86425
+              81.45685,
+              26.857497
+            ],
+            [
+              81.458369,
+              26.856977
+            ],
+            [
+              81.46,
+              26.8568
+            ],
+            [
+              81.461631,
+              26.856977
+            ],
+            [
+              81.46315,
+              26.857497
+            ],
+            [
+              81.464455,
+              26.858323
+            ],
+            [
+              81.465456,
+              26.8594
+            ],
+            [
+              81.466085,
+              26.860654
+            ],
+            [
+              81.4663,
+              26.862
             ]
           ]
         ]
@@ -101,87 +902,120 @@
         "catalogRef": "STL-GANGETIC_PLAINS-002",
         "name": "Dariyabad Rural Cluster",
         "settlementClassification": "RURAL",
-        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "settlementSubtype": "RURAL_ABADI_CLUSTER",
         "district": "Barabanki",
-        "polygonAreaHectares": 80.79,
-        "coreRadiusMeters": 560.0,
-        "builtUpDensityBuildingsPerHa": 7.2,
+        "polygonAreaHectares": 82.0,
+        "coreRadiusMeters": 510.0,
+        "builtUpDensityBuildingsPerHa": 10.5,
         "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
         "mappedBuildingFootprintCount": 10,
-        "centroidLat": 26.835,
-        "centroidLon": 81.685
+        "sacredExclusion": false,
+        "centroidLat": 26.885,
+        "centroidLon": 81.555
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.688916,
-              26.838625
+              81.5605,
+              26.885
             ],
             [
-              81.687346,
-              26.839447
+              81.560313,
+              26.886165
             ],
             [
-              81.685418,
-              26.839593
+              81.559763,
+              26.88725
             ],
             [
-              81.683426,
-              26.839039
+              81.558889,
+              26.888182
             ],
             [
-              81.681675,
-              26.83787
+              81.55775,
+              26.888897
             ],
             [
-              81.680429,
-              26.836265
+              81.556424,
+              26.889347
             ],
             [
-              81.679879,
-              26.834467
+              81.555,
+              26.8895
             ],
             [
-              81.680109,
-              26.83275
+              81.553576,
+              26.889347
             ],
             [
-              81.681084,
-              26.831375
+              81.55225,
+              26.888897
             ],
             [
-              81.682654,
-              26.830553
+              81.551111,
+              26.888182
             ],
             [
-              81.684582,
-              26.830407
+              81.550237,
+              26.88725
             ],
             [
-              81.686574,
-              26.830961
+              81.549687,
+              26.886165
             ],
             [
-              81.688325,
-              26.83213
+              81.5495,
+              26.885
             ],
             [
-              81.689571,
-              26.833735
+              81.549687,
+              26.883835
             ],
             [
-              81.690121,
-              26.835533
+              81.550237,
+              26.88275
             ],
             [
-              81.689891,
-              26.83725
+              81.551111,
+              26.881818
             ],
             [
-              81.688916,
-              26.838625
+              81.55225,
+              26.881103
+            ],
+            [
+              81.553576,
+              26.880653
+            ],
+            [
+              81.555,
+              26.8805
+            ],
+            [
+              81.556424,
+              26.880653
+            ],
+            [
+              81.55775,
+              26.881103
+            ],
+            [
+              81.558889,
+              26.881818
+            ],
+            [
+              81.559763,
+              26.88275
+            ],
+            [
+              81.560313,
+              26.883835
+            ],
+            [
+              81.5605,
+              26.885
             ]
           ]
         ]
@@ -194,87 +1028,372 @@
         "catalogRef": "STL-GANGETIC_PLAINS-003",
         "name": "Sohawal Dense Abadi Belt",
         "settlementClassification": "RURAL",
-        "settlementSubtype": "RURAL_VILLAGE_HABITATION",
+        "settlementSubtype": "RURAL_ABADI_CLUSTER",
         "district": "Ayodhya",
-        "polygonAreaHectares": 89.67,
-        "coreRadiusMeters": 590.0,
-        "builtUpDensityBuildingsPerHa": 7.2,
+        "polygonAreaHectares": 88.0,
+        "coreRadiusMeters": 540.0,
+        "builtUpDensityBuildingsPerHa": 11.2,
         "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
         "mappedBuildingFootprintCount": 10,
-        "centroidLat": 26.79,
-        "centroidLon": 81.965
+        "sacredExclusion": false,
+        "centroidLat": 26.769,
+        "centroidLon": 81.982
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.967128,
-              26.794956
+              81.988,
+              26.769
             ],
             [
-              81.965226,
-              26.795176
+              81.987796,
+              26.770165
             ],
             [
-              81.963291,
-              26.794608
+              81.987196,
+              26.77125
             ],
             [
-              81.961615,
-              26.793338
+              81.986243,
+              26.772182
             ],
             [
-              81.960455,
-              26.79156
+              81.985,
+              26.772897
             ],
             [
-              81.959986,
-              26.789545
+              81.983553,
+              26.773347
             ],
             [
-              81.960281,
-              26.787598
+              81.982,
+              26.7735
             ],
             [
-              81.961295,
-              26.786018
+              81.980447,
+              26.773347
             ],
             [
-              81.962872,
-              26.785044
+              81.979,
+              26.772897
             ],
             [
-              81.964774,
-              26.784824
+              81.977757,
+              26.772182
             ],
             [
-              81.966709,
-              26.785392
+              81.976804,
+              26.77125
             ],
             [
-              81.968385,
-              26.786662
+              81.976204,
+              26.770165
             ],
             [
-              81.969545,
-              26.78844
+              81.976,
+              26.769
             ],
             [
-              81.970014,
-              26.790455
+              81.976204,
+              26.767835
             ],
             [
-              81.969719,
-              26.792402
+              81.976804,
+              26.76675
             ],
             [
-              81.968705,
-              26.793982
+              81.977757,
+              26.765818
             ],
             [
-              81.967128,
-              26.794956
+              81.979,
+              26.765103
+            ],
+            [
+              81.980447,
+              26.764653
+            ],
+            [
+              81.982,
+              26.7645
+            ],
+            [
+              81.983553,
+              26.764653
+            ],
+            [
+              81.985,
+              26.765103
+            ],
+            [
+              81.986243,
+              26.765818
+            ],
+            [
+              81.987196,
+              26.76675
+            ],
+            [
+              81.987796,
+              26.767835
+            ],
+            [
+              81.988,
+              26.769
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-RUR-004",
+        "catalogRef": "STL-GP-RUR-004",
+        "name": "Safdarganj Highway Settlement",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_ABADI_CLUSTER",
+        "district": "Barabanki",
+        "polygonAreaHectares": 64.0,
+        "coreRadiusMeters": 460.0,
+        "builtUpDensityBuildingsPerHa": 9.8,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.906,
+        "centroidLon": 81.365
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.37,
+              26.906
+            ],
+            [
+              81.36983,
+              26.907035
+            ],
+            [
+              81.36933,
+              26.908
+            ],
+            [
+              81.368536,
+              26.908828
+            ],
+            [
+              81.3675,
+              26.909464
+            ],
+            [
+              81.366294,
+              26.909864
+            ],
+            [
+              81.365,
+              26.91
+            ],
+            [
+              81.363706,
+              26.909864
+            ],
+            [
+              81.3625,
+              26.909464
+            ],
+            [
+              81.361464,
+              26.908828
+            ],
+            [
+              81.36067,
+              26.908
+            ],
+            [
+              81.36017,
+              26.907035
+            ],
+            [
+              81.36,
+              26.906
+            ],
+            [
+              81.36017,
+              26.904965
+            ],
+            [
+              81.36067,
+              26.904
+            ],
+            [
+              81.361464,
+              26.903172
+            ],
+            [
+              81.3625,
+              26.902536
+            ],
+            [
+              81.363706,
+              26.902136
+            ],
+            [
+              81.365,
+              26.902
+            ],
+            [
+              81.366294,
+              26.902136
+            ],
+            [
+              81.3675,
+              26.902536
+            ],
+            [
+              81.368536,
+              26.903172
+            ],
+            [
+              81.36933,
+              26.904
+            ],
+            [
+              81.36983,
+              26.904965
+            ],
+            [
+              81.37,
+              26.906
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "settlementId": "STL-GP-RUR-005",
+        "catalogRef": "STL-GP-RUR-005",
+        "name": "Bikapur Block Town",
+        "settlementClassification": "RURAL",
+        "settlementSubtype": "RURAL_MARKET_SETTLEMENT",
+        "district": "Ayodhya",
+        "polygonAreaHectares": 118.0,
+        "coreRadiusMeters": 620.0,
+        "builtUpDensityBuildingsPerHa": 12.0,
+        "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
+        "mappedBuildingFootprintCount": 10,
+        "sacredExclusion": false,
+        "centroidLat": 26.605,
+        "centroidLon": 82.138
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.145,
+              26.605
+            ],
+            [
+              82.144761,
+              26.606424
+            ],
+            [
+              82.144062,
+              26.60775
+            ],
+            [
+              82.14295,
+              26.608889
+            ],
+            [
+              82.1415,
+              26.609763
+            ],
+            [
+              82.139812,
+              26.610313
+            ],
+            [
+              82.138,
+              26.6105
+            ],
+            [
+              82.136188,
+              26.610313
+            ],
+            [
+              82.1345,
+              26.609763
+            ],
+            [
+              82.13305,
+              26.608889
+            ],
+            [
+              82.131938,
+              26.60775
+            ],
+            [
+              82.131239,
+              26.606424
+            ],
+            [
+              82.131,
+              26.605
+            ],
+            [
+              82.131239,
+              26.603576
+            ],
+            [
+              82.131938,
+              26.60225
+            ],
+            [
+              82.13305,
+              26.601111
+            ],
+            [
+              82.1345,
+              26.600237
+            ],
+            [
+              82.136188,
+              26.599687
+            ],
+            [
+              82.138,
+              26.5995
+            ],
+            [
+              82.139812,
+              26.599687
+            ],
+            [
+              82.1415,
+              26.600237
+            ],
+            [
+              82.14295,
+              26.601111
+            ],
+            [
+              82.144062,
+              26.60225
+            ],
+            [
+              82.144761,
+              26.603576
+            ],
+            [
+              82.145,
+              26.605
             ]
           ]
         ]

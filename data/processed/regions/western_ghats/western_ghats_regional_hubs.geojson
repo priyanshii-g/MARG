@@ -48,6 +48,78 @@
           17.952
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-WG-SATARA",
+        "name": "Satara MIDC & Commercial Hub",
+        "district": "Satara",
+        "centerLat": 17.685,
+        "centerLon": 74.005,
+        "tieInLat": 17.69389,
+        "tieInLon": 74.02493,
+        "tieInRoadRef": "NH-48",
+        "tieInName": "NH-48 Satara Northern Interchange",
+        "urbanPopulation": 140000,
+        "catchmentPopulation": 380000,
+        "industrialOutputFactor": 1.40
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.005,
+          17.685
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-WG-BHOR",
+        "name": "Bhor Agro-Tourism Hub",
+        "district": "Pune",
+        "centerLat": 18.150,
+        "centerLon": 73.845,
+        "tieInLat": 18.162,
+        "tieInLon": 73.886,
+        "tieInRoadRef": "SH-63",
+        "tieInName": "SH-63 Bhor-Nira Road Junction",
+        "urbanPopulation": 36000,
+        "catchmentPopulation": 95000,
+        "industrialOutputFactor": 1.20
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          73.845,
+          18.150
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-WG-KHANDALA",
+        "name": "Khandala Pargaon Node",
+        "district": "Satara",
+        "centerLat": 18.050,
+        "centerLon": 74.020,
+        "tieInLat": 18.058,
+        "tieInLon": 73.904,
+        "tieInRoadRef": "SH-58",
+        "tieInName": "SH-58 Khandala Link",
+        "urbanPopulation": 32000,
+        "catchmentPopulation": 85000,
+        "industrialOutputFactor": 1.25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.020,
+          18.050
+        ]
+      }
     }
   ]
 }

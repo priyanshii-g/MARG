@@ -1,0 +1,1493 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0001",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Commercial #1",
+        "buildingType": "COMMERCIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.42,
+        "centroidLat": 22.22874,
+        "centroidLon": 70.814608
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.814684,
+              22.228753
+            ],
+            [
+              70.814655,
+              22.228786
+            ],
+            [
+              70.814598,
+              22.228793
+            ],
+            [
+              70.814547,
+              22.228769
+            ],
+            [
+              70.814532,
+              22.228727
+            ],
+            [
+              70.814561,
+              22.228694
+            ],
+            [
+              70.814618,
+              22.228687
+            ],
+            [
+              70.814669,
+              22.228711
+            ],
+            [
+              70.814684,
+              22.228753
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0002",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.231158,
+        "centroidLon": 70.813528
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.813604,
+              22.231171
+            ],
+            [
+              70.813575,
+              22.231204
+            ],
+            [
+              70.813518,
+              22.231211
+            ],
+            [
+              70.813467,
+              22.231187
+            ],
+            [
+              70.813452,
+              22.231145
+            ],
+            [
+              70.813481,
+              22.231112
+            ],
+            [
+              70.813538,
+              22.231105
+            ],
+            [
+              70.813589,
+              22.231129
+            ],
+            [
+              70.813604,
+              22.231171
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0003",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.232159,
+        "centroidLon": 70.81092
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.810996,
+              22.232172
+            ],
+            [
+              70.810967,
+              22.232205
+            ],
+            [
+              70.81091,
+              22.232212
+            ],
+            [
+              70.810859,
+              22.232188
+            ],
+            [
+              70.810844,
+              22.232146
+            ],
+            [
+              70.810873,
+              22.232113
+            ],
+            [
+              70.81093,
+              22.232106
+            ],
+            [
+              70.810981,
+              22.23213
+            ],
+            [
+              70.810996,
+              22.232172
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0004",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.231158,
+        "centroidLon": 70.808312
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.808388,
+              22.231171
+            ],
+            [
+              70.808359,
+              22.231204
+            ],
+            [
+              70.808302,
+              22.231211
+            ],
+            [
+              70.808251,
+              22.231187
+            ],
+            [
+              70.808236,
+              22.231145
+            ],
+            [
+              70.808265,
+              22.231112
+            ],
+            [
+              70.808322,
+              22.231105
+            ],
+            [
+              70.808373,
+              22.231129
+            ],
+            [
+              70.808388,
+              22.231171
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0005",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.22874,
+        "centroidLon": 70.807232
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.807308,
+              22.228753
+            ],
+            [
+              70.807279,
+              22.228786
+            ],
+            [
+              70.807222,
+              22.228793
+            ],
+            [
+              70.807171,
+              22.228769
+            ],
+            [
+              70.807156,
+              22.228727
+            ],
+            [
+              70.807185,
+              22.228694
+            ],
+            [
+              70.807242,
+              22.228687
+            ],
+            [
+              70.807293,
+              22.228711
+            ],
+            [
+              70.807308,
+              22.228753
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0006",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.226322,
+        "centroidLon": 70.808312
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.808388,
+              22.226335
+            ],
+            [
+              70.808359,
+              22.226368
+            ],
+            [
+              70.808302,
+              22.226375
+            ],
+            [
+              70.808251,
+              22.226351
+            ],
+            [
+              70.808236,
+              22.226309
+            ],
+            [
+              70.808265,
+              22.226276
+            ],
+            [
+              70.808322,
+              22.226269
+            ],
+            [
+              70.808373,
+              22.226293
+            ],
+            [
+              70.808388,
+              22.226335
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0007",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.225321,
+        "centroidLon": 70.81092
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.810996,
+              22.225334
+            ],
+            [
+              70.810967,
+              22.225367
+            ],
+            [
+              70.81091,
+              22.225374
+            ],
+            [
+              70.810859,
+              22.22535
+            ],
+            [
+              70.810844,
+              22.225308
+            ],
+            [
+              70.810873,
+              22.225275
+            ],
+            [
+              70.81093,
+              22.225268
+            ],
+            [
+              70.810981,
+              22.225292
+            ],
+            [
+              70.810996,
+              22.225334
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0008",
+        "name": "Corridor_2231_7318_2221_6965 Mandi Town Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-001",
+        "settlementName": "Corridor_2231_7318_2221_6965 Mandi Town",
+        "settlementClassification": "URBAN",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 2,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.226322,
+        "centroidLon": 70.813528
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              70.813604,
+              22.226335
+            ],
+            [
+              70.813575,
+              22.226368
+            ],
+            [
+              70.813518,
+              22.226375
+            ],
+            [
+              70.813467,
+              22.226351
+            ],
+            [
+              70.813452,
+              22.226309
+            ],
+            [
+              70.813481,
+              22.226276
+            ],
+            [
+              70.813538,
+              22.226269
+            ],
+            [
+              70.813589,
+              22.226293
+            ],
+            [
+              70.813604,
+              22.226335
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0009",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18694,
+        "centroidLon": 71.498354
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.49843,
+              22.186953
+            ],
+            [
+              71.498401,
+              22.186986
+            ],
+            [
+              71.498344,
+              22.186993
+            ],
+            [
+              71.498293,
+              22.186969
+            ],
+            [
+              71.498278,
+              22.186927
+            ],
+            [
+              71.498307,
+              22.186894
+            ],
+            [
+              71.498364,
+              22.186887
+            ],
+            [
+              71.498415,
+              22.186911
+            ],
+            [
+              71.49843,
+              22.186953
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0010",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18834,
+        "centroidLon": 71.497729
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.497805,
+              22.188353
+            ],
+            [
+              71.497776,
+              22.188386
+            ],
+            [
+              71.497719,
+              22.188393
+            ],
+            [
+              71.497668,
+              22.188369
+            ],
+            [
+              71.497653,
+              22.188327
+            ],
+            [
+              71.497682,
+              22.188294
+            ],
+            [
+              71.497739,
+              22.188287
+            ],
+            [
+              71.49779,
+              22.188311
+            ],
+            [
+              71.497805,
+              22.188353
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0011",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18892,
+        "centroidLon": 71.49622
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.496296,
+              22.188933
+            ],
+            [
+              71.496267,
+              22.188966
+            ],
+            [
+              71.49621,
+              22.188973
+            ],
+            [
+              71.496159,
+              22.188949
+            ],
+            [
+              71.496144,
+              22.188907
+            ],
+            [
+              71.496173,
+              22.188874
+            ],
+            [
+              71.49623,
+              22.188867
+            ],
+            [
+              71.496281,
+              22.188891
+            ],
+            [
+              71.496296,
+              22.188933
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0012",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18834,
+        "centroidLon": 71.494711
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.494787,
+              22.188353
+            ],
+            [
+              71.494758,
+              22.188386
+            ],
+            [
+              71.494701,
+              22.188393
+            ],
+            [
+              71.49465,
+              22.188369
+            ],
+            [
+              71.494635,
+              22.188327
+            ],
+            [
+              71.494664,
+              22.188294
+            ],
+            [
+              71.494721,
+              22.188287
+            ],
+            [
+              71.494772,
+              22.188311
+            ],
+            [
+              71.494787,
+              22.188353
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0013",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18694,
+        "centroidLon": 71.494086
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.494162,
+              22.186953
+            ],
+            [
+              71.494133,
+              22.186986
+            ],
+            [
+              71.494076,
+              22.186993
+            ],
+            [
+              71.494025,
+              22.186969
+            ],
+            [
+              71.49401,
+              22.186927
+            ],
+            [
+              71.494039,
+              22.186894
+            ],
+            [
+              71.494096,
+              22.186887
+            ],
+            [
+              71.494147,
+              22.186911
+            ],
+            [
+              71.494162,
+              22.186953
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0014",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18554,
+        "centroidLon": 71.494711
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.494787,
+              22.185553
+            ],
+            [
+              71.494758,
+              22.185586
+            ],
+            [
+              71.494701,
+              22.185593
+            ],
+            [
+              71.49465,
+              22.185569
+            ],
+            [
+              71.494635,
+              22.185527
+            ],
+            [
+              71.494664,
+              22.185494
+            ],
+            [
+              71.494721,
+              22.185487
+            ],
+            [
+              71.494772,
+              22.185511
+            ],
+            [
+              71.494787,
+              22.185553
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0015",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18496,
+        "centroidLon": 71.49622
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.496296,
+              22.184973
+            ],
+            [
+              71.496267,
+              22.185006
+            ],
+            [
+              71.49621,
+              22.185013
+            ],
+            [
+              71.496159,
+              22.184989
+            ],
+            [
+              71.496144,
+              22.184947
+            ],
+            [
+              71.496173,
+              22.184914
+            ],
+            [
+              71.49623,
+              22.184907
+            ],
+            [
+              71.496281,
+              22.184931
+            ],
+            [
+              71.496296,
+              22.184973
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0016",
+        "name": "Corridor_2231_7318_2221_6965 Rural Habitation A Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-002",
+        "settlementName": "Corridor_2231_7318_2221_6965 Rural Habitation A",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.18554,
+        "centroidLon": 71.497729
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.497805,
+              22.185553
+            ],
+            [
+              71.497776,
+              22.185586
+            ],
+            [
+              71.497719,
+              22.185593
+            ],
+            [
+              71.497668,
+              22.185569
+            ],
+            [
+              71.497653,
+              22.185527
+            ],
+            [
+              71.497682,
+              22.185494
+            ],
+            [
+              71.497739,
+              22.185487
+            ],
+            [
+              71.49779,
+              22.185511
+            ],
+            [
+              71.497805,
+              22.185553
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0017",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #1",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.33026,
+        "centroidLon": 71.982301
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.982378,
+              22.330273
+            ],
+            [
+              71.982348,
+              22.330306
+            ],
+            [
+              71.982291,
+              22.330313
+            ],
+            [
+              71.98224,
+              22.330289
+            ],
+            [
+              71.982224,
+              22.330247
+            ],
+            [
+              71.982254,
+              22.330214
+            ],
+            [
+              71.982311,
+              22.330207
+            ],
+            [
+              71.982362,
+              22.330231
+            ],
+            [
+              71.982378,
+              22.330273
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0018",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Institutional #2",
+        "buildingType": "INSTITUTIONAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.331787,
+        "centroidLon": 71.981618
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.981695,
+              22.3318
+            ],
+            [
+              71.981665,
+              22.331833
+            ],
+            [
+              71.981608,
+              22.33184
+            ],
+            [
+              71.981557,
+              22.331816
+            ],
+            [
+              71.981541,
+              22.331774
+            ],
+            [
+              71.981571,
+              22.331741
+            ],
+            [
+              71.981628,
+              22.331734
+            ],
+            [
+              71.981679,
+              22.331758
+            ],
+            [
+              71.981695,
+              22.3318
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0019",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #3",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.33242,
+        "centroidLon": 71.97997
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.980047,
+              22.332433
+            ],
+            [
+              71.980017,
+              22.332466
+            ],
+            [
+              71.97996,
+              22.332473
+            ],
+            [
+              71.979909,
+              22.332449
+            ],
+            [
+              71.979893,
+              22.332407
+            ],
+            [
+              71.979923,
+              22.332374
+            ],
+            [
+              71.97998,
+              22.332367
+            ],
+            [
+              71.980031,
+              22.332391
+            ],
+            [
+              71.980047,
+              22.332433
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0020",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #4",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.331787,
+        "centroidLon": 71.978322
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.978399,
+              22.3318
+            ],
+            [
+              71.978369,
+              22.331833
+            ],
+            [
+              71.978312,
+              22.33184
+            ],
+            [
+              71.978261,
+              22.331816
+            ],
+            [
+              71.978245,
+              22.331774
+            ],
+            [
+              71.978275,
+              22.331741
+            ],
+            [
+              71.978332,
+              22.331734
+            ],
+            [
+              71.978383,
+              22.331758
+            ],
+            [
+              71.978399,
+              22.3318
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0021",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #5",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.33026,
+        "centroidLon": 71.977639
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.977716,
+              22.330273
+            ],
+            [
+              71.977686,
+              22.330306
+            ],
+            [
+              71.977629,
+              22.330313
+            ],
+            [
+              71.977578,
+              22.330289
+            ],
+            [
+              71.977562,
+              22.330247
+            ],
+            [
+              71.977592,
+              22.330214
+            ],
+            [
+              71.977649,
+              22.330207
+            ],
+            [
+              71.9777,
+              22.330231
+            ],
+            [
+              71.977716,
+              22.330273
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0022",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #6",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.328733,
+        "centroidLon": 71.978322
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.978399,
+              22.328746
+            ],
+            [
+              71.978369,
+              22.328779
+            ],
+            [
+              71.978312,
+              22.328786
+            ],
+            [
+              71.978261,
+              22.328762
+            ],
+            [
+              71.978245,
+              22.32872
+            ],
+            [
+              71.978275,
+              22.328687
+            ],
+            [
+              71.978332,
+              22.32868
+            ],
+            [
+              71.978383,
+              22.328704
+            ],
+            [
+              71.978399,
+              22.328746
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0023",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #7",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.3281,
+        "centroidLon": 71.97997
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.980047,
+              22.328113
+            ],
+            [
+              71.980017,
+              22.328146
+            ],
+            [
+              71.97996,
+              22.328153
+            ],
+            [
+              71.979909,
+              22.328129
+            ],
+            [
+              71.979893,
+              22.328087
+            ],
+            [
+              71.979923,
+              22.328054
+            ],
+            [
+              71.97998,
+              22.328047
+            ],
+            [
+              71.980031,
+              22.328071
+            ],
+            [
+              71.980047,
+              22.328113
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "buildingId": "BLD-CORRIDOR_2231_7318_2221_6965-0024",
+        "name": "Corridor_2231_7318_2221_6965 Agro Cluster B Residential #8",
+        "buildingType": "RESIDENTIAL",
+        "settlementId": "STL-CORRIDOR_2231_7318_2221_6965-003",
+        "settlementName": "Corridor_2231_7318_2221_6965 Agro Cluster B",
+        "settlementClassification": "RURAL",
+        "district": "Corridor_2231_7318_2221_6965 Central",
+        "footprintAreaSqMeters": 120.0,
+        "floors": 1,
+        "structureMaterial": "RCC_PUCCA",
+        "equivalentRadiusMeters": 7.0,
+        "demolitionConflictWeightKmEq": 0.28,
+        "centroidLat": 22.328733,
+        "centroidLon": 71.981618
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.981695,
+              22.328746
+            ],
+            [
+              71.981665,
+              22.328779
+            ],
+            [
+              71.981608,
+              22.328786
+            ],
+            [
+              71.981557,
+              22.328762
+            ],
+            [
+              71.981541,
+              22.32872
+            ],
+            [
+              71.981571,
+              22.328687
+            ],
+            [
+              71.981628,
+              22.32868
+            ],
+            [
+              71.981679,
+              22.328704
+            ],
+            [
+              71.981695,
+              22.328746
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

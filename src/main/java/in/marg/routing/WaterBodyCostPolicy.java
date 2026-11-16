@@ -59,8 +59,8 @@ public class WaterBodyCostPolicy {
                 nodeDefaults,
                 bridgeDefaults,
                 1.40,
-                2.40,
-                180.0,
+                3.80,
+                500.0,
                 false,
                 false);
     }

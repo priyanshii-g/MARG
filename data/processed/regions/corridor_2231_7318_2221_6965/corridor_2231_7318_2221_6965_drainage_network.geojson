@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DRN-CORRIDOR_2231_7318_2221_6965-001",
+        "name": "Corridor_2231_7318_2221_6965 Seasonal Nullah #1",
+        "sublayerType": "SEASONAL_STREAM",
+        "strahlerOrder": 3,
+        "watershedId": "WS-CORRIDOR_2231_7318_2221_6965-01",
+        "designWidthMeters": 25.0,
+        "peakDischargeM3PerSec": 42.0,
+        "obstructionSensitivity": "MODERATE_CROSS_DRAINAGE",
+        "recommendedStructureType": "BOX_CULVERT_IRC_SP_13"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            69.55,
+            22.46762
+          ],
+          [
+            71.01248,
+            22.37804
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "DRN-CORRIDOR_2231_7318_2221_6965-002",
+        "name": "Corridor_2231_7318_2221_6965 Tributary Channel #2",
+        "sublayerType": "SEASONAL_STREAM",
+        "strahlerOrder": 2,
+        "watershedId": "WS-CORRIDOR_2231_7318_2221_6965-02",
+        "designWidthMeters": 18.0,
+        "peakDischargeM3PerSec": 28.0,
+        "obstructionSensitivity": "MODERATE_CROSS_DRAINAGE",
+        "recommendedStructureType": "PIPE_CULVERT_IRC_SP_13"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            71.61716,
+            22.06
+          ],
+          [
+            72.62496,
+            22.19888
+          ]
+        ]
+      }
+    }
+  ]
+}

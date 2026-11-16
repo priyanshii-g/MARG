@@ -9942,6 +9942,92 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GP-NH927",
+        "ref": "NH-927 / SH-30",
+        "name": "Barabanki-Ramnagar-Jarwal-Bahraich National Highway (4-Lane Feeder Corridor)",
+        "category": "NATIONAL_HIGHWAY",
+        "hierarchyTier": 1
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.195,
+            26.935
+          ],
+          [
+            81.218,
+            26.955
+          ],
+          [
+            81.245,
+            26.978
+          ],
+          [
+            81.285,
+            27.005
+          ],
+          [
+            81.332,
+            27.042
+          ],
+          [
+            81.375,
+            27.068
+          ],
+          [
+            81.403,
+            27.082
+          ],
+          [
+            81.415,
+            27.095
+          ],
+          [
+            81.458,
+            27.122
+          ],
+          [
+            81.53,
+            27.15
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "GP-MDR108W",
+        "ref": "MDR-108W",
+        "name": "Ramnagar-Sirauli Gauspur Major District Road",
+        "category": "MAJOR_DISTRICT_ROAD",
+        "hierarchyTier": 2
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            81.403,
+            27.082
+          ],
+          [
+            81.455,
+            27.045
+          ],
+          [
+            81.52,
+            26.98
+          ],
+          [
+            81.565,
+            26.885
+          ]
+        ]
+      }
     }
   ]
 }

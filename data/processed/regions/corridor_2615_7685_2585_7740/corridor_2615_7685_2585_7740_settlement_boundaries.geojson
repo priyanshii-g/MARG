@@ -15,6 +15,7 @@
         "builtUpDensityBuildingsPerHa": 12.0,
         "builtUpDensityClass": "HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP",
         "mappedBuildingFootprintCount": 8,
+        "sacredExclusion": false,
         "centroidLat": 25.96,
         "centroidLon": 76.9675
       },
@@ -108,6 +109,7 @@
         "builtUpDensityBuildingsPerHa": 6.5,
         "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
         "mappedBuildingFootprintCount": 8,
+        "sacredExclusion": false,
         "centroidLat": 25.904,
         "centroidLon": 77.146
       },
@@ -201,6 +203,7 @@
         "builtUpDensityBuildingsPerHa": 6.5,
         "builtUpDensityClass": "MEDIUM_DENSITY_VILLAGE_CLUSTER",
         "mappedBuildingFootprintCount": 8,
+        "sacredExclusion": false,
         "centroidLat": 26.096,
         "centroidLon": 77.272
       },

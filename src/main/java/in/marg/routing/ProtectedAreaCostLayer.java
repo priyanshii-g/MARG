@@ -32,7 +32,15 @@ public class ProtectedAreaCostLayer
                     "PROTECTED_AREA_NODATA");
         }
 
-        if (Math.round(maskValue) == 1L) {
+        long code = Math.round(maskValue);
+        if (code == 2L) {
+
+            return CostAssessment.blocked(
+                    "environment:protected-area",
+                    "SACRED_HERITAGE_EXCLUSION_ZONE");
+        }
+
+        if (code >= 1L) {
 
             return CostAssessment.blocked(
                     "environment:protected-area",
@@ -41,5 +49,26 @@ public class ProtectedAreaCostLayer
 
         return CostAssessment.free(
                 "environment:protected-area");
+    }
+
+    @Override
+    public boolean hasEdgeCost() {
+        return true;
+    }
+
+    @Override
+    public CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
+        double[] fractions = {0.2, 0.4, 0.6, 0.8};
+        for (double t : fractions) {
+            double lat = from.lat() + t * (to.lat() - from.lat());
+            double lon = from.lon() + t * (to.lon() - from.lon());
+            Double maskValue = provider.sampleOrNull(lat, lon);
+            if (maskValue != null && Math.round(maskValue) == 2L) {
+                return CostAssessment.blocked(
+                        "environment:protected-area",
+                        "SACRED_HERITAGE_EXCLUSION_ZONE");
+            }
+        }
+        return CostAssessment.FREE;
     }
 }

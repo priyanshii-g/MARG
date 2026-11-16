@@ -48,6 +48,150 @@
           26.78025
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-IGP-RAMNAGAR",
+        "name": "Ramnagar Commercial & Mandi Hub",
+        "district": "Barabanki",
+        "centerLat": 27.085,
+        "centerLon": 81.405,
+        "tieInLat": 27.082,
+        "tieInLon": 81.403,
+        "tieInRoadRef": "NH-927 / SH-30",
+        "tieInName": "NH-927 Ramnagar Highway Arterial Junction",
+        "urbanPopulation": 45000,
+        "catchmentPopulation": 140000,
+        "industrialOutputFactor": 1.25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.405,
+          27.085
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-IGP-BARABANKI",
+        "name": "Barabanki Nawabganj Commercial Hub",
+        "district": "Barabanki",
+        "centerLat": 26.925,
+        "centerLon": 81.185,
+        "tieInLat": 26.9246,
+        "tieInLon": 81.2476,
+        "tieInRoadRef": "NH-27",
+        "tieInName": "NH-27 Barabanki Eastern Bypass",
+        "urbanPopulation": 145000,
+        "catchmentPopulation": 420000,
+        "industrialOutputFactor": 1.45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.185,
+          26.925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-IGP-FAIZABAD",
+        "name": "Faizabad Cantt & Commercial Hub",
+        "district": "Ayodhya",
+        "centerLat": 26.775,
+        "centerLon": 82.14,
+        "tieInLat": 26.7603,
+        "tieInLon": 82.1228,
+        "tieInRoadRef": "NH-27",
+        "tieInName": "NH-27 Faizabad Southern Bypass",
+        "urbanPopulation": 180000,
+        "catchmentPopulation": 550000,
+        "industrialOutputFactor": 1.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.14,
+          26.775
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-IGP-ZAIDPUR",
+        "name": "Zaidpur Agro-Weaving Hub",
+        "district": "Barabanki",
+        "centerLat": 26.835,
+        "centerLon": 81.33,
+        "tieInLat": 26.84,
+        "tieInLon": 81.35,
+        "tieInRoadRef": "SH-13",
+        "tieInName": "SH-13 Zaidpur Link",
+        "urbanPopulation": 38000,
+        "catchmentPopulation": 110000,
+        "industrialOutputFactor": 1.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.33,
+          26.835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-IGP-DARIYABAD",
+        "name": "Dariyabad Rural Market Hub",
+        "district": "Barabanki",
+        "centerLat": 26.885,
+        "centerLon": 81.565,
+        "tieInLat": 26.82,
+        "tieInLon": 81.56,
+        "tieInRoadRef": "MDR-115W",
+        "tieInName": "MDR-115W Dariyabad Junction",
+        "urbanPopulation": 28000,
+        "catchmentPopulation": 85000,
+        "industrialOutputFactor": 1.15
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          81.565,
+          26.885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hubId": "HUB-IGP-SOHAWAL",
+        "name": "Sohawal Industrial & Mandi Hub",
+        "district": "Ayodhya",
+        "centerLat": 26.775,
+        "centerLon": 82.025,
+        "tieInLat": 26.77,
+        "tieInLon": 82.02,
+        "tieInRoadRef": "NH-27",
+        "tieInName": "NH-27 Sohawal Arterial Junction",
+        "urbanPopulation": 35000,
+        "catchmentPopulation": 95000,
+        "industrialOutputFactor": 1.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.025,
+          26.775
+        ]
+      }
     }
   ]
 }

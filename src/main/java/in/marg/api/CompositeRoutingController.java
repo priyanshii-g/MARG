@@ -361,6 +361,8 @@ public class CompositeRoutingController {
                 targetHubs,
                 minHubPopulation,
                 maxVcRatio,
+                true,
+                null,
                 null,
                 null,
                 null);
@@ -380,7 +382,8 @@ public class CompositeRoutingController {
             Integer minHubPopulation,
             Double maxVcRatio,
             String regionParam,
-            String tierMode) {
+            String tierMode,
+            Boolean deep) {
         return route(
                 startLat,
                 startLon,
@@ -394,9 +397,11 @@ public class CompositeRoutingController {
                 targetHubs,
                 minHubPopulation,
                 maxVcRatio,
+                true,
+                null,
                 regionParam,
                 tierMode,
-                null);
+                deep);
     }
 
     @GetMapping
@@ -413,6 +418,8 @@ public class CompositeRoutingController {
             @RequestParam(required = false) String targetHubs,
             @RequestParam(required = false) Integer minHubPopulation,
             @RequestParam(required = false) Double maxVcRatio,
+            @RequestParam(required = false) Boolean autoConnectHubs,
+            @RequestParam(required = false) Integer maxAutoHubs,
             @RequestParam(value = "region", required = false) String regionParam,
             @RequestParam(required = false) String tierMode,
             @RequestParam(required = false) Boolean deep) {
@@ -470,7 +477,9 @@ public class CompositeRoutingController {
                     facilityMode,
                     targetHubs,
                     minHubPopulation,
-                    maxVcRatio);
+                    maxVcRatio,
+                    autoConnectHubs,
+                    maxAutoHubs);
         }
 
         GeoPoint requestedStart =
@@ -508,7 +517,9 @@ public class CompositeRoutingController {
                         facilityMode,
                         targetHubs,
                         minHubPopulation,
-                        maxVcRatio);
+                        maxVcRatio,
+                        autoConnectHubs,
+                        maxAutoHubs);
             }
         }
 
@@ -537,7 +548,7 @@ public class CompositeRoutingController {
         List<String> targetHubList =
                 targetHubs == null || targetHubs.isBlank()
                         ? List.of()
-                        : Arrays.stream(targetHubs.split(","))
+                        : Arrays.stream(targetHubs.split(",(?![^()]*\\))"))
                                 .map(String::trim)
                                 .filter(s -> !s.isEmpty())
                                 .toList();
@@ -569,7 +580,9 @@ public class CompositeRoutingController {
                         mode,
                         targetHubList,
                         minHubPopulation,
-                        maxVcRatio);
+                        maxVcRatio,
+                        autoConnectHubs,
+                        maxAutoHubs);
 
         // Stage 2: Build 13-Layer Mode-Aware Cost Surface
         CompositeCostSurfaceFactory.BuildResult initialBuilt =
@@ -597,7 +610,7 @@ public class CompositeRoutingController {
         HubEvaluationService.EvaluationResult hubEvaluation =
                 (endpointResolution.startSnapped() || endpointResolution.goalSnapped())
                         ? hubEvaluationService.evaluate(
-                                start, goal, searchWindow, mode, targetHubList, minHubPopulation, maxVcRatio)
+                                start, goal, searchWindow, mode, targetHubList, minHubPopulation, maxVcRatio, autoConnectHubs, maxAutoHubs)
                         : initialHubEvaluation;
 
         CompositeCostSurfaceFactory.BuildResult built =
@@ -713,6 +726,8 @@ public class CompositeRoutingController {
                         "minHubPopulationApplied", hubEvaluation.minHubPopulationApplied(),
                         "minInterchangeSpacingKmApplied", hubEvaluation.minInterchangeSpacingKmApplied(),
                         "maxVcRatioCapApplied", hubEvaluation.maxVcRatioCapApplied(),
+                        "autoConnectHubs", autoConnectHubs == null || Boolean.TRUE.equals(autoConnectHubs),
+                        "maxAutoHubsApplied", maxAutoHubs != null ? maxAutoHubs : "UNLIMITED",
                         "approvedHubIds", hubEvaluation.approvedHubs().stream()
                                 .map(h -> h.hubId() + " (" + h.name() + ")")
                                 .toList(),
@@ -823,15 +838,34 @@ public class CompositeRoutingController {
                             "environmentalBufferGrossHectares", rowFp.environmentalBufferGrossHectares()));
         }
         networkAndCapacitySummary.put("totalCatchmentPopulationServed", networkPlan.totalCatchmentPopulationServed());
-        networkAndCapacitySummary.put(
-                "trafficCapacityAnalysis",
-                Map.of(
-                        "baseThroughTrafficPcuHr", hubEvaluation.baseThroughTrafficPcuHr(),
-                        "projectedTotalPeakTrafficPcuHr", networkPlan.projectedTrafficVolumePcuHr(),
-                        "designCapacityPcuHr", networkPlan.designCapacityPcuHr(),
-                        "projectedVcRatio", networkPlan.projectedVcRatio(),
-                        "levelOfService", networkPlan.levelOfService(),
-                        "overCapacityWarning", networkPlan.overCapacityWarning()));
+
+        double designCap = networkPlan.designCapacityPcuHr();
+        double projTraffic = networkPlan.projectedTrafficVolumePcuHr();
+        double fourLaneVc = networkPlan.projectedVcRatio();
+        double maxVcCap = hubEvaluation.maxVcRatioCapApplied();
+        boolean sixLaneRecommended = fourLaneVc > maxVcCap;
+        double sixLaneCap = designCap * 1.5;
+        double sixLaneVc = Math.round((projTraffic / sixLaneCap) * 100.0) / 100.0;
+        String capacityStandardNote = sixLaneRecommended
+                ? "IRC:SP:84 Section 2.2: Projected traffic (" + Math.round(projTraffic) + " PCU/hr) exceeds standard 4-lane capacity threshold (V/C "
+                        + fourLaneVc + " > " + maxVcCap + "). Road configuration upgraded to 6-Lane Expressway (7,200 PCU/hr) yielding V/C "
+                        + sixLaneVc + " (LOS B)."
+                : "Operates within standard 4-Lane design capacity (V/C " + fourLaneVc + " <= " + maxVcCap + ").";
+
+        Map<String, Object> trafficAnalysis = new LinkedHashMap<>();
+        trafficAnalysis.put("baseThroughTrafficPcuHr", hubEvaluation.baseThroughTrafficPcuHr());
+        trafficAnalysis.put("projectedTotalPeakTrafficPcuHr", projTraffic);
+        trafficAnalysis.put("designCapacityPcuHr", designCap);
+        trafficAnalysis.put("sixLaneCapacityPcuHr", sixLaneCap);
+        trafficAnalysis.put("projectedVcRatio", fourLaneVc);
+        trafficAnalysis.put("projectedSixLaneVcRatio", sixLaneVc);
+        trafficAnalysis.put("maxVcRatioCapApplied", maxVcCap);
+        trafficAnalysis.put("levelOfService", networkPlan.levelOfService());
+        trafficAnalysis.put("sixLaneRecommended", sixLaneRecommended);
+        trafficAnalysis.put("laneConfigurationRecommended", sixLaneRecommended ? "6_LANE_EXPANSION" : "4_LANE_STANDARD");
+        trafficAnalysis.put("capacityStandardNote", capacityStandardNote);
+        trafficAnalysis.put("overCapacityWarning", networkPlan.overCapacityWarning());
+        networkAndCapacitySummary.put("trafficCapacityAnalysis", trafficAnalysis);
         metadata.put("transportNetworkAndCapacitySummary", networkAndCapacitySummary);
 
         metadata.put(

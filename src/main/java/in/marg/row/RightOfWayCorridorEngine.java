@@ -640,7 +640,7 @@ public class RightOfWayCorridorEngine {
 
                     if (paProvider != null) {
                         Double pa = paProvider.sampleOrNull(samplePt.lat(), samplePt.lon());
-                        if (pa != null && Math.round(pa) == 1L) {
+                        if (pa != null && Math.round(pa) >= 1L) {
                             if (isCenterline) {
                                 centerlinePaViolations++;
                             } else if (isOuterEdge) {

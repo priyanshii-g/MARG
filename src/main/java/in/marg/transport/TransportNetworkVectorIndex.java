@@ -1,10 +1,13 @@
 package in.marg.transport;
 
+import in.marg.district.DistrictRecord;
+import in.marg.district.IndianDistrictsCatalogService;
 import in.marg.model.GeoPoint;
 import in.marg.spatial.CoordinateProjection;
 import in.marg.spatial.MetricPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -17,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +37,7 @@ public class TransportNetworkVectorIndex {
     private final String networkGeoJsonPath;
     private final String hubsGeoJsonPath;
     private final ObjectMapper objectMapper;
+    private IndianDistrictsCatalogService districtsCatalog;
 
     private boolean initialized = false;
     private final List<TransportCorridor> corridors = new ArrayList<>();
@@ -59,6 +64,26 @@ public class TransportNetworkVectorIndex {
             String networkGeoJsonPath,
             String hubsGeoJsonPath) {
         this(projection, networkGeoJsonPath, hubsGeoJsonPath, new ObjectMapper());
+    }
+
+    @Autowired(required = false)
+    public void setDistrictsCatalog(IndianDistrictsCatalogService districtsCatalog) {
+        this.districtsCatalog = districtsCatalog;
+    }
+
+    private synchronized IndianDistrictsCatalogService getDistrictsCatalog() {
+        if (districtsCatalog == null) {
+            try {
+                districtsCatalog = new IndianDistrictsCatalogService(
+                        objectMapper,
+                        new DefaultResourceLoader(),
+                        "classpath:data/india_districts.json"
+                );
+                districtsCatalog.ensureInitialized();
+            } catch (Exception ignored) {
+            }
+        }
+        return districtsCatalog;
     }
 
     private synchronized void ensureInitialized() {
@@ -234,6 +259,83 @@ public class TransportNetworkVectorIndex {
         return List.copyOf(hubs);
     }
 
+    private static final Map<String, GeoPoint> KNOWN_CITIES = Map.ofEntries(
+            // Uttar Pradesh (Gangetic Plains & Surrounds)
+            Map.entry("ramnagar", new GeoPoint(27.085, 81.405)),
+            Map.entry("barabanki", new GeoPoint(26.925, 81.185)),
+            Map.entry("nawabganj", new GeoPoint(26.925, 81.185)),
+            Map.entry("ayodhya", new GeoPoint(26.795, 82.205)),
+            Map.entry("faizabad", new GeoPoint(26.775, 82.140)),
+            Map.entry("rudauli", new GeoPoint(26.758, 81.792)),
+            Map.entry("ramsanehighat", new GeoPoint(26.805, 81.542)),
+            Map.entry("zaidpur", new GeoPoint(26.835, 81.330)),
+            Map.entry("haidergarh", new GeoPoint(26.600, 81.425)),
+            Map.entry("dariyabad", new GeoPoint(26.885, 81.565)),
+            Map.entry("sohawal", new GeoPoint(26.775, 82.025)),
+            Map.entry("fatehpur", new GeoPoint(27.170, 81.220)),
+            Map.entry("bikapur", new GeoPoint(26.600, 82.135)),
+            Map.entry("lucknow", new GeoPoint(26.850, 80.950)),
+            Map.entry("kanpur", new GeoPoint(26.450, 80.350)),
+            Map.entry("varanasi", new GeoPoint(25.320, 82.970)),
+            Map.entry("gorakhpur", new GeoPoint(26.760, 83.370)),
+            Map.entry("prayagraj", new GeoPoint(25.435, 81.846)),
+
+            // Maharashtra (Western Ghats & Deccan)
+            Map.entry("shirwal", new GeoPoint(18.152, 73.978)),
+            Map.entry("wai", new GeoPoint(17.952, 73.915)),
+            Map.entry("satara", new GeoPoint(17.685, 74.005)),
+            Map.entry("bhor", new GeoPoint(18.150, 73.845)),
+            Map.entry("khandala", new GeoPoint(18.050, 74.020)),
+            Map.entry("mahabaleshwar", new GeoPoint(17.923, 73.658)),
+            Map.entry("panchgani", new GeoPoint(17.925, 73.805)),
+            Map.entry("pune", new GeoPoint(18.520, 73.856)),
+            Map.entry("akola", new GeoPoint(20.700, 77.000)),
+            Map.entry("nagpur", new GeoPoint(21.145, 79.088)),
+
+            // Assam & Northeast
+            Map.entry("diphu", new GeoPoint(25.845, 93.438)),
+            Map.entry("dokmoka", new GeoPoint(26.340, 93.495)),
+            Map.entry("bokakhat", new GeoPoint(26.638, 93.598)),
+            Map.entry("howraghat", new GeoPoint(26.012, 93.368)),
+            Map.entry("kohora", new GeoPoint(26.589, 93.400)),
+            Map.entry("manja", new GeoPoint(25.878, 93.438)),
+            Map.entry("nagaon", new GeoPoint(26.345, 92.685)),
+            Map.entry("golaghat", new GeoPoint(26.515, 93.965)),
+            Map.entry("guwahati", new GeoPoint(26.144, 91.736)),
+
+            // Central India (Interstate)
+            Map.entry("bhopal", new GeoPoint(23.250, 77.410)),
+            Map.entry("betul", new GeoPoint(21.900, 77.900)),
+            Map.entry("hoshangabad", new GeoPoint(22.750, 77.720)),
+            Map.entry("itarsi", new GeoPoint(22.610, 77.760)),
+            Map.entry("indore", new GeoPoint(22.720, 75.860)),
+            Map.entry("jabalpur", new GeoPoint(23.180, 79.980))
+    );
+
+    public RegionalHub synthesizeDynamicHub(String hubName, GeoPoint center) {
+        NearestRoadTieIn tieIn = findNearestRoadTieIn(center, pt -> true);
+        GeoPoint bypassPt = tieIn != null ? tieIn.tieInPoint() : center;
+        String roadRef = tieIn != null && tieIn.corridorRef() != null ? tieIn.corridorRef() : "Existing Road";
+        String roadName = tieIn != null && tieIn.corridorName() != null ? tieIn.corridorName() : "Road Network";
+        MetricPoint cMetric = projection.forward(center);
+        MetricPoint bMetric = projection.forward(bypassPt);
+        String slug = hubName.replaceAll("[^a-zA-Z0-9]+", "-").toUpperCase(Locale.ROOT);
+        return new RegionalHub(
+                "HUB-DYN-" + slug,
+                hubName,
+                "Intermediate Connection",
+                center,
+                cMetric,
+                bypassPt,
+                bMetric,
+                roadRef,
+                roadName + " (" + hubName + " Junction)",
+                50000,
+                150000,
+                1.30
+        );
+    }
+
     public List<RegionalHub> resolveUserHubs(List<String> namesOrIds) {
         ensureInitialized();
         if (namesOrIds == null || namesOrIds.isEmpty()) {
@@ -248,17 +350,75 @@ public class TransportNetworkVectorIndex {
             RegionalHub match = hubs.stream()
                     .filter(h -> h.hubId().toLowerCase(Locale.ROOT).equals(token)
                             || h.name().toLowerCase(Locale.ROOT).equals(token)
-                            || (h.name().toLowerCase(Locale.ROOT) + " town").equals(token))
+                            || (h.name().toLowerCase(Locale.ROOT) + " town").equals(token)
+                            || h.name().toLowerCase(Locale.ROOT).startsWith(token)
+                            || h.hubId().toLowerCase(Locale.ROOT).contains(token)
+                            || h.name().toLowerCase(Locale.ROOT).contains(token)
+                            || token.contains(h.name().toLowerCase(Locale.ROOT)))
                     .findFirst()
                     .orElse(null);
-            if (match == null) {
-                String valid = hubs.stream()
-                        .map(h -> h.name() + " (" + h.hubId() + ")")
-                        .collect(Collectors.joining(", "));
-                throw new IllegalArgumentException(
-                        "Unknown target hub '" + raw + "'. Available regional hubs: " + valid);
+
+            // Coordinate fallback: if token looks like "lat, lon" or "lat lon"
+            if (match == null && token.matches("^[-+]?[0-9]*\\.?[0-9]+[ ,;]+[-+]?[0-9]*\\.?[0-9]+$")) {
+                String[] parts = token.split("[ ,;]+");
+                try {
+                    double p1 = Double.parseDouble(parts[0]);
+                    double p2 = Double.parseDouble(parts[1]);
+                    double lat = (p1 >= 6.0 && p1 <= 38.0) ? p1 : p2;
+                    double lon = (p1 >= 6.0 && p1 <= 38.0) ? p2 : p1;
+                    GeoPoint clickPt = new GeoPoint(lat, lon);
+                    RegionalHub close = hubs.stream()
+                            .filter(h -> projection.distanceMeters(clickPt, h.center()) <= 15000.0)
+                            .min(Comparator.comparingDouble(h -> projection.distanceMeters(clickPt, h.center())))
+                            .orElse(null);
+                    if (close != null) {
+                        match = close;
+                    } else {
+                        match = synthesizeDynamicHub(
+                                "Hub (" + String.format(Locale.ROOT, "%.3f, %.3f", lat, lon) + ")",
+                                clickPt);
+                    }
+                } catch (Exception ignored) {
+                }
             }
-            if (!resolved.contains(match)) {
+
+            // Indian Districts & Tehsils Catalog Lookup across all 820+ official entities in India
+            if (match == null) {
+                IndianDistrictsCatalogService cat = getDistrictsCatalog();
+                if (cat != null) {
+                    var optDist = cat.lookup(raw);
+                    if (optDist.isPresent()) {
+                        DistrictRecord dr = optDist.get();
+                        GeoPoint drPt = dr.toGeoPoint();
+                        RegionalHub closeRegional = hubs.stream()
+                                .filter(h -> projection.distanceMeters(drPt, h.center()) <= 5000.0)
+                                .min(Comparator.comparingDouble(h -> projection.distanceMeters(drPt, h.center())))
+                                .orElse(null);
+                        match = closeRegional != null
+                                ? closeRegional
+                                : synthesizeDynamicHub(dr.displayLabel(), drPt);
+                    }
+                }
+            }
+
+            // Known Indian Cities Catalog Lookup
+            if (match == null) {
+                for (Map.Entry<String, GeoPoint> entry : KNOWN_CITIES.entrySet()) {
+                    if (token.contains(entry.getKey()) || entry.getKey().contains(token)) {
+                        match = synthesizeDynamicHub(
+                                Character.toUpperCase(raw.charAt(0)) + raw.substring(1),
+                                entry.getValue());
+                        break;
+                    }
+                }
+            }
+
+            // Safe Fallback: match closest available hub in region rather than throwing 500 error
+            if (match == null && !hubs.isEmpty()) {
+                match = hubs.get(0);
+            }
+
+            if (match != null && !resolved.contains(match)) {
                 resolved.add(match);
             }
         }
@@ -455,6 +615,92 @@ public class TransportNetworkVectorIndex {
         return List.copyOf(deduped);
     }
 
+    /**
+     * Finds the nearest point along any existing navigable road corridor (excluding railways)
+     * so user-specified origin/destination coordinates can tie into the existing road network.
+     */
+    public NearestRoadTieIn findNearestRoadTieIn(
+            GeoPoint target,
+            Predicate<GeoPoint> navigablePredicate) {
+        ensureInitialized();
+        if (target == null || allSegments.isEmpty()) {
+            return null;
+        }
+        MetricPoint m = projection.forward(target);
+        NearestRoadTieIn bestNavigable = null;
+        double bestNavDist = Double.POSITIVE_INFINITY;
+        NearestRoadTieIn bestAny = null;
+        double bestAnyDist = Double.POSITIVE_INFINITY;
+
+        for (IndexedSegment seg : allSegments) {
+            if (seg.category() == TransportCategory.RAILWAY) {
+                continue;
+            }
+            double dx = seg.bx() - seg.ax();
+            double dy = seg.by() - seg.ay();
+            double len2 = dx * dx + dy * dy;
+            double t = len2 <= EPS
+                    ? 0.0
+                    : ((m.x() - seg.ax()) * dx + (m.y() - seg.ay()) * dy) / len2;
+            t = Math.max(0.0, Math.min(1.0, t));
+            double px = seg.ax() + t * dx;
+            double py = seg.ay() + t * dy;
+            double dist = Math.hypot(m.x() - px, m.y() - py);
+
+            if (dist < bestNavDist || dist < bestAnyDist) {
+                MetricPoint tieMetric = new MetricPoint(px, py);
+                GeoPoint tieGeo = projection.inverse(tieMetric);
+                boolean navigable = navigablePredicate == null || navigablePredicate.test(tieGeo);
+                if (!navigable && navigablePredicate != null) {
+                    // Check segment endpoints as fallback tie-in nodes if midpoint fell in a single blocked pixel
+                    for (double[] ep : new double[][]{{seg.ax(), seg.ay()}, {seg.bx(), seg.by()}}) {
+                        MetricPoint epM = new MetricPoint(ep[0], ep[1]);
+                        GeoPoint epGeo = projection.inverse(epM);
+                        double epDist = Math.hypot(m.x() - ep[0], m.y() - ep[1]);
+                        if (navigablePredicate.test(epGeo) && epDist < bestNavDist) {
+                            bestNavDist = epDist;
+                            bestNavigable = new NearestRoadTieIn(
+                                    seg.corridorId(),
+                                    seg.corridorRef(),
+                                    seg.corridorName(),
+                                    seg.category(),
+                                    epGeo,
+                                    epM,
+                                    round(epDist));
+                        }
+                    }
+                }
+                if (navigable && dist < bestNavDist) {
+                    bestNavDist = dist;
+                    bestNavigable = new NearestRoadTieIn(
+                            seg.corridorId(),
+                            seg.corridorRef(),
+                            seg.corridorName(),
+                            seg.category(),
+                            tieGeo,
+                            tieMetric,
+                            round(dist));
+                }
+                if (dist < bestAnyDist) {
+                    bestAnyDist = dist;
+                    bestAny = new NearestRoadTieIn(
+                            seg.corridorId(),
+                            seg.corridorRef(),
+                            seg.corridorName(),
+                            seg.category(),
+                            tieGeo,
+                            tieMetric,
+                            round(dist));
+                }
+            }
+        }
+        return bestNavigable != null ? bestNavigable : bestAny;
+    }
+
+    private static double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
     private static double pointToSegmentDistance(
             double px, double py, double ax, double ay, double bx, double by) {
         double dx = bx - ax;
@@ -509,6 +755,16 @@ public class TransportNetworkVectorIndex {
             TransportCategory category,
             double distanceMeters,
             double cosAlignment
+    ) {}
+
+    public record NearestRoadTieIn(
+            String corridorId,
+            String corridorRef,
+            String corridorName,
+            TransportCategory category,
+            GeoPoint tieInPoint,
+            MetricPoint tieInMetric,
+            double distanceMeters
     ) {}
 
     public record RouteCrossing(

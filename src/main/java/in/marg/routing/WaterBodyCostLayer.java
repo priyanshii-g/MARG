@@ -104,9 +104,9 @@ public class WaterBodyCostLayer implements CostLayer {
                         (prox.cosAlignment() - PARALLEL_COS_THRESHOLD)
                                 / (1.0 - PARALLEL_COS_THRESHOLD);
                 double riverFactor = switch (prox.riverClass()) {
-                    case MAJOR_PERENNIAL_RIVER -> 1.50;
-                    case MEDIUM_PERENNIAL_RIVER -> 1.10;
-                    case MINOR_PERENNIAL_STREAM -> 0.70;
+                    case MAJOR_PERENNIAL_RIVER -> 2.50; // Statutory 500m-1km non-encroachment riparian buffer
+                    case MEDIUM_PERENNIAL_RIVER -> 1.50;
+                    case MINOR_PERENNIAL_STREAM -> 0.80;
                 };
                 parallelBankMultiplier =
                         policy.parallelBankPenalty() * acuteRatio * acuteRatio * riverFactor;
