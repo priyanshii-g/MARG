@@ -36,6 +36,11 @@ public class CompositeCostSurface implements CostSurface {
     }
 
     @Override
+    public boolean hasEdgeCost() {
+        return !edgeLayers.isEmpty();
+    }
+
+    @Override
     public CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
         if (edgeLayers.isEmpty()) {
             return CostAssessment.FREE;

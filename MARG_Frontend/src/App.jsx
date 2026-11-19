@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -105,6 +105,7 @@ export default function App() {
   const endMarkerRef = useRef(null);
   const snapVectorGroupRef = useRef(null);
   const routeLayersGroupRef = useRef(null);
+  const comparativeRoutesGroupRef = useRef(null);
 
   // Application State
   const [selectedPresetId, setSelectedPresetId] = useState("assam");
@@ -142,6 +143,21 @@ export default function App() {
   const [hubDecisions, setHubDecisions] = useState([]);
   const [showAllDecisions, setShowAllDecisions] = useState(false);
 
+  // Multi-Objective Trade-Off & Request-Scoped User Alignment Tuning State
+  const [tradeOffProfile, setTradeOffProfile] = useState(null);
+  const [tradeOffPreset, setTradeOffPreset] = useState("BALANCED");
+  const [envWeight, setEnvWeight] = useState(1.0);
+  const [socialWeight, setSocialWeight] = useState(1.0);
+  const [directnessWeight, setDirectnessWeight] = useState(1.0);
+  const [alternativeRoutes, setAlternativeRoutes] = useState([]);
+  const [activeAlternativeId, setActiveAlternativeId] = useState(null);
+  const [isRealigning, setIsRealigning] = useState(false);
+  const [statutoryClearanceReport, setStatutoryClearanceReport] = useState(null);
+
+  // Multi-Objective Archetype Route Memory & Live Comparative Caching
+  const [cachedArchetypes, setCachedArchetypes] = useState({});
+  const lastCoordsKeyRef = useRef(null);
+
   // Endpoint Auto-Shift Notification State
   const [snapNotice, setSnapNotice] = useState(null);
 
@@ -155,9 +171,55 @@ export default function App() {
     drainage: true,
     rivers: false,
     wildlife: true,
+    sanctuaries: true,
     crossings: true,
     row: true,
+    multiArchetypes: true,
   });
+
+  // Coords Key Tracker: Automatically clear cached routes if endpoints change
+  const currentCoordsKey = start && end ? `${start.lat.toFixed(4)},${start.lng.toFixed(4)}->${end.lat.toFixed(4)},${end.lng.toFixed(4)}` : null;
+
+  useEffect(() => {
+    if (currentCoordsKey && lastCoordsKeyRef.current && currentCoordsKey !== lastCoordsKeyRef.current) {
+      setCachedArchetypes({});
+      setAlternativeRoutes([]);
+      setActiveAlternativeId(null);
+      setStatutoryClearanceReport(null);
+    }
+    lastCoordsKeyRef.current = currentCoordsKey;
+  }, [currentCoordsKey]);
+
+  // Live Comparative Deltas vs Balanced Alignment
+  const comparativeDeltasVsBalanced = useMemo(() => {
+    if (!cachedArchetypes["BALANCED"] || tradeOffPreset === "BALANCED" || !routeInfo) {
+      return null;
+    }
+    const bal = cachedArchetypes["BALANCED"];
+    const currKm = parseFloat(routeInfo.routeLengthKm || 0);
+    const balKm = parseFloat(bal.routeInfo?.routeLengthKm || 0);
+    if (!currKm || !balKm) return null;
+
+    const deltaKm = Number((currKm - balKm).toFixed(2));
+    const deltaMins = Number(((deltaKm / 85.0) * 60.0).toFixed(1));
+    const deltaVocLakh = Number((-deltaKm * 28.74).toFixed(1));
+
+    const currForest = tradeOffProfile?.environmentalSummary?.forestHectaresDirectRow ?? 0;
+    const balForest = bal.tradeOffProfile?.environmentalSummary?.forestHectaresDirectRow ?? 0;
+    const deltaForestHa = Number((currForest - balForest).toFixed(1));
+
+    const currDisplaced = tradeOffProfile?.socialSummary?.estimatedDirectlyDisplacedPopulation ?? 0;
+    const balDisplaced = bal.tradeOffProfile?.socialSummary?.estimatedDirectlyDisplacedPopulation ?? 0;
+    const deltaDisplaced = currDisplaced - balDisplaced;
+
+    return {
+      deltaKm,
+      deltaMins,
+      deltaVocLakh,
+      deltaForestHa,
+      deltaDisplaced,
+    };
+  }, [cachedArchetypes, tradeOffPreset, routeInfo, tradeOffProfile]);
 
   // -----------------------------------------------------------
   // Initialize Leaflet Map
@@ -182,6 +244,7 @@ export default function App() {
     // Vector Groups
     snapVectorGroupRef.current = L.layerGroup().addTo(map);
     routeLayersGroupRef.current = L.layerGroup().addTo(map);
+    comparativeRoutesGroupRef.current = L.layerGroup().addTo(map);
 
     // Map Click Handler for Interactive Endpoint Picking
     map.on("click", (e) => {
@@ -357,6 +420,168 @@ export default function App() {
   }, [endDistrictQuery]);
 
   // -----------------------------------------------------------
+  // Alignment Trade-Off Archetype Preset Definitions
+  // -----------------------------------------------------------
+  const PRESET_DEFINITIONS = {
+    BALANCED: {
+      id: "BALANCED",
+      label: "⚖️ Balanced",
+      shortLabel: "Balanced",
+      env: 1.0,
+      social: 1.0,
+      direct: 1.0,
+      color: "var(--primary)",
+      description: "Harmonized IRC:SP:84 engineering weighting across environment, communities & directness",
+    },
+    ECO_SHIELD: {
+      id: "ECO_SHIELD",
+      label: "🌿 Protect Nature & Rivers",
+      shortLabel: "Eco-Shield",
+      env: 2.5,
+      social: 1.0,
+      direct: 0.8,
+      color: "#10b981",
+      description: "Aggressively detours around dense forests, wildlife corridors, and river meander floodplains",
+    },
+    COMMUNITY_SAFEGUARD: {
+      id: "COMMUNITY_SAFEGUARD",
+      label: "🏡 Protect Rural Communities",
+      shortLabel: "Community",
+      env: 1.0,
+      social: 2.5,
+      direct: 0.8,
+      color: "#8b5cf6",
+      description: "Prioritizes zero demolition of rural homesteads, village borders & civic settlements",
+    },
+    SHORTEST_PATH: {
+      id: "SHORTEST_PATH",
+      label: "⚡ Shortest Direct Corridor",
+      shortLabel: "Direct Express",
+      env: 0.8,
+      social: 0.8,
+      direct: 2.5,
+      color: "#06b6d4",
+      description: "Maximizes geometric Euclidean efficiency, vehicle operating cost savings & travel speed",
+    },
+  };
+
+  // -----------------------------------------------------------
+  // Switch to Archetype (Instantly from memory if cached, else evaluate)
+  // -----------------------------------------------------------
+  function switchToArchetype(targetKey) {
+    const p = PRESET_DEFINITIONS[targetKey];
+    if (!p) return;
+
+    // 1. If already generated & cached for current endpoints: INSTANT SWITCH!
+    if (cachedArchetypes[targetKey]) {
+      const cached = cachedArchetypes[targetKey];
+      setTradeOffPreset(targetKey);
+      setEnvWeight(p.env);
+      setSocialWeight(p.social);
+      setDirectnessWeight(p.direct);
+
+      // Re-render GIS symbology & update state directly from memory (0 ms delay)
+      renderGeoJsonFeatures(cached.features, targetKey);
+      setRouteInfo(cached.routeInfo);
+      setNetworkSummary(cached.networkSummary);
+      setTradeOffProfile(cached.tradeOffProfile);
+      setConnectedHubs(cached.connectedHubs);
+      setTrafficCapacity(cached.trafficCapacity);
+      setHubDecisions(cached.hubDecisions);
+      setStatutoryClearanceReport(cached.statutoryClearanceReport || cached.tradeOffProfile?.statutoryClearanceReport || null);
+
+      setActiveAlternativeId("alt-" + targetKey);
+      setStatus(`⚡ Instantly switched to cached ${p.label} corridor (${cached.routeInfo.routeLengthKm} km) with zero recalculation delay.`);
+      return;
+    }
+
+    // 2. If not yet in cache, fetch & evaluate corridor for this archetype
+    realignAlignment(targetKey);
+  }
+
+  function handleSelectPreset(key) {
+    const p = PRESET_DEFINITIONS[key];
+    if (!p) return;
+    setTradeOffPreset(p.id);
+    setEnvWeight(p.env);
+    setSocialWeight(p.social);
+    setDirectnessWeight(p.direct);
+
+    // If an alignment is already loaded on the map, switch to it immediately!
+    if (routeInfo) {
+      switchToArchetype(key);
+    }
+  }
+
+  function handleSliderChange(type, val) {
+    setTradeOffPreset("CUSTOM");
+    const num = parseFloat(val);
+    if (type === "env") setEnvWeight(num);
+    if (type === "social") setSocialWeight(num);
+    if (type === "direct") setDirectnessWeight(num);
+  }
+
+  // -----------------------------------------------------------
+  // Multi-Archetype Comparison Overlay on Map
+  // -----------------------------------------------------------
+  useEffect(() => {
+    if (!mapRef.current || !comparativeRoutesGroupRef.current) return;
+    comparativeRoutesGroupRef.current.clearLayers();
+
+    if (!visibleLayers.multiArchetypes) return;
+
+    Object.entries(cachedArchetypes).forEach(([presetKey, snapshot]) => {
+      if (presetKey === tradeOffPreset) return;
+
+      const pDef = PRESET_DEFINITIONS[presetKey] || {
+        shortLabel: presetKey,
+        label: presetKey,
+        color: "#94a3b8",
+      };
+
+      const features = snapshot.features || snapshot.data?.features || [];
+      const mainlineFeat = features.find(
+        (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
+      );
+
+      if (mainlineFeat) {
+        const altLength = snapshot.routeInfo?.routeLengthKm || mainlineFeat.properties?.routeLengthKm || "—";
+        const altDev = snapshot.routeInfo?.deviationPercent || mainlineFeat.properties?.deviationPercent || "—";
+        const layer = L.geoJSON(mainlineFeat, {
+          style: {
+            color: pDef.color,
+            weight: 4,
+            dashArray: "8, 6",
+            opacity: 0.8,
+          },
+        });
+
+        layer.bindTooltip(
+          `<div style="font-size:11px;">
+            <strong style="color:${pDef.color};">${pDef.label || pDef.shortLabel}</strong><br/>
+            <span>Mainline: <b>${altLength} km</b> (+${altDev}%)</span><br/>
+            <span style="font-size:9.5px; color:#38bdf8; font-weight:700;">⚡ Click alignment to activate</span>
+          </div>`,
+          { sticky: true }
+        );
+
+        layer.on("click", () => {
+          switchToArchetype(presetKey);
+        });
+
+        layer.on("mouseover", function () {
+          this.setStyle({ weight: 6, opacity: 1.0 });
+        });
+        layer.on("mouseout", function () {
+          this.setStyle({ weight: 4, opacity: 0.8 });
+        });
+
+        comparativeRoutesGroupRef.current.addLayer(layer);
+      }
+    });
+  }, [cachedArchetypes, tradeOffPreset, visibleLayers.multiArchetypes]);
+
+  // -----------------------------------------------------------
   // Preset Selection Handler
   // -----------------------------------------------------------
   function applyPreset(preset) {
@@ -366,6 +591,9 @@ export default function App() {
     setTargetHubs([]);
     setSnapNotice(null);
     setRoutingError(null);
+    setCachedArchetypes({});
+    setAlternativeRoutes([]);
+    setActiveAlternativeId(null);
     setStatus(`Loaded ${preset.name}. Click 'Generate MARG Alignment' to evaluate.`);
 
     if (mapRef.current) {
@@ -431,6 +659,12 @@ export default function App() {
         params.append("region", selectedPresetId);
         params.append("regionId", selectedPresetId);
       }
+
+      // Multi-Objective Alignment Preference Tuning (Request-Scoped)
+      params.append("envWeight", envWeight.toString());
+      params.append("socialWeight", socialWeight.toString());
+      params.append("directnessWeight", directnessWeight.toString());
+      params.append("tradeOffPreset", tradeOffPreset);
 
       const response = await fetch(`/api/routes/composite?${params.toString()}`);
       if (!response.ok) {
@@ -553,84 +787,12 @@ export default function App() {
       }
 
       // ---------------------------------------------------------
-      // 2. RENDER MULTI-FEATURE GEOJSON LAYERS
+      // 2. RENDER MULTI-FEATURE GEOJSON LAYERS & CACHE RESULT
       // ---------------------------------------------------------
-      renderGeoJsonFeatures(data.features);
+      const targetPreset = tradeOffPreset || "BALANCED";
+      renderGeoJsonFeatures(data.features, targetPreset);
 
-      // ---------------------------------------------------------
-      // 3. EXTRACT METRICS & ENGINEERING SUMMARY
-      // ---------------------------------------------------------
-      const meta = data.metadata || {};
-      const diag = meta.routeDiagnostics || {};
-      const net = meta.transportNetworkAndCapacitySummary || meta.networkAndCapacitySummary || {};
-      const termConn = meta.terminalRoadConnections || {};
-
-      const mainlineFeat = data.features.find(
-        (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
-      );
-      const mainProps = mainlineFeat?.properties || {};
-
-      const routeKm = Number(diag.routeLengthKm ?? meta.routeLengthKm ?? mainProps.routeLengthKm ?? 0);
-      const baseKm = Number(diag.directDistanceBaselineKm ?? meta.directDistanceBaselineKm ?? mainProps.distanceBaselineKm ?? 0);
-      const devPct = Number(diag.alignmentDeviationPercent ?? meta.alignmentDeviationPercent ?? mainProps.deviationPercent ?? 0);
-
-      const spurFeatures = (data.features || []).filter(
-        (f) => f.properties?.featureRole === "DEDICATED_FEEDER_SPUR"
-      );
-      const hubList = spurFeatures.map((f) => ({
-        name: f.properties?.servedHubName || "Regional Hub",
-        spurKm: Number(f.properties?.spurLengthKm || 0).toFixed(1),
-        population: f.properties?.catchmentPopulationServed || 0,
-        isUserOverride: Boolean(f.properties?.immutableUserOverride),
-        traffic: Math.round(f.properties?.inducedPeakTrafficPcuHr || 0),
-        tieInRoadRef: f.properties?.tieInRoadRef || "Connecting Road",
-        decisionReason: f.properties?.decisionReason || "",
-        sixLaneRecommended: Boolean(f.properties?.sixLaneExpansionRecommended),
-      }));
-      setConnectedHubs(hubList);
-
-      const trafficAnalysis = net.trafficCapacityAnalysis || {};
-      setTrafficCapacity(trafficAnalysis);
-
-      const pipelineMeta = meta.hubEvaluationPipeline || {};
-      const allDecisions = pipelineMeta.hubDecisions || [];
-      setHubDecisions(allDecisions);
-
-      setRouteInfo({
-        routeLengthKm: routeKm.toFixed(2),
-        baselineLengthKm: baseKm.toFixed(2),
-        deviationPercent: devPct.toFixed(2),
-        tierMode: data.corridorTierMode || meta.corridorTierMode || "TIER_1_DYNAMIC_PAN_INDIA",
-        crs: meta.coordinateReferenceSystem || "EPSG:32643",
-        utmZone: meta.utmZone || 43,
-      });
-
-      setNetworkSummary({
-        interchanges: net.plannedInterchangesCount ?? 0,
-        feederSpurs: net.dedicatedFeederSpursCount ?? 0,
-        feederSpurKm: Number(net.totalDedicatedFeederSpurLengthKm ?? 0).toFixed(1),
-        terminalAccessKm: Number(
-          net.totalTerminalAccessRoadLengthKm ?? termConn.totalTerminalAccessRoadLengthKm ?? 0
-        ).toFixed(2),
-        startRoadRef:
-          termConn.startRoadConnection?.existingRoadRef ||
-          termConn.startRoadConnection?.existingRoadName ||
-          "Existing Road",
-        goalRoadRef:
-          termConn.goalRoadConnection?.existingRoadRef ||
-          termConn.goalRoadConnection?.existingRoadName ||
-          "Existing Road",
-        riverBridges: net.riverBridgesCount ?? 0,
-        riverBridgeSpanM: net.totalEstimatedRiverBridgeSpanMeters ?? 0,
-        drainageStructures: net.drainageStructuresCount ?? (data.features ? data.features.filter(f => f.properties?.featureRole === "DRAINAGE_CROSSING_STRUCTURE").length : 0),
-        wildlifePassages: net.wildlifePassagesCount ?? 0,
-        wildlifeSpanM: net.totalRecommendedWildlifePassageSpanMeters ?? 0,
-        railwayRobs: net.railwayRobCount ?? 0,
-        roadFlyovers: net.highwayFlyoverUnderpassCount ?? 0,
-        rowHectares: net.rightOfWayAcquisitionFootprint?.totalDirectRowAcquisitionHectares ?? "—",
-        rowWidthM: net.rightOfWayAcquisitionFootprint?.mainlineRowWidthMeters ?? 90,
-        displacedPop: net.estimatedDirectlyDisplacedPopulation ?? 0,
-      });
+      applyRouteResult(data, targetPreset);
 
       setStatus("✅ MARG composite highway alignment & network plan computed successfully.");
     } catch (err) {
@@ -646,14 +808,214 @@ export default function App() {
   }
 
   // -----------------------------------------------------------
+  // Helper: Extract & Apply Route Metadata & GIS Layers
+  // -----------------------------------------------------------
+  function applyRouteResult(data, presetKeyOverride) {
+    const targetKey = presetKeyOverride || tradeOffPreset || "BALANCED";
+    renderGeoJsonFeatures(data.features, targetKey);
+
+    const meta = data.metadata || {};
+    const diag = meta.routeDiagnostics || {};
+    const net = meta.transportNetworkAndCapacitySummary || meta.networkAndCapacitySummary || {};
+    const termConn = meta.terminalRoadConnections || {};
+
+    const mainlineFeat = data.features.find(
+      (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
+    );
+    const mainProps = mainlineFeat?.properties || {};
+
+    const routeKm = Number(diag.routeLengthKm ?? meta.routeLengthKm ?? mainProps.routeLengthKm ?? 0);
+    const baseKm = Number(diag.directDistanceBaselineKm ?? meta.directDistanceBaselineKm ?? mainProps.distanceBaselineKm ?? 0);
+    const devPct = Number(diag.alignmentDeviationPercent ?? meta.alignmentDeviationPercent ?? mainProps.deviationPercent ?? 0);
+
+    const spurFeatures = (data.features || []).filter(
+      (f) => f.properties?.featureRole === "DEDICATED_FEEDER_SPUR"
+    );
+    const hubList = spurFeatures.map((f) => ({
+      name: f.properties?.servedHubName || "Regional Hub",
+      spurKm: Number(f.properties?.spurLengthKm || 0).toFixed(1),
+      population: f.properties?.catchmentPopulationServed || 0,
+      isUserOverride: Boolean(f.properties?.immutableUserOverride),
+      traffic: Math.round(f.properties?.inducedPeakTrafficPcuHr || 0),
+      tieInRoadRef: f.properties?.tieInRoadRef || "Connecting Road",
+      decisionReason: f.properties?.decisionReason || "",
+      sixLaneRecommended: Boolean(f.properties?.sixLaneExpansionRecommended),
+    }));
+    setConnectedHubs(hubList);
+
+    const trafficAnalysis = net.trafficCapacityAnalysis || {};
+    setTrafficCapacity(trafficAnalysis);
+
+    const pipelineMeta = meta.hubEvaluationPipeline || {};
+    const allDecisions = pipelineMeta.hubDecisions || [];
+    setHubDecisions(allDecisions);
+
+    const newRouteInfo = {
+      routeLengthKm: routeKm.toFixed(2),
+      baselineLengthKm: baseKm.toFixed(2),
+      deviationPercent: devPct.toFixed(2),
+      tierMode: data.corridorTierMode || meta.corridorTierMode || "TIER_1_DYNAMIC_PAN_INDIA",
+      crs: meta.coordinateReferenceSystem || "EPSG:32643",
+      utmZone: meta.utmZone || 43,
+    };
+    setRouteInfo(newRouteInfo);
+
+    const newNetSummary = {
+      interchanges: net.plannedInterchangesCount ?? 0,
+      feederSpurs: net.dedicatedFeederSpursCount ?? 0,
+      feederSpurKm: Number(net.totalDedicatedFeederSpurLengthKm ?? 0).toFixed(1),
+      terminalAccessKm: Number(
+        net.totalTerminalAccessRoadLengthKm ?? termConn.totalTerminalAccessRoadLengthKm ?? 0
+      ).toFixed(2),
+      startRoadRef:
+        termConn.startRoadConnection?.existingRoadRef ||
+        termConn.startRoadConnection?.existingRoadName ||
+        "Existing Road",
+      goalRoadRef:
+        termConn.goalRoadConnection?.existingRoadRef ||
+        termConn.goalRoadConnection?.existingRoadName ||
+        "Existing Road",
+      riverBridges: net.riverBridgesCount ?? 0,
+      riverBridgeSpanM: net.totalEstimatedRiverBridgeSpanMeters ?? 0,
+      drainageStructures: net.drainageStructuresCount ?? (data.features ? data.features.filter(f => f.properties?.featureRole === "DRAINAGE_CROSSING_STRUCTURE").length : 0),
+      wildlifePassages: net.wildlifePassagesCount ?? 0,
+      wildlifeSpanM: net.totalRecommendedWildlifePassageSpanMeters ?? 0,
+      railwayRobs: net.railwayRobCount ?? 0,
+      roadFlyovers: net.highwayFlyoverUnderpassCount ?? 0,
+      rowHectares: net.rightOfWayAcquisitionFootprint?.totalDirectRowAcquisitionHectares ?? "—",
+      rowWidthM: net.rightOfWayAcquisitionFootprint?.mainlineRowWidthMeters ?? 90,
+      displacedPop: net.estimatedDirectlyDisplacedPopulation ?? 0,
+    };
+    setNetworkSummary(newNetSummary);
+
+    const profile = meta.tradeOffProfile || null;
+    setTradeOffProfile(profile);
+
+    const clearanceReport = data.statutoryClearanceReport || meta.statutoryClearanceReport || profile?.statutoryClearanceReport || null;
+    setStatutoryClearanceReport(clearanceReport);
+
+    // Save full snapshot in Archetype Cache
+    const snapshot = {
+      data,
+      features: data.features,
+      routeInfo: newRouteInfo,
+      networkSummary: newNetSummary,
+      tradeOffProfile: profile,
+      statutoryClearanceReport: clearanceReport,
+      connectedHubs: hubList,
+      trafficCapacity: trafficAnalysis,
+      hubDecisions: allDecisions,
+      presetKey: targetKey,
+    };
+
+    setCachedArchetypes((prev) => ({
+      ...prev,
+      [targetKey]: snapshot,
+    }));
+
+    // Synchronize alternativeRoutes list
+    const pDef = PRESET_DEFINITIONS[targetKey];
+    const altColor = pDef?.color || "var(--primary)";
+    const altLabel = pDef?.label || (targetKey + " Route");
+
+    setAlternativeRoutes((prev) => {
+      const existing = prev.filter((a) => a.preset !== targetKey);
+      return [
+        ...existing,
+        {
+          id: "alt-" + targetKey,
+          label: altLabel,
+          preset: targetKey,
+          routeLengthKm: newRouteInfo.routeLengthKm,
+          deviationPercent: newRouteInfo.deviationPercent,
+          forestHa: profile?.environmentalSummary?.forestHectaresDirectRow ?? 0,
+          displacedPop: profile?.socialSummary?.estimatedDirectlyDisplacedPopulation ?? 0,
+          compositeIndex: profile?.compositeAlignmentIndex ?? 85,
+          color: altColor,
+        },
+      ];
+    });
+
+    setActiveAlternativeId("alt-" + targetKey);
+
+    return { routeKm, profile, meta, net, devPct, snapshot };
+  }
+
+  // -----------------------------------------------------------
+  // Re-Align Route Based on Request-Scoped User Preferences
+  // -----------------------------------------------------------
+  async function realignAlignment(presetKeyOverride) {
+    if (!start || !end) return;
+    setIsRealigning(true);
+    setStatus("✨ Re-evaluating spatial costs & synthesizing alternative corridor based on preferences...");
+
+    const p = presetKeyOverride ? PRESET_DEFINITIONS[presetKeyOverride] : null;
+    const targetEnv = p ? p.env : envWeight;
+    const targetSocial = p ? p.social : socialWeight;
+    const targetDirect = p ? p.direct : directnessWeight;
+    const targetPreset = p ? p.id : tradeOffPreset;
+
+    if (p) {
+      setTradeOffPreset(p.id);
+      setEnvWeight(p.env);
+      setSocialWeight(p.social);
+      setDirectnessWeight(p.direct);
+    }
+
+    try {
+      const params = new URLSearchParams({
+        startLat: start.lat,
+        startLon: start.lng,
+        endLat: end.lat,
+        endLon: end.lng,
+        facilityMode: facilityMode,
+        autoConnectHubs: autoConnectHubs.toString(),
+        envWeight: targetEnv.toString(),
+        socialWeight: targetSocial.toString(),
+        directnessWeight: targetDirect.toString(),
+        tradeOffPreset: targetPreset,
+      });
+
+      if (deepIngestion) params.append("deep", "true");
+      if (autoConnectHubs && maxAutoHubs != null) params.append("maxAutoHubs", maxAutoHubs.toString());
+      if (targetHubs.length > 0) params.append("targetHubs", targetHubs.join(","));
+      if (maxVcRatio != null) params.append("maxVcRatio", maxVcRatio.toString());
+      if (maxDeviationPercent != null) params.append("maxDeviationPercent", maxDeviationPercent.toString());
+      if (selectedPresetId && selectedPresetId !== "custom" && selectedPresetId !== "interstate_pan_india") {
+        params.append("region", selectedPresetId);
+        params.append("regionId", selectedPresetId);
+      }
+
+      const res = await fetch(`/api/routes/composite?${params.toString()}`);
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      const resSummary = applyRouteResult(data, targetPreset);
+      const altLabel = PRESET_DEFINITIONS[targetPreset]?.shortLabel || targetPreset;
+      setStatus(`✨ Re-aligned & cached corridor under ${altLabel} preferences (${resSummary.routeKm.toFixed(1)} km).`);
+    } catch (err) {
+      console.error("Re-alignment error:", err);
+      setRoutingError({
+        title: "Re-Alignment Failed",
+        message: err.message || "Failed to re-align route.",
+      });
+      setStatus("❌ Re-alignment failed.");
+    } finally {
+      setIsRealigning(false);
+    }
+  }
+
+  // -----------------------------------------------------------
   // Render FeatureCollection with Custom GIS Symbology
   // -----------------------------------------------------------
-  function renderGeoJsonFeatures(features) {
+  function renderGeoJsonFeatures(features, activePresetKey) {
     if (!mapRef.current || !routeLayersGroupRef.current) return;
     routeLayersGroupRef.current.clearLayers();
 
     const group = routeLayersGroupRef.current;
     let boundsToFit = null;
+    const currentPreset = activePresetKey || tradeOffPreset || "BALANCED";
+    const mainlineColor = PRESET_DEFINITIONS[currentPreset]?.color || "#10b981";
 
     features.forEach((feature) => {
       const role = feature.properties?.featureRole || "";
@@ -710,12 +1072,12 @@ export default function App() {
       else if ((role === "GREENFIELD_MAINLINE" || role === "MAINLINE") && visibleLayers.mainline) {
         const layer = L.geoJSON(feature, {
           style: {
-            color: "#10b981",
+            color: mainlineColor,
             weight: 6,
             opacity: 0.95,
           },
         }).bindPopup(
-          `<b>13-Layer Greenfield Mainline</b><br/>Length: ${feature.properties.routeLengthKm || "—"} km<br/>Deviation: ${feature.properties.deviationPercent || "—"}%`
+          `<b>${PRESET_DEFINITIONS[currentPreset]?.label || "13-Layer Greenfield Mainline"}</b><br/>Length: ${feature.properties.routeLengthKm || "—"} km<br/>Deviation: ${feature.properties.deviationPercent || "—"}%`
         );
         group.addLayer(layer);
         boundsToFit = layer.getBounds();
@@ -770,6 +1132,31 @@ export default function App() {
           `<div class="popup-title">Wildlife Migration Viaduct</div><div class="popup-meta">Passage Span: ${feature.properties.recommendedPassageSpanMeters || "—"} m<br/>Mitigation: Elevated Viaduct Structure</div>`
         );
         group.addLayer(marker);
+      }
+
+      // 7b. Statutory Wildlife Sanctuary & National Park Boundaries (Wildlife Protection Act, 1972)
+      else if (role === "WILDLIFE_SANCTUARY_BOUNDARY" && visibleLayers.sanctuaries && (geomType === "Polygon" || geomType === "MultiPolygon")) {
+        const props = feature.properties || {};
+        const layer = L.geoJSON(feature, {
+          style: {
+            color: "#dc2626",
+            weight: 2.5,
+            dashArray: "6, 4",
+            fillColor: "#ef4444",
+            fillOpacity: 0.18,
+          },
+        }).bindPopup(
+          `<div class="popup-title" style="color:#b91c1c; font-weight:700;">🐾 ${props.name || "Wildlife Sanctuary"}</div>` +
+          `<div class="popup-meta" style="font-size:11px; line-height:1.45;">` +
+          `<b>Legal Statute:</b> ${props.legalStatute || "Wildlife (Protection) Act, 1972"}<br/>` +
+          `<b>Location:</b> ${props.state || "—"} (${props.district || "—"})<br/>` +
+          `<b>Declared Area:</b> ${props.areaKm2 ? props.areaKm2 + " km²" : "—"}<br/>` +
+          `<b>Target Species:</b> ${props.keySpecies || "Protected Wildlife"}<br/>` +
+          `<div style="margin-top:6px; padding:4px 8px; background:#fef2f2; border:1px solid #f87171; color:#991b1b; border-radius:4px; font-weight:700; font-size:10.5px;">` +
+          `🚨 Mandatory SC-NBWL Clearance Required under WPA 1972 §29/35` +
+          `</div></div>`
+        );
+        group.addLayer(layer);
       }
 
       // 8. Grade-Separated Crossings (Railway ROBs & Flyovers)
@@ -1592,6 +1979,15 @@ export default function App() {
               </div>
 
               <div
+                className={`layer-toggle-btn ${visibleLayers.sanctuaries ? "on" : ""}`}
+                onClick={() => toggleLayer("sanctuaries")}
+                title="Statutory National Parks & Wildlife Sanctuaries boundaries under Wildlife (Protection) Act, 1972"
+              >
+                <div className="layer-legend-dot" style={{ background: "#dc2626" }} />
+                <span>Sanctuaries (WPA 1972)</span>
+              </div>
+
+              <div
                 className={`layer-toggle-btn ${visibleLayers.crossings ? "on" : ""}`}
                 onClick={() => toggleLayer("crossings")}
               >
@@ -1605,6 +2001,15 @@ export default function App() {
               >
                 <div className="layer-legend-dot" style={{ background: "#10b98155" }} />
                 <span>RoW Footprint</span>
+              </div>
+
+              <div
+                className={`layer-toggle-btn ${visibleLayers.multiArchetypes ? "on" : ""}`}
+                onClick={() => toggleLayer("multiArchetypes")}
+                title="Overlay other generated alignment alternatives as dashed comparison lines on the map"
+              >
+                <div className="layer-legend-dot" style={{ background: "#38bdf8", border: "1px dashed #fff" }} />
+                <span>All Alignments ({Object.keys(cachedArchetypes).length})</span>
               </div>
             </div>
 
@@ -1631,6 +2036,120 @@ export default function App() {
                 <span className="section-title">Geometric & Feasibility Metrics</span>
               </div>
 
+              {/* ============================================================ */}
+              {/* 🚨 STATUTORY NBWL & FOREST CLEARANCE ALERT (MANDATORY)       */}
+              {/* ============================================================ */}
+              {statutoryClearanceReport?.hasSanctuaryIntersection && (
+                <div className="statutory-clearance-card">
+                  <div className="statutory-badge-banner">
+                    <span className="statutory-badge-pill">
+                      <span>🚨</span>
+                      <span>Mandatory Statutory NBWL & Forest Clearance</span>
+                    </span>
+                    <span style={{ fontSize: "11px", color: "#fca5a5", fontWeight: 700 }}>
+                      WPA 1972 §29/35
+                    </span>
+                  </div>
+
+                  <div className="statutory-headline">
+                    🚨 {statutoryClearanceReport.legalConsequenceHeadline || "MANDATORY STATUTORY CLEARANCE: Alignment intersects notified Sanctuary"}
+                  </div>
+
+                  <div className="statutory-statute-citation">
+                    📜 {statutoryClearanceReport.legalStatuteCitation || "Wildlife (Protection) Act, 1972 (Section 29/35) & Van (Sanrakshan Evam Samvardhan) Adhiniyam, 2023"}
+                  </div>
+
+                  <div className="statutory-impact-metrics">
+                    <div className="statutory-metric-box">
+                      <div className="statutory-metric-label">Sanctuary Core Length</div>
+                      <div className="statutory-metric-val">{statutoryClearanceReport.totalSanctuaryLengthKm} km</div>
+                    </div>
+                    <div className="statutory-metric-box">
+                      <div className="statutory-metric-label">Direct Forest Area Diverted</div>
+                      <div className="statutory-metric-val">{statutoryClearanceReport.directSanctuaryForestTakeHectares} ha</div>
+                    </div>
+                    <div className="statutory-metric-box">
+                      <div className="statutory-metric-label">Sanctuaries Affected</div>
+                      <div className="statutory-metric-val">{statutoryClearanceReport.traversedSanctuaryNames?.length || 1}</div>
+                    </div>
+                  </div>
+
+                  {/* Sanctuary Crossing Details */}
+                  {statutoryClearanceReport.sanctuaryCrossings && statutoryClearanceReport.sanctuaryCrossings.length > 0 && (
+                    <div className="statutory-crossings-list">
+                      <div className="statutory-crossings-title">
+                        <span>🐾</span>
+                        <span>Traversed Protected Entities & Direct Environmental Take:</span>
+                      </div>
+                      {statutoryClearanceReport.sanctuaryCrossings.map((sc, idx) => (
+                        <div key={idx} className="statutory-crossing-item">
+                          <div>
+                            <strong style={{ color: "#ffffff" }}>{sc.sanctuaryName}</strong> ({sc.state} — {sc.district})
+                          </div>
+                          <div style={{ fontSize: "10px", color: "#fca5a5", marginTop: "2px" }}>
+                            Chainage: km {sc.startKm} to {sc.endKm} ({sc.crossingLengthKm} km core traversal) • <b>Direct Forest Take:</b> {sc.directForestTakeHectares} ha
+                          </div>
+                          <div style={{ fontSize: "9.5px", color: "#fecaca", marginTop: "2px" }}>
+                            <b>Target Species:</b> {sc.keySpecies}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 6-Point Statutory Checklist */}
+                  {statutoryClearanceReport.mandatoryClearancesChecklist && (
+                    <div className="statutory-checklist-box">
+                      <div className="statutory-checklist-title">
+                        <span>📋</span>
+                        <span>Mandatory Statutory Clearances Checklist Before Construction:</span>
+                      </div>
+                      {statutoryClearanceReport.mandatoryClearancesChecklist.map((step, idx) => (
+                        <div key={idx} className="statutory-checklist-item">
+                          <span style={{ color: "#f87171", fontWeight: 800 }}>⚠️</span>
+                          <span>{step}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Direct Statutory Clearance Portal Links */}
+                  <div className="statutory-actions-row">
+                    <a
+                      href={statutoryClearanceReport.pariveshPortalUrl || "https://parivesh.nic.in/"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="statutory-action-btn"
+                    >
+                      <span>🌐</span>
+                      <span>MoEFCC PARIVESH 2.0 Portal</span>
+                    </a>
+                    <a
+                      href={statutoryClearanceReport.nbwlGuidanceUrl || "https://cpc.parivesh.nic.in/writereaddata/Final_Guidelines_NBWL_recomme_for_PA.pdf"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="statutory-action-btn secondary"
+                    >
+                      <span>📄</span>
+                      <span>NBWL PA Guidelines</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Affirmative Statutory Compliance Banner when 100% bypass achieved */}
+              {statutoryClearanceReport && !statutoryClearanceReport.hasSanctuaryIntersection && (
+                <div className="statutory-compliance-chip">
+                  <span className="compliance-icon">🛡️</span>
+                  <div>
+                    <div className="compliance-title">100% Statutory Wildlife Compliance</div>
+                    <div className="compliance-sub">
+                      Zero encroachment on notified Wildlife Sanctuaries or National Parks (Wildlife Protection Act, 1972)
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="metrics-summary-grid">
                 <div className="metric-stat-box">
                   <div className="stat-label">Mainline</div>
@@ -1645,6 +2164,464 @@ export default function App() {
                   <div className="stat-value good">+{routeInfo.deviationPercent}%</div>
                 </div>
               </div>
+
+              {/* ============================================================ */}
+              {/* 🌟 SPECIFIC ROUTE IMPROVEMENTS & QUANTIFIABLE VALUE CARD */}
+              {/* ============================================================ */}
+              {tradeOffProfile?.routeImprovements && (
+                <div
+                  className="route-improvement-card"
+                  style={{
+                    borderLeft: `4px solid ${PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)"}`,
+                  }}
+                >
+                  <div className="route-improvement-header">
+                    <div className="route-improvement-title">
+                      <span style={{ fontSize: "16px" }}>🌟</span>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ fontWeight: 800, fontSize: "12px", color: "var(--text-main)" }}>
+                            Specific Route Improvements & Value
+                          </span>
+                          <span
+                            className="archetype-badge-pill"
+                            style={{
+                              backgroundColor: `${PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)"}22`,
+                              color: PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)",
+                              borderColor: PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)",
+                            }}
+                          >
+                            {PRESET_DEFINITIONS[tradeOffPreset]?.label || tradeOffPreset}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
+                          IRC:SP:30 & MoRTH Quantitative Design Valuation
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Prominent Headline Callout */}
+                  <div className="improvement-headline-banner">
+                    <span className="headline-icon">⚡</span>
+                    <span className="headline-text">
+                      {tradeOffProfile.routeImprovements.headline}
+                    </span>
+                  </div>
+
+                  {/* Quantified Benefit Badges Grid (4 Cards) */}
+                  {tradeOffProfile.routeImprovements.quantifiedBenefits && (
+                    <div className="benefit-badges-grid">
+                      {tradeOffProfile.routeImprovements.quantifiedBenefits.map((b, idx) => (
+                        <div key={idx} className="benefit-badge-item" style={{ "--badge-accent": b.color }}>
+                          <div className="badge-item-top">
+                            <span className="badge-item-label">{b.label}</span>
+                          </div>
+                          <div className="badge-item-val" style={{ color: b.color }}>
+                            {b.value}
+                          </div>
+                          <div className="badge-item-detail">{b.detail}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Live Comparative Delta vs Balanced Corridor (when active is not Balanced) */}
+                  {comparativeDeltasVsBalanced && (
+                    <div className="live-deltas-container">
+                      <div className="live-deltas-title">
+                        <span>📊 Live Comparison vs Balanced Alignment:</span>
+                      </div>
+                      <div className="live-deltas-pills">
+                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaKm < 0 ? "gain" : "concession"}`}>
+                          📏 {comparativeDeltasVsBalanced.deltaKm < 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaKm)} km shorter` : `+${comparativeDeltasVsBalanced.deltaKm} km detour`}
+                        </span>
+                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaMins < 0 ? "gain" : "concession"}`}>
+                          ⏱️ {comparativeDeltasVsBalanced.deltaMins < 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaMins)} mins faster` : `+${comparativeDeltasVsBalanced.deltaMins} mins extra`}
+                        </span>
+                        {comparativeDeltasVsBalanced.deltaVocLakh !== 0 && (
+                          <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaVocLakh > 0 ? "gain" : "concession"}`}>
+                            💰 {comparativeDeltasVsBalanced.deltaVocLakh > 0 ? `+₹${comparativeDeltasVsBalanced.deltaVocLakh} L/yr VOC saved` : `₹${Math.abs(comparativeDeltasVsBalanced.deltaVocLakh)} L/yr higher VOC`}
+                          </span>
+                        )}
+                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaForestHa <= 0 ? "gain" : "concession"}`}>
+                          🌿 {comparativeDeltasVsBalanced.deltaForestHa <= 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaForestHa)} ha forest spared` : `+${comparativeDeltasVsBalanced.deltaForestHa} ha forest take`}
+                        </span>
+                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaDisplaced <= 0 ? "gain" : "concession"}`}>
+                          🏡 {comparativeDeltasVsBalanced.deltaDisplaced <= 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaDisplaced)} residents spared` : `+${comparativeDeltasVsBalanced.deltaDisplaced} displaced`}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Engineering Rationale & Trade-Off Transparency */}
+                  <div className="improvement-engineering-box">
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong style={{ color: "var(--accent)" }}>🎯 Engineering Advantage: </strong>
+                      <span style={{ color: "var(--text-main)" }}>{tradeOffProfile.routeImprovements.engineeringAdvantage}</span>
+                    </div>
+                    <div>
+                      <strong style={{ color: "var(--amber)" }}>⚖️ Trade-Off Accepted: </strong>
+                      <span style={{ color: "var(--text-dim)" }}>{tradeOffProfile.routeImprovements.tradeOffAccepted}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ============================================================ */}
+              {/* ⚖️ MULTI-OBJECTIVE TRADE-OFFS & ALIGNMENT TUNING DASHBOARD */}
+              {/* ============================================================ */}
+              {tradeOffProfile && (
+                <div className="tradeoff-dashboard-card">
+                  <div className="tradeoff-dashboard-header">
+                    <div className="tradeoff-dashboard-title">
+                      <span>⚖️</span>
+                      <span>Multi-Objective Trade-Offs & Alignment Tuning</span>
+                    </div>
+                    <div className="composite-score-badge">
+                      <span>Index:</span>
+                      <span>{tradeOffProfile.compositeAlignmentIndex ?? 85}/100</span>
+                    </div>
+                  </div>
+
+                  {/* 4-Pillar Scorecard Bars */}
+                  <div className="pillar-scorecard">
+                    {/* 1. Nature & Water */}
+                    <div className="pillar-row">
+                      <div className="pillar-meta-row">
+                        <span className="pillar-label">
+                          <span>🌿</span>
+                          <span>Nature & Riparian Protection</span>
+                        </span>
+                        <span className="pillar-value" style={{ color: "#34d399" }}>
+                          {tradeOffProfile.scores?.environmentalScore ?? 85}/100
+                        </span>
+                      </div>
+                      <div className="pillar-bar-bg">
+                        <div
+                          className="pillar-bar-fill"
+                          style={{
+                            width: `${tradeOffProfile.scores?.environmentalScore ?? 85}%`,
+                            background: "linear-gradient(90deg, #059669, #10b981)",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 2. Social & Communities */}
+                    <div className="pillar-row">
+                      <div className="pillar-meta-row">
+                        <span className="pillar-label">
+                          <span>👥</span>
+                          <span>Social & Community Safeguard</span>
+                        </span>
+                        <span className="pillar-value" style={{ color: "#a78bfa" }}>
+                          {tradeOffProfile.scores?.socialScore ?? 88}/100
+                        </span>
+                      </div>
+                      <div className="pillar-bar-bg">
+                        <div
+                          className="pillar-bar-fill"
+                          style={{
+                            width: `${tradeOffProfile.scores?.socialScore ?? 88}%`,
+                            background: "linear-gradient(90deg, #7c3aed, #8b5cf6)",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Directness & Geometric Economy */}
+                    <div className="pillar-row">
+                      <div className="pillar-meta-row">
+                        <span className="pillar-label">
+                          <span>⚡</span>
+                          <span>Directness & Travel Economy</span>
+                        </span>
+                        <span className="pillar-value" style={{ color: "#38bdf8" }}>
+                          {tradeOffProfile.scores?.directnessScore ?? 80}/100
+                        </span>
+                      </div>
+                      <div className="pillar-bar-bg">
+                        <div
+                          className="pillar-bar-fill"
+                          style={{
+                            width: `${tradeOffProfile.scores?.directnessScore ?? 80}%`,
+                            background: "linear-gradient(90deg, #0284c7, #06b6d4)",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 4. Regional Connectivity */}
+                    <div className="pillar-row">
+                      <div className="pillar-meta-row">
+                        <span className="pillar-label">
+                          <span>🏙️</span>
+                          <span>Regional Economic Connectivity</span>
+                        </span>
+                        <span className="pillar-value" style={{ color: "#fbbf24" }}>
+                          {tradeOffProfile.scores?.connectivityScore ?? 90}/100
+                        </span>
+                      </div>
+                      <div className="pillar-bar-bg">
+                        <div
+                          className="pillar-bar-fill"
+                          style={{
+                            width: `${tradeOffProfile.scores?.connectivityScore ?? 90}%`,
+                            background: "linear-gradient(90deg, #d97706, #f59e0b)",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Human-Readable Trade-Off Narrative */}
+                  {tradeOffProfile.tradeOffNarrative && (
+                    <div className="tradeoff-narrative-box">
+                      {tradeOffProfile.tradeOffNarrative}
+                    </div>
+                  )}
+
+                  {/* Key Compromises Bullet Breakdown */}
+                  {tradeOffProfile.keyCompromises && tradeOffProfile.keyCompromises.length > 0 && (
+                    <div className="key-compromises-list">
+                      <div className="key-compromises-title">Key Engineering Compromises</div>
+                      {tradeOffProfile.keyCompromises.map((comp, idx) => (
+                        <div key={idx} className="compromise-item">{comp}</div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* One-Click Quick-Chips with Instant Memory Switch */}
+                  <div className="quick-chips-title">
+                    <span>Align With Archetype (Quick-Chips):</span>
+                    <span style={{ fontSize: "10px", color: "var(--text-dim)", fontWeight: "normal" }}>
+                      Instant switch for cached (0 ms)
+                    </span>
+                  </div>
+                  <div className="quick-chips-container">
+                    {Object.values(PRESET_DEFINITIONS).map((preset) => {
+                      const isCached = Boolean(cachedArchetypes[preset.id]);
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          className={`quick-chip ${tradeOffPreset === preset.id ? "active" : ""}`}
+                          style={{ "--chip-color": preset.color }}
+                          onClick={() => handleSelectPreset(preset.id)}
+                          title={preset.description}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                            <span>{preset.label}</span>
+                            {isCached && (
+                              <span className="cached-badge-mini" title="Generated in memory — Click for instant switch">
+                                Ready ⚡
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Fine-Tuning Continuous Preference Sliders */}
+                  <div className="sliders-box">
+                    <div style={{ fontSize: "10.5px", fontWeight: "700", color: "var(--text-main)", marginBottom: "8px" }}>
+                      🎛️ Fine-Tuning Continuous Controls (0.5× – 3.0×):
+                    </div>
+
+                    <div className="slider-group">
+                      <div className="slider-header">
+                        <span className="slider-label">🌿 Environmental Priority</span>
+                        <span className="slider-val" style={{ color: "#34d399" }}>{envWeight.toFixed(1)}×</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={envWeight}
+                        className="pref-slider"
+                        style={{ "--slider-color": "#10b981" }}
+                        onChange={(e) => handleSliderChange("env", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="slider-group">
+                      <div className="slider-header">
+                        <span className="slider-label">👥 Social Safeguard</span>
+                        <span className="slider-val" style={{ color: "#a78bfa" }}>{socialWeight.toFixed(1)}×</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={socialWeight}
+                        className="pref-slider"
+                        style={{ "--slider-color": "#8b5cf6" }}
+                        onChange={(e) => handleSliderChange("social", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="slider-group">
+                      <div className="slider-header">
+                        <span className="slider-label">⚡ Directness Economy</span>
+                        <span className="slider-val" style={{ color: "#38bdf8" }}>{directnessWeight.toFixed(1)}×</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={directnessWeight}
+                        className="pref-slider"
+                        style={{ "--slider-color": "#06b6d4" }}
+                        onChange={(e) => handleSliderChange("direct", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Re-Align Action Button */}
+                  <button
+                    type="button"
+                    className="realign-btn"
+                    disabled={isRealigning || isLoading}
+                    onClick={() => realignAlignment()}
+                  >
+                    {isRealigning ? (
+                      <>
+                        <div className="spinner" style={{ width: "12px", height: "12px" }} />
+                        <span>Synthesizing Preferences & Re-Aligning...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>✨</span>
+                        <span>Re-Align Route Based on Preferences</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Side-by-Side Alternative Route Comparison Card */}
+                  {alternativeRoutes.length > 0 && (
+                    <div className="comparison-card">
+                      <div className="comparison-header">
+                        <span>Generated Archetypes ({alternativeRoutes.length})</span>
+                        <span style={{ fontSize: "10px", color: "#38bdf8" }}>⚡ Click any route to switch instantly</span>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        {alternativeRoutes.map((alt) => {
+                          const isActive = tradeOffPreset === alt.preset || activeAlternativeId === alt.id;
+                          return (
+                            <div
+                              key={alt.id}
+                              onClick={() => switchToArchetype(alt.preset)}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "8px 10px",
+                                background: isActive ? "rgba(59, 130, 246, 0.2)" : "rgba(0,0,0,0.25)",
+                                border: "1px solid " + (isActive ? "var(--primary)" : "var(--border)"),
+                                borderRadius: "6px",
+                                fontSize: "11px",
+                                cursor: "pointer",
+                                transition: "all 0.15s ease",
+                              }}
+                              className="alt-route-row-btn"
+                              title="Click to instantly switch to this alignment"
+                            >
+                              <div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                  <strong style={{ color: alt.color }}>{alt.label}</strong>
+                                  {isActive ? (
+                                    <span style={{ fontSize: "9px", background: "var(--primary)", color: "#fff", padding: "1px 5px", borderRadius: "10px", fontWeight: "700" }}>Active</span>
+                                  ) : (
+                                    <span style={{ fontSize: "9px", background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", padding: "1px 5px", borderRadius: "10px" }}>Switch ⚡</span>
+                                  )}
+                                </div>
+                                <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
+                                  {alt.routeLengthKm} km (+{alt.deviationPercent}%) • Index: {alt.compositeIndex}/100
+                                </div>
+                              </div>
+                              <div style={{ textAlign: "right", fontSize: "10px" }}>
+                                <div style={{ color: "#34d399" }}>Forest: {alt.forestHa} ha</div>
+                                <div style={{ color: "var(--amber)" }}>Displaced: {alt.displacedPop}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Side-by-Side Quick Comparison Matrix if 2+ routes generated */}
+                      {alternativeRoutes.length > 1 && (
+                        <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "8px" }}>
+                          <div style={{ fontSize: "10px", fontWeight: "700", color: "#94a3b8", marginBottom: "6px" }}>
+                            📐 Archetype Direct Comparison Matrix:
+                          </div>
+                          <div style={{ overflowX: "auto" }}>
+                            <table style={{ width: "100%", fontSize: "10px", borderCollapse: "collapse", textAlign: "left" }}>
+                              <thead>
+                                <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-dim)" }}>
+                                  <th style={{ padding: "4px" }}>Archetype</th>
+                                  <th style={{ padding: "4px" }}>Length</th>
+                                  <th style={{ padding: "4px" }}>Dev</th>
+                                  <th style={{ padding: "4px" }}>Forest</th>
+                                  <th style={{ padding: "4px" }}>Displaced</th>
+                                  <th style={{ padding: "4px" }}>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {alternativeRoutes.map((alt) => {
+                                  const isActive = tradeOffPreset === alt.preset || activeAlternativeId === alt.id;
+                                  return (
+                                    <tr
+                                      key={alt.id}
+                                      style={{
+                                        borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                        background: isActive ? "rgba(59, 130, 246, 0.12)" : "transparent",
+                                      }}
+                                    >
+                                      <td style={{ padding: "4px", color: alt.color, fontWeight: "700" }}>
+                                        {alt.preset === "SHORTEST_PATH" ? "Direct Express" : alt.preset === "ECO_SHIELD" ? "Eco-Shield" : alt.preset === "COMMUNITY_SAFEGUARD" ? "Community" : "Balanced"}
+                                      </td>
+                                      <td style={{ padding: "4px" }}>{alt.routeLengthKm} km</td>
+                                      <td style={{ padding: "4px" }}>+{alt.deviationPercent}%</td>
+                                      <td style={{ padding: "4px", color: "#34d399" }}>{alt.forestHa} ha</td>
+                                      <td style={{ padding: "4px", color: "var(--amber)" }}>{alt.displacedPop}</td>
+                                      <td style={{ padding: "4px" }}>
+                                        {isActive ? (
+                                          <span style={{ color: "var(--primary)", fontWeight: "700" }}>Active</span>
+                                        ) : (
+                                          <button
+                                            type="button"
+                                            onClick={() => switchToArchetype(alt.preset)}
+                                            style={{
+                                              background: "rgba(59, 130, 246, 0.2)",
+                                              border: "1px solid var(--primary)",
+                                              color: "#93c5fd",
+                                              padding: "1px 6px",
+                                              borderRadius: "4px",
+                                              cursor: "pointer",
+                                              fontSize: "9.5px",
+                                            }}
+                                          >
+                                            Switch
+                                          </button>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {networkSummary && (
                 <>

@@ -23,7 +23,7 @@ import java.util.Map;
 public class EndpointSnapService {
 
     private static final double GRID_STEP_METERS = 250.0;
-    private static final double MAX_SNAP_RADIUS_METERS = 6000.0;
+    private static final double MAX_SNAP_RADIUS_METERS = 15000.0;
     private static final double MIN_ENDPOINT_SEPARATION_METERS = 1000.0;
     private static final int ANGULAR_SAMPLES_PER_RING = 24;
 
@@ -97,8 +97,9 @@ public class EndpointSnapService {
         double bestDistance = 0.0;
 
         for (double radius = GRID_STEP_METERS; radius <= MAX_SNAP_RADIUS_METERS; radius += GRID_STEP_METERS) {
-            for (int i = 0; i < ANGULAR_SAMPLES_PER_RING; i++) {
-                double theta = (2.0 * Math.PI * i) / ANGULAR_SAMPLES_PER_RING;
+            int samples = radius > 4000.0 ? 36 : ANGULAR_SAMPLES_PER_RING;
+            for (int i = 0; i < samples; i++) {
+                double theta = (2.0 * Math.PI * i) / samples;
                 double cx = originMetric.x() + radius * Math.cos(theta);
                 double cy = originMetric.y() + radius * Math.sin(theta);
                 GeoPoint candidate = projection.inverse(new MetricPoint(cx, cy));
@@ -189,7 +190,46 @@ public class EndpointSnapService {
                 }
             }
         }
-        return openNeighbors >= 3;
+        if (openNeighbors < 3) {
+            return false;
+        }
+
+        // Fast bounded local BFS (up to 35 grid cells) to guarantee the snapped point is not
+        // trapped in an isolated mountain valley pocket or narrow border strip behind a sanctuary.
+        int minConnectedCells = 35;
+        java.util.ArrayDeque<int[]> queue = new java.util.ArrayDeque<>();
+        java.util.HashSet<Long> visited = new java.util.HashSet<>();
+        queue.add(new int[]{0, 0});
+        visited.add(0L);
+        while (!queue.isEmpty() && visited.size() < minConnectedCells) {
+            int[] cur = queue.poll();
+            GeoPoint curPt = projection.inverse(new MetricPoint(
+                    gridX + cur[1] * GRID_STEP_METERS,
+                    gridY + cur[0] * GRID_STEP_METERS));
+            for (int dr : dirs) {
+                for (int dc : dirs) {
+                    if (dr == 0 && dc == 0) continue;
+                    int nr = cur[0] + dr;
+                    int nc = cur[1] + dc;
+                    long key = (((long) nr) << 32) ^ (nc & 0xffffffffL);
+                    if (visited.contains(key)) continue;
+                    GeoPoint nextPt = projection.inverse(new MetricPoint(
+                            gridX + nc * GRID_STEP_METERS,
+                            gridY + nr * GRID_STEP_METERS));
+                    if (!fullRegion.contains(nextPt)) continue;
+                    if (searchWindow != null && !searchWindow.contains(nextPt)) continue;
+                    if (!surface.assess(nextPt).blocked()
+                            && !surface.assessEdge(curPt, nextPt).blocked()) {
+                        visited.add(key);
+                        if (visited.size() >= minConnectedCells) {
+                            return true;
+                        }
+                        queue.add(new int[]{nr, nc});
+                    }
+                }
+            }
+        }
+        return visited.size() >= minConnectedCells;
     }
 
     private static double round(double value) {

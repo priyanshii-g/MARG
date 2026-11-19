@@ -1174,4 +1174,711 @@ input:checked + .slider:before {
   box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 
+/* ============================================================
+   MULTI-OBJECTIVE TRADE-OFF & USER ALIGNMENT TUNING DASHBOARD
+   ============================================================ */
+
+.tradeoff-dashboard-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+.tradeoff-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tradeoff-dashboard-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.composite-score-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #34d399;
+}
+
+/* 4-Pillar Scorecard Bars */
+.pillar-scorecard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pillar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pillar-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.pillar-label {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pillar-value {
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.pillar-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pillar-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease-out;
+}
+
+/* Compromise Narrative */
+.tradeoff-narrative-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-left: 3px solid var(--primary);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  margin-bottom: 10px;
+}
+
+/* Key Compromises List */
+.key-compromises-list {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 14px;
+}
+
+.key-compromises-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.compromise-item {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 4px;
+  padding-left: 12px;
+  position: relative;
+}
+
+.compromise-item::before {
+  content: "•";
+  position: absolute;
+  left: 2px;
+  color: var(--primary);
+}
+
+/* Quick Chips */
+.quick-chips-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quick-chips-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.quick-chip {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 7px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quick-chip:hover {
+  border-color: var(--border-light);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.quick-chip.active {
+  border-color: var(--chip-color, var(--primary));
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--text-main);
+}
+
+/* Sliders Box */
+.sliders-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.slider-group {
+  margin-bottom: 8px;
+}
+
+.slider-group:last-child {
+  margin-bottom: 0;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  margin-bottom: 3px;
+}
+
+.slider-label {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slider-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.pref-slider {
+  width: 100%;
+  height: 4px;
+  accent-color: var(--slider-color, var(--primary));
+  cursor: pointer;
+}
+
+/* Re-Align Button */
+.realign-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  border: none;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+.realign-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5);
+}
+
+.realign-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Alternative Route Comparison Delta Box */
+.comparison-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 12px;
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #93c5fd;
+  margin-bottom: 8px;
+}
+
+.comparison-delta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+
+.delta-item {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 4px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+}
+
+.delta-label {
+  font-size: 9.5px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.delta-val {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.delta-better {
+  color: var(--emerald);
+}
+
+.delta-worse {
+  color: var(--rose);
+}
+
+.delta-neutral {
+  color: var(--text-main);
+}
+
+/* ============================================================
+   🌟 SPECIFIC ROUTE IMPROVEMENTS & QUANTIFIABLE VALUE CARD
+   ============================================================ */
+.route-improvement-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.route-improvement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.route-improvement-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.archetype-badge-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid currentColor;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.improvement-headline-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.headline-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.headline-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.benefit-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.benefit-badge-item {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--badge-accent, var(--primary));
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.badge-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.badge-item-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-item-val {
+  font-size: 13px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  margin-bottom: 2px;
+}
+
+.badge-item-detail {
+  font-size: 9.5px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Live Comparison Deltas vs Balanced */
+.live-deltas-container {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.live-deltas-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #93c5fd;
+  margin-bottom: 6px;
+}
+
+.live-deltas-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.delta-pill {
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.delta-pill.gain {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.delta-pill.concession {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.improvement-engineering-box {
+  font-size: 10.5px;
+  line-height: 1.45;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.cached-badge-mini {
+  font-size: 8.5px;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 1px 4px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.alt-route-row-btn:hover {
+  border-color: var(--primary) !important;
+  background: rgba(59, 130, 246, 0.12) !important;
+}
+
+/* ============================================================
+   🚨 STATUTORY NBWL & FOREST CLEARANCE ALERT (MANDATORY)
+   ============================================================ */
+.statutory-clearance-card {
+  background: linear-gradient(135deg, rgba(88, 15, 15, 0.96) 0%, rgba(136, 19, 19, 0.92) 100%);
+  border: 2px solid #ef4444;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  animation: statutoryPulse 3s infinite ease-in-out;
+}
+
+@keyframes statutoryPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-color: #ef4444;
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    border-color: #f87171;
+  }
+}
+
+.statutory-badge-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.statutory-badge-pill {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.statutory-headline {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.statutory-statute-citation {
+  font-size: 11px;
+  color: #fecaca;
+  font-style: italic;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(254, 202, 202, 0.2);
+}
+
+.statutory-impact-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.statutory-metric-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(254, 202, 202, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.statutory-metric-label {
+  font-size: 10px;
+  color: #fca5a5;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.statutory-metric-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.statutory-crossings-list {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(254, 202, 202, 0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.statutory-crossings-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fee2e2;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.statutory-crossing-item {
+  font-size: 11px;
+  color: #fecaca;
+  line-height: 1.45;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(254, 202, 202, 0.15);
+}
+
+.statutory-crossing-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.statutory-checklist-box {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(254, 202, 202, 0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.statutory-checklist-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statutory-checklist-item {
+  font-size: 10.5px;
+  color: #fee2e2;
+  line-height: 1.4;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.statutory-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.statutory-action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #dc2626;
+  color: #ffffff;
+  border: 1px solid #f87171;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.statutory-action-btn:hover {
+  background: #b91c1c;
+  border-color: #fca5a5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.statutory-action-btn.secondary {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.statutory-action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.statutory-compliance-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.statutory-compliance-chip .compliance-icon {
+  font-size: 16px;
+}
+
+.statutory-compliance-chip .compliance-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #34d399;
+}
+
+.statutory-compliance-chip .compliance-sub {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+
+
 

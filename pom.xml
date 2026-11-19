@@ -92,7 +92,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar -Xmx1536m</argLine>
+                    <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar -Xmx1536m -XX:+EnableDynamicAgentLoading -Dmockito.mock.maker=subclass</argLine>
                 </configuration>
             </plugin>
             <plugin>

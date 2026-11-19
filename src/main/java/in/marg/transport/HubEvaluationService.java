@@ -89,7 +89,9 @@ public class HubEvaluationService {
 
         int effectiveMinPop = minHubPopulationOverride != null
                 ? Math.max(0, minHubPopulationOverride)
-                : (enableAuto ? Math.min(20000, properties.minHubPopulationFor(mode)) : properties.minHubPopulationFor(mode));
+                : (enableAuto && maxAutoHubs != null
+                        ? Math.min(20000, properties.minHubPopulationFor(mode))
+                        : properties.minHubPopulationFor(mode));
         double minSpacingKm = properties.minInterchangeSpacingKmFor(mode);
         double effectiveMaxVc = maxVcRatioOverride != null
                 ? maxVcRatioOverride
@@ -256,7 +258,7 @@ public class HubEvaluationService {
                 // rather than refusing grade-separated feeder spur access to major economic hubs.
                 double sixLaneCapacity = designCapacityPcuHr * 1.5;
                 double sixLaneVc = projectedVolume / sixLaneCapacity;
-                boolean sixLaneFeasible = sixLaneVc <= 0.85 || projectedVc <= 1.05;
+                boolean sixLaneFeasible = mode == FacilityMode.EXPRESSWAY && (sixLaneVc <= 0.85 || projectedVc <= 1.05);
 
                 if (!enableAuto || !sixLaneFeasible) {
                     decisions.add(new HubDecision(

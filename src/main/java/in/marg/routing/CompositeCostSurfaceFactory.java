@@ -253,6 +253,29 @@ public class CompositeCostSurfaceFactory {
             List<RegionalHub> approvedHubs,
             GeoPoint start,
             GeoPoint goal) {
+        return build(
+                searchWindow,
+                maxLulcSamples,
+                facilityMode,
+                approvedHubs,
+                start,
+                goal,
+                AlignmentPreference.BALANCED);
+    }
+
+    public BuildResult build(
+            StudyRegion searchWindow,
+            int maxLulcSamples,
+            FacilityMode facilityMode,
+            List<RegionalHub> approvedHubs,
+            GeoPoint start,
+            GeoPoint goal,
+            AlignmentPreference preference) {
+
+        AlignmentPreference pref = preference != null ? preference : AlignmentPreference.BALANCED;
+        double envMult = pref.environmentalWeight();
+        double socialMult = pref.socialWeight();
+        double directnessMult = pref.directnessWeight();
 
         // Explicitly prepare LULC before A*.
         var lulcSamples =
@@ -294,26 +317,41 @@ public class CompositeCostSurfaceFactory {
                         floodRasterCache,
                         floodProperties.toPolicy());
 
+        // Apply request-scoped multi-objective preference scaling without mutating global properties
+        CostLayer lulcEff = ScaledCostLayer.wrap(lulc, envMult);
+        CostLayer floodEff = ScaledCostLayer.wrap(flood, envMult);
+        CostLayer waterEff = ScaledCostLayer.wrap(waterBodyCostLayer, envMult);
+        CostLayer wildlifeEff = ScaledCostLayer.wrap(wildlifeCorridorCostLayer, envMult);
+        CostLayer drainageEff = ScaledCostLayer.wrap(drainageWetlandCostLayer, envMult);
+
+        CostLayer settlementEff = ScaledCostLayer.wrap(settlementCostLayer, socialMult);
+        CostLayer buildingEff = ScaledCostLayer.wrap(buildingFootprintCostLayer, socialMult);
+        CostLayer demographicEff = ScaledCostLayer.wrap(demographicCostLayer, socialMult);
+
+        CostLayer slopeEff = ScaledCostLayer.wrap(slopeCostLayer, directnessMult);
+        CostLayer geotechEff = ScaledCostLayer.wrap(geotechLandslideCostLayer, directnessMult);
+        CostLayer utilityEff = ScaledCostLayer.wrap(utilityCorridorCostLayer, directnessMult);
+
         List<CostLayer> baseTerrainList = new ArrayList<>(List.of(
-                lulc,
-                flood,
-                slopeCostLayer,
+                lulcEff,
+                floodEff,
+                slopeEff,
                 protectedAreaCostLayer,
-                settlementCostLayer,
-                waterBodyCostLayer,
-                wildlifeCorridorCostLayer,
-                geotechLandslideCostLayer));
-        if (utilityCorridorCostLayer != null) {
-            baseTerrainList.add(utilityCorridorCostLayer);
+                settlementEff,
+                waterEff,
+                wildlifeEff,
+                geotechEff));
+        if (utilityEff != null) {
+            baseTerrainList.add(utilityEff);
         }
-        if (buildingFootprintCostLayer != null) {
-            baseTerrainList.add(buildingFootprintCostLayer);
+        if (buildingEff != null) {
+            baseTerrainList.add(buildingEff);
         }
-        if (demographicCostLayer != null) {
-            baseTerrainList.add(demographicCostLayer);
+        if (demographicEff != null) {
+            baseTerrainList.add(demographicEff);
         }
-        if (drainageWetlandCostLayer != null) {
-            baseTerrainList.add(drainageWetlandCostLayer);
+        if (drainageEff != null) {
+            baseTerrainList.add(drainageEff);
         }
         List<CostLayer> terrainAndSocialLayers = List.copyOf(baseTerrainList);
 
@@ -334,26 +372,26 @@ public class CompositeCostSurfaceFactory {
                         transportProperties.getCollectorLongitudinalBandKm());
 
         List<CostLayer> surfaceLayers = new ArrayList<>(List.of(
-                lulc,
-                flood,
-                slopeCostLayer,
+                lulcEff,
+                floodEff,
+                slopeEff,
                 protectedAreaCostLayer,
-                settlementCostLayer,
+                settlementEff,
                 transport,
-                waterBodyCostLayer,
-                wildlifeCorridorCostLayer,
-                geotechLandslideCostLayer));
-        if (utilityCorridorCostLayer != null) {
-            surfaceLayers.add(utilityCorridorCostLayer);
+                waterEff,
+                wildlifeEff,
+                geotechEff));
+        if (utilityEff != null) {
+            surfaceLayers.add(utilityEff);
         }
-        if (buildingFootprintCostLayer != null) {
-            surfaceLayers.add(buildingFootprintCostLayer);
+        if (buildingEff != null) {
+            surfaceLayers.add(buildingEff);
         }
-        if (demographicCostLayer != null) {
-            surfaceLayers.add(demographicCostLayer);
+        if (demographicEff != null) {
+            surfaceLayers.add(demographicEff);
         }
-        if (drainageWetlandCostLayer != null) {
-            surfaceLayers.add(drainageWetlandCostLayer);
+        if (drainageEff != null) {
+            surfaceLayers.add(drainageEff);
         }
         CompositeCostSurface surface = new CompositeCostSurface(surfaceLayers);
 

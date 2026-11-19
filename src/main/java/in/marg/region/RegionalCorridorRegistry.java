@@ -471,11 +471,53 @@ public class RegionalCorridorRegistry {
             Double maxVcRatio,
             Boolean autoConnectHubs,
             Integer maxAutoHubs) {
+        return route(
+                regionParam,
+                tierModeParam,
+                startLat,
+                startLon,
+                endLat,
+                endLon,
+                resolutionMeters,
+                corridorBufferDeg,
+                maxLulcSamples,
+                maxDeviationPercent,
+                facilityMode,
+                targetHubs,
+                minHubPopulation,
+                maxVcRatio,
+                autoConnectHubs,
+                maxAutoHubs,
+                in.marg.routing.AlignmentPreference.BALANCED);
+    }
+
+    public Map<String, Object> route(
+            String regionParam,
+            String tierModeParam,
+            Double startLat,
+            Double startLon,
+            Double endLat,
+            Double endLon,
+            Double resolutionMeters,
+            Double corridorBufferDeg,
+            Integer maxLulcSamples,
+            Double maxDeviationPercent,
+            String facilityMode,
+            String targetHubs,
+            Integer minHubPopulation,
+            Double maxVcRatio,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs,
+            in.marg.routing.AlignmentPreference preference) {
 
         double resolution = resolutionMeters == null ? ROUTING_RESOLUTION_METERS : resolutionMeters;
         if (Math.abs(resolution - ROUTING_RESOLUTION_METERS) > 1e-9) {
             throw new IllegalArgumentException("Composite routing is fixed at the canonical 250 m grid.");
         }
+
+        in.marg.routing.AlignmentPreference pref = preference != null
+                ? preference
+                : in.marg.routing.AlignmentPreference.BALANCED;
 
         CorridorTierMode explicitTier = CorridorTierMode.fromParam(tierModeParam);
         String normalizedRegion = normalizeRegionId(regionParam);
@@ -499,7 +541,7 @@ public class RegionalCorridorRegistry {
                             .filter(s -> !s.isEmpty())
                             .toList();
             return panIndiaService.routeDynamicPanIndia(
-                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs);
+                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref);
         }
 
         // Case 2: Explicit preset region ("assam", "western_ghats", "gangetic_plains")
@@ -523,7 +565,8 @@ public class RegionalCorridorRegistry {
                     minHubPopulation,
                     maxVcRatio,
                     autoConnectHubs,
-                    maxAutoHubs);
+                    maxAutoHubs,
+                    pref);
         }
 
         // Case 3: No region parameter specified — auto-detect from coordinates!
@@ -541,7 +584,8 @@ public class RegionalCorridorRegistry {
                     minHubPopulation,
                     maxVcRatio,
                     autoConnectHubs,
-                    maxAutoHubs);
+                    maxAutoHubs,
+                    pref);
         }
 
         RegionalCorridorPreset defaultAssam = presets.get("assam");
@@ -566,7 +610,8 @@ public class RegionalCorridorRegistry {
                     minHubPopulation,
                     maxVcRatio,
                     autoConnectHubs,
-                    maxAutoHubs);
+                    maxAutoHubs,
+                    pref);
         }
 
         // If explicitTier was TIER_2, reject coordinates outside presets; otherwise route via Tier-1 Pan-India if inside India
@@ -580,7 +625,7 @@ public class RegionalCorridorRegistry {
                             .filter(s -> !s.isEmpty())
                             .toList();
             return panIndiaService.routeDynamicPanIndia(
-                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs);
+                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref);
         }
 
         throw new IllegalArgumentException(
@@ -626,6 +671,49 @@ public class RegionalCorridorRegistry {
             Double maxVcRatio,
             Boolean autoConnectHubs,
             Integer maxAutoHubs) {
+        return routeInPresetRegion(
+                regionId,
+                requestedStart,
+                requestedGoal,
+                corridorBufferDeg,
+                maxLulcSamples,
+                maxDeviationPercent,
+                mode,
+                targetHubs,
+                minHubPopulation,
+                maxVcRatio,
+                autoConnectHubs,
+                maxAutoHubs,
+                in.marg.routing.AlignmentPreference.BALANCED);
+    }
+
+    public Map<String, Object> routeInPresetRegion(
+            String regionId,
+            GeoPoint requestedStart,
+            GeoPoint requestedGoal,
+            Double corridorBufferDeg,
+            Integer maxLulcSamples,
+            Double maxDeviationPercent,
+            FacilityMode mode,
+            String targetHubs,
+            Integer minHubPopulation,
+            Double maxVcRatio,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs,
+            in.marg.routing.AlignmentPreference preference) {
+
+        in.marg.routing.AlignmentPreference pref = preference != null
+                ? preference
+                : in.marg.routing.AlignmentPreference.BALANCED;
+
+        Double effectiveMaxDev = maxDeviationPercent;
+        if (effectiveMaxDev == null) {
+            if (pref.environmentalWeight() >= 2.0) {
+                effectiveMaxDev = 25.0;
+            } else if (pref.directnessWeight() >= 2.0) {
+                effectiveMaxDev = 10.0;
+            }
+        }
 
         boolean wasAlreadyLoaded = isRegionLoadedInMemory(regionId);
         RegionalPipelineBundle bundle = getOrLoadPipeline(regionId);
@@ -647,7 +735,7 @@ public class RegionalCorridorRegistry {
                                 .filter(s -> !s.isEmpty())
                                 .toList();
                 return panIndiaService.routeDynamicPanIndia(
-                        requestedStart, requestedGoal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs);
+                        requestedStart, requestedGoal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref);
             }
         }
 
@@ -694,7 +782,8 @@ public class RegionalCorridorRegistry {
                 mode,
                 initialHubEval.approvedHubs(),
                 requestedStart,
-                requestedGoal);
+                requestedGoal,
+                pref);
 
         // Stage 2b: Smart Endpoint Snapping for arbitrary random clicks inside the region!
         EndpointSnapService.EndpointResolution endpointResolution = bundle.endpointSnapService().resolveEndpoints(
@@ -717,13 +806,13 @@ public class RegionalCorridorRegistry {
         CompositeCostSurfaceFactory.BuildResult built =
                 (endpointResolution.startSnapped() || endpointResolution.goalSnapped())
                         ? bundle.costSurfaceFactory().build(
-                                searchWindow, maxSamples, mode, hubEvaluation.approvedHubs(), start, goal)
+                                searchWindow, maxSamples, mode, hubEvaluation.approvedHubs(), start, goal, pref)
                         : initialBuilt;
 
         // Determine whether corridor fits in a single 250 m A* window or multi-stage 250 m windows
         double dLat = Math.abs(goal.lat() - start.lat());
         double dLon = Math.abs(goal.lon() - start.lon());
-        int stages = Math.max(1, (int) Math.ceil(Math.max(dLat, dLon) / 0.65));
+        int stages = Math.max(1, (int) Math.ceil(Math.max(dLat, dLon) / 1.20));
 
         List<GeoPoint> baseline = new ArrayList<>();
         List<GeoPoint> mainline = new ArrayList<>();
@@ -740,13 +829,13 @@ public class RegionalCorridorRegistry {
             double baselineLengthKm = bundle.router().routeLengthKm(baseline);
 
             RouteConstraints constraints = RouteConstraints.none();
-            if (maxDeviationPercent != null) {
-                if (!Double.isFinite(maxDeviationPercent)
-                        || maxDeviationPercent < 0.0
-                        || maxDeviationPercent > 200.0) {
+            if (effectiveMaxDev != null) {
+                if (!Double.isFinite(effectiveMaxDev)
+                        || effectiveMaxDev < 0.0
+                        || effectiveMaxDev > 200.0) {
                     throw new IllegalArgumentException("maxDeviationPercent must be between 0 and 200");
                 }
-                double maxLengthKm = baselineLengthKm * (1.0 + maxDeviationPercent / 100.0);
+                double maxLengthKm = baselineLengthKm * (1.0 + effectiveMaxDev / 100.0);
                 constraints = RouteConstraints.maxLengthKm(maxLengthKm);
             }
 
@@ -767,7 +856,7 @@ public class RegionalCorridorRegistry {
             for (int s = 0; s < stageWaypoints.size() - 1; s++) {
                 GeoPoint stageStart = stageWaypoints.get(s);
                 GeoPoint stageGoal = stageWaypoints.get(s + 1);
-                double stageBuffer = Math.min(buffer, 0.12);
+                double stageBuffer = Math.min(Math.max(buffer, 0.16), 0.25);
                 StudyRegion stageWindow = corridorWindow(fullRegion, stageStart, stageGoal, stageBuffer);
 
                 List<GeoPoint> stageBaseline = bundle.router().route(
@@ -779,11 +868,11 @@ public class RegionalCorridorRegistry {
                         stageWindow);
 
                 RouteConstraints stageConstraints = RouteConstraints.none();
-                if (maxDeviationPercent != null
-                        && Double.isFinite(maxDeviationPercent)
-                        && maxDeviationPercent >= 0.0
-                        && maxDeviationPercent <= 200.0) {
-                    double maxStageKm = bundle.router().routeLengthKm(stageBaseline) * (1.0 + maxDeviationPercent / 100.0);
+                if (effectiveMaxDev != null
+                        && Double.isFinite(effectiveMaxDev)
+                        && effectiveMaxDev >= 0.0
+                        && effectiveMaxDev <= 200.0) {
+                    double maxStageKm = bundle.router().routeLengthKm(stageBaseline) * (1.0 + effectiveMaxDev / 100.0);
                     stageConstraints = RouteConstraints.maxLengthKm(maxStageKm);
                 }
 
@@ -1047,6 +1136,18 @@ public class RegionalCorridorRegistry {
                         : "unconstrained-A*-if-feasible-otherwise-Lagrangian-relaxation");
         metadata.put("constraintOptimizationApproximate", maxDeviationPercent != null);
 
+        Map<String, Object> tradeOffProfile = in.marg.routing.TradeOffEvaluationService.evaluateTradeOffs(
+                routeDiagnostics,
+                networkPlan,
+                baselineLengthKm,
+                routeLengthKm,
+                deviationPercent,
+                pref,
+                mainline);
+        metadata.put("tradeOffProfile", tradeOffProfile);
+        metadata.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
+        metadata.put("alignmentPreference", pref.toMap());
+
         Map<String, Object> mainlineProperties = new LinkedHashMap<>();
         mainlineProperties.put("profile", "COMPOSITE_13_LAYER");
         mainlineProperties.put("corridorTierMode", CorridorTierMode.TIER_2_PRECACHED_BENCHMARK.name());
@@ -1079,6 +1180,7 @@ public class RegionalCorridorRegistry {
         response.put("mode", "COMPOSITE_13_LAYER");
         response.put("facilityMode", mode.name());
         response.put("metadata", metadata);
+        response.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
         response.put("warning", "Preliminary greenfield planning corridor only; not a legal land-acquisition or clearance determination.");
         response.put("features", features);
         return response;
@@ -1280,7 +1382,7 @@ public class RegionalCorridorRegistry {
         }
         if (terrainAndSocialLayers != null && !terrainAndSocialLayers.isEmpty()) {
             CostSurface relaxedSurface = new CompositeCostSurface(terrainAndSocialLayers);
-            for (double buf : new double[]{0.08, 0.18}) {
+            for (double buf : new double[]{0.08, 0.18, 0.35}) {
                 StudyRegion localWin = corridorWindow(fullRegion, fromPt, toPt, buf);
                 try {
                     List<GeoPoint> path = new ArrayList<>(router.route(
@@ -1293,6 +1395,10 @@ public class RegionalCorridorRegistry {
                 } catch (RuntimeException ignored) {
                 }
             }
+        }
+        if (in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                .findIntersectingSanctuaryForSegment(fromPt.lat(), fromPt.lon(), toPt.lat(), toPt.lon()) != null) {
+            return List.of();
         }
         return List.of(fromPt, toPt);
     }
@@ -1427,10 +1533,19 @@ public class RegionalCorridorRegistry {
 
     private static StudyRegion corridorWindow(
             StudyRegion full, GeoPoint a, GeoPoint b, double bufferDeg) {
-        double minLat = Math.max(full.minLat(), Math.min(a.lat(), b.lat()) - bufferDeg);
-        double maxLat = Math.min(full.maxLat(), Math.max(a.lat(), b.lat()) + bufferDeg);
-        double minLon = Math.max(full.minLon(), Math.min(a.lon(), b.lon()) - bufferDeg);
-        double maxLon = Math.min(full.maxLon(), Math.max(a.lon(), b.lon()) + bufferDeg);
+        double midLat = 0.5 * (a.lat() + b.lat());
+        double midLon = 0.5 * (a.lon() + b.lon());
+        var reg = in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance();
+        boolean nearProtectedOrEsz = reg.matchPoint(midLat, midLon) != null
+                || reg.matchPoint(a.lat(), a.lon()) != null
+                || reg.matchPoint(b.lat(), b.lon()) != null
+                || reg.findIntersectingSanctuaryForSegment(a.lat(), a.lon(), b.lat(), b.lon()) != null;
+        double effBuf = nearProtectedOrEsz ? Math.max(bufferDeg, 0.22) : bufferDeg;
+
+        double minLat = Math.max(full.minLat(), Math.min(a.lat(), b.lat()) - effBuf);
+        double maxLat = Math.min(full.maxLat(), Math.max(a.lat(), b.lat()) + effBuf);
+        double minLon = Math.max(full.minLon(), Math.min(a.lon(), b.lon()) - effBuf);
+        double maxLon = Math.min(full.maxLon(), Math.max(a.lon(), b.lon()) + effBuf);
         return new StudyRegion(
                 full.name() + " / composite A-B corridor",
                 minLat, minLon, maxLat, maxLon, a, b);

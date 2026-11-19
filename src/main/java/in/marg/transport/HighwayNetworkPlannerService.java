@@ -1144,6 +1144,10 @@ public class HighwayNetworkPlannerService {
     }
 
     private boolean isInsideWildlifeInterchangeExclusionZone(GeoPoint pt) {
+        if (in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                .isInsideAnySanctuaryCore(pt.lat(), pt.lon())) {
+            return true;
+        }
         if (wildlifeRasterProvider == null) {
             return false;
         }
@@ -1186,6 +1190,10 @@ public class HighwayNetworkPlannerService {
     }
 
     private boolean isTerrainSafeForInterchange(GeoPoint pt) {
+        if (in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                .isInsideAnySanctuaryCore(pt.lat(), pt.lon())) {
+            return false;
+        }
         Double pa = protectedAreaRasterProvider.sampleOrNull(pt.lat(), pt.lon());
         if (pa == null || Math.round(pa) >= 1L) {
             return false;
@@ -1223,7 +1231,7 @@ public class HighwayNetworkPlannerService {
             return List.of(interchangePoint, hubBypassTieIn);
         }
 
-        for (double bufferDeg : new double[]{0.06, 0.12, 0.20}) {
+        for (double bufferDeg : new double[]{0.06, 0.12, 0.20, 0.35}) {
             StudyRegion localWindow = localWindow(fullRegion, interchangePoint, hubBypassTieIn, bufferDeg);
             try {
                 return router.route(
@@ -1236,6 +1244,16 @@ public class HighwayNetworkPlannerService {
             } catch (RuntimeException ignored) {
                 // Expand local spur window on steep ridges or protected-area detours
             }
+        }
+        try {
+            return router.route(
+                    fullRegion,
+                    interchangePoint,
+                    hubBypassTieIn,
+                    spurSurface,
+                    SPUR_ROUTING_RESOLUTION_METERS,
+                    fullRegion);
+        } catch (RuntimeException ignored) {
         }
         return List.of(interchangePoint, hubBypassTieIn);
     }
@@ -1521,6 +1539,91 @@ public class HighwayNetworkPlannerService {
                         "geometry", Map.of(
                                 "type", "LineString",
                                 "coordinates", coords)));
+            }
+        }
+
+        // Statutory National Parks & Wildlife Sanctuaries (Wildlife Protection Act, 1972)
+        in.marg.wildlife.IndianWildlifeSanctuaryRegistry sanctuaryReg = in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance();
+        double sMinLat = Double.POSITIVE_INFINITY, sMaxLat = Double.NEGATIVE_INFINITY;
+        double sMinLon = Double.POSITIVE_INFINITY, sMaxLon = Double.NEGATIVE_INFINITY;
+        for (GeoPoint p : mainline) {
+            sMinLat = Math.min(sMinLat, p.lat());
+            sMaxLat = Math.max(sMaxLat, p.lat());
+            sMinLon = Math.min(sMinLon, p.lon());
+            sMaxLon = Math.max(sMaxLon, p.lon());
+        }
+        for (in.marg.wildlife.IndianWildlifeSanctuaryRegistry.StatutorySanctuary s : sanctuaryReg.allSanctuaries()) {
+            if (!mainline.isEmpty() && (s.maxLat() < sMinLat - 0.25 || s.minLat() > sMaxLat + 0.25
+                    || s.maxLon() < sMinLon - 0.25 || s.minLon() > sMaxLon + 0.25)) {
+                continue;
+            }
+            Map<String, Object> sProps = new LinkedHashMap<>();
+            sProps.put("featureRole", "WILDLIFE_SANCTUARY_BOUNDARY");
+            sProps.put("sanctuaryId", s.id());
+            sProps.put("name", s.name());
+            sProps.put("state", s.state());
+            sProps.put("district", s.district());
+            sProps.put("legalStatute", s.legalStatute());
+            sProps.put("areaKm2", s.areaKm2());
+            sProps.put("keySpecies", s.keySpecies());
+            sProps.put("requiresNbwlClearance", true);
+
+            List<List<double[]>> effectiveRings = s.effectiveBoundaryRings();
+            Map<String, Object> geomMap;
+            if (effectiveRings.size() > 1) {
+                List<List<List<List<Double>>>> multiCoords = new ArrayList<>(effectiveRings.size());
+                for (List<double[]> r : effectiveRings) {
+                    List<List<Double>> ring = new ArrayList<>(r.size());
+                    for (double[] pt : r) {
+                        ring.add(List.of(Math.round(pt[1] * 100000.0) / 100000.0, Math.round(pt[0] * 100000.0) / 100000.0));
+                    }
+                    multiCoords.add(List.of(ring));
+                }
+                geomMap = Map.of("type", "MultiPolygon", "coordinates", multiCoords);
+            } else {
+                List<List<Double>> ring = new ArrayList<>();
+                if (!effectiveRings.isEmpty()) {
+                    for (double[] pt : effectiveRings.get(0)) {
+                        ring.add(List.of(Math.round(pt[1] * 100000.0) / 100000.0, Math.round(pt[0] * 100000.0) / 100000.0));
+                    }
+                } else {
+                    int n = 24;
+                    double latR = (s.maxLat() - s.minLat()) / 2.0;
+                    double lonR = (s.maxLon() - s.minLon()) / 2.0;
+                    for (int k = 0; k <= n; k++) {
+                        double a = 2.0 * Math.PI * k / n;
+                        double ptLat = s.centerLat() + latR * Math.sin(a);
+                        double ptLon = s.centerLon() + lonR * Math.cos(a);
+                        ring.add(List.of(Math.round(ptLon * 10000.0) / 10000.0, Math.round(ptLat * 10000.0) / 10000.0));
+                    }
+                }
+                geomMap = Map.of("type", "Polygon", "coordinates", List.of(ring));
+            }
+            features.add(Map.of(
+                    "type", "Feature",
+                    "properties", sProps,
+                    "geometry", geomMap
+            ));
+
+            if (s.eszPolygon() != null && s.eszPolygon().size() >= 3) {
+                List<List<Double>> eszRing = new ArrayList<>();
+                for (double[] pt : s.eszPolygon()) {
+                    eszRing.add(List.of(Math.round(pt[1] * 100000.0) / 100000.0, Math.round(pt[0] * 100000.0) / 100000.0));
+                }
+                Map<String, Object> eszProps = new LinkedHashMap<>();
+                eszProps.put("featureRole", "ECO_SENSITIVE_ZONE_BOUNDARY");
+                eszProps.put("sanctuaryId", s.id());
+                eszProps.put("name", s.name() + " (MoEFCC 10 km Default ESZ)");
+                eszProps.put("eszRadiusKm", in.marg.wildlife.IndianWildlifeSanctuaryRegistry.DEFAULT_ESZ_BUFFER_KM);
+                eszProps.put("state", s.state());
+                features.add(Map.of(
+                        "type", "Feature",
+                        "properties", eszProps,
+                        "geometry", Map.of(
+                                "type", "Polygon",
+                                "coordinates", List.of(eszRing)
+                        )
+                ));
             }
         }
 

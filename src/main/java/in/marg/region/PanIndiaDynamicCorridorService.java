@@ -321,10 +321,45 @@ public class PanIndiaDynamicCorridorService {
             List<String> targetHubs,
             Boolean autoConnectHubs,
             Integer maxAutoHubs) {
+        return routeDynamicPanIndia(
+                requestedStart,
+                requestedGoal,
+                facilityMode,
+                corridorBufferDeg,
+                maxDeviationPercent,
+                targetHubs,
+                autoConnectHubs,
+                maxAutoHubs,
+                in.marg.routing.AlignmentPreference.BALANCED);
+    }
+
+    public Map<String, Object> routeDynamicPanIndia(
+            GeoPoint requestedStart,
+            GeoPoint requestedGoal,
+            FacilityMode facilityMode,
+            Double corridorBufferDeg,
+            Double maxDeviationPercent,
+            List<String> targetHubs,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs,
+            in.marg.routing.AlignmentPreference preference) {
 
         if (!isWithinIndiaBounds(requestedStart) || !isWithinIndiaBounds(requestedGoal)) {
             throw new IllegalArgumentException(
                     "Both endpoints must lie within Pan-India bounds (lat 6.5..37.5 N, lon 68.0..97.5 E).");
+        }
+
+        in.marg.routing.AlignmentPreference pref = preference != null
+                ? preference
+                : in.marg.routing.AlignmentPreference.BALANCED;
+
+        Double effectiveMaxDev = maxDeviationPercent;
+        if (effectiveMaxDev == null) {
+            if (pref.environmentalWeight() >= 2.0) {
+                effectiveMaxDev = 25.0;
+            } else if (pref.directnessWeight() >= 2.0) {
+                effectiveMaxDev = 10.0;
+            }
         }
 
         FacilityMode mode = facilityMode != null ? facilityMode : FacilityMode.EXPRESSWAY;
@@ -336,7 +371,7 @@ public class PanIndiaDynamicCorridorService {
         EndpointSnapService snapService = new EndpointSnapService(projection);
 
         PanIndiaDynamicCostLayer panIndiaSurface = new PanIndiaDynamicCostLayer(
-                requestedStart, requestedGoal, mode);
+                requestedStart, requestedGoal, mode, pref);
 
         double bufferDeg = corridorBufferDeg != null
                 ? Math.max(0.05, Math.min(0.30, corridorBufferDeg))
@@ -509,7 +544,7 @@ public class PanIndiaDynamicCorridorService {
                 GeoPoint stageGoal = stageWaypoints.get(s + 1);
                 double stageBuffer = Math.min(bufferDeg, 0.12);
                 StudyRegion stageWindow = stageCorridorWindow(stageStart, stageGoal, stageBuffer);
-                PanIndiaDynamicCostLayer stageSurface = new PanIndiaDynamicCostLayer(stageStart, stageGoal, mode);
+                PanIndiaDynamicCostLayer stageSurface = new PanIndiaDynamicCostLayer(stageStart, stageGoal, mode, pref);
 
                 List<GeoPoint> stageBaseline = router.route(
                         PAN_INDIA_BOUNDS,
@@ -520,8 +555,8 @@ public class PanIndiaDynamicCorridorService {
                         stageWindow);
 
                 RouteConstraints constraints = RouteConstraints.none();
-                if (maxDeviationPercent != null && Double.isFinite(maxDeviationPercent) && maxDeviationPercent >= 0.0) {
-                    double maxStageKm = router.routeLengthKm(stageBaseline) * (1.0 + maxDeviationPercent / 100.0);
+                if (effectiveMaxDev != null && Double.isFinite(effectiveMaxDev) && effectiveMaxDev >= 0.0) {
+                    double maxStageKm = router.routeLengthKm(stageBaseline) * (1.0 + effectiveMaxDev / 100.0);
                     constraints = RouteConstraints.maxLengthKm(maxStageKm);
                 }
 
@@ -697,6 +732,20 @@ public class PanIndiaDynamicCorridorService {
         metadata.put("deviationPercent", round(deviationPercent));
         metadata.put("routeDiagnostics", routeDiagnostics);
         metadata.put("transportNetworkAndCapacitySummary", networkSummary);
+
+        Map<String, Object> tradeOffProfile = in.marg.routing.TradeOffEvaluationService.evaluateTradeOffs(
+                routeDiagnostics,
+                networkSummary,
+                baselineLengthKm,
+                routeLengthKm,
+                deviationPercent,
+                pref,
+                mainline);
+        metadata.put("tradeOffProfile", tradeOffProfile);
+        metadata.put("alignmentPreference", pref.toMap());
+        if (tradeOffProfile.containsKey("statutoryClearanceReport")) {
+            metadata.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
+        }
         metadata.put("layers", List.of(
                 "LULC",
                 "FLOOD_HAZARD",
@@ -725,6 +774,9 @@ public class PanIndiaDynamicCorridorService {
         response.put("mode", "COMPOSITE_13_LAYER");
         response.put("facilityMode", mode.name());
         response.put("metadata", metadata);
+        if (tradeOffProfile.containsKey("statutoryClearanceReport")) {
+            response.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
+        }
         response.put("warning", "Preliminary greenfield planning corridor only; not a legal land-acquisition or clearance determination.");
         response.put("features", features);
         return response;
@@ -879,6 +931,94 @@ public class PanIndiaDynamicCorridorService {
                 }
             }
         }
+
+        // 3. Statutory National Parks & Wildlife Sanctuaries (Wildlife Protection Act, 1972)
+        if (!mainline.isEmpty()) {
+            in.marg.wildlife.IndianWildlifeSanctuaryRegistry sanctuaryReg = in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance();
+            double minLat = Double.POSITIVE_INFINITY, maxLat = Double.NEGATIVE_INFINITY;
+            double minLon = Double.POSITIVE_INFINITY, maxLon = Double.NEGATIVE_INFINITY;
+            for (GeoPoint p : mainline) {
+                minLat = Math.min(minLat, p.lat());
+                maxLat = Math.max(maxLat, p.lat());
+                minLon = Math.min(minLon, p.lon());
+                maxLon = Math.max(maxLon, p.lon());
+            }
+            for (in.marg.wildlife.IndianWildlifeSanctuaryRegistry.StatutorySanctuary s : sanctuaryReg.allSanctuaries()) {
+                if (s.maxLat() < minLat - 0.25 || s.minLat() > maxLat + 0.25
+                        || s.maxLon() < minLon - 0.25 || s.minLon() > maxLon + 0.25) {
+                    continue;
+                }
+                Map<String, Object> sProps = new LinkedHashMap<>();
+                sProps.put("featureRole", "WILDLIFE_SANCTUARY_BOUNDARY");
+                sProps.put("sanctuaryId", s.id());
+                sProps.put("name", s.name());
+                sProps.put("state", s.state());
+                sProps.put("district", s.district());
+                sProps.put("legalStatute", s.legalStatute());
+                sProps.put("areaKm2", s.areaKm2());
+                sProps.put("keySpecies", s.keySpecies());
+                sProps.put("requiresNbwlClearance", true);
+
+                List<List<double[]>> effectiveRings = s.effectiveBoundaryRings();
+                Map<String, Object> geomMap;
+                if (effectiveRings.size() > 1) {
+                    List<List<List<List<Double>>>> multiCoords = new ArrayList<>(effectiveRings.size());
+                    for (List<double[]> r : effectiveRings) {
+                        List<List<Double>> ring = new ArrayList<>(r.size());
+                        for (double[] pt : r) {
+                            ring.add(List.of(Math.round(pt[1] * 100000.0) / 100000.0, Math.round(pt[0] * 100000.0) / 100000.0));
+                        }
+                        multiCoords.add(List.of(ring));
+                    }
+                    geomMap = Map.of("type", "MultiPolygon", "coordinates", multiCoords);
+                } else {
+                    List<List<Double>> ring = new ArrayList<>();
+                    if (!effectiveRings.isEmpty()) {
+                        for (double[] pt : effectiveRings.get(0)) {
+                            ring.add(List.of(Math.round(pt[1] * 100000.0) / 100000.0, Math.round(pt[0] * 100000.0) / 100000.0));
+                        }
+                    } else {
+                        int n = 24;
+                        double rLat = (s.maxLat() - s.minLat()) / 2.0;
+                        double rLon = (s.maxLon() - s.minLon()) / 2.0;
+                        for (int i = 0; i <= n; i++) {
+                            double theta = 2.0 * Math.PI * i / n;
+                            double lat = s.centerLat() + rLat * Math.sin(theta);
+                            double lon = s.centerLon() + rLon * Math.cos(theta);
+                            ring.add(List.of(round(lon), round(lat)));
+                        }
+                    }
+                    geomMap = Map.of("type", "Polygon", "coordinates", List.of(ring));
+                }
+                features.add(Map.of(
+                        "type", "Feature",
+                        "geometry", geomMap,
+                        "properties", sProps
+                ));
+
+                if (s.eszPolygon() != null && s.eszPolygon().size() >= 3) {
+                    List<List<Double>> eszRing = new ArrayList<>();
+                    for (double[] pt : s.eszPolygon()) {
+                        eszRing.add(List.of(Math.round(pt[1] * 100000.0) / 100000.0, Math.round(pt[0] * 100000.0) / 100000.0));
+                    }
+                    Map<String, Object> eszProps = new LinkedHashMap<>();
+                    eszProps.put("featureRole", "ECO_SENSITIVE_ZONE_BOUNDARY");
+                    eszProps.put("sanctuaryId", s.id());
+                    eszProps.put("name", s.name() + " (MoEFCC 10 km Default ESZ)");
+                    eszProps.put("eszRadiusKm", in.marg.wildlife.IndianWildlifeSanctuaryRegistry.DEFAULT_ESZ_BUFFER_KM);
+                    eszProps.put("state", s.state());
+                    features.add(Map.of(
+                            "type", "Feature",
+                            "geometry", Map.of(
+                                    "type", "Polygon",
+                                    "coordinates", List.of(eszRing)
+                            ),
+                            "properties", eszProps
+                    ));
+                }
+            }
+        }
+
         return features;
     }
 
