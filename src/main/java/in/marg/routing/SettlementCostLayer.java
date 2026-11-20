@@ -4,6 +4,7 @@ import in.marg.config.SettlementRoutingProperties;
 import in.marg.model.GeoPoint;
 import in.marg.settlement.SettlementExposureClass;
 import in.marg.settlement.SettlementRasterProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,12 +14,26 @@ public class SettlementCostLayer implements CostLayer {
 
     private final SettlementRasterProvider provider;
     private final SettlementRoutingProperties properties;
+    private final boolean forceUrbanCoreSoftBarrier;
 
+    @Autowired
     public SettlementCostLayer(
             SettlementRasterProvider provider,
             SettlementRoutingProperties properties) {
+        this(provider, properties, false);
+    }
+
+    private SettlementCostLayer(
+            SettlementRasterProvider provider,
+            SettlementRoutingProperties properties,
+            boolean forceUrbanCoreSoftBarrier) {
         this.provider = provider;
         this.properties = properties;
+        this.forceUrbanCoreSoftBarrier = forceUrbanCoreSoftBarrier;
+    }
+
+    public SettlementCostLayer withUrbanCoreLastResortMode() {
+        return new SettlementCostLayer(provider, properties, true);
     }
 
     @Override
@@ -33,7 +48,7 @@ public class SettlementCostLayer implements CostLayer {
             return new CostAssessment(false, policy.penalty(SettlementExposureClass.NODATA), SOURCE, "SETTLEMENT_NODATA");
         }
 
-        if (exposure == SettlementExposureClass.URBAN_CORE && policy.blockUrbanCore()) {
+        if (exposure == SettlementExposureClass.URBAN_CORE && policy.blockUrbanCore() && !forceUrbanCoreSoftBarrier) {
             return CostAssessment.blocked(SOURCE, "SETTLEMENT_URBAN_CORE");
         }
 
@@ -41,9 +56,14 @@ public class SettlementCostLayer implements CostLayer {
             return CostAssessment.free(SOURCE);
         }
 
+        double pen = policy.penalty(exposure);
+        if (exposure == SettlementExposureClass.URBAN_CORE && forceUrbanCoreSoftBarrier) {
+            pen = Math.max(pen, BuildingCostPolicy.DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
+        }
+
         return new CostAssessment(
                 false,
-                policy.penalty(exposure),
+                pen,
                 SOURCE,
                 "SETTLEMENT_" + exposure.name());
     }

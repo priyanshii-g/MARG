@@ -27,8 +27,8 @@ const PRESET_CORRIDORS = [
     tier: "TIER_2_PRECACHED_BENCHMARK",
     name: "Corridor 2: Pune–Satara (Western Ghats, MH)",
     tag: "Steep Slope & Landslide",
-    start: { lat: 18.365, lng: 73.855 },
-    end: { lat: 17.695, lng: 74.015 },
+    start: { lat: 18.36002, lng: 73.85352 },
+    end: { lat: 17.71704, lng: 74.02648 },
     center: [18.03, 73.93],
     zoom: 9,
     suggestedHubs: ["Wai", "Shirwal", "Satara", "Bhor", "Khandala"],
@@ -64,8 +64,20 @@ function isInsideIndia(lat, lng) {
 function humanizeSnapReason(reason) {
   if (!reason) return "Terrain or environmental exclusion constraint";
   const r = reason.toUpperCase();
+  if (r.includes("HOSPITAL") || r.includes("MEDICAL") || r.includes("CLINIC")) {
+    return "Hospital / Medical Campus Exclusion Zone (+100m safety buffer)";
+  }
+  if (r.includes("INSTITUTIONAL") || r.includes("SCHOOL") || r.includes("COLLEGE") || r.includes("UNIVERSITY")) {
+    return "Educational / Institutional Campus Exclusion Zone (+100m safety buffer)";
+  }
   if (r.includes("SACRED") || r.includes("HERITAGE") || r.includes("RELIGIOUS")) {
     return "Sacred Temple / Heritage Precinct Exclusion Zone (Zero-tolerance buffer)";
+  }
+  if (r.includes("COLONY") || r.includes("RESIDENTIAL_SETTLEMENT")) {
+    return "Dense Residential Colony / Urban Settlement Boundary";
+  }
+  if (r.includes("BUILDING_FOOTPRINT")) {
+    return "Existing Building Footprint / Structure Clearance";
   }
   if (r.includes("PROTECTED_AREA") || r.includes("WILDLIFE_SANCTUARY")) {
     return "Protected Wildlife Sanctuary / National Park Core (Zero-tolerance exclusion)";
@@ -884,6 +896,10 @@ export default function App() {
       roadFlyovers: net.highwayFlyoverUnderpassCount ?? 0,
       rowHectares: net.rightOfWayAcquisitionFootprint?.totalDirectRowAcquisitionHectares ?? "—",
       rowWidthM: net.rightOfWayAcquisitionFootprint?.mainlineRowWidthMeters ?? 90,
+      buildingsInRow: net.buildingsInDirectRowCount ?? 0,
+      buildingsByType: net.buildingsInDirectRowByType ?? null,
+      settlementConflicts: net.settlementConflictZonesCount ?? 0,
+      displacedHouseholds: net.estimatedDirectlyDisplacedHouseholds ?? 0,
       displacedPop: net.estimatedDirectlyDisplacedPopulation ?? 0,
     };
     setNetworkSummary(newNetSummary);
@@ -1233,6 +1249,35 @@ export default function App() {
           fillOpacity: 0.95,
         }).bindPopup(
           `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Existing Road Tie-In</div><div class="popup-meta">Existing Road: ${props.existingRoadRef || "NH/SH/MDR"}<br/>Corridor: ${props.tieInJunctionName || "Existing Road Network"}<br/>Access Connector: ${props.connectorLengthKm ?? "—"} km</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 13. Building Demolition & Settlement RoW Conflict Zones (RFCTLARR 2013 R&R)
+      else if (role === "SETTLEMENT_BUILDING_CONFLICT_ZONE" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const props = feature.properties || {};
+        const directBlds = props.buildingsInDirectRowCount ?? 0;
+        const byType = props.buildingsInDirectRowByType || {};
+        const breakdownStr = Object.entries(byType)
+          .filter(([, cnt]) => cnt > 0)
+          .map(([t, cnt]) => `${t}: ${cnt}`)
+          .join(", ") || "Fringe parcel touch";
+        const icon = L.divIcon({
+          className: "struct-marker conflict",
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${directBlds > 0 ? "#dc2626" : "#f59e0b"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">🏚️</span>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">Building / Settlement RoW Conflict</div>` +
+            `<div class="popup-meta">` +
+            `<b>Location:</b> ${props.settlementName || "Corridor Structure"}<br/>` +
+            `<b>Structures to Demolish (Direct RoW):</b> ${directBlds}<br/>` +
+            `<b>Breakdown:</b> ${breakdownStr}<br/>` +
+            `<b>Footprint Area:</b> ${props.affectedDirectRowFootprintSqMeters ?? 0} m²<br/>` +
+            `<b>Mitigation:</b> ${(props.recommendedEngineeringMitigation || "RFCTLARR 2013 R&R").replace(/_/g, " ")}` +
+            `</div>`
         );
         group.addLayer(marker);
       }
@@ -2834,11 +2879,36 @@ export default function App() {
 
                     <div className="struct-item">
                       <div className="struct-name">
+                        <span>🏚️</span>
+                        <span>Buildings to Demolish (Direct RoW)</span>
+                      </div>
+                      <div
+                        className="struct-count"
+                        style={{ color: networkSummary.buildingsInRow > 0 ? "#ef4444" : "var(--emerald)" }}
+                      >
+                        {networkSummary.buildingsInRow} structures
+                        {networkSummary.buildingsByType &&
+                          Object.values(networkSummary.buildingsByType).some((v) => v > 0) && (
+                            <span style={{ fontSize: "10px", marginLeft: "4px", opacity: 0.85 }}>
+                              (
+                              {Object.entries(networkSummary.buildingsByType)
+                                .filter(([, v]) => v > 0)
+                                .map(([k, v]) => `${k.slice(0, 3)}:${v}`)
+                                .join(" ")}
+                              )
+                            </span>
+                          )}
+                      </div>
+                    </div>
+
+                    <div className="struct-item">
+                      <div className="struct-name">
                         <span>👥</span>
-                        <span>Est. Displaced Population</span>
+                        <span>Est. Displaced Population (RFCTLARR)</span>
                       </div>
                       <div className="struct-count" style={{ color: "var(--amber)" }}>
                         {networkSummary.displacedPop} persons
+                        {networkSummary.displacedHouseholds > 0 && ` (~${networkSummary.displacedHouseholds} HH)`}
                       </div>
                     </div>
                   </div>

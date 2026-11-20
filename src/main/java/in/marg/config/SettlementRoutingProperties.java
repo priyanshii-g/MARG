@@ -11,15 +11,15 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "marg.routing.settlement")
 public class SettlementRoutingProperties {
     private Map<String, Double> penalties = new LinkedHashMap<>();
-    private boolean blockUrbanCore = false;
+    private boolean blockUrbanCore = true;
     private boolean blockNoData = false;
 
     public SettlementRoutingProperties() {
         penalties.put("NONE", 0.0);
-        penalties.put("OUTER_BUFFER", 0.30);
-        penalties.put("INNER_BUFFER", 0.80);
-        penalties.put("RURAL_CORE", 1.60);
-        penalties.put("URBAN_CORE", 2.50);
+        penalties.put("OUTER_BUFFER", 1.50);
+        penalties.put("INNER_BUFFER", 6.00);
+        penalties.put("RURAL_CORE", 35.00);
+        penalties.put("URBAN_CORE", 1000.00);
         penalties.put("NODATA", 0.0);
     }
 

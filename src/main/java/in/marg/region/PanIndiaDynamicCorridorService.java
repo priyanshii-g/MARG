@@ -1,5 +1,6 @@
 package in.marg.region;
 
+import in.marg.building.OsmDynamicBuildingSettlementCache;
 import in.marg.district.DistrictRecord;
 import in.marg.district.IndianDistrictsCatalogService;
 import in.marg.model.GeoPoint;
@@ -370,20 +371,28 @@ public class PanIndiaDynamicCorridorService {
         RightOfWayCorridorEngine rowEngine = new RightOfWayCorridorEngine(projection);
         EndpointSnapService snapService = new EndpointSnapService(projection);
 
+        OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex =
+                OsmDynamicBuildingSettlementCache.getDefaultInstance()
+                        .indexForCorridor(requestedStart, requestedGoal, projection);
+
         PanIndiaDynamicCostLayer panIndiaSurface = new PanIndiaDynamicCostLayer(
-                requestedStart, requestedGoal, mode, pref);
+                requestedStart, requestedGoal, mode, pref, osmIndex, false);
 
         double bufferDeg = corridorBufferDeg != null
                 ? Math.max(0.05, Math.min(0.30, corridorBufferDeg))
                 : 0.12;
 
-        // Resolve/snap endpoints across active Pan-India space
+        // Resolve/snap endpoints off hospitals, institutional compounds, colonies, buildings & protected areas
+        EndpointSnapService.EndpointObstacleEvaluator osmObstacleEval =
+                EndpointSnapService.forDynamicOsmIndex(osmIndex);
         EndpointSnapService.EndpointResolution startSnap = snapService.resolveEndpoints(
                 PAN_INDIA_BOUNDS,
                 null,
                 panIndiaSurface,
                 requestedStart,
-                requestedGoal);
+                requestedGoal,
+                osmObstacleEval,
+                EndpointSnapService.CandidateTieInScorer.DEFAULT);
 
         GeoPoint start = startSnap.resolvedStart();
         GeoPoint goal = startSnap.resolvedGoal();
@@ -544,7 +553,8 @@ public class PanIndiaDynamicCorridorService {
                 GeoPoint stageGoal = stageWaypoints.get(s + 1);
                 double stageBuffer = Math.min(bufferDeg, 0.12);
                 StudyRegion stageWindow = stageCorridorWindow(stageStart, stageGoal, stageBuffer);
-                PanIndiaDynamicCostLayer stageSurface = new PanIndiaDynamicCostLayer(stageStart, stageGoal, mode, pref);
+                PanIndiaDynamicCostLayer stageSurface = new PanIndiaDynamicCostLayer(
+                        stageStart, stageGoal, mode, pref, osmIndex, false);
 
                 List<GeoPoint> stageBaseline = router.route(
                         PAN_INDIA_BOUNDS,
@@ -560,27 +570,40 @@ public class PanIndiaDynamicCorridorService {
                     constraints = RouteConstraints.maxLengthKm(maxStageKm);
                 }
 
-                List<GeoPoint> stageMainline = router.route(
-                        PAN_INDIA_BOUNDS,
-                        stageStart,
-                        stageGoal,
-                        stageSurface,
-                        ROUTING_RESOLUTION_METERS,
-                        stageWindow,
-                        constraints);
+                List<GeoPoint> stageMainline;
+                try {
+                    stageMainline = router.route(
+                            PAN_INDIA_BOUNDS,
+                            stageStart,
+                            stageGoal,
+                            stageSurface,
+                            ROUTING_RESOLUTION_METERS,
+                            stageWindow,
+                            constraints);
+                } catch (RuntimeException primaryFailed) {
+                    // Last-resort urban colony barrier (1000.0x) while Hospitals & Sanctuaries stay Hard-Blocked
+                    stageMainline = router.route(
+                            PAN_INDIA_BOUNDS,
+                            stageStart,
+                            stageGoal,
+                            stageSurface.withDenseColonyLastResortMode(),
+                            ROUTING_RESOLUTION_METERS,
+                            stageWindow,
+                            constraints);
+                }
 
                 appendPathSegment(baseline, stageBaseline);
                 appendPathSegment(mainline, stageMainline);
             }
         }
 
-        // Route feasible A* road connectors joining user start/goal to nearest existing highway and include in mainline/stats
+        // Route feasible building-safe A* road connectors joining user start/goal to nearest existing highway
         List<GeoPoint> startConnectorPath = List.of();
         double startConnectorKm = 0.0;
         if (startTieIn != null) {
             if (startTieIn.distanceMeters() > DIRECT_ROAD_TIE_IN_THRESHOLD_METERS) {
                 startConnectorPath = routeDynamicConnector(
-                        router, snapService, mode, startTieIn.tieInPoint(), start, bufferDeg);
+                        router, snapService, mode, startTieIn.tieInPoint(), start, bufferDeg, osmIndex);
                 startConnectorKm = router.routeLengthKm(startConnectorPath);
             } else if (!mainline.isEmpty()) {
                 mainline.set(0, startTieIn.tieInPoint());
@@ -592,7 +615,7 @@ public class PanIndiaDynamicCorridorService {
         if (goalTieIn != null) {
             if (goalTieIn.distanceMeters() > DIRECT_ROAD_TIE_IN_THRESHOLD_METERS) {
                 goalConnectorPath = routeDynamicConnector(
-                        router, snapService, mode, goal, goalTieIn.tieInPoint(), bufferDeg);
+                        router, snapService, mode, goal, goalTieIn.tieInPoint(), bufferDeg, osmIndex);
                 goalConnectorKm = router.routeLengthKm(goalConnectorPath);
             } else if (!mainline.isEmpty()) {
                 mainline.set(mainline.size() - 1, goalTieIn.tieInPoint());
@@ -642,7 +665,7 @@ public class PanIndiaDynamicCorridorService {
                     .orElse(null);
             if (tieIn != null) {
                 double straightSpurKm = round(projection.distanceMeters(hubPt, tieIn) / 1000.0);
-                List<GeoPoint> spurPath = routeDynamicConnector(router, snapService, mode, tieIn, hubPt, bufferDeg);
+                List<GeoPoint> spurPath = routeDynamicConnector(router, snapService, mode, tieIn, hubPt, bufferDeg, osmIndex);
                 double spurDistKm = spurPath.size() >= 2 ? round(router.routeLengthKm(spurPath)) : straightSpurKm;
                 totalFeederSpurKm += spurDistKm;
                 dynamicInterchanges++;
@@ -690,6 +713,23 @@ public class PanIndiaDynamicCorridorService {
                 .filter(f -> "DRAINAGE_CROSSING_STRUCTURE".equals(((Map<?, ?>) f.get("properties")).get("featureRole")))
                 .count();
 
+        // Evaluate exact OSM building demolition & RFCTLARR 2013 displacement along dynamic corridor
+        double rowHalfWidthM = rowFootprint != null ? 0.5 * rowFootprint.mainlineRowWidthMeters() : 30.0;
+        OsmDynamicBuildingSettlementCache.DynamicDemolitionSummary osmDemolition =
+                osmIndex.evaluateRouteDemolitionImpact(mainline, rowHalfWidthM);
+        for (OsmDynamicBuildingSettlementCache.IndexedOsmPoly bld : osmDemolition.demolishedBuildings()) {
+            Map<String, Object> sczProps = new LinkedHashMap<>();
+            sczProps.put("settlementId", bld.osmId());
+            sczProps.put("settlementName", bld.name());
+            sczProps.put("settlementClassification", "RURAL");
+            sczProps.put("settlementSubtype", "OSM_BUILDING_IN_DIRECT_ROW");
+            sczProps.put("buildingsInDirectRowCount", 1);
+            sczProps.put("buildingsInDirectRowByType", Map.of(bld.category(), 1));
+            sczProps.put("affectedDirectRowFootprintSqMeters", round(bld.areaSqM()));
+            sczProps.put("recommendedEngineeringMitigation", "RFCTLARR_2013_STRUCTURE_COMPENSATION_AND_REHABILITATION");
+            features.add(pointFeature(bld.centroid(), "SETTLEMENT_BUILDING_CONFLICT_ZONE", sczProps));
+        }
+
         Map<String, Object> networkSummary = new LinkedHashMap<>();
         networkSummary.put("mainlineLengthKm", round(routeLengthKm));
         networkSummary.put("totalTerminalAccessRoadLengthKm", totalTerminalAccessRoadLengthKm);
@@ -699,6 +739,11 @@ public class PanIndiaDynamicCorridorService {
         networkSummary.put("plannedInterchangesCount", Math.max(2, mainline.size() / 15) + dynamicInterchanges);
         networkSummary.put("riverBridgesCount", actualRiverBridgesCount);
         networkSummary.put("drainageStructuresCount", actualDrainageStructuresCount);
+        networkSummary.put("buildingsInDirectRowCount", osmDemolition.buildingsInDirectRowCount());
+        networkSummary.put("buildingsInDirectRowByType", osmDemolition.buildingsByType());
+        networkSummary.put("estimatedDirectlyDisplacedHouseholds", osmDemolition.estimatedDisplacedHouseholds());
+        networkSummary.put("estimatedDirectlyDisplacedPopulation", osmDemolition.estimatedDisplacedPopulation());
+        networkSummary.put("osmDynamicIndexedFeaturesCount", osmIndex.totalIndexedFeatures());
         if (rowFootprint != null) {
             networkSummary.put("rightOfWayAcquisitionFootprint", Map.of(
                     "ircStandard", rowFootprint.ircStandard(),
@@ -1094,33 +1139,46 @@ public class PanIndiaDynamicCorridorService {
             FacilityMode mode,
             GeoPoint fromPt,
             GeoPoint toPt,
-            double bufferDeg) {
+            double bufferDeg,
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex) {
         if (fromPt == null || toPt == null) {
             return List.of();
         }
-        PanIndiaDynamicCostLayer connSurface = new PanIndiaDynamicCostLayer(fromPt, toPt, mode);
         double dLat = Math.abs(toPt.lat() - fromPt.lat());
         double dLon = Math.abs(toPt.lon() - fromPt.lon());
         int stages = Math.max(1, (int) Math.ceil(Math.max(dLat, dLon) / MAX_SINGLE_STAGE_SPAN_DEG));
-        try {
-            List<GeoPoint> waypoints = buildStageWaypoints(
-                    fromPt, toPt, stages, connSurface, snapService, bufferDeg);
-            List<GeoPoint> connector = new ArrayList<>();
-            for (int s = 0; s < waypoints.size() - 1; s++) {
-                GeoPoint sA = waypoints.get(s);
-                GeoPoint sB = waypoints.get(s + 1);
-                StudyRegion sWin = stageCorridorWindow(sA, sB, Math.min(bufferDeg, 0.14));
-                PanIndiaDynamicCostLayer sSurface = new PanIndiaDynamicCostLayer(sA, sB, mode);
-                List<GeoPoint> seg = router.route(
-                        PAN_INDIA_BOUNDS, sA, sB, sSurface, ROUTING_RESOLUTION_METERS, sWin);
-                appendPathSegment(connector, seg);
+        for (boolean lastResortColony : new boolean[]{false, true}) {
+            PanIndiaDynamicCostLayer connSurface = new PanIndiaDynamicCostLayer(
+                    fromPt, toPt, mode, in.marg.routing.AlignmentPreference.BALANCED, osmIndex, lastResortColony);
+            try {
+                List<GeoPoint> waypoints = buildStageWaypoints(
+                        fromPt, toPt, stages, connSurface, snapService, bufferDeg);
+                List<GeoPoint> connector = new ArrayList<>();
+                for (int s = 0; s < waypoints.size() - 1; s++) {
+                    GeoPoint sA = waypoints.get(s);
+                    GeoPoint sB = waypoints.get(s + 1);
+                    StudyRegion sWin = stageCorridorWindow(sA, sB, Math.min(bufferDeg, 0.14));
+                    PanIndiaDynamicCostLayer sSurface = new PanIndiaDynamicCostLayer(
+                            sA, sB, mode, in.marg.routing.AlignmentPreference.BALANCED, osmIndex, lastResortColony);
+                    List<GeoPoint> seg = router.route(
+                            PAN_INDIA_BOUNDS, sA, sB, sSurface, ROUTING_RESOLUTION_METERS, sWin);
+                    appendPathSegment(connector, seg);
+                }
+                if (!connector.isEmpty()) {
+                    connector.set(0, fromPt);
+                    connector.set(connector.size() - 1, toPt);
+                    return connector;
+                }
+            } catch (RuntimeException ignored) {
             }
-            if (!connector.isEmpty()) {
-                connector.set(0, fromPt);
-                connector.set(connector.size() - 1, toPt);
-                return connector;
-            }
-        } catch (RuntimeException ignored) {
+        }
+        // Never allow unchecked straight-line fallback across hospitals, colonies, buildings, or sanctuaries
+        if (in.marg.wildlife.IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                .findIntersectingSanctuaryForSegment(fromPt.lat(), fromPt.lon(), toPt.lat(), toPt.lon()) != null) {
+            return List.of();
+        }
+        if (osmIndex != null && osmIndex.hasSegmentBuildingOrExclusionConflict(fromPt, toPt, 25.0, 75.0)) {
+            return List.of();
         }
         return List.of(fromPt, toPt);
     }

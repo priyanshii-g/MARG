@@ -1,7 +1,9 @@
 package in.marg.region;
 
+import in.marg.building.OsmDynamicBuildingSettlementCache;
 import in.marg.model.GeoPoint;
 import in.marg.row.RightOfWayCorridorEngine;
+import in.marg.routing.BuildingCostPolicy;
 import in.marg.routing.CostAssessment;
 import in.marg.routing.CostLayer;
 import in.marg.routing.CostSurface;
@@ -187,9 +189,11 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
     private final GeoPoint goal;
     private final FacilityMode facilityMode;
     private final in.marg.routing.AlignmentPreference preference;
+    private final OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex;
+    private final boolean denseColonyLastResortMode;
 
     public PanIndiaDynamicCostLayer(GeoPoint start, GeoPoint goal, FacilityMode facilityMode) {
-        this(start, goal, facilityMode, in.marg.routing.AlignmentPreference.BALANCED);
+        this(start, goal, facilityMode, in.marg.routing.AlignmentPreference.BALANCED, null, false);
     }
 
     public PanIndiaDynamicCostLayer(
@@ -197,10 +201,26 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             GeoPoint goal,
             FacilityMode facilityMode,
             in.marg.routing.AlignmentPreference preference) {
+        this(start, goal, facilityMode, preference, null, false);
+    }
+
+    public PanIndiaDynamicCostLayer(
+            GeoPoint start,
+            GeoPoint goal,
+            FacilityMode facilityMode,
+            in.marg.routing.AlignmentPreference preference,
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex,
+            boolean denseColonyLastResortMode) {
         this.start = start;
         this.goal = goal;
         this.facilityMode = facilityMode != null ? facilityMode : FacilityMode.EXPRESSWAY;
         this.preference = preference != null ? preference : in.marg.routing.AlignmentPreference.BALANCED;
+        this.osmIndex = osmIndex;
+        this.denseColonyLastResortMode = denseColonyLastResortMode;
+    }
+
+    public PanIndiaDynamicCostLayer withDenseColonyLastResortMode() {
+        return new PanIndiaDynamicCostLayer(start, goal, facilityMode, preference, osmIndex, true);
     }
 
     @Override
@@ -237,12 +257,36 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
+        // 2b. Dynamic OSM Hard Exclusion Check: Hospitals, Medical/Educational/Religious Campuses (+ 75m buffer)
+        if (osmIndex != null && !osmIndex.isEmpty()) {
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly instHit =
+                    osmIndex.findInstitutionalExclusion(point, BuildingCostPolicy.DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS);
+            if (instHit != null) {
+                return CostAssessment.blocked(SOURCE, instHit.category() + "_EXCLUSION:" + instHit.name());
+            }
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly colonyHit = osmIndex.findDenseColony(point);
+            if (colonyHit != null && !denseColonyLastResortMode) {
+                return CostAssessment.blocked(SOURCE, "DENSE_RESIDENTIAL_COLONY_EXCLUSION:" + colonyHit.name());
+            }
+        }
+
         double envMult = preference.environmentalWeight();
         double socialMult = preference.socialWeight();
         double directnessMult = 1.0 / Math.max(0.2, preference.directnessWeight());
 
         double totalPenalty = 0.0;
         String dominantClass = classifyPhysiographicZone(lat, lon);
+
+        // 2c. Dynamic OSM Dense Colony Last-Resort Barrier or Isolated Building Demolition Penalty
+        if (osmIndex != null && !osmIndex.isEmpty()) {
+            if (denseColonyLastResortMode && osmIndex.findDenseColony(point) != null) {
+                totalPenalty += BuildingCostPolicy.DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY;
+                dominantClass = "DENSE_RESIDENTIAL_COLONY_LAST_RESORT";
+            } else if (osmIndex.findBuildingHit(point, 15.0) != null) {
+                totalPenalty += 75.0 * socialMult;
+                dominantClass = "OSM_ISOLATED_BUILDING_FOOTPRINT";
+            }
+        }
 
         // 3. Physiographic Terrain & Slope Penalty
         totalPenalty += physiographicBasePenalty(lat, lon, dominantClass) * directnessMult;
@@ -317,8 +361,36 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
-        double edgePenalty = 0.0;
-        String edgeClass = null;
+        // 2. Dynamic OSM Edge Check: Hospitals/Institutional (+ 105m RoW+buffer), Dense Colonies, Isolated Buildings
+        double osmEdgePenalty = 0.0;
+        String osmEdgeClass = null;
+        if (osmIndex != null && !osmIndex.isEmpty()) {
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly instSeg =
+                    osmIndex.findInstitutionalExclusionForSegment(
+                            from, to, 30.0 + BuildingCostPolicy.DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS);
+            if (instSeg != null) {
+                return CostAssessment.blocked(SOURCE, instSeg.category() + "_EDGE_BLOCKED:" + instSeg.name());
+            }
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly colonySeg =
+                    osmIndex.findDenseColonyForSegment(from, to, 30.0);
+            if (colonySeg != null) {
+                if (!denseColonyLastResortMode) {
+                    return CostAssessment.blocked(SOURCE, "DENSE_RESIDENTIAL_COLONY_EDGE_BLOCKED:" + colonySeg.name());
+                }
+                osmEdgePenalty += BuildingCostPolicy.DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY;
+                osmEdgeClass = "DENSE_RESIDENTIAL_COLONY_LAST_RESORT:" + colonySeg.name();
+            }
+            int bldHits = osmIndex.countBuildingHitsForSegment(from, to, 30.0);
+            if (bldHits > 0) {
+                osmEdgePenalty += bldHits * 60.0 * preference.socialWeight();
+                if (osmEdgeClass == null) {
+                    osmEdgeClass = "OSM_ROW_BUILDING_DEMOLITION_CONFLICT";
+                }
+            }
+        }
+
+        double edgePenalty = osmEdgePenalty;
+        String edgeClass = osmEdgeClass;
         double envMult = preference.environmentalWeight();
 
         // Check major river crossings and skew angles

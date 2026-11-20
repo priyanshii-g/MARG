@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -622,11 +623,25 @@ public class TransportNetworkVectorIndex {
     public NearestRoadTieIn findNearestRoadTieIn(
             GeoPoint target,
             Predicate<GeoPoint> navigablePredicate) {
+        return findNearestRoadTieIn(target, navigablePredicate, null);
+    }
+
+    /**
+     * Finds the nearest existing road tie-in point, prioritizing candidates whose local connector
+     * segment passes {@code connectorSafePredicate} (no intersection with hospitals, dense colonies,
+     * or building footprints), while rejecting unnavigable tie-in points.
+     */
+    public NearestRoadTieIn findNearestRoadTieIn(
+            GeoPoint target,
+            Predicate<GeoPoint> navigablePredicate,
+            BiPredicate<GeoPoint, GeoPoint> connectorSafePredicate) {
         ensureInitialized();
         if (target == null || allSegments.isEmpty()) {
             return null;
         }
         MetricPoint m = projection.forward(target);
+        NearestRoadTieIn bestCleanConnector = null;
+        double bestCleanDist = Double.POSITIVE_INFINITY;
         NearestRoadTieIn bestNavigable = null;
         double bestNavDist = Double.POSITIVE_INFINITY;
         NearestRoadTieIn bestAny = null;
@@ -647,19 +662,18 @@ public class TransportNetworkVectorIndex {
             double py = seg.ay() + t * dy;
             double dist = Math.hypot(m.x() - px, m.y() - py);
 
-            if (dist < bestNavDist || dist < bestAnyDist) {
+            if (dist < bestCleanDist || dist < bestNavDist || dist < bestAnyDist) {
                 MetricPoint tieMetric = new MetricPoint(px, py);
                 GeoPoint tieGeo = projection.inverse(tieMetric);
                 boolean navigable = navigablePredicate == null || navigablePredicate.test(tieGeo);
                 if (!navigable && navigablePredicate != null) {
-                    // Check segment endpoints as fallback tie-in nodes if midpoint fell in a single blocked pixel
+                    // Check segment endpoints as fallback tie-in nodes if midpoint fell in a blocked cell
                     for (double[] ep : new double[][]{{seg.ax(), seg.ay()}, {seg.bx(), seg.by()}}) {
                         MetricPoint epM = new MetricPoint(ep[0], ep[1]);
                         GeoPoint epGeo = projection.inverse(epM);
                         double epDist = Math.hypot(m.x() - ep[0], m.y() - ep[1]);
-                        if (navigablePredicate.test(epGeo) && epDist < bestNavDist) {
-                            bestNavDist = epDist;
-                            bestNavigable = new NearestRoadTieIn(
+                        if (navigablePredicate.test(epGeo)) {
+                            NearestRoadTieIn epTie = new NearestRoadTieIn(
                                     seg.corridorId(),
                                     seg.corridorRef(),
                                     seg.corridorName(),
@@ -667,12 +681,21 @@ public class TransportNetworkVectorIndex {
                                     epGeo,
                                     epM,
                                     round(epDist));
+                            if (epDist < bestNavDist) {
+                                bestNavDist = epDist;
+                                bestNavigable = epTie;
+                            }
+                            if (connectorSafePredicate != null
+                                    && epDist < bestCleanDist
+                                    && connectorSafePredicate.test(target, epGeo)) {
+                                bestCleanDist = epDist;
+                                bestCleanConnector = epTie;
+                            }
                         }
                     }
                 }
-                if (navigable && dist < bestNavDist) {
-                    bestNavDist = dist;
-                    bestNavigable = new NearestRoadTieIn(
+                if (navigable) {
+                    NearestRoadTieIn cand = new NearestRoadTieIn(
                             seg.corridorId(),
                             seg.corridorRef(),
                             seg.corridorName(),
@@ -680,6 +703,16 @@ public class TransportNetworkVectorIndex {
                             tieGeo,
                             tieMetric,
                             round(dist));
+                    if (dist < bestNavDist) {
+                        bestNavDist = dist;
+                        bestNavigable = cand;
+                    }
+                    if (connectorSafePredicate != null
+                            && dist < bestCleanDist
+                            && connectorSafePredicate.test(target, tieGeo)) {
+                        bestCleanDist = dist;
+                        bestCleanConnector = cand;
+                    }
                 }
                 if (dist < bestAnyDist) {
                     bestAnyDist = dist;
@@ -694,7 +727,10 @@ public class TransportNetworkVectorIndex {
                 }
             }
         }
-        return bestNavigable != null ? bestNavigable : bestAny;
+        if (bestCleanConnector != null) {
+            return bestCleanConnector;
+        }
+        return bestNavigable != null ? bestNavigable : (connectorSafePredicate == null ? bestAny : null);
     }
 
     private static double round(double value) {

@@ -27,12 +27,14 @@ import in.marg.hydrology.WaterBodyClass;
 import in.marg.hydrology.WaterBodyRasterProvider;
 import in.marg.model.GeoPoint;
 import in.marg.model.StudyRegion;
+import in.marg.routing.BuildingFootprintCostLayer;
 import in.marg.routing.CompositeCostSurface;
 import in.marg.routing.CostAssessment;
 import in.marg.routing.CostLayer;
 import in.marg.routing.CostSurface;
 import in.marg.routing.GeotechCostPolicy;
 import in.marg.routing.GreenfieldAStarRouter;
+import in.marg.routing.SettlementCostLayer;
 import in.marg.routing.TransportCostPolicy;
 import in.marg.routing.UtilityCostPolicy;
 import in.marg.routing.WaterBodyCostPolicy;
@@ -532,6 +534,17 @@ public class HighwayNetworkPlannerService {
         List<CostLayer> spurLayers = new ArrayList<>(terrainAndSocialSpurLayers);
         spurLayers.add(buildRailwayOnlySpurLayer(policy));
         CostSurface spurSurface = new CompositeCostSurface(spurLayers);
+        List<CostLayer> lastResortSpurLayers = new ArrayList<>(spurLayers.size());
+        for (CostLayer layer : spurLayers) {
+            if (layer instanceof BuildingFootprintCostLayer bcl) {
+                lastResortSpurLayers.add(bcl.withDenseColonyLastResortMode());
+            } else if (layer instanceof SettlementCostLayer scl) {
+                lastResortSpurLayers.add(scl.withUrbanCoreLastResortMode());
+            } else {
+                lastResortSpurLayers.add(layer);
+            }
+        }
+        CostSurface lastResortSpurSurface = new CompositeCostSurface(lastResortSpurLayers);
 
         List<PlannedInterchange> interchanges = new ArrayList<>();
         List<PlannedFeederSpur> feederSpurs = new ArrayList<>();
@@ -583,20 +596,22 @@ public class HighwayNetworkPlannerService {
                     fullRegion,
                     chosen.point(),
                     hub.bypassTieIn(),
-                    spurSurface);
-            double spurLengthKm = router.routeLengthKm(spurPath);
-
-            feederSpurs.add(new PlannedFeederSpur(
-                    "SPUR-" + hub.hubId().replace("HUB-", ""),
-                    interchangeId,
-                    hub,
-                    spurPath,
-                    round(spurLengthKm),
-                    decision.inducedPeakTrafficPcuHr(),
-                    decision.hvi(),
-                    immutable,
-                    decision.status(),
-                    decision.reason()));
+                    spurSurface,
+                    lastResortSpurSurface);
+            if (!spurPath.isEmpty()) {
+                double spurLengthKm = router.routeLengthKm(spurPath);
+                feederSpurs.add(new PlannedFeederSpur(
+                        "SPUR-" + hub.hubId().replace("HUB-", ""),
+                        interchangeId,
+                        hub,
+                        spurPath,
+                        round(spurLengthKm),
+                        decision.inducedPeakTrafficPcuHr(),
+                        decision.hvi(),
+                        immutable,
+                        decision.status(),
+                        decision.reason()));
+            }
 
             activeTrafficPcuHr += decision.inducedPeakTrafficPcuHr();
             activeServedPopulation += hub.catchmentPopulation();
@@ -1169,6 +1184,12 @@ public class HighwayNetworkPlannerService {
     }
 
     private boolean isInsideBuildingInterchangeExclusionZone(GeoPoint pt) {
+        if (buildingVectorIndex != null) {
+            if (buildingVectorIndex.findContainingInstitutionalOrSacredExclusion(pt, 100.0) != null
+                    || buildingVectorIndex.findContainingDenseColony(pt) != null) {
+                return true;
+            }
+        }
         if (buildingRasterProvider == null) {
             return false;
         }
@@ -1224,36 +1245,51 @@ public class HighwayNetworkPlannerService {
             StudyRegion fullRegion,
             GeoPoint interchangePoint,
             GeoPoint hubBypassTieIn,
-            CostSurface spurSurface) {
+            CostSurface spurSurface,
+            CostSurface lastResortSpurSurface) {
 
         double directMeters = projection.distanceMeters(interchangePoint, hubBypassTieIn);
         if (directMeters <= 300.0) {
-            return List.of(interchangePoint, hubBypassTieIn);
+            boolean directSafe = buildingVectorIndex == null
+                    || !buildingVectorIndex.hasSegmentBuildingOrExclusionConflict(
+                            interchangePoint, hubBypassTieIn, 20.0, 75.0);
+            if (directSafe) {
+                return List.of(interchangePoint, hubBypassTieIn);
+            }
         }
 
-        for (double bufferDeg : new double[]{0.06, 0.12, 0.20, 0.35}) {
-            StudyRegion localWindow = localWindow(fullRegion, interchangePoint, hubBypassTieIn, bufferDeg);
+        for (CostSurface activeSurface : new CostSurface[]{spurSurface, lastResortSpurSurface}) {
+            if (activeSurface == null) continue;
+            for (double bufferDeg : new double[]{0.06, 0.12, 0.20, 0.35}) {
+                StudyRegion localWindow = localWindow(fullRegion, interchangePoint, hubBypassTieIn, bufferDeg);
+                try {
+                    return router.route(
+                            fullRegion,
+                            interchangePoint,
+                            hubBypassTieIn,
+                            activeSurface,
+                            SPUR_ROUTING_RESOLUTION_METERS,
+                            localWindow);
+                } catch (RuntimeException ignored) {
+                    // Expand local spur window on steep ridges or exclusion detours
+                }
+            }
             try {
                 return router.route(
                         fullRegion,
                         interchangePoint,
                         hubBypassTieIn,
-                        spurSurface,
+                        activeSurface,
                         SPUR_ROUTING_RESOLUTION_METERS,
-                        localWindow);
+                        fullRegion);
             } catch (RuntimeException ignored) {
-                // Expand local spur window on steep ridges or protected-area detours
             }
         }
-        try {
-            return router.route(
-                    fullRegion,
-                    interchangePoint,
-                    hubBypassTieIn,
-                    spurSurface,
-                    SPUR_ROUTING_RESOLUTION_METERS,
-                    fullRegion);
-        } catch (RuntimeException ignored) {
+        // Never allow an unchecked straight-line fallback across hospitals, institutional compounds, or buildings
+        if (buildingVectorIndex != null
+                && buildingVectorIndex.hasSegmentBuildingOrExclusionConflict(
+                        interchangePoint, hubBypassTieIn, 20.0, 75.0)) {
+            return List.of();
         }
         return List.of(interchangePoint, hubBypassTieIn);
     }

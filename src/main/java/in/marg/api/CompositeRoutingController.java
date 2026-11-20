@@ -78,6 +78,15 @@ public class CompositeRoutingController {
     @Autowired(required = false)
     private in.marg.wildlife.ExtremePrecisionProtectedAreaService extremePrecisionProtectedAreaService;
 
+    @Autowired(required = false)
+    private in.marg.building.BuildingFootprintVectorIndex buildingVectorIndex;
+
+    @Autowired(required = false)
+    private in.marg.building.BuildingDensityRasterProvider buildingRasterProvider;
+
+    @Autowired(required = false)
+    private in.marg.transport.TransportNetworkVectorIndex transportVectorIndex;
+
     public CompositeRoutingController(
             StudyRegion region,
             GreenfieldAStarRouter router,
@@ -731,14 +740,16 @@ public class CompositeRoutingController {
                         requestedGoal,
                         preference);
 
-        // Smart Endpoint Snapping for any arbitrary clicked coordinates inside the corridor region
+        // Smart Endpoint Snapping off Hospitals (+100m), Settlements/Colonies, Buildings & Hard Terrain
         EndpointSnapService snapService = new EndpointSnapService(projection);
         EndpointSnapService.EndpointResolution endpointResolution = snapService.resolveEndpoints(
                 this.region,
                 initialWindow,
                 initialBuilt.surface(),
                 requestedStart,
-                requestedGoal);
+                requestedGoal,
+                EndpointSnapService.forBenchmarkCorridor(buildingVectorIndex, buildingRasterProvider),
+                EndpointSnapService.forCleanRoadTieIn(this.region, transportVectorIndex, buildingVectorIndex));
 
         GeoPoint start = endpointResolution.resolvedStart();
         GeoPoint goal = endpointResolution.resolvedGoal();
@@ -789,16 +800,27 @@ public class CompositeRoutingController {
             constraints = RouteConstraints.maxLengthKm(maxLengthKm);
         }
 
-        // Stage 3: Route Greenfield Mainline
-        List<GeoPoint> mainline =
-                router.route(
-                        this.region,
-                        start,
-                        goal,
-                        built.surface(),
-                        ROUTING_RESOLUTION_METERS,
-                        searchWindow,
-                        constraints);
+        // Stage 3: Route Greenfield Mainline (Hard-block dense colonies, fallback to 1000x barrier if surrounded)
+        List<GeoPoint> mainline;
+        try {
+            mainline = router.route(
+                    this.region,
+                    start,
+                    goal,
+                    built.surface(),
+                    ROUTING_RESOLUTION_METERS,
+                    searchWindow,
+                    constraints);
+        } catch (RuntimeException primaryBlocked) {
+            mainline = router.route(
+                    this.region,
+                    start,
+                    goal,
+                    built.surface().withDenseColonyLastResortMode(),
+                    ROUTING_RESOLUTION_METERS,
+                    searchWindow,
+                    constraints);
+        }
 
         double routeLengthKm = router.routeLengthKm(mainline);
         double deviationPercent =
@@ -928,6 +950,19 @@ public class CompositeRoutingController {
         networkAndCapacitySummary.put(
                 "buildingsInDirectRowCount",
                 networkPlan.buildingsInDirectRowCount());
+        if (buildingVectorIndex != null && networkPlan.rowCorridorFootprint() != null) {
+            var bldRowImpact = buildingVectorIndex.evaluateCorridorFootprintImpact(
+                    mainline, networkPlan.rowCorridorFootprint());
+            networkAndCapacitySummary.put(
+                    "buildingsInDirectRowByType",
+                    bldRowImpact.buildingsInDirectRowByType());
+            networkAndCapacitySummary.put(
+                    "directRowAffectedFootprintAreaSqMeters",
+                    bldRowImpact.directRowAffectedFootprintAreaSqMeters());
+            networkAndCapacitySummary.put(
+                    "estimatedDirectlyDisplacedHouseholds",
+                    bldRowImpact.toSummaryMap().get("estimatedDirectlyDisplacedHouseholds"));
+        }
         networkAndCapacitySummary.put(
                 "settlementsIntersectingDirectRowCount",
                 networkPlan.settlementsIntersectingDirectRowCount());

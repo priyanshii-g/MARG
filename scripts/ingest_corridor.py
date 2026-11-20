@@ -1011,6 +1011,32 @@ def ingest_corridor(
         json.dumps({"type": "FeatureCollection", "features": demo_features}, indent=2), encoding="utf-8"
     )
 
+    # 7b. Enhance newly ingested corridor with real OpenStreetMap hospitals, settlements & building footprints
+    try:
+        import fuse_osm_buildings_and_settlements as osm_fuse
+        mid_lat = 0.5 * (start_lat + end_lat)
+        mid_lon = 0.5 * (start_lon + end_lon)
+        dynamic_cfg = {
+            "zone": zone,
+            "epsg": epsg,
+            "bbox": (min_lat, min_lon, max_lat, max_lon),
+            "default_district": display_name,
+            "settlements_out": out_dir / f"{region_id}_settlement_boundaries.geojson",
+            "buildings_out": out_dir / f"{region_id}_building_footprints.geojson",
+            "building_raster_out": out_dir / f"{region_id}_building_density_utm{zone}.tif",
+            "settlement_raster_out": out_dir / f"{region_id}_settlement_exposure_utm{zone}.tif",
+            "transport_geojson": out_dir / f"{region_id}_transport_network.geojson",
+            "spine": [(start_lat, start_lon), (mid_lat, mid_lon), (end_lat, end_lon)],
+            "building_tiles": [
+                (max(min_lat, start_lat - 0.08), max(min_lon, start_lon - 0.08), min(max_lat, start_lat + 0.08), min(max_lon, start_lon + 0.08)),
+                (max(min_lat, mid_lat - 0.10), max(min_lon, mid_lon - 0.10), min(max_lat, mid_lat + 0.10), min(max_lon, mid_lon + 0.10)),
+                (max(min_lat, end_lat - 0.08), max(min_lon, end_lon - 0.08), min(max_lat, end_lat + 0.08), min(max_lon, end_lon + 0.08)),
+            ],
+        }
+        osm_fuse.process_corridor(region_id, dynamic_cfg, refresh=False)
+    except Exception as osm_err:
+        print(f"[MARG-INGEST] Real OSM building fusion skipped (offline/fallback): {osm_err}", flush=True)
+
     # 8. Drainage, Wetlands & Watersheds
     drainage_raster = np.zeros((height, width), dtype=np.uint8)
     wetland_features = []

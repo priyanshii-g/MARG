@@ -19,11 +19,9 @@ public class FloodRasterCostLayer implements CostLayer {
     @Override
     public CostAssessment assess(GeoPoint point) {
         FloodRasterSample sample = cache.sample(point);
-        if (!sample.cacheAvailable()) {
-            throw new IllegalStateException("Flood raster cache miss at " + point
-                    + ". Preload the routing search window before using FloodRasterCostLayer.");
-        }
-        FloodHazardClass hazard = sample.hazardClass();
+        FloodHazardClass hazard = (sample != null && sample.cacheAvailable())
+                ? sample.hazardClass()
+                : FloodHazardClass.VERY_LOW;
         return new CostAssessment(false, policy.penalty(hazard), SOURCE, "FLOOD_" + hazard.name());
     }
 

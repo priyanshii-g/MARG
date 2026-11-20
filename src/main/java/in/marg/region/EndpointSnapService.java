@@ -1,24 +1,35 @@
 package in.marg.region;
 
+import in.marg.building.BuildingDensityClass;
+import in.marg.building.BuildingDensityRasterProvider;
+import in.marg.building.BuildingFootprintVectorIndex;
+import in.marg.building.OsmDynamicBuildingSettlementCache;
 import in.marg.model.GeoPoint;
 import in.marg.model.StudyRegion;
 import in.marg.routing.CostAssessment;
 import in.marg.routing.CostSurface;
 import in.marg.spatial.CoordinateProjection;
 import in.marg.spatial.MetricPoint;
+import in.marg.transport.TransportNetworkVectorIndex;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Smart Endpoint Validation & Snapping Service.
+ * Smart Endpoint Validation &amp; Snapping Service.
  *
  * <p>When an evaluator clicks any arbitrary start or end coordinate inside a highlighted
  * corridor region (or anywhere across India in Tier 1 mode), the exact clicked coordinate
  * or its nearest 250 m routing grid cell might fall inside a hard-blocked pixel
- * (e.g. Protected Area mask, Slope &gt; 30&deg;, active landslide scarp, or reservoir body).
- * This service automatically snaps blocked endpoints outward in concentric metric rings
- * (250 m .. 6,000 m) to the nearest navigable corridor cell with open neighbors.
+ * (Protected Area mask, Slope &gt; 30&deg;, active landslide scarp, reservoir body) OR inside:
+ * <ul>
+ *   <li>Any Hospital / Medical / Institutional / Religious compound (or within 100 m of one),</li>
+ *   <li>Any Settlement / Residential Colony polygon ({@code landuse=residential} / {@code SettlementBoundaryPolygon}),</li>
+ *   <li>Any Building Footprint or high-density built-up raster cell.</li>
+ * </ul>
+ * This service automatically snaps invalid endpoints outward in concentric metric rings
+ * (250 m .. 15,000 m) to the nearest open greenfield corridor cell outside the settlement/hospital
+ * boundary that has a clean, building-free tie-in to an existing highway/road.
  */
 public class EndpointSnapService {
 
@@ -26,11 +37,106 @@ public class EndpointSnapService {
     private static final double MAX_SNAP_RADIUS_METERS = 15000.0;
     private static final double MIN_ENDPOINT_SEPARATION_METERS = 1000.0;
     private static final int ANGULAR_SAMPLES_PER_RING = 24;
+    public static final double ENDPOINT_INSTITUTIONAL_BUFFER_METERS = 100.0;
+    public static final double ENDPOINT_BUILDING_BUFFER_METERS = 25.0;
 
     private final CoordinateProjection projection;
 
+    @FunctionalInterface
+    public interface EndpointObstacleEvaluator {
+        /** Returns a machine-readable obstacle reason if the endpoint is invalid, or {@code null} if clean. */
+        String findObstacleReason(GeoPoint point);
+
+        EndpointObstacleEvaluator NONE = pt -> null;
+    }
+
+    @FunctionalInterface
+    public interface CandidateTieInScorer {
+        /**
+         * Returns a non-negative preference cost for a candidate endpoint (lower is better).
+         * Candidates with a clean, building-free tie-in to an existing road score lowest.
+         */
+        double scoreCandidate(GeoPoint candidate, CostSurface surface);
+
+        CandidateTieInScorer DEFAULT = (pt, surface) -> Math.max(0.0, surface.assess(pt).penaltyMultiplier());
+    }
+
     public EndpointSnapService(CoordinateProjection projection) {
         this.projection = projection;
+    }
+
+    /**
+     * Builds an obstacle evaluator for Tier-2 Benchmark Corridors checking hospitals/institutional/religious
+     * compounds (+100 m buffer), settlement/colony polygons, building footprints, and high-density rasters.
+     */
+    public static EndpointObstacleEvaluator forBenchmarkCorridor(
+            BuildingFootprintVectorIndex buildingIndex,
+            BuildingDensityRasterProvider buildingRaster) {
+        return point -> {
+            if (buildingIndex != null) {
+                String vectorObstacle = buildingIndex.findEndpointBuildingOrSettlementObstacle(
+                        point, ENDPOINT_INSTITUTIONAL_BUFFER_METERS, ENDPOINT_BUILDING_BUFFER_METERS);
+                if (vectorObstacle != null) {
+                    return vectorObstacle;
+                }
+            }
+            if (buildingRaster != null) {
+                BuildingDensityClass dc = buildingRaster.sampleClass(point.lat(), point.lon());
+                if (dc == BuildingDensityClass.INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT) {
+                    return "HOSPITAL_OR_INSTITUTIONAL_COMPOUND_RASTER";
+                }
+                if (dc == BuildingDensityClass.HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP) {
+                    return "HIGH_DENSITY_URBAN_COLONY_RASTER";
+                }
+                if (dc == BuildingDensityClass.MEDIUM_DENSITY_VILLAGE_CLUSTER) {
+                    return "SETTLEMENT_VILLAGE_CLUSTER_RASTER";
+                }
+            }
+            return null;
+        };
+    }
+
+    /**
+     * Builds an obstacle evaluator for Tier-1 Pan-India Dynamic Corridors using the disk-cached OSM index.
+     */
+    public static EndpointObstacleEvaluator forDynamicOsmIndex(
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex) {
+        if (osmIndex == null || osmIndex.isEmpty()) {
+            return EndpointObstacleEvaluator.NONE;
+        }
+        return point -> osmIndex.findEndpointObstacleReason(
+                point, ENDPOINT_INSTITUTIONAL_BUFFER_METERS, ENDPOINT_BUILDING_BUFFER_METERS);
+    }
+
+    /**
+     * Builds a tie-in cleanliness scorer that favors open greenfield candidates with a short,
+     * building-free, hospital-free tie-in to an existing highway or road.
+     */
+    public static CandidateTieInScorer forCleanRoadTieIn(
+            StudyRegion fullRegion,
+            TransportNetworkVectorIndex transportIndex,
+            BuildingFootprintVectorIndex buildingIndex) {
+        if (transportIndex == null) {
+            return CandidateTieInScorer.DEFAULT;
+        }
+        return (candidate, surface) -> {
+            double basePenalty = Math.max(0.0, surface.assess(candidate).penaltyMultiplier());
+            TransportNetworkVectorIndex.NearestRoadTieIn tieIn = transportIndex.findNearestRoadTieIn(
+                    candidate,
+                    pt -> fullRegion.contains(pt)
+                            && !surface.assess(pt).blocked()
+                            && (buildingIndex == null
+                            || buildingIndex.findEndpointBuildingOrSettlementObstacle(
+                                    pt, ENDPOINT_INSTITUTIONAL_BUFFER_METERS, ENDPOINT_BUILDING_BUFFER_METERS) == null));
+            if (tieIn == null) {
+                return basePenalty + 50.0;
+            }
+            boolean cleanDirect = buildingIndex == null
+                    || !buildingIndex.hasSegmentBuildingOrExclusionConflict(
+                            candidate, tieIn.tieInPoint(), 25.0, 75.0);
+            double distScore = Math.min(25.0, tieIn.distanceMeters() / 500.0);
+            return basePenalty + distScore + (cleanDirect ? 0.0 : 40.0);
+        };
     }
 
     public EndpointResolution resolveEndpoints(
@@ -39,6 +145,24 @@ public class EndpointSnapService {
             CostSurface surface,
             GeoPoint requestedStart,
             GeoPoint requestedGoal) {
+        return resolveEndpoints(
+                fullRegion,
+                searchWindow,
+                surface,
+                requestedStart,
+                requestedGoal,
+                EndpointObstacleEvaluator.NONE,
+                CandidateTieInScorer.DEFAULT);
+    }
+
+    public EndpointResolution resolveEndpoints(
+            StudyRegion fullRegion,
+            StudyRegion searchWindow,
+            CostSurface surface,
+            GeoPoint requestedStart,
+            GeoPoint requestedGoal,
+            EndpointObstacleEvaluator obstacleEvaluator,
+            CandidateTieInScorer tieInScorer) {
 
         if (!fullRegion.contains(requestedStart) || !fullRegion.contains(requestedGoal)) {
             throw new IllegalArgumentException(
@@ -52,8 +176,15 @@ public class EndpointSnapService {
                             + (MIN_ENDPOINT_SEPARATION_METERS / 1000.0) + " km.");
         }
 
-        SnapPointResult startRes = snapIfBlocked(fullRegion, null, surface, requestedStart);
-        SnapPointResult goalRes = snapIfBlocked(fullRegion, null, surface, requestedGoal);
+        EndpointObstacleEvaluator eval = obstacleEvaluator != null
+                ? obstacleEvaluator
+                : EndpointObstacleEvaluator.NONE;
+        CandidateTieInScorer scorer = tieInScorer != null
+                ? tieInScorer
+                : CandidateTieInScorer.DEFAULT;
+
+        SnapPointResult startRes = snapIfBlocked(fullRegion, null, surface, requestedStart, eval, scorer);
+        SnapPointResult goalRes = snapIfBlocked(fullRegion, null, surface, requestedGoal, eval, scorer);
 
         return new EndpointResolution(
                 requestedStart,
@@ -73,27 +204,50 @@ public class EndpointSnapService {
             StudyRegion fullRegion,
             CostSurface surface,
             GeoPoint original) {
-        return snapIfBlocked(fullRegion, null, surface, original);
+        return snapPoint(fullRegion, surface, original, EndpointObstacleEvaluator.NONE, CandidateTieInScorer.DEFAULT);
+    }
+
+    public SnapPointResult snapPoint(
+            StudyRegion fullRegion,
+            CostSurface surface,
+            GeoPoint original,
+            EndpointObstacleEvaluator obstacleEvaluator,
+            CandidateTieInScorer tieInScorer) {
+        return snapIfBlocked(
+                fullRegion,
+                null,
+                surface,
+                original,
+                obstacleEvaluator != null ? obstacleEvaluator : EndpointObstacleEvaluator.NONE,
+                tieInScorer != null ? tieInScorer : CandidateTieInScorer.DEFAULT);
     }
 
     private SnapPointResult snapIfBlocked(
             StudyRegion fullRegion,
             StudyRegion searchWindow,
             CostSurface surface,
-            GeoPoint original) {
+            GeoPoint original,
+            EndpointObstacleEvaluator obstacleEvaluator,
+            CandidateTieInScorer tieInScorer) {
 
-        if (isNavigableEndpoint(fullRegion, searchWindow, surface, original)) {
+        String initialObstacle = obstacleEvaluator.findObstacleReason(original);
+        if (initialObstacle == null && isNavigableEndpoint(fullRegion, searchWindow, surface, original, obstacleEvaluator)) {
             return new SnapPointResult(original, false, 0.0, "EXACT_COORDINATE_ACCESSIBLE");
         }
 
         CostAssessment initialAssessment = surface.assess(original);
-        String blockedReason = initialAssessment.className() != null && !initialAssessment.className().isBlank()
-                ? initialAssessment.className()
-                : "HARD_CONSTRAINT_OR_ISOLATED_GRID_NODE";
+        String blockedReason;
+        if (initialObstacle != null && !initialObstacle.isBlank()) {
+            blockedReason = initialObstacle;
+        } else if (initialAssessment.className() != null && !initialAssessment.className().isBlank()) {
+            blockedReason = initialAssessment.className();
+        } else {
+            blockedReason = "HARD_CONSTRAINT_OR_ISOLATED_GRID_NODE";
+        }
 
         MetricPoint originMetric = projection.forward(original);
         GeoPoint bestCandidate = null;
-        double bestPenalty = Double.POSITIVE_INFINITY;
+        double bestScore = Double.POSITIVE_INFINITY;
         double bestDistance = 0.0;
 
         for (double radius = GRID_STEP_METERS; radius <= MAX_SNAP_RADIUS_METERS; radius += GRID_STEP_METERS) {
@@ -104,11 +258,10 @@ public class EndpointSnapService {
                 double cy = originMetric.y() + radius * Math.sin(theta);
                 GeoPoint candidate = projection.inverse(new MetricPoint(cx, cy));
 
-                if (isNavigableEndpoint(fullRegion, searchWindow, surface, candidate)) {
-                    CostAssessment assessment = surface.assess(candidate);
-                    double penalty = Math.max(0.0, assessment.penaltyMultiplier());
-                    if (penalty < bestPenalty) {
-                        bestPenalty = penalty;
+                if (isNavigableEndpoint(fullRegion, searchWindow, surface, candidate, obstacleEvaluator)) {
+                    double score = tieInScorer.scoreCandidate(candidate, surface);
+                    if (score < bestScore) {
+                        bestScore = score;
                         bestCandidate = candidate;
                         bestDistance = projection.distanceMeters(original, candidate);
                     }
@@ -119,31 +272,36 @@ public class EndpointSnapService {
                         bestCandidate,
                         true,
                         bestDistance,
-                        "SNAPPED_FROM_" + blockedReason + "_TO_NEAREST_FEASIBLE_GRID_CELL"
+                        "SNAPPED_FROM_" + blockedReason + "_TO_NEAREST_FEASIBLE_GREENFIELD_ROAD_EDGE"
                 );
             }
         }
 
         throw new IllegalStateException(
                 "Endpoint (" + original.lat() + ", " + original.lon()
-                        + ") is inside an extensive hard-constraint exclusion zone (" + blockedReason
-                        + ") and no navigable grid cell was found within " + (MAX_SNAP_RADIUS_METERS / 1000.0) + " km.");
+                        + ") is inside an extensive exclusion zone (" + blockedReason
+                        + ") and no navigable greenfield cell was found within " + (MAX_SNAP_RADIUS_METERS / 1000.0) + " km.");
     }
 
     /**
-     * Verifies that the candidate point and its snapped 250 m grid node are both unblocked
-     * and have at least 3 open 250 m neighbors so A* never starts or terminates in a 1-cell trap.
+     * Verifies that the candidate point and its snapped 250 m grid node are both unblocked,
+     * outside hospitals/settlements/buildings, and have at least 3 open 250 m neighbors
+     * connected to a >= 35-cell open greenfield component.
      */
     private boolean isNavigableEndpoint(
             StudyRegion fullRegion,
             StudyRegion searchWindow,
             CostSurface surface,
-            GeoPoint point) {
+            GeoPoint point,
+            EndpointObstacleEvaluator obstacleEvaluator) {
 
         if (!fullRegion.contains(point)) {
             return false;
         }
         if (searchWindow != null && !searchWindow.contains(point)) {
+            return false;
+        }
+        if (obstacleEvaluator.findObstacleReason(point) != null) {
             return false;
         }
         CostAssessment direct = surface.assess(point);
@@ -162,6 +320,9 @@ public class EndpointSnapService {
 
         if (!fullRegion.contains(snappedGridNode)
                 || (searchWindow != null && !searchWindow.contains(snappedGridNode))) {
+            return false;
+        }
+        if (obstacleEvaluator.findObstacleReason(snappedGridNode) != null) {
             return false;
         }
         if (surface.assess(snappedGridNode).blocked()) {
@@ -195,7 +356,7 @@ public class EndpointSnapService {
         }
 
         // Fast bounded local BFS (up to 35 grid cells) to guarantee the snapped point is not
-        // trapped in an isolated mountain valley pocket or narrow border strip behind a sanctuary.
+        // trapped in an isolated mountain valley pocket or enclosed inside an urban ring.
         int minConnectedCells = 35;
         java.util.ArrayDeque<int[]> queue = new java.util.ArrayDeque<>();
         java.util.HashSet<Long> visited = new java.util.HashSet<>();

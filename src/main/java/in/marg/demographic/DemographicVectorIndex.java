@@ -404,19 +404,18 @@ public class DemographicVectorIndex {
         PreparedGeometry prepSec500 = PreparedGeometryFactory.prepare(secondary500Geom);
         PreparedGeometry prepCatch1000 = PreparedGeometryFactory.prepare(catchment1000Geom);
 
-        // If BuildingFootprintVectorIndex is available, count actual residential/commercial
-        // structures inside Direct RoW per settlement to compute structure-based displacement
-        Map<String, Integer> directRowResBuildingsByStl = new HashMap<>();
-        Map<String, Integer> directRowComBuildingsByStl = new HashMap<>();
+        // If BuildingFootprintVectorIndex is available, count actual residential/commercial/industrial
+        // structures inside Direct RoW per settlement using RFCTLARR 2013 floor-area & household norms
+        Map<String, Double> directRowHouseholdsByStl = new HashMap<>();
+        Set<String> matchedSettlementIds = new HashSet<>();
         if (buildingIndex != null) {
             var bldImpact = buildingIndex.evaluateCorridorFootprintImpact(mainline, corridor);
             for (var abr : bldImpact.affectedBuildings()) {
                 if (abr.impactZone() == in.marg.row.RowImpactZone.DIRECT_ROW_FOOTPRINT) {
-                    if (abr.buildingType() == BuildingType.RESIDENTIAL) {
-                        directRowResBuildingsByStl.merge(
-                                abr.settlementId(), Math.max(1, abr.floors()), Integer::sum);
-                    } else if (abr.buildingType() == BuildingType.COMMERCIAL) {
-                        directRowComBuildingsByStl.merge(abr.settlementId(), 1, Integer::sum);
+                    double hh = BuildingFootprintVectorIndex.estimateHouseholdsForDemolishedBuilding(
+                            abr.buildingType(), abr.footprintAreaSqMeters(), abr.floors());
+                    if (hh > 0.0) {
+                        directRowHouseholdsByStl.merge(abr.settlementId(), hh, Double::sum);
                     }
                 }
             }
@@ -496,9 +495,10 @@ public class DemographicVectorIndex {
             // Important distinction: Population within a buffer != Displaced population.
             // Actual displacement requires physical structure demolition inside Direct RoW
             // (from 2D building footprints when available, or core parcel acquisition fallback).
-            int resUnitsInRow = directRowResBuildingsByStl.getOrDefault(t.settlementId(), 0);
-            int comUnitsInRow = directRowComBuildingsByStl.getOrDefault(t.settlementId(), 0);
-            double displacedHhForTract = resUnitsInRow + (0.35 * comUnitsInRow);
+            double displacedHhForTract = directRowHouseholdsByStl.getOrDefault(t.settlementId(), 0.0);
+            if (displacedHhForTract > 0.0) {
+                matchedSettlementIds.add(t.settlementId());
+            }
             if (buildingIndex == null) {
                 double coreIntersectDirectM2 = prepDirect.intersects(corePoly)
                         ? directGeom.intersection(corePoly).getArea()
@@ -509,7 +509,10 @@ public class DemographicVectorIndex {
                     displacedHhForTract = Math.max(displacedHhForTract, parcelAcqHh);
                 }
             }
-            double displacedPopForTract = displacedHhForTract * t.averageHouseholdSize();
+            double hhSize = t.averageHouseholdSize() > 1.0
+                    ? t.averageHouseholdSize()
+                    : BuildingFootprintVectorIndex.RFCTLARR_PERSONS_PER_HOUSEHOLD;
+            double displacedPopForTract = displacedHhForTract * hhSize;
 
             double ruralRatio = t.totalPopulation() > 0
                     ? (double) t.ruralPopulation() / t.totalPopulation()
@@ -601,6 +604,19 @@ public class DemographicVectorIndex {
                         round(distCenterline),
                         round(distRowEdge),
                         round(tractExposureScore)));
+            }
+        }
+
+        // Include RFCTLARR 2013 displacement for all demolished OSM buildings in Direct RoW
+        // belonging to isolated rural homesteads or OSM settlements outside legacy census tracts
+        for (Map.Entry<String, Double> entry : directRowHouseholdsByStl.entrySet()) {
+            if (!matchedSettlementIds.contains(entry.getKey()) && entry.getValue() > 0.0) {
+                double unmatchedHh = entry.getValue();
+                double unmatchedPop = unmatchedHh * BuildingFootprintVectorIndex.RFCTLARR_PERSONS_PER_HOUSEHOLD;
+                estimatedDisplacedHouseholds += unmatchedHh;
+                estimatedDisplacedPop += unmatchedPop;
+                popInDirectRow += unmatchedPop;
+                ruralPopInDirectRow += unmatchedPop;
             }
         }
 
