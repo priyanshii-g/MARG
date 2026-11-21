@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -714,22 +715,32 @@ public class OsmDynamicTransportNetworkCache {
         }
 
         /**
-         * Finds the nearest existing road tie-in point from real OSM infrastructure.
+         * Finds the nearest existing road tie-in point from real OSM infrastructure,
+         * honoring IRC:SP:99-2013 (Expressways strictly exclude local streets &amp; prefer NH/SH)
+         * and IRC:SP:84-2019 (National Highways prefer NH &gt; SH &gt; MDR over local roads).
          */
         public TransportNetworkVectorIndex.NearestRoadTieIn findNearestRoadTieIn(
                 GeoPoint target,
                 Predicate<GeoPoint> navigablePredicate,
                 FacilityMode facilityMode) {
+            return findNearestRoadTieIn(target, navigablePredicate, null, facilityMode);
+        }
+
+        public TransportNetworkVectorIndex.NearestRoadTieIn findNearestRoadTieIn(
+                GeoPoint target,
+                Predicate<GeoPoint> navigablePredicate,
+                BiPredicate<GeoPoint, GeoPoint> connectorSafePredicate,
+                FacilityMode facilityMode) {
             if (target == null || allSegments.isEmpty()) return null;
             MetricPoint m = projection.forward(target);
 
-            TransportNetworkVectorIndex.NearestRoadTieIn bestTie = null;
-            double bestDist = Double.POSITIVE_INFINITY;
+            TransportNetworkVectorIndex.NearestRoadTieIn bestClean = null;
+            double bestCleanScore = Double.POSITIVE_INFINITY;
+            TransportNetworkVectorIndex.NearestRoadTieIn bestNav = null;
+            double bestNavScore = Double.POSITIVE_INFINITY;
 
             for (IndexedWaySegment seg : allSegments) {
-                if (seg.category() == TransportCategory.RAILWAY) continue;
-                // For EXPRESSWAY, strictly avoid local roads as terminal tie-in points
-                if (facilityMode == FacilityMode.EXPRESSWAY && seg.category() == TransportCategory.LOCAL_ROAD) {
+                if (!TerminalAccessPolicy.isCategoryAllowedForTieIn(seg.category(), facilityMode)) {
                     continue;
                 }
 
@@ -741,19 +752,92 @@ public class OsmDynamicTransportNetworkCache {
                 double px = seg.ax() + t * dx;
                 double py = seg.ay() + t * dy;
                 double dist = Math.hypot(m.x() - px, m.y() - py);
+                double score = TerminalAccessPolicy.weightedTieInDistanceMeters(dist, seg.category(), facilityMode);
 
-                if (dist < bestDist) {
+                if (score < bestCleanScore || score < bestNavScore) {
                     MetricPoint tieMetric = new MetricPoint(px, py);
                     GeoPoint tieGeo = projection.inverse(tieMetric);
                     if (navigablePredicate == null || navigablePredicate.test(tieGeo)) {
-                        bestDist = dist;
-                        bestTie = new TransportNetworkVectorIndex.NearestRoadTieIn(
-                                seg.corridorId(), seg.corridorRef(), seg.corridorName(),
-                                seg.category(), tieGeo, tieMetric, Math.round(dist * 10.0) / 10.0);
+                        TransportNetworkVectorIndex.NearestRoadTieIn cand =
+                                new TransportNetworkVectorIndex.NearestRoadTieIn(
+                                        seg.corridorId(), seg.corridorRef(), seg.corridorName(),
+                                        seg.category(), tieGeo, tieMetric, Math.round(dist * 10.0) / 10.0);
+                        if (score < bestNavScore) {
+                            bestNavScore = score;
+                            bestNav = cand;
+                        }
+                        if (connectorSafePredicate != null
+                                && score < bestCleanScore
+                                && connectorSafePredicate.test(target, tieGeo)) {
+                            bestCleanScore = score;
+                            bestClean = cand;
+                        }
                     }
                 }
             }
-            return bestTie;
+            return bestClean != null ? bestClean : bestNav;
+        }
+
+        /**
+         * Fast O(1) spatial-bucket check determining whether {@code point} lands directly on top of a
+         * local street while not adjacent to a major arterial highway (NH/SH).
+         */
+        public TransportNetworkVectorIndex.NearestRoadTieIn findImmediateLocalStreetConflict(
+                GeoPoint point,
+                double localStreetRadiusMeters,
+                double majorHighwayExemptionRadiusMeters) {
+            if (point == null || spatialBuckets.isEmpty()) {
+                return null;
+            }
+            MetricPoint m = projection.forward(point);
+            int cx = bucketCoord(m.x());
+            int cy = bucketCoord(m.y());
+
+            IndexedWaySegment nearestLocal = null;
+            double nearestLocalDist = localStreetRadiusMeters;
+            double nearestLocalPx = m.x();
+            double nearestLocalPy = m.y();
+
+            for (int bx = cx - 1; bx <= cx + 1; bx++) {
+                for (int by = cy - 1; by <= cy + 1; by++) {
+                    List<IndexedWaySegment> bucket = spatialBuckets.get(bucketKey(bx, by));
+                    if (bucket == null) continue;
+                    for (IndexedWaySegment seg : bucket) {
+                        TransportCategory cat = seg.category();
+                        double dx = seg.bx() - seg.ax();
+                        double dy = seg.by() - seg.ay();
+                        double len2 = dx * dx + dy * dy;
+                        double t = len2 <= EPS ? 0.0 : ((m.x() - seg.ax()) * dx + (m.y() - seg.ay()) * dy) / len2;
+                        t = Math.max(0.0, Math.min(1.0, t));
+                        double px = seg.ax() + t * dx;
+                        double py = seg.ay() + t * dy;
+                        double dist = Math.hypot(m.x() - px, m.y() - py);
+
+                        if (cat == TransportCategory.NATIONAL_HIGHWAY || cat == TransportCategory.STATE_HIGHWAY) {
+                            if (dist <= majorHighwayExemptionRadiusMeters) {
+                                return null;
+                            }
+                        } else if (cat == TransportCategory.LOCAL_ROAD && dist <= nearestLocalDist) {
+                            nearestLocalDist = dist;
+                            nearestLocal = seg;
+                            nearestLocalPx = px;
+                            nearestLocalPy = py;
+                        }
+                    }
+                }
+            }
+            if (nearestLocal == null) {
+                return null;
+            }
+            MetricPoint tieM = new MetricPoint(nearestLocalPx, nearestLocalPy);
+            return new TransportNetworkVectorIndex.NearestRoadTieIn(
+                    nearestLocal.corridorId(),
+                    nearestLocal.corridorRef(),
+                    nearestLocal.corridorName(),
+                    nearestLocal.category(),
+                    projection.inverse(tieM),
+                    tieM,
+                    Math.round(nearestLocalDist * 10.0) / 10.0);
         }
 
         private static int categoryPriority(TransportCategory c) {

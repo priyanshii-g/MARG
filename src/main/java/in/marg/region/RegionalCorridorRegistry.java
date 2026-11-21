@@ -53,6 +53,7 @@ import in.marg.terrain.SlopeRasterProvider;
 import in.marg.transport.FacilityMode;
 import in.marg.transport.HighwayNetworkPlannerService;
 import in.marg.transport.HubEvaluationService;
+import in.marg.transport.TerminalAccessPolicy;
 import in.marg.transport.TransportNetworkRasterProvider;
 import in.marg.transport.TransportNetworkVectorIndex;
 import in.marg.utility.UtilityNetworkVectorIndex;
@@ -825,13 +826,17 @@ public class RegionalCorridorRegistry {
                 requestedGoal,
                 pref);
 
-        // Stage 2b: Smart Endpoint Snapping off Hospitals (+100m), Settlements/Colonies, Buildings & Hard Terrain
+        // Stage 2b: Smart Endpoint Snapping off Hospitals (+250m), Settlements/Colonies, Buildings, Urban Cores (EXPRESSWAY) & Hard Terrain
         EndpointSnapService.EndpointObstacleEvaluator obstacleEvaluator =
                 EndpointSnapService.forBenchmarkCorridor(
-                        bundle.buildingVectorIndex(), bundle.buildingRasterProvider());
+                        bundle.buildingVectorIndex(),
+                        bundle.buildingRasterProvider(),
+                        bundle.settlementRasterProvider(),
+                        bundle.transportIndex(),
+                        mode);
         EndpointSnapService.CandidateTieInScorer tieInScorer =
                 EndpointSnapService.forCleanRoadTieIn(
-                        fullRegion, bundle.transportIndex(), bundle.buildingVectorIndex());
+                        fullRegion, bundle.transportIndex(), bundle.buildingVectorIndex(), mode);
         EndpointSnapService.EndpointResolution endpointResolution = bundle.endpointSnapService().resolveEndpoints(
                 fullRegion,
                 initialWindow,
@@ -964,7 +969,7 @@ public class RegionalCorridorRegistry {
         double baselineLengthKm = bundle.router().routeLengthKm(baseline);
 
         // Stage 3b: Connect origin & destination to nearest building-safe existing road tie-in
-        // enforcing exact 2D polygon/segment checks against hospitals, colonies, and buildings.
+        // honoring IRC:SP:99-2013 (EXPRESSWAY: NH/SH only, zero local streets) and IRC:SP:84-2019 (NH: arterial preference).
         var bldIdx = bundle.buildingVectorIndex();
         double instBufM = buildingProperties.getInstitutionalSafetyBufferMeters();
         java.util.function.Predicate<GeoPoint> safeTieInPred = pt -> fullRegion.contains(pt)
@@ -975,9 +980,9 @@ public class RegionalCorridorRegistry {
                 bldIdx == null || !bldIdx.hasSegmentBuildingOrExclusionConflict(fromPt, toPt, 25.0, instBufM);
 
         TransportNetworkVectorIndex.NearestRoadTieIn startTieIn = bundle.transportIndex().findNearestRoadTieIn(
-                start, safeTieInPred, cleanConnectorPred);
+                start, safeTieInPred, cleanConnectorPred, mode);
         TransportNetworkVectorIndex.NearestRoadTieIn goalTieIn = bundle.transportIndex().findNearestRoadTieIn(
-                goal, safeTieInPred, cleanConnectorPred);
+                goal, safeTieInPred, cleanConnectorPred, mode);
 
         List<GeoPoint> startConnectorPath = List.of();
         double startConnectorKm = 0.0;
@@ -1049,6 +1054,11 @@ public class RegionalCorridorRegistry {
         Map<String, Object> routeDiagnostics = bundle.routeMetricsService().summarize(mainline, mode);
         var flood = built.floodPreload().mosaic();
 
+        Map<String, Object> terminalRoadConnections = buildTerminalRoadConnectionsMetadata(
+                startTieIn, startConnectorKm, start, endpointResolution.startSnapReason(),
+                goalTieIn, goalConnectorKm, goal, endpointResolution.goalSnapReason(),
+                totalTerminalAccessRoadLengthKm, mode);
+
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("corridorTierMode", CorridorTierMode.TIER_2_PRECACHED_BENCHMARK.name());
         metadata.put("regionId", preset.id());
@@ -1058,10 +1068,7 @@ public class RegionalCorridorRegistry {
         metadata.put("utmZone", preset.utmZone());
         metadata.put("lazyLoadedOnThisRequest", !wasAlreadyLoaded);
         metadata.put("endpointResolution", endpointResolution.toMetadataMap());
-        metadata.put("terminalRoadConnections", buildTerminalRoadConnectionsMetadata(
-                startTieIn, startConnectorKm, start,
-                goalTieIn, goalConnectorKm, goal,
-                totalTerminalAccessRoadLengthKm));
+        metadata.put("terminalRoadConnections", terminalRoadConnections);
         metadata.put("routeDiagnostics", routeDiagnostics);
         metadata.put("facilityMode", mode.name());
         metadata.put("accessibilityPullApplied", built.accessibilityPullApplied());
@@ -1104,6 +1111,9 @@ public class RegionalCorridorRegistry {
         Map<String, Object> networkAndCapacitySummary = new LinkedHashMap<>();
         networkAndCapacitySummary.put("mainlineLengthKm", networkPlan.mainlineLengthKm());
         networkAndCapacitySummary.put("totalTerminalAccessRoadLengthKm", totalTerminalAccessRoadLengthKm);
+        networkAndCapacitySummary.put("terminalInterchangesCount", terminalRoadConnections.get("terminalInterchangesCount"));
+        networkAndCapacitySummary.put("localStreetViolationsCount", terminalRoadConnections.get("localStreetViolationsCount"));
+        networkAndCapacitySummary.put("expresswayComplianceVerified", terminalRoadConnections.get("expresswayComplianceVerified"));
         networkAndCapacitySummary.put("totalDedicatedFeederSpurLengthKm", networkPlan.totalFeederSpurLengthKm());
         networkAndCapacitySummary.put("totalConstructedHighwayAndSpurKm", networkPlan.totalConstructedHighwayAndSpurKm());
         networkAndCapacitySummary.put("plannedInterchangesCount", networkPlan.interchanges().size());
@@ -1242,6 +1252,13 @@ public class RegionalCorridorRegistry {
         metadata.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
         metadata.put("alignmentPreference", pref.toMap());
 
+        Map<String, Object> baselineDiagnostics = bundle.routeMetricsService().summarize(baseline, mode, false);
+        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
+                routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode);
+        List<Map<String, Object>> routeLayerProfile = bundle.routeMetricsService().sampleRouteLayerProfile(mainline);
+        metadata.put("layerAudit", layerAudit);
+        metadata.put("routeLayerProfile", routeLayerProfile);
+
         Map<String, Object> mainlineProperties = new LinkedHashMap<>();
         mainlineProperties.put("profile", "COMPOSITE_13_LAYER");
         mainlineProperties.put("corridorTierMode", CorridorTierMode.TIER_2_PRECACHED_BENCHMARK.name());
@@ -1259,6 +1276,8 @@ public class RegionalCorridorRegistry {
                 networkPlan));
         addTerminalRoadFeatures(
                 features,
+                mode,
+                routeLengthKm,
                 startTieIn, startConnectorPath, startConnectorKm,
                 goalTieIn, goalConnectorPath, goalConnectorKm);
 
@@ -1441,6 +1460,7 @@ public class RegionalCorridorRegistry {
                 transportIndex,
                 slopeProvider,
                 paProvider,
+                settlementProvider,
                 buildingRaster,
                 buildingIndex,
                 drainageRaster,
@@ -1472,9 +1492,14 @@ public class RegionalCorridorRegistry {
         }
 
         // 1. Fine-grid A* (100m -> 150m -> 250m) on strict primary surface so connectors skirt hospitals & buildings
-        double[] resolutions = directMeters <= 4000.0
-                ? new double[]{100.0, 150.0, ROUTING_RESOLUTION_METERS}
-                : new double[]{150.0, ROUTING_RESOLUTION_METERS};
+        double[] resolutions;
+        if (directMeters <= 4000.0) {
+            resolutions = new double[]{100.0, 150.0, ROUTING_RESOLUTION_METERS};
+        } else if (directMeters <= 6000.0) {
+            resolutions = new double[]{150.0, ROUTING_RESOLUTION_METERS};
+        } else {
+            resolutions = new double[]{ROUTING_RESOLUTION_METERS};
+        }
         for (double resM : resolutions) {
             for (double buf : new double[]{0.05, 0.12, 0.25}) {
                 StudyRegion localWin = corridorWindow(fullRegion, fromPt, toPt, buf);
@@ -1540,110 +1565,71 @@ public class RegionalCorridorRegistry {
             TransportNetworkVectorIndex.NearestRoadTieIn startTieIn,
             double startConnectorKm,
             GeoPoint start,
+            String startSnapReason,
             TransportNetworkVectorIndex.NearestRoadTieIn goalTieIn,
             double goalConnectorKm,
             GeoPoint goal,
-            double totalTerminalAccessRoadLengthKm) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        if (startTieIn != null) {
-            Map<String, Object> sMap = new LinkedHashMap<>();
-            sMap.put("corridorId", startTieIn.corridorId());
-            sMap.put("existingRoadRef", startTieIn.corridorRef());
-            sMap.put("existingRoadName", startTieIn.corridorName());
-            sMap.put("category", startTieIn.category().name());
-            sMap.put("tieInPoint", startTieIn.tieInPoint());
-            sMap.put("userPoint", start);
-            sMap.put("straightOffsetMeters", startTieIn.distanceMeters());
-            sMap.put("connectorLengthKm", round(startConnectorKm));
-            sMap.put("directTieInApplied", startTieIn.distanceMeters() <= 35.0);
-            map.put("startRoadConnection", sMap);
-        }
-        if (goalTieIn != null) {
-            Map<String, Object> gMap = new LinkedHashMap<>();
-            gMap.put("corridorId", goalTieIn.corridorId());
-            gMap.put("existingRoadRef", goalTieIn.corridorRef());
-            gMap.put("existingRoadName", goalTieIn.corridorName());
-            gMap.put("category", goalTieIn.category().name());
-            gMap.put("tieInPoint", goalTieIn.tieInPoint());
-            gMap.put("userPoint", goal);
-            gMap.put("straightOffsetMeters", goalTieIn.distanceMeters());
-            gMap.put("connectorLengthKm", round(goalConnectorKm));
-            gMap.put("directTieInApplied", goalTieIn.distanceMeters() <= 35.0);
-            map.put("goalRoadConnection", gMap);
-        }
-        map.put("totalTerminalAccessRoadLengthKm", totalTerminalAccessRoadLengthKm);
-        map.put("includedInMainlineAndStatistics", true);
-        return map;
+            String goalSnapReason,
+            double totalTerminalAccessRoadLengthKm,
+            FacilityMode mode) {
+        Map<String, Object> startConn = startTieIn == null ? null : TerminalAccessPolicy.buildTerminalConnectionEntry(
+                startTieIn.corridorId(),
+                startTieIn.corridorRef(),
+                startTieIn.corridorName(),
+                startTieIn.category(),
+                startTieIn.tieInPoint(),
+                start,
+                startTieIn.distanceMeters(),
+                startConnectorKm,
+                TerminalAccessPolicy.DIRECT_TIE_IN_THRESHOLD_METERS,
+                mode,
+                TerminalAccessPolicy.isSnappedOutsideUrbanCore(startSnapReason));
+        Map<String, Object> goalConn = goalTieIn == null ? null : TerminalAccessPolicy.buildTerminalConnectionEntry(
+                goalTieIn.corridorId(),
+                goalTieIn.corridorRef(),
+                goalTieIn.corridorName(),
+                goalTieIn.category(),
+                goalTieIn.tieInPoint(),
+                goal,
+                goalTieIn.distanceMeters(),
+                goalConnectorKm,
+                TerminalAccessPolicy.DIRECT_TIE_IN_THRESHOLD_METERS,
+                mode,
+                TerminalAccessPolicy.isSnappedOutsideUrbanCore(goalSnapReason));
+        return TerminalAccessPolicy.buildTerminalConnectionsMetadata(
+                startConn, goalConn, totalTerminalAccessRoadLengthKm, mode);
     }
 
     private static void addTerminalRoadFeatures(
             List<Map<String, Object>> features,
+            FacilityMode mode,
+            double routeLengthKm,
             TransportNetworkVectorIndex.NearestRoadTieIn startTieIn,
             List<GeoPoint> startConnectorPath,
             double startConnectorKm,
             TransportNetworkVectorIndex.NearestRoadTieIn goalTieIn,
             List<GeoPoint> goalConnectorPath,
             double goalConnectorKm) {
-        if (startTieIn != null) {
-            Map<String, Object> tieProps = new LinkedHashMap<>();
-            tieProps.put("featureRole", "ROAD_TIE_IN");
-            tieProps.put("tieInRole", "ORIGIN_EXISTING_ROAD_TIE_IN");
-            tieProps.put("existingRoadRef", startTieIn.corridorRef());
-            tieProps.put("tieInJunctionName", startTieIn.corridorName());
-            tieProps.put("roadCategory", startTieIn.category().name());
-            tieProps.put("connectorLengthKm", round(startConnectorKm));
-            tieProps.put("continuityRule", "Connects user origin to existing navigable road network");
-            features.add(Map.of(
-                    "type", "Feature",
-                    "properties", tieProps,
-                    "geometry", Map.of(
-                            "type", "Point",
-                            "coordinates", List.of(startTieIn.tieInPoint().lon(), startTieIn.tieInPoint().lat()))));
-        }
-        if (goalTieIn != null) {
-            Map<String, Object> tieProps = new LinkedHashMap<>();
-            tieProps.put("featureRole", "ROAD_TIE_IN");
-            tieProps.put("tieInRole", "DESTINATION_EXISTING_ROAD_TIE_IN");
-            tieProps.put("existingRoadRef", goalTieIn.corridorRef());
-            tieProps.put("tieInJunctionName", goalTieIn.corridorName());
-            tieProps.put("roadCategory", goalTieIn.category().name());
-            tieProps.put("connectorLengthKm", round(goalConnectorKm));
-            tieProps.put("continuityRule", "Connects user destination to existing navigable road network");
-            features.add(Map.of(
-                    "type", "Feature",
-                    "properties", tieProps,
-                    "geometry", Map.of(
-                            "type", "Point",
-                            "coordinates", List.of(goalTieIn.tieInPoint().lon(), goalTieIn.tieInPoint().lat()))));
-        }
-        if (startTieIn != null && startConnectorPath.size() >= 2 && startConnectorKm > 0.035) {
-            Map<String, Object> cProps = new LinkedHashMap<>();
-            cProps.put("featureRole", "TERMINAL_ACCESS_ROAD");
-            cProps.put("connectorRole", "ORIGIN_ROAD_CONNECTOR");
-            cProps.put("existingRoadRef", startTieIn.corridorRef());
-            cProps.put("existingRoadName", startTieIn.corridorName());
-            cProps.put("connectorLengthKm", round(startConnectorKm));
-            features.add(Map.of(
-                    "type", "Feature",
-                    "properties", cProps,
-                    "geometry", Map.of(
-                            "type", "LineString",
-                            "coordinates", startConnectorPath.stream().map(p -> List.of(p.lon(), p.lat())).toList())));
-        }
-        if (goalTieIn != null && goalConnectorPath.size() >= 2 && goalConnectorKm > 0.035) {
-            Map<String, Object> cProps = new LinkedHashMap<>();
-            cProps.put("featureRole", "TERMINAL_ACCESS_ROAD");
-            cProps.put("connectorRole", "DESTINATION_ROAD_CONNECTOR");
-            cProps.put("existingRoadRef", goalTieIn.corridorRef());
-            cProps.put("existingRoadName", goalTieIn.corridorName());
-            cProps.put("connectorLengthKm", round(goalConnectorKm));
-            features.add(Map.of(
-                    "type", "Feature",
-                    "properties", cProps,
-                    "geometry", Map.of(
-                            "type", "LineString",
-                            "coordinates", goalConnectorPath.stream().map(p -> List.of(p.lon(), p.lat())).toList())));
-        }
+        TerminalAccessPolicy.TerminalEndpointSpec originSpec = startTieIn == null ? null
+                : new TerminalAccessPolicy.TerminalEndpointSpec(
+                        startTieIn.corridorId(),
+                        startTieIn.corridorRef(),
+                        startTieIn.corridorName(),
+                        startTieIn.category(),
+                        startTieIn.tieInPoint(),
+                        startConnectorPath,
+                        startConnectorKm);
+        TerminalAccessPolicy.TerminalEndpointSpec destSpec = goalTieIn == null ? null
+                : new TerminalAccessPolicy.TerminalEndpointSpec(
+                        goalTieIn.corridorId(),
+                        goalTieIn.corridorRef(),
+                        goalTieIn.corridorName(),
+                        goalTieIn.category(),
+                        goalTieIn.tieInPoint(),
+                        goalConnectorPath,
+                        goalConnectorKm);
+        TerminalAccessPolicy.appendTerminalRoadGeoJsonFeatures(
+                features, mode, routeLengthKm, "INTERCHANGE", originSpec, destSpec);
     }
 
     public static String normalizeRegionId(String raw) {
@@ -1819,6 +1805,7 @@ public class RegionalCorridorRegistry {
             TransportNetworkVectorIndex transportIndex,
             SlopeRasterProvider slopeProvider,
             ProtectedAreaRasterProvider protectedAreaProvider,
+            SettlementRasterProvider settlementRasterProvider,
             BuildingDensityRasterProvider buildingRasterProvider,
             BuildingFootprintVectorIndex buildingVectorIndex,
             DrainageWetlandRasterProvider drainageRasterProvider,

@@ -285,7 +285,7 @@ class HydrologyLayerValidationTest {
             List<GeoPoint> route6 = router.route(
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
-                            lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer, modeTransportLayer)),
+                            lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer, modeTransportLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag6 = metricsService.summarize(route6);
@@ -298,7 +298,7 @@ class HydrologyLayerValidationTest {
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
-                            settlementLayer, modeTransportLayer, waterLayer)),
+                            settlementLayer, modeTransportLayer, waterLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag7 = metricsService.summarize(route7);

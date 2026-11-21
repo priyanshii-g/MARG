@@ -418,12 +418,12 @@ class DrainageWetlandLayerValidationTest {
                     lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer,
                     transportLayer, waterLayer, wildlifeLayer, geotechLayer, utilityLayer,
                     buildingLayer, demoLayer
-            ));
+            )).withDenseColonyLastResortMode();
             CompositeCostSurface surface13 = new CompositeCostSurface(List.of(
                     lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer,
                     transportLayer, waterLayer, wildlifeLayer, geotechLayer, utilityLayer,
                     buildingLayer, demoLayer, drainageLayer
-            ));
+            )).withDenseColonyLastResortMode();
 
             List<GeoPoint> route12 = router.route(fullRegion, start, goal, surface12, 250.0, corridorWindow);
             List<GeoPoint> route13 = router.route(fullRegion, start, goal, surface13, 250.0, corridorWindow);

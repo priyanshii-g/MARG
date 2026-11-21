@@ -664,10 +664,14 @@ public class CompositeRouteMetricsService {
     }
 
     public Map<String, Object> summarize(List<GeoPoint> route) {
-        return summarize(route, FacilityMode.NATIONAL_HIGHWAY);
+        return summarize(route, FacilityMode.NATIONAL_HIGHWAY, true);
     }
 
     public Map<String, Object> summarize(List<GeoPoint> route, FacilityMode facilityMode) {
+        return summarize(route, facilityMode, true);
+    }
+
+    public Map<String, Object> summarize(List<GeoPoint> route, FacilityMode facilityMode, boolean includeSwathAudit) {
 
         EnumMap<LulcClass, Double> lulcKm = new EnumMap<>(LulcClass.class);
         EnumMap<FloodHazardClass, Double> floodKm = new EnumMap<>(FloodHazardClass.class);
@@ -1426,7 +1430,7 @@ public class CompositeRouteMetricsService {
         diagnostics.put("floodCacheMissSamples", floodCacheMisses);
         diagnostics.put("hardConstraintValidation", hardConstraints);
 
-        if (rowCorridorEngine != null && route.size() >= 2) {
+        if (includeSwathAudit && rowCorridorEngine != null && route.size() >= 2) {
             FacilityMode effectiveMode =
                     facilityMode != null ? facilityMode : FacilityMode.NATIONAL_HIGHWAY;
             RightOfWayCorridorEngine.CorridorFootprint activeFootprint =
@@ -1479,6 +1483,95 @@ public class CompositeRouteMetricsService {
         }
 
         return diagnostics;
+    }
+
+    /**
+     * Samples a compact, evenly-spaced raster profile along the generated mainline so the
+     * frontend 13-Layer Lens Explorer can colorize route segments by active raster layer
+     * (LULC, Flood, DEM/Slope, Settlement, Geotech, Population, Drainage) and draw a DEM slope chart.
+     */
+    public List<Map<String, Object>> sampleRouteLayerProfile(List<GeoPoint> route) {
+        if (route == null || route.size() < 2) {
+            return List.of();
+        }
+        double totalMeters = 0.0;
+        for (int i = 1; i < route.size(); i++) {
+            MetricPoint a = projection.forward(route.get(i - 1));
+            MetricPoint b = projection.forward(route.get(i));
+            totalMeters += Math.hypot(b.x() - a.x(), b.y() - a.y());
+        }
+        if (totalMeters <= 1.0) {
+            return List.of();
+        }
+        // Target ~200 profile samples (min 400 m spacing so payload stays small and Leaflet renders fast)
+        double stepMeters = Math.max(400.0, totalMeters / 200.0);
+
+        List<Map<String, Object>> profile = new java.util.ArrayList<>();
+        double accumulatedMeters = 0.0;
+        double nextSampleMeters = 0.0;
+
+        for (int i = 1; i < route.size(); i++) {
+            MetricPoint a = projection.forward(route.get(i - 1));
+            MetricPoint b = projection.forward(route.get(i));
+            double dx = b.x() - a.x();
+            double dy = b.y() - a.y();
+            double segMeters = Math.hypot(dx, dy);
+            if (segMeters <= 0.0) {
+                continue;
+            }
+            while (nextSampleMeters <= accumulatedMeters + segMeters) {
+                double t = Math.max(0.0, Math.min(1.0, (nextSampleMeters - accumulatedMeters) / segMeters));
+                GeoPoint pt = projection.inverse(new MetricPoint(a.x() + t * dx, a.y() + t * dy));
+                profile.add(buildProfileSample(pt, nextSampleMeters / 1000.0));
+                nextSampleMeters += stepMeters;
+            }
+            accumulatedMeters += segMeters;
+        }
+        // Always include the exact final endpoint
+        GeoPoint lastPt = route.get(route.size() - 1);
+        if (profile.isEmpty() || Math.abs(((Number) profile.get(profile.size() - 1).get("chKm")).doubleValue() - (totalMeters / 1000.0)) > 0.15) {
+            profile.add(buildProfileSample(lastPt, totalMeters / 1000.0));
+        }
+        return profile;
+    }
+
+    private Map<String, Object> buildProfileSample(GeoPoint point, double chainageKm) {
+        Map<String, Object> sample = new LinkedHashMap<>();
+        sample.put("lat", Math.round(point.lat() * 100000.0) / 100000.0);
+        sample.put("lon", Math.round(point.lon() * 100000.0) / 100000.0);
+        sample.put("chKm", round(chainageKm));
+
+        if (lulcProvider != null) {
+            LulcSample ls = lulcProvider.sample(point);
+            sample.put("lulc", ls != null && ls.type() != null ? ls.type().name() : "UNKNOWN");
+        }
+        if (floodRasterCache != null) {
+            FloodRasterSample fs = floodRasterCache.sample(point);
+            sample.put("flood", fs != null && fs.cacheAvailable() && fs.hazardClass() != null
+                    ? fs.hazardClass().name() : "NOT_IN_HAZARD_LAYER");
+        }
+        if (slopeRasterProvider != null) {
+            Double slopeDeg = slopeRasterProvider.sampleOrNull(point.lat(), point.lon());
+            sample.put("slopeDeg", slopeDeg != null ? round(slopeDeg) : null);
+            sample.put("slopeBand", classifySlope(slopeDeg));
+        }
+        if (settlementRasterProvider != null) {
+            SettlementExposureClass sc = settlementRasterProvider.sampleClass(point.lat(), point.lon());
+            sample.put("settlement", sc != null ? sc.name() : "NONE");
+        }
+        if (geotechRasterProvider != null) {
+            GeotechHazardClass gc = geotechRasterProvider.sampleClass(point.lat(), point.lon());
+            sample.put("geotech", gc != null ? gc.name() : "COMPETENT_BEDROCK_STABLE_SUBGRADE");
+        }
+        if (demographicRasterProvider != null) {
+            PopulationDensityClass pc = demographicRasterProvider.sampleClass(point.lat(), point.lon());
+            sample.put("population", pc != null ? pc.name() : "UNINHABITED_OR_BACKGROUND");
+        }
+        if (drainageRasterProvider != null) {
+            DrainageWetlandClass dc = drainageRasterProvider.sampleClass(point.lat(), point.lon());
+            sample.put("drainage", dc != null ? dc.name() : "NONE");
+        }
+        return sample;
     }
 
     private String classifySlope(Double slopeDegrees) {

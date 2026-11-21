@@ -11,6 +11,7 @@ import in.marg.routing.GreenfieldAStarRouter;
 import in.marg.routing.RouteConstraints;
 import in.marg.spatial.Wgs84UtmProjection;
 import in.marg.transport.FacilityMode;
+import in.marg.transport.TerminalAccessPolicy;
 import in.marg.transport.TransportCategory;
 import in.marg.transport.TransportNetworkVectorIndex;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -413,9 +414,11 @@ public class PanIndiaDynamicCorridorService {
                 ? Math.max(0.05, Math.min(0.30, corridorBufferDeg))
                 : 0.12;
 
-        // Resolve/snap endpoints off hospitals, institutional compounds, colonies, buildings & protected areas
+        // Resolve/snap endpoints off hospitals, institutional compounds, colonies, buildings, urban cores (EXPRESSWAY) & protected areas
         EndpointSnapService.EndpointObstacleEvaluator osmObstacleEval =
-                EndpointSnapService.forDynamicOsmIndex(osmIndex);
+                EndpointSnapService.forDynamicOsmIndex(osmIndex, osmTransportIndex, mode);
+        EndpointSnapService.CandidateTieInScorer dynamicTieInScorer =
+                EndpointSnapService.forDynamicRoadTieIn(osmTransportIndex, osmIndex, mode);
         EndpointSnapService.EndpointResolution startSnap = snapService.resolveEndpoints(
                 PAN_INDIA_BOUNDS,
                 null,
@@ -423,7 +426,7 @@ public class PanIndiaDynamicCorridorService {
                 requestedStart,
                 requestedGoal,
                 osmObstacleEval,
-                EndpointSnapService.CandidateTieInScorer.DEFAULT);
+                dynamicTieInScorer);
 
         GeoPoint start = startSnap.resolvedStart();
         GeoPoint goal = startSnap.resolvedGoal();
@@ -522,9 +525,9 @@ public class PanIndiaDynamicCorridorService {
             }));
         }
 
-        // Find nearest navigable existing highway tie-ins for origin & destination
-        HighwayTieInResult startTieIn = findNearestHighwayTieIn(start, panIndiaSurface, projection, snapService, osmTransportIndex, mode);
-        HighwayTieInResult goalTieIn = findNearestHighwayTieIn(goal, panIndiaSurface, projection, snapService, osmTransportIndex, mode);
+        // Find nearest navigable existing highway tie-ins for origin & destination (IRC:SP:99 / IRC:SP:84 compliant)
+        HighwayTieInResult startTieIn = findNearestHighwayTieIn(start, panIndiaSurface, projection, snapService, osmTransportIndex, osmIndex, mode);
+        HighwayTieInResult goalTieIn = findNearestHighwayTieIn(goal, panIndiaSurface, projection, snapService, osmTransportIndex, osmIndex, mode);
 
         List<GeoPoint> baseline = new ArrayList<>();
         List<GeoPoint> mainline = new ArrayList<>();
@@ -701,7 +704,7 @@ public class PanIndiaDynamicCorridorService {
                 totalFeederSpurKm += spurDistKm;
                 dynamicInterchanges++;
 
-                HighwayTieInResult hubRoad = findNearestHighwayTieIn(hubPt, panIndiaSurface, projection, snapService);
+                HighwayTieInResult hubRoad = findNearestHighwayTieIn(hubPt, panIndiaSurface, projection, snapService, osmTransportIndex, osmIndex, mode);
                 String tieInRoadRef = (hubRoad != null && hubRoad.distanceMeters() < 50000.0) ? hubRoad.roadRef() : "State Highway / MDR";
                 String tieInRoadName = (hubRoad != null && hubRoad.distanceMeters() < 50000.0) ? hubRoad.roadName() : "Classified Feeder Road";
                 String tieInRoadCategory = (hubRoad != null && hubRoad.category() != null) ? hubRoad.category().name() : "STATE_HIGHWAY";
@@ -792,9 +795,17 @@ public class PanIndiaDynamicCorridorService {
             }
         }
 
+        Map<String, Object> terminalRoadConnections = buildTerminalRoadConnectionsMetadata(
+                startTieIn, startConnectorKm, start, startSnap.startSnapReason(),
+                goalTieIn, goalConnectorKm, goal, startSnap.goalSnapReason(),
+                totalTerminalAccessRoadLengthKm, mode);
+
         Map<String, Object> networkSummary = new LinkedHashMap<>();
         networkSummary.put("mainlineLengthKm", round(routeLengthKm));
         networkSummary.put("totalTerminalAccessRoadLengthKm", totalTerminalAccessRoadLengthKm);
+        networkSummary.put("terminalInterchangesCount", terminalRoadConnections.get("terminalInterchangesCount"));
+        networkSummary.put("localStreetViolationsCount", terminalRoadConnections.get("localStreetViolationsCount"));
+        networkSummary.put("expresswayComplianceVerified", terminalRoadConnections.get("expresswayComplianceVerified"));
         networkSummary.put("dedicatedFeederSpursCount", resolvedHubs.size());
         networkSummary.put("totalDedicatedFeederSpurLengthKm", round(totalFeederSpurKm));
         networkSummary.put("totalConstructedHighwayAndSpurKm", round(routeLengthKm + totalFeederSpurKm));
@@ -834,10 +845,7 @@ public class PanIndiaDynamicCorridorService {
         metadata.put("autoConnectHubs", enableAuto);
         metadata.put("maxAutoHubs", maxAutoHubs != null ? maxAutoHubs : "DEFAULT");
         metadata.put("endpointResolution", startSnap.toMetadataMap());
-        metadata.put("terminalRoadConnections", buildTerminalRoadConnectionsMetadata(
-                startTieIn, startConnectorKm, start,
-                goalTieIn, goalConnectorKm, goal,
-                totalTerminalAccessRoadLengthKm));
+        metadata.put("terminalRoadConnections", terminalRoadConnections);
         metadata.put("facilityMode", mode.name());
         metadata.put("searchWindow", overallWindow);
         metadata.put("distanceBaselineLengthKm", round(baselineLengthKm));
@@ -859,6 +867,19 @@ public class PanIndiaDynamicCorridorService {
         if (tradeOffProfile.containsKey("statutoryClearanceReport")) {
             metadata.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
         }
+
+        Map<String, Object> baselineDiagnostics = panIndiaSurface.summarizeRouteDiagnostics(
+                baseline, mode, projection, null);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> statutoryReport = tradeOffProfile.get("statutoryClearanceReport") instanceof Map<?, ?> m
+                ? (Map<String, Object>) m : null;
+        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier1Audit(
+                routeDiagnostics, baselineDiagnostics, mainline, baseline,
+                terminalRoadConnections, statutoryReport, features, mode, projection);
+        List<Map<String, Object>> routeLayerProfile = in.marg.routing.LayerVerificationAuditService.sampleTier1RouteProfile(
+                mainline, projection);
+        metadata.put("layerAudit", layerAudit);
+        metadata.put("routeLayerProfile", routeLayerProfile);
         metadata.put("layers", List.of(
                 "LULC",
                 "FLOOD_HAZARD",
@@ -958,54 +979,26 @@ public class PanIndiaDynamicCorridorService {
                 "properties", mainlineProps
         ));
 
-        if (startTieIn != null) {
-            features.add(pointFeature(startTieIn.tieInPoint(), "ROAD_TIE_IN", Map.of(
-                    "tieInRole", "ORIGIN_EXISTING_ROAD_TIE_IN",
-                    "roadCategory", startTieIn.category() != null ? startTieIn.category().name() : "NATIONAL_HIGHWAY",
-                    "existingRoadRef", startTieIn.roadRef(),
-                    "tieInJunctionName", startTieIn.roadName(),
-                    "connectorLengthKm", round(startConnectorKm)
-            )));
-        }
-        if (goalTieIn != null) {
-            features.add(pointFeature(goalTieIn.tieInPoint(), "ROAD_TIE_IN", Map.of(
-                    "tieInRole", "DESTINATION_EXISTING_ROAD_TIE_IN",
-                    "roadCategory", goalTieIn.category() != null ? goalTieIn.category().name() : "NATIONAL_HIGHWAY",
-                    "existingRoadRef", goalTieIn.roadRef(),
-                    "tieInJunctionName", goalTieIn.roadName(),
-                    "connectorLengthKm", round(goalConnectorKm)
-            )));
-        }
-        if (startTieIn != null && startConnectorPath.size() >= 2 && startConnectorKm > 0.035) {
-            Map<String, Object> cp = new LinkedHashMap<>();
-            cp.put("featureRole", "TERMINAL_ACCESS_ROAD");
-            cp.put("connectorRole", "ORIGIN_ROAD_CONNECTOR");
-            cp.put("existingRoadRef", startTieIn.roadRef());
-            cp.put("existingRoadName", startTieIn.roadName());
-            cp.put("connectorLengthKm", round(startConnectorKm));
-            features.add(Map.of(
-                    "type", "Feature",
-                    "geometry", Map.of(
-                            "type", "LineString",
-                            "coordinates", startConnectorPath.stream().map(p -> List.of(p.lon(), p.lat())).toList()),
-                    "properties", cp
-            ));
-        }
-        if (goalTieIn != null && goalConnectorPath.size() >= 2 && goalConnectorKm > 0.035) {
-            Map<String, Object> cp = new LinkedHashMap<>();
-            cp.put("featureRole", "TERMINAL_ACCESS_ROAD");
-            cp.put("connectorRole", "DESTINATION_ROAD_CONNECTOR");
-            cp.put("existingRoadRef", goalTieIn.roadRef());
-            cp.put("existingRoadName", goalTieIn.roadName());
-            cp.put("connectorLengthKm", round(goalConnectorKm));
-            features.add(Map.of(
-                    "type", "Feature",
-                    "geometry", Map.of(
-                            "type", "LineString",
-                            "coordinates", goalConnectorPath.stream().map(p -> List.of(p.lon(), p.lat())).toList()),
-                    "properties", cp
-            ));
-        }
+        TerminalAccessPolicy.TerminalEndpointSpec originSpec = startTieIn == null ? null
+                : new TerminalAccessPolicy.TerminalEndpointSpec(
+                        startTieIn.corridorId(),
+                        startTieIn.roadRef(),
+                        startTieIn.roadName(),
+                        startTieIn.category(),
+                        startTieIn.tieInPoint(),
+                        startConnectorPath,
+                        startConnectorKm);
+        TerminalAccessPolicy.TerminalEndpointSpec destSpec = goalTieIn == null ? null
+                : new TerminalAccessPolicy.TerminalEndpointSpec(
+                        goalTieIn.corridorId(),
+                        goalTieIn.roadRef(),
+                        goalTieIn.roadName(),
+                        goalTieIn.category(),
+                        goalTieIn.tieInPoint(),
+                        goalConnectorPath,
+                        goalConnectorKm);
+        TerminalAccessPolicy.appendTerminalRoadGeoJsonFeatures(
+                features, mode, routeLengthKm, "INTERCHANGE_JUNCTION", originSpec, destSpec);
 
         // 1. Identify major perennial river bridge crossings (IRC:5-2020 / IRC:SP:13)
         int bridgeCounter = 1;
@@ -1140,7 +1133,7 @@ public class PanIndiaDynamicCorridorService {
             PanIndiaDynamicCostLayer surface,
             Wgs84UtmProjection projection,
             EndpointSnapService snapService) {
-        return findNearestHighwayTieIn(target, surface, projection, snapService, null, FacilityMode.EXPRESSWAY);
+        return findNearestHighwayTieIn(target, surface, projection, snapService, null, null, FacilityMode.EXPRESSWAY);
     }
 
     private HighwayTieInResult findNearestHighwayTieIn(
@@ -1149,13 +1142,21 @@ public class PanIndiaDynamicCorridorService {
             Wgs84UtmProjection projection,
             EndpointSnapService snapService,
             in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex,
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex,
             FacilityMode facilityMode) {
         if (target == null) {
             return null;
         }
         if (osmTransportIndex != null && !osmTransportIndex.isEmpty()) {
+            boolean hasOsm = osmIndex != null && !osmIndex.isEmpty();
             TransportNetworkVectorIndex.NearestRoadTieIn osmTie =
-                    osmTransportIndex.findNearestRoadTieIn(target, pt -> !surface.assess(pt).blocked(), facilityMode);
+                    osmTransportIndex.findNearestRoadTieIn(
+                            target,
+                            pt -> !surface.assess(pt).blocked()
+                                    && (!hasOsm || osmIndex.findEndpointObstacleReason(pt, 75.0, 15.0) == null),
+                            (fromPt, toPt) -> !hasOsm
+                                    || !osmIndex.hasSegmentBuildingOrExclusionConflict(fromPt, toPt, 25.0, 75.0),
+                            facilityMode);
             if (osmTie != null && osmTie.distanceMeters() <= 35000.0) {
                 return new HighwayTieInResult(
                         osmTie.corridorId(),
@@ -1279,40 +1280,39 @@ public class PanIndiaDynamicCorridorService {
             HighwayTieInResult startTieIn,
             double startConnectorKm,
             GeoPoint start,
+            String startSnapReason,
             HighwayTieInResult goalTieIn,
             double goalConnectorKm,
             GeoPoint goal,
-            double totalTerminalAccessRoadLengthKm) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        if (startTieIn != null) {
-            Map<String, Object> sMap = new LinkedHashMap<>();
-            sMap.put("corridorId", startTieIn.corridorId());
-            sMap.put("roadCategory", startTieIn.category() != null ? startTieIn.category().name() : "NATIONAL_HIGHWAY");
-            sMap.put("existingRoadRef", startTieIn.roadRef());
-            sMap.put("existingRoadName", startTieIn.roadName());
-            sMap.put("tieInPoint", startTieIn.tieInPoint());
-            sMap.put("userPoint", start);
-            sMap.put("straightOffsetMeters", startTieIn.distanceMeters());
-            sMap.put("connectorLengthKm", round(startConnectorKm));
-            sMap.put("directTieInApplied", startTieIn.distanceMeters() <= DIRECT_ROAD_TIE_IN_THRESHOLD_METERS);
-            map.put("startRoadConnection", sMap);
-        }
-        if (goalTieIn != null) {
-            Map<String, Object> gMap = new LinkedHashMap<>();
-            gMap.put("corridorId", goalTieIn.corridorId());
-            gMap.put("roadCategory", goalTieIn.category() != null ? goalTieIn.category().name() : "NATIONAL_HIGHWAY");
-            gMap.put("existingRoadRef", goalTieIn.roadRef());
-            gMap.put("existingRoadName", goalTieIn.roadName());
-            gMap.put("tieInPoint", goalTieIn.tieInPoint());
-            gMap.put("userPoint", goal);
-            gMap.put("straightOffsetMeters", goalTieIn.distanceMeters());
-            gMap.put("connectorLengthKm", round(goalConnectorKm));
-            gMap.put("directTieInApplied", goalTieIn.distanceMeters() <= DIRECT_ROAD_TIE_IN_THRESHOLD_METERS);
-            map.put("goalRoadConnection", gMap);
-        }
-        map.put("totalTerminalAccessRoadLengthKm", totalTerminalAccessRoadLengthKm);
-        map.put("includedInMainlineAndStatistics", true);
-        return map;
+            String goalSnapReason,
+            double totalTerminalAccessRoadLengthKm,
+            FacilityMode mode) {
+        Map<String, Object> startConn = startTieIn == null ? null : TerminalAccessPolicy.buildTerminalConnectionEntry(
+                startTieIn.corridorId(),
+                startTieIn.roadRef(),
+                startTieIn.roadName(),
+                startTieIn.category(),
+                startTieIn.tieInPoint(),
+                start,
+                startTieIn.distanceMeters(),
+                startConnectorKm,
+                DIRECT_ROAD_TIE_IN_THRESHOLD_METERS,
+                mode,
+                TerminalAccessPolicy.isSnappedOutsideUrbanCore(startSnapReason));
+        Map<String, Object> goalConn = goalTieIn == null ? null : TerminalAccessPolicy.buildTerminalConnectionEntry(
+                goalTieIn.corridorId(),
+                goalTieIn.roadRef(),
+                goalTieIn.roadName(),
+                goalTieIn.category(),
+                goalTieIn.tieInPoint(),
+                goal,
+                goalTieIn.distanceMeters(),
+                goalConnectorKm,
+                DIRECT_ROAD_TIE_IN_THRESHOLD_METERS,
+                mode,
+                TerminalAccessPolicy.isSnappedOutsideUrbanCore(goalSnapReason));
+        return TerminalAccessPolicy.buildTerminalConnectionsMetadata(
+                startConn, goalConn, totalTerminalAccessRoadLengthKm, mode);
     }
 
     private static void appendPathSegmentExact(List<GeoPoint> target, List<GeoPoint> segment) {

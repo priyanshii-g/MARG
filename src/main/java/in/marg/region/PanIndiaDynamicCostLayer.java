@@ -623,6 +623,76 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         return diagnostics;
     }
 
+    /**
+     * Returns {@code true} if {@code point} falls inside any statutory sacred heritage precinct
+     * or protected wildlife sanctuary core (hard legal exclusions that always take precedence
+     * over urban-core exclusion reporting).
+     */
+    public static boolean isStatutoryHardBlock(GeoPoint point) {
+        if (point == null) {
+            return false;
+        }
+        double lat = point.lat();
+        double lon = point.lon();
+        for (SacredHeritageExclusionZone sz : SACRED_HERITAGE_ZONES) {
+            if (Math.hypot(lat - sz.centerLat(), lon - sz.centerLon()) <= sz.exclusionRadiusDeg()) {
+                return true;
+            }
+        }
+        if (IndianWildlifeSanctuaryRegistry.getDefaultInstance().findIntersectingSanctuary(lat, lon) != null) {
+            return true;
+        }
+        for (ProtectedSanctuaryCore pa : PROTECTED_SANCTUARIES) {
+            if (Math.hypot(lat - pa.centerLat(), lon - pa.centerLon()) <= pa.coreRadiusDeg()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the {@link UrbanSettlementCenter} whose urban core encompasses {@code point},
+     * or {@code null} if the point lies outside all metropolitan/city cores.
+     * Used in {@link FacilityMode#EXPRESSWAY} mode per IRC:SP:99-2013 &amp; NHAI greenfield
+     * directives so expressways never start or terminate inside city cores.
+     */
+    public static UrbanSettlementCenter findContainingUrbanCore(GeoPoint point) {
+        if (point == null) {
+            return null;
+        }
+        double lat = point.lat();
+        double lon = point.lon();
+        for (UrbanSettlementCenter city : URBAN_CENTERS) {
+            if (Math.hypot(lat - city.lat(), lon - city.lon()) <= city.coreRadiusDeg()) {
+                return city;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Classifies a Pan-India coordinate into standard settlement exposure tiers
+     * ({@code URBAN_CORE}, {@code INNER_BUFFER}, {@code OUTER_BUFFER}, or {@code NONE}).
+     */
+    public static String classifyUrbanProximity(GeoPoint point) {
+        if (point == null) {
+            return "NONE";
+        }
+        double lat = point.lat();
+        double lon = point.lon();
+        for (UrbanSettlementCenter city : URBAN_CENTERS) {
+            double d = Math.hypot(lat - city.lat(), lon - city.lon());
+            if (d <= city.coreRadiusDeg()) {
+                return "URBAN_CORE";
+            } else if (d <= city.periUrbanRadiusDeg() * 0.6) {
+                return "INNER_BUFFER";
+            } else if (d <= city.periUrbanRadiusDeg()) {
+                return "OUTER_BUFFER";
+            }
+        }
+        return "NONE";
+    }
+
     public static double pointToSegmentDistanceDeg(
             double pLat, double pLon, double aLat, double aLon, double bLat, double bLon) {
         double dx = bLon - aLon;

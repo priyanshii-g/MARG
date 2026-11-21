@@ -27,6 +27,8 @@ import in.marg.spatial.CoordinateProjection;
 import in.marg.transport.FacilityMode;
 import in.marg.transport.HighwayNetworkPlannerService;
 import in.marg.transport.HubEvaluationService;
+import in.marg.transport.TerminalAccessPolicy;
+import in.marg.transport.TransportNetworkVectorIndex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,6 +88,9 @@ public class CompositeRoutingController {
 
     @Autowired(required = false)
     private in.marg.transport.TransportNetworkVectorIndex transportVectorIndex;
+
+    @Autowired(required = false)
+    private in.marg.settlement.SettlementRasterProvider settlementRasterProvider;
 
     public CompositeRoutingController(
             StudyRegion region,
@@ -742,7 +747,7 @@ public class CompositeRoutingController {
                         requestedGoal,
                         preference);
 
-        // Smart Endpoint Snapping off Hospitals (+100m), Settlements/Colonies, Buildings & Hard Terrain
+        // Smart Endpoint Snapping off Hospitals (+250m), Settlements/Colonies, Buildings, Urban Cores (EXPRESSWAY) & Hard Terrain
         EndpointSnapService snapService = new EndpointSnapService(projection);
         EndpointSnapService.EndpointResolution endpointResolution = snapService.resolveEndpoints(
                 this.region,
@@ -750,8 +755,17 @@ public class CompositeRoutingController {
                 initialBuilt.surface(),
                 requestedStart,
                 requestedGoal,
-                EndpointSnapService.forBenchmarkCorridor(buildingVectorIndex, buildingRasterProvider),
-                EndpointSnapService.forCleanRoadTieIn(this.region, transportVectorIndex, buildingVectorIndex));
+                EndpointSnapService.forBenchmarkCorridor(
+                        buildingVectorIndex,
+                        buildingRasterProvider,
+                        settlementRasterProvider,
+                        transportVectorIndex,
+                        mode),
+                EndpointSnapService.forCleanRoadTieIn(
+                        this.region,
+                        transportVectorIndex,
+                        buildingVectorIndex,
+                        mode));
 
         GeoPoint start = endpointResolution.resolvedStart();
         GeoPoint goal = endpointResolution.resolvedGoal();
@@ -830,6 +844,56 @@ public class CompositeRoutingController {
                         ? ((routeLengthKm / baselineLengthKm) - 1.0) * 100.0
                         : Double.NaN;
 
+        // Facility-mode-aware terminal road tie-ins (IRC:SP:99-2013 for EXPRESSWAY, IRC:SP:84-2019 for NH)
+        TransportNetworkVectorIndex.NearestRoadTieIn startTieIn = null;
+        TransportNetworkVectorIndex.NearestRoadTieIn goalTieIn = null;
+        Map<String, Object> terminalRoadConnections = null;
+        if (transportVectorIndex != null) {
+            double instBufM = buildingProperties != null
+                    ? buildingProperties.getInstitutionalSafetyBufferMeters()
+                    : EndpointSnapService.ENDPOINT_INSTITUTIONAL_BUFFER_METERS;
+            java.util.function.Predicate<GeoPoint> safeTieInPred = pt -> this.region.contains(pt)
+                    && !built.surface().assess(pt).blocked()
+                    && (buildingVectorIndex == null
+                    || buildingVectorIndex.findEndpointBuildingOrSettlementObstacle(pt, instBufM, 15.0) == null);
+            java.util.function.BiPredicate<GeoPoint, GeoPoint> cleanConnectorPred = (fromPt, toPt) ->
+                    buildingVectorIndex == null
+                            || !buildingVectorIndex.hasSegmentBuildingOrExclusionConflict(fromPt, toPt, 25.0, instBufM);
+            startTieIn = transportVectorIndex.findNearestRoadTieIn(start, safeTieInPred, cleanConnectorPred, mode);
+            goalTieIn = transportVectorIndex.findNearestRoadTieIn(goal, safeTieInPred, cleanConnectorPred, mode);
+
+            double startOffKm = startTieIn != null ? startTieIn.distanceMeters() / 1000.0 : 0.0;
+            double goalOffKm = goalTieIn != null ? goalTieIn.distanceMeters() / 1000.0 : 0.0;
+            Map<String, Object> startConn = startTieIn == null ? null
+                    : TerminalAccessPolicy.buildTerminalConnectionEntry(
+                            startTieIn.corridorId(),
+                            startTieIn.corridorRef(),
+                            startTieIn.corridorName(),
+                            startTieIn.category(),
+                            startTieIn.tieInPoint(),
+                            start,
+                            startTieIn.distanceMeters(),
+                            startOffKm,
+                            TerminalAccessPolicy.DIRECT_TIE_IN_THRESHOLD_METERS,
+                            mode,
+                            TerminalAccessPolicy.isSnappedOutsideUrbanCore(endpointResolution.startSnapReason()));
+            Map<String, Object> goalConn = goalTieIn == null ? null
+                    : TerminalAccessPolicy.buildTerminalConnectionEntry(
+                            goalTieIn.corridorId(),
+                            goalTieIn.corridorRef(),
+                            goalTieIn.corridorName(),
+                            goalTieIn.category(),
+                            goalTieIn.tieInPoint(),
+                            goal,
+                            goalTieIn.distanceMeters(),
+                            goalOffKm,
+                            TerminalAccessPolicy.DIRECT_TIE_IN_THRESHOLD_METERS,
+                            mode,
+                            TerminalAccessPolicy.isSnappedOutsideUrbanCore(endpointResolution.goalSnapReason()));
+            terminalRoadConnections = TerminalAccessPolicy.buildTerminalConnectionsMetadata(
+                    startConn, goalConn, round(startOffKm + goalOffKm), mode);
+        }
+
         // Stage 4: Interchange Placement, Dedicated A* Feeder/Spur Roads & ROB/Flyover Structures
         HighwayNetworkPlannerService.NetworkPlanResult networkPlan =
                 networkPlannerService.planNetwork(
@@ -846,6 +910,9 @@ public class CompositeRoutingController {
         metadata.put("corridorTierMode", CorridorTierMode.TIER_2_PRECACHED_BENCHMARK.name());
         metadata.put("regionId", "assam");
         metadata.put("endpointResolution", endpointResolution.toMetadataMap());
+        if (terminalRoadConnections != null) {
+            metadata.put("terminalRoadConnections", terminalRoadConnections);
+        }
         metadata.put("routeDiagnostics", routeDiagnostics);
         metadata.put("facilityMode", mode.name());
         metadata.put("accessibilityPullApplied", built.accessibilityPullApplied());
@@ -907,6 +974,16 @@ public class CompositeRoutingController {
 
         Map<String, Object> networkAndCapacitySummary = new LinkedHashMap<>();
         networkAndCapacitySummary.put("mainlineLengthKm", networkPlan.mainlineLengthKm());
+        if (terminalRoadConnections != null) {
+            networkAndCapacitySummary.put("totalTerminalAccessRoadLengthKm",
+                    terminalRoadConnections.get("totalTerminalAccessRoadLengthKm"));
+            networkAndCapacitySummary.put("terminalInterchangesCount",
+                    terminalRoadConnections.get("terminalInterchangesCount"));
+            networkAndCapacitySummary.put("localStreetViolationsCount",
+                    terminalRoadConnections.get("localStreetViolationsCount"));
+            networkAndCapacitySummary.put("expresswayComplianceVerified",
+                    terminalRoadConnections.get("expresswayComplianceVerified"));
+        }
         networkAndCapacitySummary.put("totalDedicatedFeederSpurLengthKm", networkPlan.totalFeederSpurLengthKm());
         networkAndCapacitySummary.put("totalConstructedHighwayAndSpurKm", networkPlan.totalConstructedHighwayAndSpurKm());
         networkAndCapacitySummary.put("plannedInterchangesCount", networkPlan.interchanges().size());
@@ -1216,6 +1293,13 @@ public class CompositeRoutingController {
             metadata.put("statutoryClearanceReport", tradeOffProfile.get("statutoryClearanceReport"));
         }
 
+        Map<String, Object> baselineDiagnostics = routeMetrics.summarize(baseline, mode, false);
+        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
+                routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode);
+        List<Map<String, Object>> routeLayerProfile = routeMetrics.sampleRouteLayerProfile(mainline);
+        metadata.put("layerAudit", layerAudit);
+        metadata.put("routeLayerProfile", routeLayerProfile);
+
         Map<String, Object> mainlineProperties = new LinkedHashMap<>();
         mainlineProperties.put("profile", "COMPOSITE_13_LAYER");
         mainlineProperties.put("routeLengthKm", round(routeLengthKm));
@@ -1243,11 +1327,33 @@ public class CompositeRoutingController {
                         + "population-scaled & demographic-vulnerability-weighted corridor exposure minimization, "
                         + "and IRC:SP:13 / IRC:SP:42 cross-drainage structure sizing & wetland/thalweg obstruction avoidance.");
 
-        List<Map<String, Object>> features =
+        List<Map<String, Object>> features = new java.util.ArrayList<>(
                 networkPlannerService.buildGeoJsonFeatures(
                         mainline,
                         mainlineProperties,
-                        networkPlan);
+                        networkPlan));
+        if (startTieIn != null || goalTieIn != null) {
+            TerminalAccessPolicy.TerminalEndpointSpec originSpec = startTieIn == null ? null
+                    : new TerminalAccessPolicy.TerminalEndpointSpec(
+                            startTieIn.corridorId(),
+                            startTieIn.corridorRef(),
+                            startTieIn.corridorName(),
+                            startTieIn.category(),
+                            startTieIn.tieInPoint(),
+                            List.of(),
+                            startTieIn.distanceMeters() / 1000.0);
+            TerminalAccessPolicy.TerminalEndpointSpec destSpec = goalTieIn == null ? null
+                    : new TerminalAccessPolicy.TerminalEndpointSpec(
+                            goalTieIn.corridorId(),
+                            goalTieIn.corridorRef(),
+                            goalTieIn.corridorName(),
+                            goalTieIn.category(),
+                            goalTieIn.tieInPoint(),
+                            List.of(),
+                            goalTieIn.distanceMeters() / 1000.0);
+            TerminalAccessPolicy.appendTerminalRoadGeoJsonFeatures(
+                    features, mode, routeLengthKm, "INTERCHANGE", originSpec, destSpec);
+        }
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("type", "FeatureCollection");

@@ -346,7 +346,7 @@ class GeotechLayerValidationTest {
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
-                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer)),
+                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag8 = metricsService.summarize(route8);
@@ -360,7 +360,7 @@ class GeotechLayerValidationTest {
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
-                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer, geotechLayer)),
+                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer, geotechLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag9 = metricsService.summarize(route9);

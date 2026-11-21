@@ -387,7 +387,7 @@ class RightOfWayCorridorEngineTest {
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
-                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer, geotechLayer, utilityLayer)),
+                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer, geotechLayer, utilityLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
 

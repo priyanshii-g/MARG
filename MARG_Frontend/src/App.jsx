@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getBasemapConfig } from "./layers/basemaps";
+import {
+  LAYER_BY_ID,
+  OVERVIEW_FEATURE_ROLES,
+  formatClassLabel,
+  getSegmentColor,
+} from "./layers/layerCatalog";
+import LayerAuditPanel from "./components/LayerAuditPanel";
+import MapLensHud from "./components/MapLensHud";
 
 // -------------------------------------------------------------
 // India & Benchmark Region Constants
@@ -110,6 +119,7 @@ export default function App() {
 
   // Base Map Layer & Type (No API keys required)
   const [baseMapType, setBaseMapType] = useState("osm");
+  const [lockBasemap, setLockBasemap] = useState(false);
   const baseTileLayerRef = useRef(null);
 
   // Markers and Vector Layers
@@ -117,6 +127,8 @@ export default function App() {
   const endMarkerRef = useRef(null);
   const snapVectorGroupRef = useRef(null);
   const routeLayersGroupRef = useRef(null);
+  const colorizedRouteGroupRef = useRef(null);
+  const focusHighlightGroupRef = useRef(null);
   const comparativeRoutesGroupRef = useRef(null);
 
   // Application State
@@ -173,21 +185,13 @@ export default function App() {
   // Endpoint Auto-Shift Notification State
   const [snapNotice, setSnapNotice] = useState(null);
 
-  // Layer Visibility Filters
-  const [visibleLayers, setVisibleLayers] = useState({
-    mainline: true,
-    baseline: true,
-    spurs: true,
-    interchanges: true,
-    bridges: true,
-    drainage: true,
-    rivers: false,
-    wildlife: true,
-    sanctuaries: true,
-    crossings: true,
-    row: true,
-    multiArchetypes: true,
-  });
+  // 13-Layer Verification Audit & Interactive Map Lens State
+  const [currentFeatures, setCurrentFeatures] = useState([]);
+  const [layerAudit, setLayerAudit] = useState([]);
+  const [routeLayerProfile, setRouteLayerProfile] = useState([]);
+  const [activeLayerId, setActiveLayerId] = useState(null);
+  const [pinnedLayerIds, setPinnedLayerIds] = useState(() => new Set());
+  const [showMultiArchetypes, setShowMultiArchetypes] = useState(true);
 
   // Coords Key Tracker: Automatically clear cached routes if endpoints change
   const currentCoordsKey = start && end ? `${start.lat.toFixed(4)},${start.lng.toFixed(4)}->${end.lat.toFixed(4)},${end.lng.toFixed(4)}` : null;
@@ -198,6 +202,11 @@ export default function App() {
       setAlternativeRoutes([]);
       setActiveAlternativeId(null);
       setStatutoryClearanceReport(null);
+      setCurrentFeatures([]);
+      setLayerAudit([]);
+      setRouteLayerProfile([]);
+      setActiveLayerId(null);
+      setPinnedLayerIds(new Set());
     }
     lastCoordsKeyRef.current = currentCoordsKey;
   }, [currentCoordsKey]);
@@ -256,6 +265,8 @@ export default function App() {
     // Vector Groups
     snapVectorGroupRef.current = L.layerGroup().addTo(map);
     routeLayersGroupRef.current = L.layerGroup().addTo(map);
+    colorizedRouteGroupRef.current = L.layerGroup().addTo(map);
+    focusHighlightGroupRef.current = L.layerGroup().addTo(map);
     comparativeRoutesGroupRef.current = L.layerGroup().addTo(map);
 
     // Map Click Handler for Interactive Endpoint Picking
@@ -301,29 +312,26 @@ export default function App() {
   }, []);
 
   // -----------------------------------------------------------
-  // Basemap Switcher (OpenStreetMap vs Esri Satellite - No Keys Required)
+  // Multi-Basemap Switcher (OSM, OpenTopoMap, Esri Satellite/Relief, CartoDB - Free, No Keys)
   // -----------------------------------------------------------
   useEffect(() => {
     if (!mapRef.current) return;
     if (baseTileLayerRef.current) {
       mapRef.current.removeLayer(baseTileLayerRef.current);
     }
-    let newLayer;
-    if (baseMapType === "satellite") {
-      newLayer = L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        {
-          attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
-          maxZoom: 19,
-        }
-      );
-    } else {
-      newLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-      });
-    }
+    const cfg = getBasemapConfig(baseMapType);
+    let tileErrors = 0;
+    const newLayer = L.tileLayer(cfg.url, cfg.options);
+    newLayer.on("tileerror", () => {
+      tileErrors += 1;
+      if (tileErrors === 4 && cfg.fallbackId && cfg.fallbackId !== baseMapType) {
+        setBaseMapType(cfg.fallbackId);
+      }
+    });
     newLayer.addTo(mapRef.current);
+    if (typeof newLayer.bringToBack === "function") {
+      newLayer.bringToBack();
+    }
     baseTileLayerRef.current = newLayer;
   }, [baseMapType]);
 
@@ -493,7 +501,10 @@ export default function App() {
       setDirectnessWeight(p.direct);
 
       // Re-render GIS symbology & update state directly from memory (0 ms delay)
-      renderGeoJsonFeatures(cached.features, targetKey);
+      setCurrentFeatures(cached.features || []);
+      setLayerAudit(cached.layerAudit || []);
+      setRouteLayerProfile(cached.routeLayerProfile || []);
+      renderGeoJsonFeatures(cached.features || [], targetKey, activeLayerId, pinnedLayerIds, cached.routeLayerProfile || [], false);
       setRouteInfo(cached.routeInfo);
       setNetworkSummary(cached.networkSummary);
       setTradeOffProfile(cached.tradeOffProfile);
@@ -540,7 +551,7 @@ export default function App() {
     if (!mapRef.current || !comparativeRoutesGroupRef.current) return;
     comparativeRoutesGroupRef.current.clearLayers();
 
-    if (!visibleLayers.multiArchetypes) return;
+    if (!showMultiArchetypes) return;
 
     Object.entries(cachedArchetypes).forEach(([presetKey, snapshot]) => {
       if (presetKey === tradeOffPreset) return;
@@ -591,7 +602,7 @@ export default function App() {
         comparativeRoutesGroupRef.current.addLayer(layer);
       }
     });
-  }, [cachedArchetypes, tradeOffPreset, visibleLayers.multiArchetypes]);
+  }, [cachedArchetypes, tradeOffPreset, showMultiArchetypes]);
 
   // -----------------------------------------------------------
   // Preset Selection Handler
@@ -606,6 +617,14 @@ export default function App() {
     setCachedArchetypes({});
     setAlternativeRoutes([]);
     setActiveAlternativeId(null);
+    setCurrentFeatures([]);
+    setLayerAudit([]);
+    setRouteLayerProfile([]);
+    setActiveLayerId(null);
+    setPinnedLayerIds(new Set());
+    if (!lockBasemap) {
+      setBaseMapType("osm");
+    }
     setStatus(`Loaded ${preset.name}. Click 'Generate MARG Alignment' to evaluate.`);
 
     if (mapRef.current) {
@@ -824,12 +843,18 @@ export default function App() {
   // -----------------------------------------------------------
   function applyRouteResult(data, presetKeyOverride) {
     const targetKey = presetKeyOverride || tradeOffPreset || "BALANCED";
-    renderGeoJsonFeatures(data.features, targetKey);
-
     const meta = data.metadata || {};
     const diag = meta.routeDiagnostics || {};
     const net = meta.transportNetworkAndCapacitySummary || meta.networkAndCapacitySummary || {};
     const termConn = meta.terminalRoadConnections || {};
+    const auditList = Array.isArray(meta.layerAudit) ? meta.layerAudit : [];
+    const layerProfile = Array.isArray(meta.routeLayerProfile) ? meta.routeLayerProfile : [];
+    const feats = Array.isArray(data.features) ? data.features : [];
+
+    setCurrentFeatures(feats);
+    setLayerAudit(auditList);
+    setRouteLayerProfile(layerProfile);
+    renderGeoJsonFeatures(feats, targetKey, activeLayerId, pinnedLayerIds, layerProfile, true);
 
     const mainlineFeat = data.features.find(
       (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
@@ -913,7 +938,9 @@ export default function App() {
     // Save full snapshot in Archetype Cache
     const snapshot = {
       data,
-      features: data.features,
+      features: feats,
+      layerAudit: auditList,
+      routeLayerProfile: layerProfile,
       routeInfo: newRouteInfo,
       networkSummary: newNetSummary,
       tradeOffProfile: profile,
@@ -1022,106 +1049,264 @@ export default function App() {
   }
 
   // -----------------------------------------------------------
-  // Render FeatureCollection with Custom GIS Symbology
+  // Compute Allowed GeoJSON Roles for Overview vs. Active Lens + Pinned Layers
   // -----------------------------------------------------------
-  function renderGeoJsonFeatures(features, activePresetKey) {
+  function computeAllowedFeatureRoles(lensId, pinnedSet) {
+    const isLensMode = Boolean(lensId) || (pinnedSet && pinnedSet.size > 0);
+    if (!isLensMode) {
+      return OVERVIEW_FEATURE_ROLES;
+    }
+    const allowed = new Set([
+      "MAINLINE",
+      "GREENFIELD_MAINLINE",
+      "DISTANCE_BASELINE",
+      "BASELINE",
+    ]);
+    const activeIds = new Set(pinnedSet ? Array.from(pinnedSet) : []);
+    if (lensId) activeIds.add(lensId);
+    activeIds.forEach((id) => {
+      const cfg = LAYER_BY_ID[id];
+      if (cfg && Array.isArray(cfg.vectorFeatureRoles)) {
+        cfg.vectorFeatureRoles.forEach((r) => allowed.add(r));
+      }
+    });
+    return allowed;
+  }
+
+  // -----------------------------------------------------------
+  // Paint Color-Coded Route Segments for Raster Layers (LULC, Flood, DEM Slope, Settlements, Geotech, Demographics, Drainage)
+  // -----------------------------------------------------------
+  function renderColorizedRouteRibbon(profile, lensId) {
+    if (!colorizedRouteGroupRef.current) return;
+    colorizedRouteGroupRef.current.clearLayers();
+
+    const cfg = lensId ? LAYER_BY_ID[lensId] : null;
+    if (!cfg || !cfg.profileField || !Array.isArray(profile) || profile.length < 2) {
+      return;
+    }
+
+    const group = colorizedRouteGroupRef.current;
+    const field = cfg.profileField;
+
+    // Group contiguous samples with the same class color so polylines stay crisp & fast
+    let runCoords = [];
+    let runVal = null;
+    let runStartCh = 0;
+    let runMaxSlope = 0;
+
+    const flushRun = (endCh) => {
+      if (runCoords.length < 2) return;
+      const color = getSegmentColor(cfg, runVal);
+      // Dark outer casing for crisp visibility on both Satellite and Topo basemaps
+      const casing = L.polyline(runCoords, {
+        color: "#0f172a",
+        weight: 9,
+        opacity: 0.72,
+        lineCap: "round",
+        lineJoin: "round",
+      });
+      const ribbon = L.polyline(runCoords, {
+        color,
+        weight: 5.5,
+        opacity: 0.98,
+        lineCap: "round",
+        lineJoin: "round",
+      });
+      const slopeExtra =
+        cfg.id === "L3_SLOPE"
+          ? `<br/>Peak Slope in Segment: <b>${runMaxSlope.toFixed(1)}°</b>`
+          : "";
+      ribbon.bindTooltip(
+        `<div style="font-size:11px;line-height:1.35;">` +
+          `<b>${cfg.icon} L${cfg.number}: ${cfg.shortName}</b><br/>` +
+          `Class: <b style="color:${color};">${formatClassLabel(runVal)}</b>${slopeExtra}<br/>` +
+          `Chainage: km ${runStartCh.toFixed(1)} – ${endCh.toFixed(1)}` +
+          `</div>`,
+        { sticky: true }
+      );
+      group.addLayer(casing);
+      group.addLayer(ribbon);
+    };
+
+    for (let i = 0; i < profile.length; i++) {
+      const pt = profile[i];
+      if (typeof pt.lat !== "number" || typeof pt.lon !== "number") continue;
+      const val = pt[field] ?? "UNKNOWN";
+      const slopeVal = typeof pt.slopeDeg === "number" ? pt.slopeDeg : 0;
+
+      if (runCoords.length === 0) {
+        runCoords = [[pt.lat, pt.lon]];
+        runVal = val;
+        runStartCh = Number(pt.chKm || 0);
+        runMaxSlope = slopeVal;
+      } else if (val === runVal) {
+        runCoords.push([pt.lat, pt.lon]);
+        if (slopeVal > runMaxSlope) runMaxSlope = slopeVal;
+      } else {
+        // Connect seamlessly to transition vertex before flushing
+        runCoords.push([pt.lat, pt.lon]);
+        flushRun(Number(pt.chKm || runStartCh));
+        runCoords = [[pt.lat, pt.lon]];
+        runVal = val;
+        runStartCh = Number(pt.chKm || 0);
+        runMaxSlope = slopeVal;
+      }
+    }
+    if (runCoords.length >= 2) {
+      const lastCh = Number(profile[profile.length - 1]?.chKm || runStartCh);
+      flushRun(lastCh);
+    }
+  }
+
+  // -----------------------------------------------------------
+  // Render FeatureCollection with Custom GIS Symbology (Overview vs. 13-Layer Lens)
+  // -----------------------------------------------------------
+  function renderGeoJsonFeatures(
+    features,
+    activePresetKey,
+    lensIdOverride,
+    pinnedOverride,
+    profileOverride,
+    shouldFitBounds = false
+  ) {
     if (!mapRef.current || !routeLayersGroupRef.current) return;
     routeLayersGroupRef.current.clearLayers();
+
+    const effectiveLens = lensIdOverride !== undefined ? lensIdOverride : activeLayerId;
+    const effectivePinned = pinnedOverride !== undefined ? pinnedOverride : pinnedLayerIds;
+    const effectiveProfile = profileOverride !== undefined ? profileOverride : routeLayerProfile;
+
+    const allowedRoles = computeAllowedFeatureRoles(effectiveLens, effectivePinned);
+    const activeLensCfg = effectiveLens ? LAYER_BY_ID[effectiveLens] : null;
+    const hasColorizedRibbon = Boolean(
+      activeLensCfg?.profileField && Array.isArray(effectiveProfile) && effectiveProfile.length >= 2
+    );
 
     const group = routeLayersGroupRef.current;
     let boundsToFit = null;
     const currentPreset = activePresetKey || tradeOffPreset || "BALANCED";
     const mainlineColor = PRESET_DEFINITIONS[currentPreset]?.color || "#10b981";
 
-    features.forEach((feature) => {
+    (features || []).forEach((feature) => {
       const role = feature.properties?.featureRole || "";
       const geomType = feature.geometry?.type;
+      const props = feature.properties || {};
+
+      // Gate visibility strictly by Overview Mode vs. Active Lens + Pinned Layers
+      const isAllowed =
+        allowedRoles.has(role) ||
+        (role.includes("BASELINE") && allowedRoles.has("BASELINE")) ||
+        (role.includes("ROW_CORRIDOR") && allowedRoles.has("MAINLINE_ROW_CORRIDOR"));
+      if (!isAllowed) return;
 
       // 1. Straight-Line Baseline
-      if (role.includes("BASELINE") && visibleLayers.baseline) {
+      if (role.includes("BASELINE")) {
         const layer = L.geoJSON(feature, {
           style: {
             color: "#94a3b8",
-            weight: 3,
+            weight: 2.8,
             dashArray: "6, 8",
-            opacity: 0.8,
+            opacity: 0.78,
           },
-        }).bindPopup("<b>Straight-Line Baseline</b><br/>Euclidean metric distance comparison.");
+        }).bindPopup("<b>Direct Distance Baseline</b><br/>Reference shortest path used for 13-Layer Before vs. After verification.");
         group.addLayer(layer);
       }
 
-      // 2. Right-of-Way Footprint Polygons
-      else if (role.includes("ROW_CORRIDOR") && visibleLayers.row && geomType === "Polygon") {
+      // 2. Right-of-Way Footprint Polygons (L11 & Overview Road Structure)
+      else if (role.includes("ROW_CORRIDOR") && (geomType === "Polygon" || geomType === "MultiPolygon")) {
         const layer = L.geoJSON(feature, {
           style: {
-            color: "#10b981",
-            weight: 1,
-            fillColor: "#10b981",
-            fillOpacity: 0.12,
+            color: effectiveLens === "L11_BUILDINGS_ROW" ? "#ec4899" : "#10b981",
+            weight: effectiveLens === "L11_BUILDINGS_ROW" ? 2 : 1,
+            fillColor: effectiveLens === "L11_BUILDINGS_ROW" ? "#ec4899" : "#10b981",
+            fillOpacity: effectiveLens === "L11_BUILDINGS_ROW" ? 0.22 : 0.12,
             dashArray: "4, 4",
           },
         }).bindPopup(
-          `<b>RoW Acquisition Footprint</b><br/>Standard: ${feature.properties.ircStandard || "IRC:SP:99-2023"}<br/>Width: ${feature.properties.designRowWidthMeters || 90}m`
+          `<b>2D RoW Acquisition Footprint</b><br/>Standard: ${props.ircStandard || "IRC:SP:99-2023"}<br/>Width: ${props.designRowWidthMeters || 60} m`
         );
         group.addLayer(layer);
       }
 
-      // 3. Feeder Spurs
-      else if (role === "DEDICATED_FEEDER_SPUR" && visibleLayers.spurs) {
-        const p = feature.properties || {};
-        const reasonHtml = p.decisionReason
-          ? `<br/><div style="margin-top:4px; font-size:11px; color:${p.sixLaneExpansionRecommended ? '#d97706' : '#6b7280'}; line-height:1.3"><b>Design Rule:</b> ${p.decisionReason}</div>`
+      // 3. Feeder Spurs (Tier-2 & Tier-1)
+      else if (role === "DEDICATED_FEEDER_SPUR" || role === "FEEDER_SPUR_HIGHWAY") {
+        const reasonHtml = props.decisionReason
+          ? `<br/><div style="margin-top:4px; font-size:11px; color:${props.sixLaneExpansionRecommended ? '#d97706' : '#6b7280'}; line-height:1.3"><b>Design Rule:</b> ${props.decisionReason}</div>`
           : "";
         const layer = L.geoJSON(feature, {
           style: {
-            color: p.sixLaneExpansionRecommended ? "#f59e0b" : "#a855f7",
+            color: props.sixLaneExpansionRecommended ? "#f59e0b" : "#a855f7",
             weight: 5,
             opacity: 0.95,
           },
         }).bindPopup(
-          `<b>Dedicated Feeder Spur</b><br/>Connecting to: <b>${p.servedHubName || "Regional Hub"}</b><br/>Length: ${p.spurLengthKm || "—"} km<br/>Tie-In: ${p.tieInRoadRef || "Existing Road"}${reasonHtml}`
+          `<b>Dedicated Feeder Spur</b><br/>Connecting to: <b>${props.servedHubName || props.connectingHub || "Regional Hub"}</b><br/>Length: ${props.spurLengthKm || props.lengthKm || "—"} km<br/>Tie-In: ${props.tieInRoadRef || "Existing Road"}${reasonHtml}`
         );
         group.addLayer(layer);
       }
 
       // 4. Greenfield Mainline
-      else if ((role === "GREENFIELD_MAINLINE" || role === "MAINLINE") && visibleLayers.mainline) {
+      else if (role === "GREENFIELD_MAINLINE" || role === "MAINLINE") {
         const layer = L.geoJSON(feature, {
           style: {
             color: mainlineColor,
-            weight: 6,
-            opacity: 0.95,
+            weight: hasColorizedRibbon ? 3 : 6,
+            opacity: hasColorizedRibbon ? 0.35 : 0.95,
           },
         }).bindPopup(
-          `<b>${PRESET_DEFINITIONS[currentPreset]?.label || "13-Layer Greenfield Mainline"}</b><br/>Length: ${feature.properties.routeLengthKm || "—"} km<br/>Deviation: ${feature.properties.deviationPercent || "—"}%`
+          `<b>${PRESET_DEFINITIONS[currentPreset]?.label || "13-Layer Greenfield Mainline"}</b><br/>Length: ${props.routeLengthKm || "—"} km<br/>Deviation: ${props.deviationPercent || "—"}%`
         );
         group.addLayer(layer);
         boundsToFit = layer.getBounds();
       }
 
-      // 5. Interchanges (Filter out any spurious terminal origin/destination duplicate markers)
+      // 5. Interchanges & Terminal Interchanges (IRC:SP:99 / IRC:SP:84)
       else if (
-        role.includes("INTERCHANGE") &&
-        visibleLayers.interchanges &&
-        geomType === "Point" &&
-        !feature.properties?.interchangeId?.includes("ORIGIN") &&
-        !feature.properties?.interchangeId?.includes("DESTINATION")
+        (role === "INTERCHANGE" || role === "TERMINAL_INTERCHANGE" || role === "INTERCHANGE_JUNCTION") &&
+        geomType === "Point"
       ) {
         const coords = feature.geometry.coordinates;
+        const isTerminal = role === "TERMINAL_INTERCHANGE";
         const icon = L.divIcon({
-          className: "struct-marker interchange",
-          html: "<span>✦</span>",
-          iconSize: [26, 26],
-          iconAnchor: [13, 13],
+          className: `struct-marker interchange ${isTerminal ? "terminal" : ""}`,
+          html: isTerminal
+            ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#d97706;border:2.5px solid #fff;color:#fff;font-size:13px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,0.5);">✦</span>`
+            : "<span>✦</span>",
+          iconSize: isTerminal ? [28, 28] : [26, 26],
+          iconAnchor: isTerminal ? [14, 14] : [13, 13],
         });
+        const title = isTerminal
+          ? `${props.terminalRole === "ORIGIN_TERMINAL_INTERCHANGE" ? "Origin" : "Destination"} Terminal Interchange (IRC:SP:99)`
+          : "Planned Grade-Separated Interchange";
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Planned Interchange</div><div class="popup-meta">ID: ${feature.properties.interchangeId}<br/>Type: ${feature.properties.interchangeType || "Trumpet"}<br/>Chainage: ${feature.properties.chainageKm} km</div>`
+          `<div class="popup-title">${title}</div><div class="popup-meta">` +
+            `<b>Type:</b> ${formatClassLabel(props.interchangeType || props.type || "Trumpet")}<br/>` +
+            (props.existingRoadRef ? `<b>Arterial Tie-In:</b> ${props.existingRoadRef} (${formatClassLabel(props.roadCategory || "")})<br/>` : "") +
+            (props.tollPlazaConfiguration ? `<b>Toll Plaza:</b> ${formatClassLabel(props.tollPlazaConfiguration)}<br/>` : "") +
+            (props.connectingHub ? `<b>Served Hub:</b> ${props.connectingHub}<br/>` : "") +
+            (props.chainageKm != null ? `<b>Chainage:</b> ${props.chainageKm} km` : "") +
+            `</div>`
         );
         group.addLayer(marker);
       }
 
-      // 6. River Bridges
-      else if (role === "RIVER_BRIDGE" && visibleLayers.bridges && geomType === "Point") {
+      // 5b. Regional Service Hubs (Tier-1)
+      else if (role === "REGIONAL_SERVICE_HUB" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const marker = L.circleMarker([coords[1], coords[0]], {
+          radius: 7,
+          color: "#ffffff",
+          weight: 2,
+          fillColor: "#a855f7",
+          fillOpacity: 0.9,
+        }).bindPopup(
+          `<div class="popup-title">🏙️ ${props.name || "Regional Hub"}</div><div class="popup-meta">Feeder Spur: ${props.spurDistanceKm ?? "—"} km • Tie-In: ${props.tieInRoadRef || "SH/MDR"}</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 6. River Bridges (L7 & Overview)
+      else if (role === "RIVER_BRIDGE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
         const icon = L.divIcon({
           className: "struct-marker bridge",
@@ -1130,13 +1315,13 @@ export default function App() {
           iconAnchor: [13, 13],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Perennial River Bridge</div><div class="popup-meta">River: ${feature.properties.riverName || "Major River"}<br/>Skew Span: ${feature.properties.estimatedSkewSpanMeters || feature.properties.effectiveSkewSpanMeters || "—"} m<br/>Crossing Angle: ${feature.properties.crossingAngleDegrees || "—"}°</div>`
+          `<div class="popup-title">Perennial River Bridge</div><div class="popup-meta">River: ${props.riverName || "Major River"}<br/>Skew Span: ${props.estimatedSkewSpanMeters || props.effectiveSkewSpanMeters || "—"} m<br/>Crossing Angle: ${props.crossingAngleDegrees || "—"}°</div>`
         );
         group.addLayer(marker);
       }
 
-      // 7. Wildlife Passages
-      else if (role === "WILDLIFE_PASSAGE" && visibleLayers.wildlife && geomType === "Point") {
+      // 7. Wildlife Passages (L8)
+      else if (role === "WILDLIFE_PASSAGE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
         const icon = L.divIcon({
           className: "struct-marker wildlife",
@@ -1145,40 +1330,55 @@ export default function App() {
           iconAnchor: [13, 13],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Wildlife Migration Viaduct</div><div class="popup-meta">Passage Span: ${feature.properties.recommendedPassageSpanMeters || "—"} m<br/>Mitigation: Elevated Viaduct Structure</div>`
+          `<div class="popup-title">Wildlife Migration Viaduct</div><div class="popup-meta">Corridor: ${props.corridorName || "Wildlife Corridor"}<br/>Passage Span: ${props.recommendedPassageSpanMeters || "—"} m<br/>Mitigation: ${formatClassLabel(props.mitigationStructure || "Elevated Viaduct Structure")}</div>`
         );
         group.addLayer(marker);
       }
 
-      // 7b. Statutory Wildlife Sanctuary & National Park Boundaries (Wildlife Protection Act, 1972)
-      else if (role === "WILDLIFE_SANCTUARY_BOUNDARY" && visibleLayers.sanctuaries && (geomType === "Polygon" || geomType === "MultiPolygon")) {
-        const props = feature.properties || {};
+      // 7b. Statutory Wildlife Sanctuary & National Park Boundaries (L4 — Hidden in Overview!)
+      else if (role === "WILDLIFE_SANCTUARY_BOUNDARY" && (geomType === "Polygon" || geomType === "MultiPolygon")) {
         const layer = L.geoJSON(feature, {
           style: {
             color: "#dc2626",
             weight: 2.5,
             dashArray: "6, 4",
             fillColor: "#ef4444",
-            fillOpacity: 0.18,
+            fillOpacity: 0.22,
           },
         }).bindPopup(
-          `<div class="popup-title" style="color:#b91c1c; font-weight:700;">🐾 ${props.name || "Wildlife Sanctuary"}</div>` +
-          `<div class="popup-meta" style="font-size:11px; line-height:1.45;">` +
-          `<b>Legal Statute:</b> ${props.legalStatute || "Wildlife (Protection) Act, 1972"}<br/>` +
-          `<b>Location:</b> ${props.state || "—"} (${props.district || "—"})<br/>` +
-          `<b>Declared Area:</b> ${props.areaKm2 ? props.areaKm2 + " km²" : "—"}<br/>` +
-          `<b>Target Species:</b> ${props.keySpecies || "Protected Wildlife"}<br/>` +
-          `<div style="margin-top:6px; padding:4px 8px; background:#fef2f2; border:1px solid #f87171; color:#991b1b; border-radius:4px; font-weight:700; font-size:10.5px;">` +
-          `🚨 Mandatory SC-NBWL Clearance Required under WPA 1972 §29/35` +
-          `</div></div>`
+          `<div class="popup-title" style="color:#b91c1c; font-weight:700;">🛡️ ${props.name || "Wildlife Sanctuary"}</div>` +
+            `<div class="popup-meta" style="font-size:11px; line-height:1.45;">` +
+            `<b>Legal Statute:</b> ${props.legalStatute || "Wildlife (Protection) Act, 1972"}<br/>` +
+            `<b>Location:</b> ${props.state || "—"} (${props.district || "—"})<br/>` +
+            `<b>Declared Area:</b> ${props.areaKm2 ? props.areaKm2 + " km²" : "—"}<br/>` +
+            `<b>Target Species:</b> ${props.keySpecies || "Protected Wildlife"}<br/>` +
+            `<div style="margin-top:6px; padding:4px 8px; background:#fef2f2; border:1px solid #f87171; color:#991b1b; border-radius:4px; font-weight:700; font-size:10.5px;">` +
+            `🛡️ Zero-Tolerance Hard Exclusion Boundary (WPA 1972 §29/35)` +
+            `</div></div>`
         );
         group.addLayer(layer);
       }
 
-      // 8. Grade-Separated Crossings (Railway ROBs & Road Overpasses/Flyovers)
-      else if (role === "GRADE_SEPARATED_CROSSING" && visibleLayers.crossings && geomType === "Point") {
+      // 7c. 10 km Eco-Sensitive Zone Boundaries (L8)
+      else if (role === "ECO_SENSITIVE_ZONE_BOUNDARY" && (geomType === "Polygon" || geomType === "MultiPolygon")) {
+        const layer = L.geoJSON(feature, {
+          style: {
+            color: "#f59e0b",
+            weight: 2,
+            dashArray: "8, 6",
+            fillColor: "#fbbf24",
+            fillOpacity: 0.14,
+          },
+        }).bindPopup(
+          `<div class="popup-title" style="color:#b45309;">🌿 ${props.name || "Eco-Sensitive Zone (ESZ)"}</div>` +
+            `<div class="popup-meta">Buffer: ${props.eszBufferKm || 10} km MoEFCC Eco-Sensitive Zone<br/>Requires WII 2016 wildlife mitigation compliance.</div>`
+        );
+        group.addLayer(layer);
+      }
+
+      // 8. Grade-Separated Crossings (L6 & Overview)
+      else if (role === "GRADE_SEPARATED_CROSSING" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
-        const props = feature.properties || {};
         const isRail = props.crossedCategory === "RAILWAY";
         const icon = L.divIcon({
           className: `struct-marker ${isRail ? "rail-rob" : "road-overpass"}`,
@@ -1199,22 +1399,22 @@ export default function App() {
         group.addLayer(marker);
       }
 
-      // 9. Corridor River Channels (Backend Hydrographic Model)
-      else if (role === "CORRIDOR_RIVER_CHANNEL" && visibleLayers.rivers) {
+      // 9. Corridor River Channels (L7 & L2)
+      else if (role === "CORRIDOR_RIVER_CHANNEL") {
         const layer = L.geoJSON(feature, {
           style: {
             color: "#0284c7",
-            weight: 3,
+            weight: 3.2,
             opacity: 0.85,
           },
         }).bindPopup(
-          `<b>Backend Waterway Model</b><br/>River: ${feature.properties.riverName || "River"}<br/>Class: ${feature.properties.riverClass || "PERENNIAL"}<br/>Design Width: ${feature.properties.designChannelWidthMeters || "—"}m`
+          `<b>Backend Waterway Model</b><br/>River: ${props.riverName || "River"}<br/>Class: ${props.riverClass || "PERENNIAL"}<br/>Design Width: ${props.designChannelWidthMeters || "—"} m`
         );
         group.addLayer(layer);
       }
 
-      // 10. Drainage & Canal Crossing Structures (Layer 12)
-      else if (role === "DRAINAGE_CROSSING_STRUCTURE" && visibleLayers.drainage && geomType === "Point") {
+      // 10. Drainage & Canal Crossing Structures (L13)
+      else if (role === "DRAINAGE_CROSSING_STRUCTURE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
         const icon = L.divIcon({
           className: "struct-marker drainage",
@@ -1223,14 +1423,37 @@ export default function App() {
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Canal Aqueduct / Drainage Crossing</div><div class="popup-meta">Target: ${feature.properties.targetFeatureName || "Canal"}<br/>Type: ${feature.properties.structureType || "Aqueduct"}<br/>Span: ${feature.properties.recommendedClearSpanOrWidthMeters || "—"} m<br/>Discharge: ${feature.properties.designDischargeM3PerSec || "—"} m³/s</div>`
+          `<div class="popup-title">Canal Aqueduct / Cross-Drainage Structure</div><div class="popup-meta">Target: ${props.targetFeatureName || "Drainage Channel"}<br/>Type: ${formatClassLabel(props.structureType || "Box Culvert")}<br/>Span: ${props.recommendedClearSpanOrWidthMeters || "—"} m<br/>Discharge: ${props.designDischargeM3PerSec || "—"} m³/s</div>`
         );
         group.addLayer(marker);
       }
 
-      // 11. Terminal Access Road Connectors (Joining User Terminals to Existing Roads)
-      else if (role === "TERMINAL_ACCESS_ROAD" && visibleLayers.mainline && geomType === "LineString") {
-        const props = feature.properties || {};
+      // 10b. Wetland Hydrologic Mitigation Zones (L13)
+      else if (role === "WETLAND_HYDROLOGIC_MITIGATION_ZONE") {
+        if (geomType === "Point") {
+          const coords = feature.geometry.coordinates;
+          const marker = L.circleMarker([coords[1], coords[0]], {
+            radius: 10,
+            color: "#0d9488",
+            weight: 2.5,
+            fillColor: "#14b8a6",
+            fillOpacity: 0.35,
+          }).bindPopup(
+            `<div class="popup-title">💧 Wetland Hydrologic Mitigation Zone</div><div class="popup-meta">Wetland: ${props.wetlandName || props.name || "Notified Wetland"}<br/>Mitigation: ${formatClassLabel(props.recommendedEngineeringMitigation || "Hydrologic Culvert Equalization")}</div>`
+          );
+          group.addLayer(marker);
+        } else {
+          const layer = L.geoJSON(feature, {
+            style: { color: "#0d9488", weight: 2, fillColor: "#14b8a6", fillOpacity: 0.28 },
+          }).bindPopup(
+            `<div class="popup-title">💧 Wetland Mitigation Zone</div><div class="popup-meta">${props.wetlandName || props.name || "Wetland Buffer"}</div>`
+          );
+          group.addLayer(layer);
+        }
+      }
+
+      // 11. Terminal Access Road Connectors (L6 & Overview)
+      else if (role === "TERMINAL_ACCESS_ROAD" && geomType === "LineString") {
         const isOrigin = props.connectorRole === "ORIGIN_ROAD_CONNECTOR";
         const layer = L.geoJSON(feature, {
           style: {
@@ -1240,15 +1463,14 @@ export default function App() {
             dashArray: "8, 6",
           },
         }).bindPopup(
-          `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Terminal Access Connector</div><div class="popup-meta">Tie-In Road: ${props.existingRoadRef || "Existing Road"} (${props.existingRoadName || "—"})<br/>Connector Length: ${props.connectorLengthKm ?? "—"} km<br/>Included in Mainline & Statistics: Yes</div>`
+          `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Terminal Feeder Spur / Access Connector</div><div class="popup-meta">Tie-In Road: ${props.existingRoadRef || "Existing Road"} (${props.existingRoadName || "—"})<br/>Category: ${formatClassLabel(props.roadCategory || "Arterial")}<br/>Connector Length: ${props.connectorLengthKm ?? "—"} km</div>`
         );
         group.addLayer(layer);
       }
 
-      // 12. Existing Road Tie-In Junction Markers
-      else if (role === "ROAD_TIE_IN" && visibleLayers.mainline && geomType === "Point") {
+      // 12. Existing Road Tie-In Junction Markers (L6 & Overview)
+      else if (role === "ROAD_TIE_IN" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
-        const props = feature.properties || {};
         const isOrigin = props.tieInRole === "ORIGIN_EXISTING_ROAD_TIE_IN";
         const marker = L.circleMarker([coords[1], coords[0]], {
           radius: 7,
@@ -1257,33 +1479,33 @@ export default function App() {
           fillColor: "#06b6d4",
           fillOpacity: 0.95,
         }).bindPopup(
-          `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Existing Road Tie-In</div><div class="popup-meta">Existing Road: ${props.existingRoadRef || "NH/SH/MDR"}<br/>Corridor: ${props.tieInJunctionName || "Existing Road Network"}<br/>Access Connector: ${props.connectorLengthKm ?? "—"} km</div>`
+          `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Existing Road Tie-In</div><div class="popup-meta">Existing Road: ${props.existingRoadRef || "NH/SH"}<br/>Category: ${formatClassLabel(props.roadCategory || "Arterial Highway")}<br/>Corridor: ${props.tieInJunctionName || "Existing Road Network"}</div>`
         );
         group.addLayer(marker);
       }
 
-      // 13. Building Demolition & Settlement RoW Conflict Zones (RFCTLARR 2013 R&R)
+      // 13. Building Demolition & Settlement RoW Conflict Zones (L5 & L11)
       else if (role === "SETTLEMENT_BUILDING_CONFLICT_ZONE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
-        const props = feature.properties || {};
         const directBlds = props.buildingsInDirectRowCount ?? 0;
         const byType = props.buildingsInDirectRowByType || {};
-        const breakdownStr = Object.entries(byType)
-          .filter(([, cnt]) => cnt > 0)
-          .map(([t, cnt]) => `${t}: ${cnt}`)
-          .join(", ") || "Fringe parcel touch";
+        const breakdownStr =
+          Object.entries(byType)
+            .filter(([, cnt]) => cnt > 0)
+            .map(([t, cnt]) => `${t}: ${cnt}`)
+            .join(", ") || "Fringe parcel touch";
         const hasDemolition = directBlds > 0;
         const icon = L.divIcon({
           className: "struct-marker conflict",
-          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${hasDemolition ? "#dc2626" : "#f59e0b"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">${hasDemolition ? "🏚️" : "🏘️"}</span>`,
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${hasDemolition ? "#dc2626" : "#ec4899"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">${hasDemolition ? "🏚️" : "🏘️"}</span>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">${hasDemolition ? "Building Demolition (RFCTLARR 2013)" : "Settlement RoW Buffer (0 Demolitions)"}</div>` +
+          `<div class="popup-title">${hasDemolition ? "Building Conflict Zone (RFCTLARR 2013)" : "Settlement RoW Buffer (0 Demolitions)"}</div>` +
             `<div class="popup-meta">` +
             `<b>Location:</b> ${props.settlementName || "Corridor Settlement"}<br/>` +
-            `<b>Structures to Demolish (Direct RoW):</b> ${directBlds}<br/>` +
+            `<b>Structures in Direct RoW:</b> ${directBlds}<br/>` +
             `<b>Breakdown:</b> ${breakdownStr}<br/>` +
             `<b>Footprint Area:</b> ${props.affectedDirectRowFootprintSqMeters ?? 0} m²<br/>` +
             `<b>Mitigation:</b> ${(props.recommendedEngineeringMitigation || "RFCTLARR 2013 R&R").replace(/_/g, " ")}` +
@@ -1291,21 +1513,139 @@ export default function App() {
         );
         group.addLayer(marker);
       }
+
+      // 14. Geotechnical & Landslide Mitigation Zones (L9)
+      else if (role === "GEOTECH_MITIGATION_ZONE" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const icon = L.divIcon({
+          className: "struct-marker geotech",
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:#d97706;border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">🪨</span>`,
+          iconSize: [25, 25],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">🪨 Geotechnical Stabilization Zone</div><div class="popup-meta">` +
+            `<b>Hazard Feature:</b> ${props.name || props.featureName || "Geological Lineament / Scarp"}<br/>` +
+            `<b>Treatment:</b> ${formatClassLabel(props.mitigationStructure || props.recommendedEngineeringMitigation || "Anchored Retaining Wall")}<br/>` +
+            `<b>Stabilization Length:</b> ${props.recommendedStabilizationLengthMeters ?? "—"} m<br/>` +
+            `<b>Crossing Angle:</b> ${props.crossingAngleDegrees ?? "—"}° • ch. ${props.chainageKm ?? "—"} km</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 15. High-Voltage EHV Utility Crossing Protection (L10)
+      else if (role === "UTILITY_CROSSING_PROTECTION" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const icon = L.divIcon({
+          className: "struct-marker utility",
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:#ca8a04;border:2px solid #fff;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">⚡</span>`,
+          iconSize: [25, 25],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">⚡ High-Voltage Utility Crossing Protection</div><div class="popup-meta">` +
+            `<b>Transmission Line:</b> ${props.lineName || props.name || "EHV Line"}<br/>` +
+            `<b>Voltage Tier:</b> ${formatClassLabel(props.utilityTier || props.tier || "EHV")}<br/>` +
+            `<b>Protection Spec:</b> ${formatClassLabel(props.protectionType || props.recommendedProtection || "Guard Cradle & Tower Extension")}<br/>` +
+            `<b>Protective Span:</b> ${props.recommendedProtectiveSpanMeters ?? "—"} m • Angle: ${props.crossingAngleDegrees ?? "—"}°</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 16. Demographic Exposure Mitigation Zones (L12)
+      else if (role === "DEMOGRAPHIC_EXPOSURE_MITIGATION_ZONE" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const halo = L.circle([coords[1], coords[0]], {
+          radius: 300,
+          color: "#8b5cf6",
+          weight: 2,
+          fillColor: "#8b5cf6",
+          fillOpacity: 0.22,
+        }).bindPopup(
+          `<div class="popup-title">👥 Demographic Exposure Mitigation Zone</div><div class="popup-meta">` +
+            `<b>Tract / Settlement:</b> ${props.settlementName || props.tractName || props.name || "Census Tract"}<br/>` +
+            `<b>250 m Buffer Pop:</b> ${props.populationWithin250m ?? props.totalPopulation ?? "—"} residents<br/>` +
+            `<b>Vulnerability Tier:</b> ${formatClassLabel(props.vulnerabilityTier || "Monitored")}<br/>` +
+            `<b>Mitigation:</b> ${formatClassLabel(props.recommendedEngineeringMitigation || "Acoustic Barrier & Pedestrian Underpass")}</div>`
+        );
+        group.addLayer(halo);
+      }
     });
 
-    if (boundsToFit && boundsToFit.isValid()) {
+    // Paint Colorized Route Ribbon on top when a raster lens is active
+    renderColorizedRouteRibbon(effectiveProfile, effectiveLens);
+
+    if (shouldFitBounds && boundsToFit && boundsToFit.isValid()) {
       mapRef.current.fitBounds(boundsToFit, { padding: [40, 40], maxZoom: 14 });
     }
   }
 
+  // Re-render GIS overlays & colorized route ribbon instantaneously when Lens/Pins change
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (currentFeatures.length === 0) {
+      routeLayersGroupRef.current?.clearLayers();
+      colorizedRouteGroupRef.current?.clearLayers();
+      return;
+    }
+    renderGeoJsonFeatures(currentFeatures, tradeOffPreset, activeLayerId, pinnedLayerIds, routeLayerProfile, false);
+  }, [currentFeatures, routeLayerProfile, activeLayerId, pinnedLayerIds, tradeOffPreset]);
+
   // -----------------------------------------------------------
-  // Layer Toggle Handler
+  // 13-Layer Lens, Pin, Basemap Reset & Fly-To Handlers
   // -----------------------------------------------------------
-  function toggleLayer(key) {
-    setVisibleLayers((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  function handleSelectLayer(layerId) {
+    focusHighlightGroupRef.current?.clearLayers();
+    setActiveLayerId(layerId);
+    if (!lockBasemap) {
+      if (layerId && LAYER_BY_ID[layerId]) {
+        setBaseMapType(LAYER_BY_ID[layerId].preferredBasemap || "osm");
+      } else {
+        setBaseMapType("osm");
+      }
+    }
+  }
+
+  function handleTogglePinLayer(layerId) {
+    setPinnedLayerIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(layerId)) next.delete(layerId);
+      else next.add(layerId);
+      return next;
+    });
+  }
+
+  function handleClearToOverview() {
+    focusHighlightGroupRef.current?.clearLayers();
+    setActiveLayerId(null);
+    setPinnedLayerIds(new Set());
+    if (!lockBasemap) {
+      setBaseMapType("osm");
+    }
+  }
+
+  // Keeps active layer lens & verification card open over basic OSM map;
+  // leaves auto-switch enabled so the NEXT layer clicked switches basemaps again.
+  function handleResetBasicMap() {
+    setBaseMapType("osm");
+  }
+
+  function handleFocusFeature(lat, lng, label) {
+    if (!mapRef.current || typeof lat !== "number" || typeof lng !== "number") return;
+    mapRef.current.flyTo([lat, lng], 14, { duration: 0.9 });
+    if (focusHighlightGroupRef.current) {
+      focusHighlightGroupRef.current.clearLayers();
+      const pulse = L.circleMarker([lat, lng], {
+        radius: 16,
+        color: "#ffffff",
+        weight: 3,
+        fillColor: "#38bdf8",
+        fillOpacity: 0.25,
+      })
+        .bindPopup(`<b>📍 ${label || "Inspected Feature"}</b><br/>${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+        .addTo(focusHighlightGroupRef.current);
+      pulse.openPopup();
+    }
   }
 
   return (
@@ -1962,127 +2302,21 @@ export default function App() {
             )}
           </div>
 
-          {/* Section 3: Layer Toggles */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Visualized Infrastructure Layers</span>
-            </div>
-
-            <div className="layer-toggles-grid">
-              <div
-                className={`layer-toggle-btn ${visibleLayers.mainline ? "on" : ""}`}
-                onClick={() => toggleLayer("mainline")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#10b981" }} />
-                <span>13-L Mainline</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.baseline ? "on" : ""}`}
-                onClick={() => toggleLayer("baseline")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#94a3b8" }} />
-                <span>Direct Baseline</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.spurs ? "on" : ""}`}
-                onClick={() => toggleLayer("spurs")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#a855f7" }} />
-                <span>Feeder Spurs</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.interchanges ? "on" : ""}`}
-                onClick={() => toggleLayer("interchanges")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#f59e0b" }} />
-                <span>Interchanges</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.bridges ? "on" : ""}`}
-                onClick={() => toggleLayer("bridges")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#06b6d4" }} />
-                <span>River Bridges</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.drainage ? "on" : ""}`}
-                onClick={() => toggleLayer("drainage")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#0891b2" }} />
-                <span>Canals & Culverts</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.rivers ? "on" : ""}`}
-                onClick={() => toggleLayer("rivers")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#0284c7" }} />
-                <span>Waterways Model</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.wildlife ? "on" : ""}`}
-                onClick={() => toggleLayer("wildlife")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#15803d" }} />
-                <span>Wildlife Passages</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.sanctuaries ? "on" : ""}`}
-                onClick={() => toggleLayer("sanctuaries")}
-                title="Statutory National Parks & Wildlife Sanctuaries boundaries under Wildlife (Protection) Act, 1972"
-              >
-                <div className="layer-legend-dot" style={{ background: "#dc2626" }} />
-                <span>Sanctuaries (WPA 1972)</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.crossings ? "on" : ""}`}
-                onClick={() => toggleLayer("crossings")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#64748b" }} />
-                <span>Rail ROBs & Flyovers</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.row ? "on" : ""}`}
-                onClick={() => toggleLayer("row")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#10b98155" }} />
-                <span>RoW Footprint</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.multiArchetypes ? "on" : ""}`}
-                onClick={() => toggleLayer("multiArchetypes")}
-                title="Overlay other generated alignment alternatives as dashed comparison lines on the map"
-              >
-                <div className="layer-legend-dot" style={{ background: "#38bdf8", border: "1px dashed #fff" }} />
-                <span>All Alignments ({Object.keys(cachedArchetypes).length})</span>
-              </div>
-            </div>
-
-            {/* Marker Symbology & Legend */}
-            <div className="section-header" style={{ marginTop: "12px" }}>
-              <span className="section-title">Marker Symbology & Meaning</span>
-            </div>
-            <div className="marker-legend-grid">
-              <div className="legend-item"><span className="legend-icon start">A</span> Highway Origin</div>
-              <div className="legend-item"><span className="legend-icon end">B</span> Destination</div>
-              <div className="legend-item"><span className="legend-icon orig">✕</span> Snapped Obstacle</div>
-              <div className="legend-item"><span className="legend-icon interchange">✦</span> Interchange</div>
-              <div className="legend-item"><span className="legend-icon bridge">🌉</span> River Bridge</div>
-              <div className="legend-item"><span className="legend-icon drainage">🌊</span> Canal Aqueduct</div>
-              <div className="legend-item"><span className="legend-icon wildlife">🐾</span> Wildlife Viaduct</div>
-              <div className="legend-item"><span className="legend-icon crossing">🚊</span> Rail ROB / Flyover</div>
-            </div>
-          </div>
+          {/* Section 3: 13-Layer Verification & Interactive Map Lenses */}
+          <LayerAuditPanel
+            layerAudit={layerAudit}
+            routeLayerProfile={routeLayerProfile}
+            allFeatures={currentFeatures}
+            activeLayerId={activeLayerId}
+            pinnedLayerIds={pinnedLayerIds}
+            onSelectLayer={handleSelectLayer}
+            onTogglePinLayer={handleTogglePinLayer}
+            onClearToOverview={handleClearToOverview}
+            onFocusFeature={handleFocusFeature}
+            showMultiArchetypes={showMultiArchetypes}
+            onToggleMultiArchetypes={() => setShowMultiArchetypes((v) => !v)}
+            cachedArchetypesCount={Object.keys(cachedArchetypes).length}
+          />
 
           {/* Section 4: Route Metrics & Engineering Plan */}
           {routeInfo && (
@@ -3019,25 +3253,23 @@ export default function App() {
         <main className="map-viewport">
           <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
 
-          {/* Floating Quick Action Buttons on Map */}
-          <div className="map-floating-bar">
-            <button
-              className="map-control-btn"
-              onClick={() => setBaseMapType((b) => (b === "osm" ? "satellite" : "osm"))}
-            >
-              {baseMapType === "osm" ? "🛰️ Satellite View" : "🗺️ Street Map"}
-            </button>
-            <button
-              className="map-control-btn"
-              onClick={() => {
-                if (mapRef.current) {
-                  mapRef.current.flyTo([22.5, 78.5], 5, { duration: 1 });
-                }
-              }}
-            >
-              🇮🇳 Zoom to India
-            </button>
-          </div>
+          {/* Floating Basemap Controls & Active 13-Layer Lens Legend HUD */}
+          <MapLensHud
+            baseMapType={baseMapType}
+            lockBasemap={lockBasemap}
+            onSelectBasemap={(id) => setBaseMapType(id)}
+            onResetBasicMap={handleResetBasicMap}
+            onToggleLockBasemap={() => setLockBasemap((v) => !v)}
+            onZoomIndia={() => {
+              if (mapRef.current) {
+                mapRef.current.flyTo([22.5, 78.5], 5, { duration: 1 });
+              }
+            }}
+            activeLayerId={activeLayerId}
+            pinnedLayerIds={pinnedLayerIds}
+            onUnpinLayer={handleTogglePinLayer}
+            onExitLens={handleClearToOverview}
+          />
         </main>
       </div>
     </div>
