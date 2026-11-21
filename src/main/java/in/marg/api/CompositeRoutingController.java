@@ -621,7 +621,8 @@ public class CompositeRoutingController {
                     maxVcRatio,
                     autoConnectHubs,
                     maxAutoHubs,
-                    preference);
+                    preference,
+                    deep);
             attachPrecisionNotice(regionalResponse, deep, precisionFetchResult);
             return regionalResponse;
         }
@@ -664,7 +665,8 @@ public class CompositeRoutingController {
                         maxVcRatio,
                         autoConnectHubs,
                         maxAutoHubs,
-                        preference);
+                        preference,
+                        deep);
             }
         }
 

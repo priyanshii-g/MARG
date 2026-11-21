@@ -66,7 +66,7 @@ class TransportLayerValidationTest {
         );
 
         System.out.println("=== 1. TRANSPORT RASTER & VECTOR POINT/CROSSING VALIDATION ===");
-        assertEquals(12, vectorIndex.allCorridors().size());
+        assertTrue(vectorIndex.allCorridors().size() >= 12, "Corridors must include baseline plus real OSM network");
         assertEquals(14, vectorIndex.allHubs().size());
 
         // Raster point samples across categories

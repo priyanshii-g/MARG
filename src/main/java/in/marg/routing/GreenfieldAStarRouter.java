@@ -87,7 +87,9 @@ public class GreenfieldAStarRouter {
                     continue;
                 }
                 CostAssessment assessment = costCache.computeIfAbsent(next, n -> surface.assess(nextPoint));
-                if (assessment.blocked()) continue;
+                if (assessment.blocked()) {
+                    continue;
+                }
                 CostAssessment edgeAssessment;
                 if (!hasEdgeCost) {
                     edgeAssessment = CostAssessment.free("grid-edge");
@@ -96,7 +98,9 @@ public class GreenfieldAStarRouter {
                     edgeAssessment = edgeCostCache.computeIfAbsent(eKey,
                             k -> surface.assessEdge(currentPoint, nextPoint));
                 }
-                if (edgeAssessment.blocked()) continue;
+                if (edgeAssessment.blocked()) {
+                    continue;
+                }
 
                 double stepKm = projection.distanceMeters(currentPoint, nextPoint) / 1000.0;
                 double multiplier = 1.0
@@ -129,6 +133,15 @@ public class GreenfieldAStarRouter {
         Grid grid = buildGrid(searchWindow, resolutionMeters);
         Node startNode = nearestNavigableNode(start, grid, surface);
         Node goalNode = nearestNavigableNode(goal, grid, surface);
+        System.out.println("DEBUG_NODES: startNode=" + startNode + " sBlocked=" + surface.assess(point(startNode, grid)).blocked()
+                + " goalNode=" + goalNode + " gBlocked=" + surface.assess(point(goalNode, grid)).blocked()
+                + " goalPt=" + point(goalNode, grid) + " gClass=" + surface.assess(point(goalNode, grid)).className());
+        for (Node nbr : neighbors(goalNode, grid.rows(), grid.cols())) {
+            GeoPoint nPt = point(nbr, grid);
+            CostAssessment na = surface.assess(nPt);
+            CostAssessment ea = surface.assessEdge(nPt, point(goalNode, grid));
+            System.out.println("  GOAL_NBR: " + nbr + " nBlocked=" + na.blocked() + "(" + na.className() + ") eBlocked=" + ea.blocked() + "(" + ea.className() + ")");
+        }
         ensureEndpointAccessible(surface, start, goal);
 
         Map<Node, CostAssessment> costCache = new HashMap<>();
@@ -380,9 +393,26 @@ public class GreenfieldAStarRouter {
         return new Node(r, c);
     }
 
+    private boolean isNavigableNode(Node node, Grid grid, CostSurface surface) {
+        GeoPoint pt = point(node, grid);
+        if (surface.assess(pt).blocked()) {
+            return false;
+        }
+        if (!surface.hasEdgeCost()) {
+            return true;
+        }
+        for (Node nbr : neighbors(node, grid.rows(), grid.cols())) {
+            GeoPoint nPt = point(nbr, grid);
+            if (!surface.assess(nPt).blocked() && !surface.assessEdge(nPt, pt).blocked()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private Node nearestNavigableNode(GeoPoint point, Grid grid, CostSurface surface) {
         Node base = nearestNode(point, grid);
-        if (!surface.assess(point(base, grid)).blocked()) {
+        if (isNavigableNode(base, grid, surface)) {
             return base;
         }
         for (int radius = 1; radius <= 4; radius++) {
@@ -395,7 +425,7 @@ public class GreenfieldAStarRouter {
                     int nc = base.c() + dc;
                     if (nr >= 0 && nr < grid.rows() && nc >= 0 && nc < grid.cols()) {
                         Node candidate = new Node(nr, nc);
-                        if (!surface.assess(point(candidate, grid)).blocked()) {
+                        if (isNavigableNode(candidate, grid, surface)) {
                             double dist = Math.hypot(dr, dc);
                             if (dist < bestDist) {
                                 bestDist = dist;

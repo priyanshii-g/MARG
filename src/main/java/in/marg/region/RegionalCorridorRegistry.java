@@ -509,6 +509,46 @@ public class RegionalCorridorRegistry {
             Boolean autoConnectHubs,
             Integer maxAutoHubs,
             in.marg.routing.AlignmentPreference preference) {
+        return route(
+                regionParam,
+                tierModeParam,
+                startLat,
+                startLon,
+                endLat,
+                endLon,
+                resolutionMeters,
+                corridorBufferDeg,
+                maxLulcSamples,
+                maxDeviationPercent,
+                facilityMode,
+                targetHubs,
+                minHubPopulation,
+                maxVcRatio,
+                autoConnectHubs,
+                maxAutoHubs,
+                preference,
+                false);
+    }
+
+    public Map<String, Object> route(
+            String regionParam,
+            String tierModeParam,
+            Double startLat,
+            Double startLon,
+            Double endLat,
+            Double endLon,
+            Double resolutionMeters,
+            Double corridorBufferDeg,
+            Integer maxLulcSamples,
+            Double maxDeviationPercent,
+            String facilityMode,
+            String targetHubs,
+            Integer minHubPopulation,
+            Double maxVcRatio,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs,
+            in.marg.routing.AlignmentPreference preference,
+            Boolean deep) {
 
         double resolution = resolutionMeters == null ? ROUTING_RESOLUTION_METERS : resolutionMeters;
         if (Math.abs(resolution - ROUTING_RESOLUTION_METERS) > 1e-9) {
@@ -541,7 +581,7 @@ public class RegionalCorridorRegistry {
                             .filter(s -> !s.isEmpty())
                             .toList();
             return panIndiaService.routeDynamicPanIndia(
-                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref);
+                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, deep);
         }
 
         // Case 2: Explicit preset region ("assam", "western_ghats", "gangetic_plains")
@@ -625,7 +665,7 @@ public class RegionalCorridorRegistry {
                             .filter(s -> !s.isEmpty())
                             .toList();
             return panIndiaService.routeDynamicPanIndia(
-                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref);
+                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, deep);
         }
 
         throw new IllegalArgumentException(

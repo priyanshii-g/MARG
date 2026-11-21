@@ -37,7 +37,7 @@ public class EndpointSnapService {
     private static final double MAX_SNAP_RADIUS_METERS = 15000.0;
     private static final double MIN_ENDPOINT_SEPARATION_METERS = 1000.0;
     private static final int ANGULAR_SAMPLES_PER_RING = 24;
-    public static final double ENDPOINT_INSTITUTIONAL_BUFFER_METERS = 100.0;
+    public static final double ENDPOINT_INSTITUTIONAL_BUFFER_METERS = 250.0;
     public static final double ENDPOINT_BUILDING_BUFFER_METERS = 25.0;
 
     private final CoordinateProjection projection;

@@ -12,6 +12,7 @@ import in.marg.routing.RouteConstraints;
 import in.marg.spatial.Wgs84UtmProjection;
 import in.marg.transport.FacilityMode;
 import in.marg.transport.TransportCategory;
+import in.marg.transport.TransportNetworkVectorIndex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -344,6 +345,30 @@ public class PanIndiaDynamicCorridorService {
             Boolean autoConnectHubs,
             Integer maxAutoHubs,
             in.marg.routing.AlignmentPreference preference) {
+        return routeDynamicPanIndia(
+                requestedStart,
+                requestedGoal,
+                facilityMode,
+                corridorBufferDeg,
+                maxDeviationPercent,
+                targetHubs,
+                autoConnectHubs,
+                maxAutoHubs,
+                preference,
+                false);
+    }
+
+    public Map<String, Object> routeDynamicPanIndia(
+            GeoPoint requestedStart,
+            GeoPoint requestedGoal,
+            FacilityMode facilityMode,
+            Double corridorBufferDeg,
+            Double maxDeviationPercent,
+            List<String> targetHubs,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs,
+            in.marg.routing.AlignmentPreference preference,
+            Boolean deep) {
 
         if (!isWithinIndiaBounds(requestedStart) || !isWithinIndiaBounds(requestedGoal)) {
             throw new IllegalArgumentException(
@@ -375,8 +400,14 @@ public class PanIndiaDynamicCorridorService {
                 OsmDynamicBuildingSettlementCache.getDefaultInstance()
                         .indexForCorridor(requestedStart, requestedGoal, projection);
 
+        in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex = null;
+        if (Boolean.TRUE.equals(deep)) {
+            osmTransportIndex = in.marg.transport.OsmDynamicTransportNetworkCache.getDefaultInstance()
+                    .indexArteriesForCorridor(requestedStart, requestedGoal, projection);
+        }
+
         PanIndiaDynamicCostLayer panIndiaSurface = new PanIndiaDynamicCostLayer(
-                requestedStart, requestedGoal, mode, pref, osmIndex, false);
+                requestedStart, requestedGoal, mode, pref, osmIndex, osmTransportIndex, false);
 
         double bufferDeg = corridorBufferDeg != null
                 ? Math.max(0.05, Math.min(0.30, corridorBufferDeg))
@@ -492,8 +523,8 @@ public class PanIndiaDynamicCorridorService {
         }
 
         // Find nearest navigable existing highway tie-ins for origin & destination
-        HighwayTieInResult startTieIn = findNearestHighwayTieIn(start, panIndiaSurface, projection, snapService);
-        HighwayTieInResult goalTieIn = findNearestHighwayTieIn(goal, panIndiaSurface, projection, snapService);
+        HighwayTieInResult startTieIn = findNearestHighwayTieIn(start, panIndiaSurface, projection, snapService, osmTransportIndex, mode);
+        HighwayTieInResult goalTieIn = findNearestHighwayTieIn(goal, panIndiaSurface, projection, snapService, osmTransportIndex, mode);
 
         List<GeoPoint> baseline = new ArrayList<>();
         List<GeoPoint> mainline = new ArrayList<>();
@@ -554,7 +585,7 @@ public class PanIndiaDynamicCorridorService {
                 double stageBuffer = Math.min(bufferDeg, 0.12);
                 StudyRegion stageWindow = stageCorridorWindow(stageStart, stageGoal, stageBuffer);
                 PanIndiaDynamicCostLayer stageSurface = new PanIndiaDynamicCostLayer(
-                        stageStart, stageGoal, mode, pref, osmIndex, false);
+                        stageStart, stageGoal, mode, pref, osmIndex, osmTransportIndex, false);
 
                 List<GeoPoint> stageBaseline = router.route(
                         PAN_INDIA_BOUNDS,
@@ -730,6 +761,37 @@ public class PanIndiaDynamicCorridorService {
             features.add(pointFeature(bld.centroid(), "SETTLEMENT_BUILDING_CONFLICT_ZONE", sczProps));
         }
 
+        // Evaluate dynamic OSM grade-separated crossings (ROB, Flyover, VUP, LVUP)
+        int railwayRobCount = 0;
+        int roadFlyoverCount = 0;
+        if (osmTransportIndex != null && !osmTransportIndex.isEmpty()) {
+            if (mode == FacilityMode.EXPRESSWAY) {
+                osmTransportIndex.loadMainlineLocalStreets(mainline);
+            }
+            List<TransportNetworkVectorIndex.RouteCrossing> osmCrossings =
+                    osmTransportIndex.findRouteCrossings(mainline);
+            for (TransportNetworkVectorIndex.RouteCrossing rc : osmCrossings) {
+                if (mode == FacilityMode.NATIONAL_HIGHWAY && rc.category() != TransportCategory.RAILWAY) {
+                    continue; // In National Highway mode, non-railway crossings remain at-grade
+                }
+                if (rc.category() == TransportCategory.RAILWAY) {
+                    railwayRobCount++;
+                } else {
+                    roadFlyoverCount++;
+                }
+                Map<String, Object> gsProps = new LinkedHashMap<>();
+                gsProps.put("featureRole", "GRADE_SEPARATED_CROSSING");
+                gsProps.put("structureId", "GS-PAN-" + (railwayRobCount + roadFlyoverCount) + "-" + rc.corridorRef());
+                gsProps.put("structureType", rc.category().defaultCrossingStructureType());
+                gsProps.put("crossedCategory", rc.category().name());
+                gsProps.put("crossedCorridorRef", rc.corridorRef());
+                gsProps.put("crossedCorridorName", rc.corridorName());
+                gsProps.put("chainageKm", round(rc.chainageKm()));
+                gsProps.put("crossingAngleDegrees", round(rc.crossingAngleDegrees()));
+                features.add(pointFeature(rc.point(), "GRADE_SEPARATED_CROSSING", gsProps));
+            }
+        }
+
         Map<String, Object> networkSummary = new LinkedHashMap<>();
         networkSummary.put("mainlineLengthKm", round(routeLengthKm));
         networkSummary.put("totalTerminalAccessRoadLengthKm", totalTerminalAccessRoadLengthKm);
@@ -739,6 +801,12 @@ public class PanIndiaDynamicCorridorService {
         networkSummary.put("plannedInterchangesCount", Math.max(2, mainline.size() / 15) + dynamicInterchanges);
         networkSummary.put("riverBridgesCount", actualRiverBridgesCount);
         networkSummary.put("drainageStructuresCount", actualDrainageStructuresCount);
+        networkSummary.put("railwayRobCount", railwayRobCount);
+        networkSummary.put("roadFlyoverCount", roadFlyoverCount);
+        networkSummary.put("gradeSeparatedCrossingsCount", railwayRobCount + roadFlyoverCount);
+        if (osmTransportIndex != null) {
+            networkSummary.put("osmDynamicIndexedRoadSegmentsCount", osmTransportIndex.totalIndexedSegments());
+        }
         networkSummary.put("buildingsInDirectRowCount", osmDemolition.buildingsInDirectRowCount());
         networkSummary.put("buildingsInDirectRowByType", osmDemolition.buildingsByType());
         networkSummary.put("estimatedDirectlyDisplacedHouseholds", osmDemolition.estimatedDisplacedHouseholds());
@@ -1072,8 +1140,32 @@ public class PanIndiaDynamicCorridorService {
             PanIndiaDynamicCostLayer surface,
             Wgs84UtmProjection projection,
             EndpointSnapService snapService) {
+        return findNearestHighwayTieIn(target, surface, projection, snapService, null, FacilityMode.EXPRESSWAY);
+    }
+
+    private HighwayTieInResult findNearestHighwayTieIn(
+            GeoPoint target,
+            PanIndiaDynamicCostLayer surface,
+            Wgs84UtmProjection projection,
+            EndpointSnapService snapService,
+            in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex,
+            FacilityMode facilityMode) {
         if (target == null) {
             return null;
+        }
+        if (osmTransportIndex != null && !osmTransportIndex.isEmpty()) {
+            TransportNetworkVectorIndex.NearestRoadTieIn osmTie =
+                    osmTransportIndex.findNearestRoadTieIn(target, pt -> !surface.assess(pt).blocked(), facilityMode);
+            if (osmTie != null && osmTie.distanceMeters() <= 35000.0) {
+                return new HighwayTieInResult(
+                        osmTie.corridorId(),
+                        osmTie.corridorRef(),
+                        osmTie.corridorName(),
+                        osmTie.category(),
+                        osmTie.tieInPoint(),
+                        osmTie.distanceMeters()
+                );
+            }
         }
         HighwayTieInResult bestSh = findNearestInClassifiedList(
                 target, STATE_HIGHWAY_AXES, surface, projection, snapService);

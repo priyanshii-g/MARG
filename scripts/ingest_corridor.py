@@ -267,21 +267,41 @@ out geom;"""
 
 def fetch_osm_transport(min_lat, min_lon, max_lat, max_lon, region_id):
     try:
+        cache_file = Path("data/cache/osm-transport") / f"ingest_{region_id}_transport.json"
+        if cache_file.exists():
+            try:
+                cached = json.loads(cache_file.read_text(encoding="utf-8"))
+                return cached.get("highways", []), cached.get("railways", [])
+            except Exception:
+                pass
+
         import urllib.request
         import urllib.parse
         bbox = f"{min_lat},{min_lon},{max_lat},{max_lon}"
-        query = f"""[out:json][timeout:4];
+        query = f"""[out:json][timeout:10];
 (
-  way["highway"~"motorway|trunk|primary|secondary"]({bbox});
+  way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"]({bbox});
   way["railway"="rail"]({bbox});
 );
 out geom;"""
-        url = "https://overpass-api.de/api/interpreter"
-        data = urllib.parse.urlencode({"data": query}).encode("utf-8")
-        req = urllib.request.Request(url, data=data, headers={"User-Agent": "MARG-Ingestion/1.0", "Accept": "application/json"})
-        with urllib.request.urlopen(req, timeout=4) as resp:
-            res = json.loads(resp.read().decode("utf-8"))
-        elements = res.get("elements", [])
+        mirrors = [
+            "https://overpass-api.de/api/interpreter",
+            "https://lz4.overpass-api.de/api/interpreter",
+            "https://overpass.kumi.systems/api/interpreter"
+        ]
+        elements = []
+        for url in mirrors:
+            try:
+                data = urllib.parse.urlencode({"data": query}).encode("utf-8")
+                req = urllib.request.Request(url, data=data, headers={"User-Agent": "MARG-Ingestion/3.0", "Accept": "application/json"})
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    res = json.loads(resp.read().decode("utf-8"))
+                    elements = res.get("elements", [])
+                    if elements:
+                        break
+            except Exception:
+                continue
+
         if not elements:
             return None, None
 
@@ -311,22 +331,34 @@ out geom;"""
                 })
             else:
                 h_type = tags.get("highway", "primary")
-                if h_type == "motorway":
-                    cat = "EXPRESSWAY"
-                    tier = "ACCESS_CONTROLLED_EXPRESSWAY"
-                elif h_type == "trunk":
+                ref_val = tags.get("ref", "")
+                name_upper = (name or "").upper()
+                ref_upper = ref_val.upper()
+
+                if "NH" in ref_upper or "NATIONAL HIGHWAY" in name_upper:
                     cat = "NATIONAL_HIGHWAY"
                     tier = "PRIMARY_ARTERIAL"
-                elif h_type == "primary":
+                elif "SH" in ref_upper or "STATE HIGHWAY" in name_upper:
                     cat = "STATE_HIGHWAY"
                     tier = "SECONDARY_ARTERIAL"
-                else:
+                elif "MDR" in ref_upper or "ODR" in ref_upper or "DISTRICT ROAD" in name_upper:
                     cat = "MAJOR_DISTRICT_ROAD"
                     tier = "MAJOR_DISTRICT_CONNECTOR"
+                elif h_type in ("motorway", "trunk", "primary", "motorway_link", "trunk_link", "primary_link"):
+                    cat = "NATIONAL_HIGHWAY"
+                    tier = "PRIMARY_ARTERIAL"
+                elif h_type in ("secondary", "secondary_link"):
+                    cat = "STATE_HIGHWAY"
+                    tier = "SECONDARY_ARTERIAL"
+                elif h_type in ("tertiary", "tertiary_link"):
+                    cat = "MAJOR_DISTRICT_ROAD"
+                    tier = "MAJOR_DISTRICT_CONNECTOR"
+                else:
+                    cat = "LOCAL_ROAD"
+                    tier = "LOCAL_ACCESS"
 
-                ref_val = tags.get("ref")
                 if not ref_val:
-                    ref_val = "NH" if cat == "NATIONAL_HIGHWAY" else ("SH" if cat == "STATE_HIGHWAY" else "MDR")
+                    ref_val = "NH" if cat == "NATIONAL_HIGHWAY" else ("SH" if cat == "STATE_HIGHWAY" else ("MDR" if cat == "MAJOR_DISTRICT_ROAD" else f"OSM-{el['id']}"))
 
                 highways.append({
                     "type": "Feature",
@@ -339,6 +371,9 @@ out geom;"""
                     },
                     "geometry": {"type": "LineString", "coordinates": simplified}
                 })
+
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        cache_file.write_text(json.dumps({"highways": highways, "railways": railways}), encoding="utf-8")
         return highways, railways
     except Exception as ex:
         print(f"[WARN] Live OSM transport fetch failed ({ex}); falling back to parameterized alignments.")
@@ -595,8 +630,19 @@ def ingest_corridor(
         if osm_hwys:
             print(f"[{region_id}] Ingested {len(osm_hwys)} physical road features from OpenStreetMap.")
             for h in osm_hwys:
-                burn_polyline(transport_raster, min_x, max_y, res, h["geometry"]["coordinates"], zone, 180.0, 1)
-                burn_polyline(transport_raster, min_x, max_y, res, h["geometry"]["coordinates"], zone, 75.0, 4)
+                cat = h["properties"].get("category", "LOCAL_ROAD")
+                coords = h["geometry"]["coordinates"]
+                if cat == "NATIONAL_HIGHWAY":
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 180.0, 1)
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 75.0, 4)
+                elif cat == "STATE_HIGHWAY":
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 120.0, 1)
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 50.0, 3)
+                elif cat == "MAJOR_DISTRICT_ROAD":
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 80.0, 1)
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 35.0, 2)
+                else:
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 20.0, 2)
                 transport_features.append(h)
         if osm_rlys:
             print(f"[{region_id}] Ingested {len(osm_rlys)} physical railway features from OpenStreetMap.")

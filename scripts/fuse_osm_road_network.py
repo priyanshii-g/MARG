@@ -139,7 +139,48 @@ def fuse_corridor_roads(cache_file, base_transport_file, corridor_prefix, bbox=N
         added_count += 1
         by_category[category] = by_category.get(category, 0) + 1
         
-    print(f"[{corridor_prefix}] Added {added_count} real OSM roads: {by_category}")
+    railways = cache_data.get("railways", [])
+    if isinstance(railways, dict):
+        railways = list(railways.values())
+    for rw in railways:
+        wid = rw.get("id")
+        tags = rw.get("tags", {})
+        coords = rw.get("coords", [])
+        if len(coords) < 2:
+            continue
+        if bbox:
+            min_lat, min_lon, max_lat, max_lon = bbox
+            if not any(min_lat <= pt[1] <= max_lat and min_lon <= pt[0] <= max_lon for pt in coords):
+                continue
+        sig1 = (round(coords[0][0], 4), round(coords[0][1], 4), round(coords[-1][0], 4), round(coords[-1][1], 4))
+        sig2 = (round(coords[-1][0], 4), round(coords[-1][1], 4), round(coords[0][0], 4), round(coords[0][1], 4))
+        if sig1 in existing_line_sigs or sig2 in existing_line_sigs:
+            continue
+        existing_line_sigs.add(sig1)
+        name = tags.get("name") or tags.get("ref") or f"Railway Line (way {wid})"
+        ref = tags.get("ref") or tags.get("name") or "IR"
+        feat_id = f"{corridor_prefix}-OSM-RLY-{wid}"
+        new_feat = {
+            "type": "Feature",
+            "properties": {
+                "id": feat_id,
+                "ref": ref,
+                "name": name,
+                "category": "RAILWAY",
+                "hierarchyTier": 1,
+                "osmWayId": wid,
+                "railwayType": tags.get("railway", "rail")
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": coords
+            }
+        }
+        existing_features.append(new_feat)
+        added_count += 1
+        by_category["RAILWAY"] = by_category.get("RAILWAY", 0) + 1
+
+    print(f"[{corridor_prefix}] Added {added_count} real OSM roads/railways: {by_category}")
     print(f"[{corridor_prefix}] Total features now: {len(existing_features)}")
     
     with open(base_path, "w", encoding="utf-8") as f:
@@ -163,6 +204,14 @@ def main():
         "data/processed/regions/gangetic_plains/gangetic_plains_transport_network.geojson",
         "GP",
         bbox=(26.55, 81.10, 27.20, 82.25)
+    )
+
+    # 3. Assam (Kaziranga - Karbi Anglong)
+    fuse_corridor_roads(
+        "scripts/osm_assam_cache.json",
+        "data/processed/transport/assam_transport_network.geojson",
+        "AS",
+        bbox=(25.75, 93.10, 26.65, 93.75)
     )
 
 if __name__ == "__main__":

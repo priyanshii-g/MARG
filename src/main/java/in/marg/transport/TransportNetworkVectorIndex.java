@@ -112,10 +112,19 @@ public class TransportNetworkVectorIndex {
                 JsonNode props = feat.get("properties");
                 String id = props.get("id").asString();
                 String ref = props.get("ref").asString();
-                String name = props.get("name").asString();
-                TransportCategory category =
-                        TransportCategory.valueOf(props.get("category").asString());
-                int tier = props.get("hierarchyTier").asInt(1);
+                String name = props.get("name") != null ? props.get("name").asString() : "";
+                String catStr = props.get("category") != null ? props.get("category").asString() : "";
+                TransportCategory category;
+                if ("EXPRESSWAY".equalsIgnoreCase(catStr) || "MOTORWAY".equalsIgnoreCase(catStr)) {
+                    category = TransportCategory.NATIONAL_HIGHWAY;
+                } else {
+                    try {
+                        category = TransportCategory.valueOf(catStr);
+                    } catch (Exception ex) {
+                        continue;
+                    }
+                }
+                int tier = props.get("hierarchyTier") != null ? props.get("hierarchyTier").asInt(1) : 1;
 
                 String geomType = feat.get("geometry") != null && feat.get("geometry").get("type") != null
                         ? feat.get("geometry").get("type").asString()
@@ -493,10 +502,21 @@ public class TransportNetworkVectorIndex {
                         if (byCorridor == null) {
                             byCorridor = new LinkedHashMap<>(2);
                         }
-                        SegmentCrossing existing = byCorridor.get(seg.corridorId());
-                        if (existing == null || clampedT < existing.stepFraction()) {
+                        String refKey = normalizeRoadRef(seg.corridorRef(), seg.corridorId());
+                        SegmentCrossing existing = byCorridor.get(refKey);
+                        boolean closeToExisting = false;
+                        if (existing == null) {
+                            for (SegmentCrossing other : byCorridor.values()) {
+                                if (other.category() == seg.category()
+                                        && Math.hypot(ix - other.metricPoint().x(), iy - other.metricPoint().y()) < 50.0) {
+                                    closeToExisting = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!closeToExisting && (existing == null || categoryPriority(seg.category()) < categoryPriority(existing.category()))) {
                             byCorridor.put(
-                                    seg.corridorId(),
+                                    refKey,
                                     new SegmentCrossing(
                                             seg.corridorId(),
                                             seg.corridorRef(),
@@ -610,10 +630,40 @@ public class TransportNetworkVectorIndex {
             if (last != null && Math.abs(rc.chainageKm() - last) < 0.40) {
                 continue;
             }
+            // Spatial merging for dual-carriageway / close parallel ways within 100 m
+            if (!deduped.isEmpty()) {
+                RouteCrossing prev = deduped.get(deduped.size() - 1);
+                if (Math.abs(rc.chainageKm() - prev.chainageKm()) < 0.10) {
+                    if (categoryPriority(rc.category()) < categoryPriority(prev.category())) {
+                        deduped.set(deduped.size() - 1, rc);
+                        lastChainageByCorridor.put(rc.corridorId(), rc.chainageKm());
+                    }
+                    continue;
+                }
+            }
             deduped.add(rc);
             lastChainageByCorridor.put(rc.corridorId(), rc.chainageKm());
         }
         return List.copyOf(deduped);
+    }
+
+    private static int categoryPriority(TransportCategory c) {
+        if (c == null) return 99;
+        return switch (c) {
+            case RAILWAY -> 0;
+            case NATIONAL_HIGHWAY -> 1;
+            case STATE_HIGHWAY -> 2;
+            case MAJOR_DISTRICT_ROAD -> 3;
+            case LOCAL_ROAD -> 4;
+        };
+    }
+
+    private static String normalizeRoadRef(String ref, String corridorId) {
+        if (ref == null || ref.isBlank()) {
+            return corridorId != null ? corridorId : "";
+        }
+        String norm = ref.trim().toUpperCase(Locale.ROOT).replaceAll("[\\s_-]+", "");
+        return norm.isEmpty() ? corridorId : norm;
     }
 
     /**

@@ -190,6 +190,8 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
     private final FacilityMode facilityMode;
     private final in.marg.routing.AlignmentPreference preference;
     private final OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex;
+    private final in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex;
+    private final in.marg.routing.TransportCostPolicy transportPolicy;
     private final boolean denseColonyLastResortMode;
 
     public PanIndiaDynamicCostLayer(GeoPoint start, GeoPoint goal, FacilityMode facilityMode) {
@@ -211,16 +213,29 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             in.marg.routing.AlignmentPreference preference,
             OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex,
             boolean denseColonyLastResortMode) {
+        this(start, goal, facilityMode, preference, osmIndex, null, denseColonyLastResortMode);
+    }
+
+    public PanIndiaDynamicCostLayer(
+            GeoPoint start,
+            GeoPoint goal,
+            FacilityMode facilityMode,
+            in.marg.routing.AlignmentPreference preference,
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex,
+            in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex,
+            boolean denseColonyLastResortMode) {
         this.start = start;
         this.goal = goal;
         this.facilityMode = facilityMode != null ? facilityMode : FacilityMode.EXPRESSWAY;
         this.preference = preference != null ? preference : in.marg.routing.AlignmentPreference.BALANCED;
         this.osmIndex = osmIndex;
+        this.osmTransportIndex = osmTransportIndex;
+        this.transportPolicy = in.marg.routing.TransportCostPolicy.defaultPolicy();
         this.denseColonyLastResortMode = denseColonyLastResortMode;
     }
 
     public PanIndiaDynamicCostLayer withDenseColonyLastResortMode() {
-        return new PanIndiaDynamicCostLayer(start, goal, facilityMode, preference, osmIndex, true);
+        return new PanIndiaDynamicCostLayer(start, goal, facilityMode, preference, osmIndex, osmTransportIndex, true);
     }
 
     @Override
@@ -385,6 +400,16 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
                 osmEdgePenalty += bldHits * 60.0 * preference.socialWeight();
                 if (osmEdgeClass == null) {
                     osmEdgeClass = "OSM_ROW_BUILDING_DEMOLITION_CONFLICT";
+                }
+            }
+        }
+
+        if (osmTransportIndex != null && !osmTransportIndex.isEmpty()) {
+            CostAssessment transportEdge = osmTransportIndex.assessEdge(from, to, facilityMode, transportPolicy);
+            if (transportEdge != null && transportEdge.penaltyMultiplier() > 0.0) {
+                osmEdgePenalty += transportEdge.penaltyMultiplier();
+                if (osmEdgeClass == null) {
+                    osmEdgeClass = "OSM_TRANSPORT_CROSSING_SKEW";
                 }
             }
         }
