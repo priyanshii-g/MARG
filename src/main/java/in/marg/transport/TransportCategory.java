@@ -7,7 +7,8 @@ public enum TransportCategory {
     RAILWAY("RAIL_OVER_BRIDGE_ROB", false),
     NATIONAL_HIGHWAY("HIGHWAY_FLYOVER_UNDERPASS", true),
     STATE_HIGHWAY("HIGHWAY_FLYOVER_UNDERPASS", true),
-    MAJOR_DISTRICT_ROAD("VEHICULAR_UNDERPASS_VUP", false);
+    MAJOR_DISTRICT_ROAD("VEHICULAR_UNDERPASS_VUP", false),
+    LOCAL_ROAD("LIGHT_VEHICULAR_OVERPASS_LVUP", false);
 
     private final String defaultCrossingStructureType;
     private final boolean highCapacityInterchangeEligible;

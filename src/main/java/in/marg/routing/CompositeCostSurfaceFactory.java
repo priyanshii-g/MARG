@@ -369,7 +369,8 @@ public class CompositeCostSurfaceFactory {
                         start,
                         goal,
                         transportProperties.getCollectorSweetSpotMaxKm(),
-                        transportProperties.getCollectorLongitudinalBandKm());
+                        transportProperties.getCollectorLongitudinalBandKm(),
+                        facilityMode);
 
         List<CostLayer> surfaceLayers = new ArrayList<>(List.of(
                 lulcEff,

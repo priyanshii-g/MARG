@@ -632,6 +632,14 @@ public class HighwayNetworkPlannerService {
                 continue;
             }
 
+            // In NATIONAL_HIGHWAY mode, road crossings are at-grade intersections (no elevated bridge required).
+            // Only RAILWAY crossings require mandatory grade-separated ROB.
+            // In EXPRESSWAY mode, ALL non-interchange crossings (railway + highways + district + local roads)
+            // strictly require an elevated grade-separated structure (ROB / Flyover / VUP / LVUP).
+            if (mode == FacilityMode.NATIONAL_HIGHWAY && rc.category() != TransportCategory.RAILWAY) {
+                continue;
+            }
+
             if (rc.category() == TransportCategory.RAILWAY) {
                 railwayRobCount++;
             } else {

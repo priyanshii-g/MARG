@@ -1175,17 +1175,26 @@ export default function App() {
         group.addLayer(layer);
       }
 
-      // 8. Grade-Separated Crossings (Railway ROBs & Flyovers)
+      // 8. Grade-Separated Crossings (Railway ROBs & Road Overpasses/Flyovers)
       else if (role === "GRADE_SEPARATED_CROSSING" && visibleLayers.crossings && geomType === "Point") {
         const coords = feature.geometry.coordinates;
+        const props = feature.properties || {};
+        const isRail = props.crossedCategory === "RAILWAY";
         const icon = L.divIcon({
-          className: "struct-marker crossing",
-          html: "<span>🚊</span>",
+          className: `struct-marker ${isRail ? "rail-rob" : "road-overpass"}`,
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${isRail ? "#1e293b" : "#2563eb"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">${isRail ? "🚊" : "🌉"}</span>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Grade-Separated Structure</div><div class="popup-meta">Type: ${feature.properties.structureType || "ROB"}<br/>Chainage: ${feature.properties.chainageKm} km</div>`
+          `<div class="popup-title">${isRail ? "Railway Over Bridge (ROB)" : "Elevated Road Bridge / Overpass"}</div>` +
+            `<div class="popup-meta">` +
+            `<b>Crossed Infrastructure:</b> ${props.crossedCorridorRef || props.crossedCorridorName || "Existing Road"}<br/>` +
+            `<b>Category:</b> ${(props.crossedCategory || "HIGHWAY").replace(/_/g, " ")}<br/>` +
+            `<b>Structure Type:</b> ${(props.structureType || "OVERPASS").replace(/_/g, " ")}<br/>` +
+            `<b>Chainage:</b> ${props.chainageKm ?? "—"} km<br/>` +
+            `<b>Crossing Angle:</b> ${props.crossingAngleDegrees ?? 90}°` +
+            `</div>`
         );
         group.addLayer(marker);
       }
@@ -1263,16 +1272,17 @@ export default function App() {
           .filter(([, cnt]) => cnt > 0)
           .map(([t, cnt]) => `${t}: ${cnt}`)
           .join(", ") || "Fringe parcel touch";
+        const hasDemolition = directBlds > 0;
         const icon = L.divIcon({
           className: "struct-marker conflict",
-          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${directBlds > 0 ? "#dc2626" : "#f59e0b"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">🏚️</span>`,
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${hasDemolition ? "#dc2626" : "#f59e0b"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">${hasDemolition ? "🏚️" : "🏘️"}</span>`,
           iconSize: [24, 24],
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Building / Settlement RoW Conflict</div>` +
+          `<div class="popup-title">${hasDemolition ? "Building Demolition (RFCTLARR 2013)" : "Settlement RoW Buffer (0 Demolitions)"}</div>` +
             `<div class="popup-meta">` +
-            `<b>Location:</b> ${props.settlementName || "Corridor Structure"}<br/>` +
+            `<b>Location:</b> ${props.settlementName || "Corridor Settlement"}<br/>` +
             `<b>Structures to Demolish (Direct RoW):</b> ${directBlds}<br/>` +
             `<b>Breakdown:</b> ${breakdownStr}<br/>` +
             `<b>Footprint Area:</b> ${props.affectedDirectRowFootprintSqMeters ?? 0} m²<br/>` +

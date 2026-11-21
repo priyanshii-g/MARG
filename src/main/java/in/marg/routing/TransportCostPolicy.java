@@ -52,6 +52,7 @@ public class TransportCostPolicy {
         crossingDefaults.put(TransportCategory.NATIONAL_HIGHWAY, 1.50);
         crossingDefaults.put(TransportCategory.STATE_HIGHWAY, 0.95);
         crossingDefaults.put(TransportCategory.MAJOR_DISTRICT_ROAD, 0.55);
+        crossingDefaults.put(TransportCategory.LOCAL_ROAD, 0.35);
 
         return new TransportCostPolicy(
                 nodeDefaults,

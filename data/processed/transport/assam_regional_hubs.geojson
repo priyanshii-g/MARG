@@ -339,20 +339,20 @@
         "urbanPopulation": 11500,
         "catchmentPopulation": 26000,
         "industrialOutputFactor": 1.25,
-        "tieInLat": 26.066009,
-        "tieInLon": 93.418263,
+        "tieInLat": 26.055689,
+        "tieInLon": 93.418411,
         "tieInRoadRef": "MDR-102",
         "tieInName": "Chokihola Southern Collector Tie-In (MDR-102 OSM)",
         "centerUtmX": 536180.6,
         "centerUtmY": 2892899.7,
-        "tieInUtmX": 541835.6,
-        "tieInUtmY": 2883061.1
+        "tieInUtmX": 541854.1,
+        "tieInUtmY": 2881918.2
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          93.418263,
-          26.066009
+          93.418411,
+          26.055689
         ]
       }
     },
