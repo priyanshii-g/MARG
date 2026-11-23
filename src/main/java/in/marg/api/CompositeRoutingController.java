@@ -1297,8 +1297,23 @@ public class CompositeRoutingController {
         List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
                 routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode);
         List<Map<String, Object>> routeLayerProfile = routeMetrics.sampleRouteLayerProfile(mainline);
+        List<Map<String, Object>> spurLayerProfiles = new java.util.ArrayList<>();
+        for (HighwayNetworkPlannerService.PlannedFeederSpur spur : networkPlan.feederSpurs()) {
+            if (spur.path() != null && spur.path().size() >= 2) {
+                Map<String, Object> sp = new LinkedHashMap<>();
+                sp.put("spurId", spur.spurId());
+                sp.put("servedHubName", spur.hub() != null ? spur.hub().name() : "Regional Hub");
+                sp.put("samples", routeMetrics.sampleRouteLayerProfile(spur.path()));
+                spurLayerProfiles.add(sp);
+            }
+        }
+        HighwayNetworkPlannerService.SpurEngineeringAnalysis spurAnalysis =
+                networkPlannerService.analyzeFeederSpurStructures(networkPlan);
+
         metadata.put("layerAudit", layerAudit);
         metadata.put("routeLayerProfile", routeLayerProfile);
+        metadata.put("spurLayerProfiles", spurLayerProfiles);
+        metadata.put("spurEngineeringSummary", spurAnalysis.summary());
 
         Map<String, Object> mainlineProperties = new LinkedHashMap<>();
         mainlineProperties.put("profile", "COMPOSITE_13_LAYER");
@@ -1332,6 +1347,7 @@ public class CompositeRoutingController {
                         mainline,
                         mainlineProperties,
                         networkPlan));
+        features.addAll(spurAnalysis.features());
         if (startTieIn != null || goalTieIn != null) {
             TerminalAccessPolicy.TerminalEndpointSpec originSpec = startTieIn == null ? null
                     : new TerminalAccessPolicy.TerminalEndpointSpec(

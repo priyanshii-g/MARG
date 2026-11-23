@@ -1256,8 +1256,38 @@ public class RegionalCorridorRegistry {
         List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
                 routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode);
         List<Map<String, Object>> routeLayerProfile = bundle.routeMetricsService().sampleRouteLayerProfile(mainline);
+        List<Map<String, Object>> spurLayerProfiles = new ArrayList<>();
+        for (HighwayNetworkPlannerService.PlannedFeederSpur spur : networkPlan.feederSpurs()) {
+            if (spur.path() != null && spur.path().size() >= 2) {
+                Map<String, Object> sp = new LinkedHashMap<>();
+                sp.put("spurId", spur.spurId());
+                sp.put("servedHubName", spur.hub() != null ? spur.hub().name() : "Regional Hub");
+                sp.put("samples", bundle.routeMetricsService().sampleRouteLayerProfile(spur.path()));
+                spurLayerProfiles.add(sp);
+            }
+        }
+        if (startConnectorPath != null && startConnectorPath.size() >= 2) {
+            Map<String, Object> sp = new LinkedHashMap<>();
+            sp.put("spurId", "TERM-ORIGIN-SPUR");
+            sp.put("servedHubName", "Origin Terminal Spur");
+            sp.put("samples", bundle.routeMetricsService().sampleRouteLayerProfile(startConnectorPath));
+            spurLayerProfiles.add(sp);
+        }
+        if (goalConnectorPath != null && goalConnectorPath.size() >= 2) {
+            Map<String, Object> sp = new LinkedHashMap<>();
+            sp.put("spurId", "TERM-DEST-SPUR");
+            sp.put("servedHubName", "Destination Terminal Spur");
+            sp.put("samples", bundle.routeMetricsService().sampleRouteLayerProfile(goalConnectorPath));
+            spurLayerProfiles.add(sp);
+        }
+
+        HighwayNetworkPlannerService.SpurEngineeringAnalysis spurAnalysis =
+                bundle.networkPlannerService().analyzeFeederSpurStructures(networkPlan);
+
         metadata.put("layerAudit", layerAudit);
         metadata.put("routeLayerProfile", routeLayerProfile);
+        metadata.put("spurLayerProfiles", spurLayerProfiles);
+        metadata.put("spurEngineeringSummary", spurAnalysis.summary());
 
         Map<String, Object> mainlineProperties = new LinkedHashMap<>();
         mainlineProperties.put("profile", "COMPOSITE_13_LAYER");
@@ -1274,6 +1304,7 @@ public class RegionalCorridorRegistry {
                 mainline,
                 mainlineProperties,
                 networkPlan));
+        features.addAll(spurAnalysis.features());
         addTerminalRoadFeatures(
                 features,
                 mode,

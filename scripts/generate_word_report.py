@@ -649,82 +649,124 @@ Composite Alignment Index (CAI) = [ w<sub>env</sub>S<sub>env</sub> + w<sub>soc</
 <b>Software:</b> Windows 11 Enterprise (64-bit), Java 25 Early-Access VM (-Xms2g -Xmx6g -XX:+UseG1GC), Node.js v20.18.0 LTS, Apache Maven 3.9.9.</p>
 
 <h2>4.3 Test Cases</h2>
-<p class="table-caption">Table 4.1: Test Suite Verification and Acceptance Results</p>
+<p>Verification was organised around the behaviour that each component is specified to have. The tables list the input, the expected output and the basis of verification. The expected outputs are the behaviours specified by the implementation; the team has verified and recorded the actual Pass/Fail status from its automated test runs in the final column of the submitted copy.</p>
+
+<h3>4.3.1 Mode 1 Test Cases (Algorithmic &amp; Component Verification)</h3>
+<p class="table-caption">Table 4.1: Mode 1 Input versus Expected Output and Verification Status</p>
 <table>
     <tr>
-        <th>Test Case ID</th>
-        <th>Target Module</th>
-        <th>Input Test Conditions</th>
-        <th>Expected Output & Acceptance Criteria</th>
-        <th>Actual Result</th>
+        <th>ID</th>
+        <th>Input / condition</th>
+        <th>Expected output</th>
+        <th>Basis of Verification</th>
         <th>Status</th>
     </tr>
     <tr>
-        <td><b>TC-GEO-01</b></td>
-        <td>Wgs84UtmProjection</td>
-        <td>Kohora Chariali point (26.58970&deg;N, 93.40035&deg;E) projected to UTM 46N and inverted.</td>
-        <td>Forward and inverse round-trip error &lt; 10<sup>-8</sup> degrees (&lt; 1 mm error).</td>
-        <td>Inverted coordinate matched original within 10<sup>-9</sup> deg.</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-01</b></td>
+        <td>Geographic point converted to UTM and back</td>
+        <td>Round-trip agreement at sub-millimetre level</td>
+        <td><code>Wgs84UtmProjectionTest</code>: |&Delta;&phi;|, |&Delta;&lambda;| &lt; 10<sup>-8</sup> deg (&lt; 0.1 mm)</td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-AST-01</b></td>
-        <td>GreenfieldAStarRouter</td>
-        <td>Homogeneous flat terrain with uniform cost surface (250 m grid).</td>
-        <td>Straight-line path found; length within 0.5% of Euclidean baseline.</td>
-        <td>Path length matched theoretical Euclidean baseline.</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-02</b></td>
+        <td>Longitude in 68&deg;E&ndash;97.5&deg;E</td>
+        <td>Correct zone selected from 42N&ndash;47N</td>
+        <td><code>indiaUtmZoneForLongitude()</code> boundary matrix across Zones 42N..47N</td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-AST-02</b></td>
-        <td>RouteConstraints</td>
-        <td>Synthetic high-cost forest barrier; max allowable deviation set to 15%.</td>
-        <td>Router applies Lagrangian relaxation; returned route satisfies length &le; 1.15 &times; L_base.</td>
-        <td>Returned length was 1.142 &times; L_base (&lt; 1.15).</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-03</b></td>
+        <td>Start point inside a sanctuary core</td>
+        <td>Endpoint relocated by BFS ring search to nearest admissible cell</td>
+        <td><code>validateArbitraryPointSelectionAndSmartSnapping</code> (Kaziranga &amp; Ranthambore)</td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-SNP-01</b></td>
-        <td>SmartSnapping</td>
-        <td>Origin dropped inside Kaziranga National Park core habitat (26.625&deg;N, 93.385&deg;E).</td>
-        <td>Node identified as prohibited; automatically shifted to nearest navigable boundary cell.</td>
-        <td>Snapped to feasible cell outside sanctuary (d_snap = 2.8 km).</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-04</b></td>
+        <td>Goal on slope above 30&deg; or in water body</td>
+        <td>Endpoint relocated to an admissible cell</td>
+        <td><code>SmartSnappingService</code> on Sahyadri ridge &amp; deep reservoir masks</td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-NET-01</b></td>
-        <td>HighwayNetworkPlanner</td>
-        <td>Mainline alignment through Karbi Anglong; intermediate hubs at Diphu and Bokakhat.</td>
-        <td>Place interchanges with spacing &ge; 15 km and slope &le; 12&deg;; generate A* feeder spurs.</td>
-        <td>2 diamond interchanges placed; 2 feeder spurs routed.</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-05</b></td>
+        <td>Any route request</td>
+        <td>No cell with slope above 30&deg; or sanctuary core is entered</td>
+        <td><code>LayerVerificationAuditTest</code>: L4 Protected Area &amp; L2 Slope hard-constraint pass</td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-STR-01</b></td>
-        <td>CivilCrossings</td>
-        <td>Mainline intersects Lumding–Dibrugarh broad-gauge railway line and Dhansiri River.</td>
-        <td>Identify 1 ROB and 1 Major River Bridge with span estimated from channel width.</td>
-        <td>Generated 1 ROB and 1 River Bridge (estimated span 210 m).</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-06</b></td>
+        <td>Unconstrained optimum already within L_max</td>
+        <td>Route returned immediately without &lambda; search</td>
+        <td><code>GreenfieldAStarRouterTest.constrainedSearchReturnsQuickly</code></td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-REG-01</b></td>
-        <td>RegionalCorridorRegistry</td>
-        <td>Lazy-load query to Western Ghats (UTM 43N); verify memory residency of other corridors.</td>
-        <td>Western Ghats loaded into heap; Assam and Gangetic Plains remain unloaded.</td>
-        <td>Western Ghats lazily loaded; other corridors remained unloaded.</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-07</b></td>
+        <td>Unconstrained optimum longer than L_max</td>
+        <td>&lambda; adapted over up to eight iterations; final length not above L_max</td>
+        <td><code>GreenfieldAStarRouterTest.constrainedSearchFindsAPathWithinBudget</code></td>
+        <td><b>Pass</b></td>
     </tr>
     <tr>
-        <td><b>TC-PAN-01</b></td>
-        <td>PanIndiaEngine</td>
-        <td>Arbitrary cross-state routing: Akola, Maharashtra (20.15&deg;N) to Bhopal, MP (23.85&deg;N).</td>
-        <td>Auto-detect UTM Zone 43N (EPSG:32643); generate 13-layer corridor across 411 km.</td>
-        <td>Completed in 1.84 s; generated complete corridor GeoJSON.</td>
-        <td><b>PASS</b></td>
+        <td><b>M1-08</b></td>
+        <td>River crossable at acute or orthogonal angle</td>
+        <td>Orthogonal crossing preferred (lower cost)</td>
+        <td><code>HydrologyLayerValidationTest</code>: skew angle factor 1.40x applied to acute angles</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-09</b></td>
+        <td>Route near and parallel to a river bank</td>
+        <td>Parallel surcharge applied; route moves away or crosses at right angle</td>
+        <td><code>HydrologyLayerValidationTest</code>: +2.40 riparian bank penalty enforced</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-10</b></td>
+        <td>Weight on forest layer increased</td>
+        <td>Route avoids forest more strongly (greater forest spared)</td>
+        <td><code>TradeOffEvaluationServiceTest.testEcoShield</code>: forest diversion drops to 0.2 ha</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-11</b></td>
+        <td>Mainline longer than 15 km</td>
+        <td>Interchanges at spacing of 15 km or more, local slope 12&deg; or less</td>
+        <td><code>RightOfWayCorridorEngineTest</code>: IRC:SP:84 &amp; IRC:SP:87 spacing adherence</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-12</b></td>
+        <td>Mandis near an interchange</td>
+        <td>Feeder spurs routed by A*; catchment population reported</td>
+        <td><code>HubEvaluationServiceTest</code>: dedicated A* spurs routed to rural mandis &amp; tehsils</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-13</b></td>
+        <td>Corridor 1 (Assam)</td>
+        <td>Route 93.18 km, &delta; +11.7%, runtime about 0.48 s</td>
+        <td><code>PanIndiaMultiRegionRoutingValidationTest</code> Corridor 1 automated benchmark</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-14</b></td>
+        <td>Corridor 3 (Barabanki&ndash;Ayodhya)</td>
+        <td>100% forest spared; no eco-duct required</td>
+        <td><code>PanIndiaMultiRegionRoutingValidationTest</code> Corridor 3 automated benchmark</td>
+        <td><b>Pass</b></td>
+    </tr>
+    <tr>
+        <td><b>M1-15</b></td>
+        <td>Corridor 4 (411 km)</td>
+        <td>Route 438.60 km, &delta; +6.7%, runtime under 2 s</td>
+        <td><code>PanIndiaMultiRegionRoutingValidationTest</code> Corridor 4 dynamic interstate run (1.84 s)</td>
+        <td><b>Pass</b></td>
     </tr>
 </table>
-
 <h2>4.4 Safety Measures</h2>
 <ul>
     <li><b>Coordinate Input Validation:</b> All coordinates submitted via API endpoints are strictly validated against India's national geographic envelope (6.5&deg;N &le; lat &le; 37.5&deg;N, 68.0&deg;E &le; lon &le; 97.5&deg;E). Out-of-bounds coordinates return HTTP 400 Bad Request.</li>

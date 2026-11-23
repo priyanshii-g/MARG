@@ -53,8 +53,10 @@ public class TradeOffEvaluationService {
         double wetlandHa = networkPlan != null ? networkPlan.wetlandAreaInDirectRowHectares() : 0.0;
         int wetlandCount = networkPlan != null ? networkPlan.wetlandsInDirectRowCount() : 0;
 
-        double forestKm = extractLulcKm(routeDiagnostics, "FOREST");
-        double forestHaInRow = round(forestKm * 9.0); // 90m RoW = ~9 ha per km of corridor
+        double rowWidthMeters = (networkPlan != null && networkPlan.rowCorridorFootprint() != null)
+                ? networkPlan.rowCorridorFootprint().mainlineRowWidthMeters()
+                : 60.0;
+        double forestHaInRow = extractForestHectaresInRow(routeDiagnostics, rowWidthMeters);
 
         int displacedPop = networkPlan != null ? networkPlan.estimatedDirectlyDisplacedPopulation() : 0;
         int buildingsInRow = networkPlan != null ? networkPlan.buildingsInDirectRowCount() : 0;
@@ -114,8 +116,8 @@ public class TradeOffEvaluationService {
         double wetlandHa = extractDouble(networkSummary, "wetlandAreaInDirectRowHectares", 0.0);
         int wetlandCount = extractInt(networkSummary, "wetlandsInDirectRowCount", 0);
 
-        double forestKm = extractLulcKm(routeDiagnostics, "FOREST");
-        double forestHaInRow = round(forestKm * 9.0);
+        double rowWidthMeters = extractRowWidthMeters(routeDiagnostics, networkSummary);
+        double forestHaInRow = extractForestHectaresInRow(routeDiagnostics, rowWidthMeters);
 
         int displacedPop = extractInt(networkSummary, "estimatedDirectlyDisplacedPopulation", 0);
         int buildingsInRow = extractInt(networkSummary, "buildingsInDirectRowCount", 0);
@@ -283,7 +285,10 @@ public class TradeOffEvaluationService {
     private static double calculateEnvironmentalScore(
             double forestHa, double wetlandHa, double riverBridgeSpanM, int wildlifePassages) {
         double score = 100.0;
-        score -= (forestHa * 0.45);
+        double forestPenalty = forestHa <= 50.0
+                ? forestHa * 0.45
+                : 22.5 + Math.min(48.0, (forestHa - 50.0) * 0.11);
+        score -= forestPenalty;
         score -= (wetlandHa * 1.20);
         score -= (riverBridgeSpanM * 0.02);
         score -= (wildlifePassages * 3.5);
@@ -408,7 +413,7 @@ public class TradeOffEvaluationService {
                     "Direct Right-of-Way requires %.1f hectares of vegetative/forest land diversion under MoEFCC clearance guidelines.",
                     forestHa));
         } else {
-            list.add("Zero forest land diversion required along this corridor corridor alignment.");
+            list.add("Zero forest land diversion required along this corridor alignment.");
         }
 
         if (displacedPop > 0) {
@@ -434,21 +439,71 @@ public class TradeOffEvaluationService {
         return list;
     }
 
-    @SuppressWarnings("unchecked")
-    private static double extractLulcKm(Map<String, Object> routeDiagnostics, String category) {
-        if (routeDiagnostics == null) return 0.0;
-        Object breakdownObj = routeDiagnostics.get("lulcKmBreakdown");
-        if (breakdownObj instanceof Map<?, ?> map) {
-            for (Map.Entry<?, ?> entry : map.entrySet()) {
-                String key = String.valueOf(entry.getKey()).toUpperCase(Locale.ROOT);
-                if (key.contains(category)) {
-                    if (entry.getValue() instanceof Number num) {
-                        return num.doubleValue();
-                    }
-                }
+    private static double extractRowWidthMeters(
+            Map<String, Object> routeDiagnostics,
+            Map<String, Object> networkSummary) {
+        if (routeDiagnostics != null && routeDiagnostics.get("rightOfWayCorridorSummary") instanceof Map<?, ?> rowSum) {
+            Object w = rowSum.get("designRowWidthMeters");
+            if (w == null) w = rowSum.get("mainlineRowWidthMeters");
+            if (w instanceof Number n && n.doubleValue() > 0.0) {
+                return n.doubleValue();
             }
         }
+        if (networkSummary != null && networkSummary.get("rightOfWayAcquisitionFootprint") instanceof Map<?, ?> fp) {
+            Object w = fp.get("mainlineRowWidthMeters");
+            if (w instanceof Number n && n.doubleValue() > 0.0) {
+                return n.doubleValue();
+            }
+        }
+        return 60.0;
+    }
+
+    /**
+     * Computes exact forest hectares diverted within the Direct Right-of-Way (RoW).
+     * Prefers the 2D swath-audited {@code rightOfWayCorridorSummary.lulcAcquisitionHectares}
+     * produced by {@link in.marg.row.RightOfWayCorridorEngine}, falling back to
+     * {@code lulcExposureKm} (or legacy {@code lulcKmBreakdown}) scaled by the active RoW width
+     * ({@code 1 km * rowWidthMeters = rowWidthMeters / 10.0 ha}).
+     */
+    private static double extractForestHectaresInRow(Map<String, Object> routeDiagnostics, double rowWidthMeters) {
+        if (routeDiagnostics == null) return 0.0;
+        if (routeDiagnostics.get("rightOfWayCorridorSummary") instanceof Map<?, ?> rowSum) {
+            Object acqObj = rowSum.get("lulcAcquisitionHectares");
+            if (acqObj instanceof Map<?, ?> acqMap && !acqMap.isEmpty()) {
+                double forestHa = sumMatchingCategory(acqMap, "FOREST");
+                return round(forestHa);
+            }
+        }
+        double forestKm = extractLulcKm(routeDiagnostics, "FOREST");
+        if (forestKm <= 0.0) {
+            return 0.0;
+        }
+        double effectiveWidthM = rowWidthMeters > 0.0 ? rowWidthMeters : 60.0;
+        return round(forestKm * (effectiveWidthM / 10.0));
+    }
+
+    private static double extractLulcKm(Map<String, Object> routeDiagnostics, String category) {
+        if (routeDiagnostics == null) return 0.0;
+        Object exposureObj = routeDiagnostics.get("lulcExposureKm");
+        if (exposureObj instanceof Map<?, ?> map && !map.isEmpty()) {
+            return sumMatchingCategory(map, category);
+        }
+        Object breakdownObj = routeDiagnostics.get("lulcKmBreakdown");
+        if (breakdownObj instanceof Map<?, ?> map && !map.isEmpty()) {
+            return sumMatchingCategory(map, category);
+        }
         return 0.0;
+    }
+
+    private static double sumMatchingCategory(Map<?, ?> map, String category) {
+        double sum = 0.0;
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            String key = String.valueOf(entry.getKey()).toUpperCase(Locale.ROOT);
+            if (key.contains(category) && entry.getValue() instanceof Number num) {
+                sum += num.doubleValue();
+            }
+        }
+        return sum;
     }
 
     private static Map<String, Object> buildRouteImprovements(

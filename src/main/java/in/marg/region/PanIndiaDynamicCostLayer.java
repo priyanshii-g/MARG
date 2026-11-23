@@ -537,6 +537,10 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         double settlementProximityKm = 0.0;
         double drainageWetlandExposureKm = 0.0;
         double blackCottonOrSoftSoilKm = 0.0;
+        double forestKm = 0.0;
+        double builtUpKm = 0.0;
+        double agricultureKm = 0.0;
+        double barrenKm = 0.0;
         Set<String> physiographicZones = new LinkedHashSet<>();
 
         int riverCrossings = 0;
@@ -558,17 +562,37 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
                     floodExposureKm += stepKm * 0.45;
                     drainageWetlandExposureKm += stepKm * 0.55;
                 }
-                if (zone.contains("MONTANE") || zone.contains("GHATS") || zone.contains("SCARP") || zone.contains("ARAVALLI")) {
+                boolean isHill = zone.contains("MONTANE") || zone.contains("GHATS") || zone.contains("SCARP") || zone.contains("ARAVALLI");
+                boolean isAlluvial = zone.contains("ALLUVIAL") || zone.contains("DELTA") || zone.contains("COASTAL");
+                if (isHill) {
                     steepTerrainKm += stepKm * 0.38;
                 }
                 if (zone.contains("DECCAN") || zone.contains("ALLUVIAL")) {
                     blackCottonOrSoftSoilKm += stepKm * 0.42;
                 }
+                boolean nearUrban = false;
                 for (UrbanSettlementCenter city : URBAN_CENTERS) {
-                    if (Math.hypot(p.lat() - city.lat(), p.lon() - city.lon()) <= city.periUrbanRadiusDeg()) {
+                    double d = Math.hypot(p.lat() - city.lat(), p.lon() - city.lon());
+                    if (d <= city.periUrbanRadiusDeg()) {
                         settlementProximityKm += stepKm;
+                        if (d <= city.coreRadiusDeg()) {
+                            nearUrban = true;
+                        }
                         break;
                     }
+                }
+                boolean nearSanctuaryEsz = IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                        .isInsideAnyEszBuffer(p.lat(), p.lon());
+                boolean isWoodedPlateau = zone.contains("DECCAN") || zone.contains("PLATEAU")
+                        || zone.contains("SATPURA") || zone.contains("VINDHYA") || zone.contains("EASTERN_GHATS");
+                if (nearUrban) {
+                    builtUpKm += stepKm;
+                } else if (nearSanctuaryEsz || (isHill && wave > 0.45) || (isWoodedPlateau && wave > 0.72)) {
+                    forestKm += stepKm;
+                } else if (isAlluvial || wave <= 0.65) {
+                    agricultureKm += stepKm;
+                } else {
+                    barrenKm += stepKm;
                 }
                 if (i % 6 == 0) {
                     seasonalStreamCrossings++;
@@ -586,9 +610,16 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         int totalWaterCrossings = riverCrossings + seasonalStreamCrossings + canalCrossings;
         int watershedCount = Math.max(2, (int) Math.round(totalKm / 12.0));
 
+        Map<String, Double> lulcExposure = new LinkedHashMap<>();
+        if (forestKm > 0.0) lulcExposure.put("FOREST", round(forestKm));
+        if (agricultureKm > 0.0) lulcExposure.put("AGRICULTURE", round(agricultureKm));
+        if (barrenKm > 0.0) lulcExposure.put("BARREN_WASTELAND", round(barrenKm));
+        if (builtUpKm > 0.0) lulcExposure.put("BUILT_UP", round(builtUpKm));
+
         Map<String, Object> diagnostics = new LinkedHashMap<>();
         diagnostics.put("routeLengthKm", round(totalKm));
         diagnostics.put("physiographicZonesTraversed", new ArrayList<>(physiographicZones));
+        diagnostics.put("lulcExposureKm", lulcExposure);
         diagnostics.put("floodExposureKm", round(floodExposureKm));
         diagnostics.put("steepSlopeExposureKm", round(steepTerrainKm));
         diagnostics.put("settlementProximityKm", round(settlementProximityKm));

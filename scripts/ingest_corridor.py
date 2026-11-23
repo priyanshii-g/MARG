@@ -1229,14 +1229,29 @@ def ingest_corridor(
         json.dumps({"type": "FeatureCollection", "features": watershed_features}, indent=2), encoding="utf-8"
     )
 
-    # 9. LULC Pre-Cached Samples
+    # 9. LULC Pre-Cached Samples (0.01 deg grid matching RegionalLulcProvider + real OSM forest/water + local GeoTIFF fusion)
     lulc_samples = []
-    step_deg = 0.02
+    step_deg = 0.01
+    osm_forest_polys = []
+    osm_water_polys = []
+    slope_sampler = None
+    wildlife_sampler = None
+    try:
+        import bake_offline_lulc as lulc_baker
+        osm_payload = lulc_baker.fetch_osm_forest_water(region_id, (min_lat, min_lon, max_lat, max_lon), force=False)
+        osm_forest_polys = [p for p in (osm_payload or {}).get("polygons", []) if p.get("cls") == "FOREST"]
+        osm_water_polys = [p for p in (osm_payload or {}).get("polygons", []) if p.get("cls") == "WETLAND_WATER"]
+        slope_sampler = lulc_baker.LocalGeoTiffSampler(out_dir / f"{region_id}_slope_utm{zone}.tif", zone)
+        wildlife_sampler = lulc_baker.LocalGeoTiffSampler(out_dir / f"{region_id}_wildlife_esz_corridors_utm{zone}.tif", zone)
+    except Exception:
+        lulc_baker = None
+
     lat = min_lat
     while lat <= max_lat + 1e-9:
         lon = min_lon
         while lon <= max_lon + 1e-9:
             l_class = "AGRICULTURE"
+            src_tag = f"ON_DEMAND_INGESTION_{region_id.upper()}"
             for st in settlements_data:
                 if math.hypot(lat - st["lat"], lon - st["lon"]) < 0.022:
                     l_class = "BUILT_UP"
@@ -1244,12 +1259,26 @@ def ingest_corridor(
             if l_class == "AGRICULTURE":
                 if math.hypot(lat - pa_lat, lon - pa_lon) < 0.055:
                     l_class = "FOREST"
+                elif lulc_baker is not None:
+                    osm_cls, osm_name = lulc_baker.classify_from_osm(lat, lon, osm_forest_polys, osm_water_polys)
+                    if osm_cls == "FOREST":
+                        l_class = "FOREST"
+                        src_tag = f"OSM_OFFLINE_FOREST:{(osm_name or '')[:40]}"
+                    elif osm_cls == "WETLAND_WATER":
+                        l_class = "WETLAND_WATER"
+                        src_tag = f"OSM_OFFLINE_WATER:{(osm_name or '')[:40]}"
+                    else:
+                        w_val = wildlife_sampler.sample(lat, lon) if wildlife_sampler else None
+                        s_val = slope_sampler.sample(lat, lon) if slope_sampler else None
+                        if (w_val is not None and w_val >= 2.0) or (s_val is not None and s_val >= 13.0):
+                            l_class = "FOREST"
+                            src_tag = f"OFFLINE_RASTER_FOREST_{region_id.upper()}"
             lulc_samples.append(
                 {
                     "lat": round(lat, 4),
                     "lon": round(lon, 4),
                     "type": l_class,
-                    "rawFeatureInfo": f"ON_DEMAND_INGESTION_{region_id.upper()}",
+                    "rawFeatureInfo": src_tag,
                     "remoteSuccess": True,
                     "error": None,
                 }

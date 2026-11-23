@@ -103,4 +103,47 @@ class LayerVerificationAuditTest {
         assertNotNull(profile.get(0).get("lulc"));
         assertNotNull(profile.get(0).get("flood"));
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void kazirangaAssamCorridorReportsNonZeroForestHectaresInTradeOffAndLayer1Audit() {
+        RegionalCorridorRegistry registry = new RegionalCorridorRegistry();
+        CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
+        CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
+
+        Map<String, Object> route = controller.route(
+                26.5897, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                true, 1,
+                "assam", null, null
+        );
+
+        Map<?, ?> meta = (Map<?, ?>) route.get("metadata");
+        Map<?, ?> tradeOff = (Map<?, ?>) meta.get("tradeOffProfile");
+        Map<?, ?> envSummary = (Map<?, ?>) tradeOff.get("environmentalSummary");
+        double forestHa = ((Number) envSummary.get("forestHectaresDirectRow")).doubleValue();
+        assertTrue(forestHa > 100.0,
+                "Kaziranga–Karbi Anglong forested corridor must report accurate non-zero forest diversion hectares, got: " + forestHa);
+
+        List<Map<String, Object>> layerAudit = (List<Map<String, Object>>) meta.get("layerAudit");
+        assertNotNull(layerAudit);
+        assertEquals(13, layerAudit.size());
+        String l1Headline = String.valueOf(layerAudit.get(0).get("headlineProof"));
+        assertTrue(l1Headline.contains("ha"), "Layer 1 LULC proof should cite 2D RoW forest hectares: " + l1Headline);
+
+        // Verify 13-layer feeder spur profiles & spur engineering structure analysis
+        List<Map<String, Object>> spurProfiles = (List<Map<String, Object>>) meta.get("spurLayerProfiles");
+        assertNotNull(spurProfiles, "metadata.spurLayerProfiles must be present");
+        assertFalse(spurProfiles.isEmpty(), "Expected at least one sampled feeder/terminal spur profile");
+        List<Map<String, Object>> spurSamples = (List<Map<String, Object>>) spurProfiles.get(0).get("samples");
+        assertNotNull(spurSamples);
+        assertTrue(spurSamples.size() >= 2, "Feeder spur profile must contain sampled points");
+        assertNotNull(spurSamples.get(0).get("lulc"));
+        assertNotNull(spurSamples.get(0).get("slopeBand"));
+
+        Map<?, ?> spurEngSummary = (Map<?, ?>) meta.get("spurEngineeringSummary");
+        assertNotNull(spurEngSummary, "metadata.spurEngineeringSummary must be present");
+        assertTrue(((Number) spurEngSummary.get("spursEvaluated")).intValue() >= 1);
+    }
 }

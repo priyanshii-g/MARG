@@ -62,10 +62,16 @@ public final class LayerVerificationAuditService {
         double rLulcPen = num(rPen.get("LULC"));
         double bLulcPen = num(bPen.get("LULC"));
         boolean useLulcPen = bLulcSensitive <= 0.05 && bLulcPen > 0.05;
+        Map<String, Object> rRowSummary = asMap(routeDiag.get("rightOfWayCorridorSummary"));
+        Map<String, Object> rLulcAcqHa = asMap(rRowSummary.get("lulcAcquisitionHectares"));
+        double forestRowHa = num(rLulcAcqHa.get("FOREST"));
+        String lulcSuffix = forestRowHa > 0.05
+                ? "Direct 2D RoW forest land take: " + round(forestRowHa) + " ha (Forest Conservation Act 1980 Stage-I/II diversion required)."
+                : "Prioritized barren, grazing & low-conflict corridors over forest and built-up land.";
         audit.add(buildLayerRecord(
                 "L1_LULC", 1, "Land Use & Land Cover (LULC)", "TERRAIN_HAZARDS",
                 "FULL_RASTER_AND_VECTOR",
-                "NRSC Bhuvan 1:50k LULC • RFCTLARR 2013 Land Acquisition",
+                "NRSC Bhuvan 1:50k LULC • RFCTLARR 2013 • FCA 1980",
                 useLulcPen ? "LULC Weighted Cost" : "Sensitive Land (Forest/Built-up/Water)",
                 useLulcPen ? "km-eq" : "km",
                 useLulcPen ? bLulcPen : bLulcSensitive,
@@ -80,7 +86,7 @@ public final class LayerVerificationAuditService {
                         useLulcPen ? bLulcPen : bLulcSensitive,
                         useLulcPen ? rLulcPen : rLulcSensitive,
                         useLulcPen ? "km-eq" : "km",
-                        "Prioritized barren, grazing & low-conflict corridors over forest and built-up land.")
+                        lulcSuffix)
         ));
 
         // -----------------------------------------------------------------

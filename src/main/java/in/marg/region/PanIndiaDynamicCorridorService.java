@@ -878,8 +878,30 @@ public class PanIndiaDynamicCorridorService {
                 terminalRoadConnections, statutoryReport, features, mode, projection);
         List<Map<String, Object>> routeLayerProfile = in.marg.routing.LayerVerificationAuditService.sampleTier1RouteProfile(
                 mainline, projection);
+        List<Map<String, Object>> spurLayerProfiles = new ArrayList<>();
+        for (Map<String, Object> f : features) {
+            if (!(f.get("properties") instanceof Map<?, ?> props)) continue;
+            Object role = props.get("featureRole");
+            if (!"FEEDER_SPUR_HIGHWAY".equals(role) && !"TERMINAL_ACCESS_ROAD".equals(role)) continue;
+            if (!(f.get("geometry") instanceof Map<?, ?> geom) || !(geom.get("coordinates") instanceof List<?> rawCoords)) continue;
+            List<GeoPoint> spurPts = new ArrayList<>();
+            for (Object cObj : rawCoords) {
+                if (cObj instanceof List<?> pair && pair.size() >= 2
+                        && pair.get(0) instanceof Number lonN && pair.get(1) instanceof Number latN) {
+                    spurPts.add(new GeoPoint(latN.doubleValue(), lonN.doubleValue()));
+                }
+            }
+            if (spurPts.size() >= 2) {
+                Map<String, Object> sp = new LinkedHashMap<>();
+                sp.put("spurId", String.valueOf(props.get("corridorId") != null ? props.get("corridorId") : role));
+                sp.put("servedHubName", String.valueOf(props.get("connectingHub") != null ? props.get("connectingHub") : "Terminal Spur"));
+                sp.put("samples", in.marg.routing.LayerVerificationAuditService.sampleTier1RouteProfile(spurPts, projection));
+                spurLayerProfiles.add(sp);
+            }
+        }
         metadata.put("layerAudit", layerAudit);
         metadata.put("routeLayerProfile", routeLayerProfile);
+        metadata.put("spurLayerProfiles", spurLayerProfiles);
         metadata.put("layers", List.of(
                 "LULC",
                 "FLOOD_HAZARD",

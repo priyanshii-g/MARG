@@ -1916,6 +1916,200 @@ public class HighwayNetworkPlannerService {
         return List.copyOf(features);
     }
 
+    /**
+     * Evaluates 13-layer engineering crossing structures (Railway ROBs, River Bridges, Wildlife
+     * Passages, Geotechnical Mitigation Zones, EHV Utility Crossings, and Cross-Drainage Culverts)
+     * along every dedicated feeder spur path (30 m IRC spur RoW), tagging each GeoJSON feature
+     * with {@code segmentRole = "FEEDER_SPUR"} so mainline KPIs and existing assertions remain intact.
+     */
+    public record SpurEngineeringAnalysis(
+            List<Map<String, Object>> features,
+            Map<String, Object> summary) {}
+
+    public SpurEngineeringAnalysis analyzeFeederSpurStructures(NetworkPlanResult plan) {
+        List<Map<String, Object>> spurFeatures = new ArrayList<>();
+        int railwayRobs = 0;
+        int riverBridges = 0;
+        int wildlifePassages = 0;
+        int geotechZones = 0;
+        int utilityCrossings = 0;
+        int drainageStructures = 0;
+
+        List<PlannedFeederSpur> spurs = plan != null && plan.feederSpurs() != null
+                ? plan.feederSpurs()
+                : List.of();
+
+        for (PlannedFeederSpur spur : spurs) {
+            List<GeoPoint> path = spur.path();
+            if (path == null || path.size() < 2) {
+                continue;
+            }
+            String spurId = spur.spurId();
+            String hubName = spur.hub() != null ? spur.hub().name() : "Regional Hub";
+
+            // L6: Mandatory Railway ROBs along feeder spur (road tie-ins are at-grade on spurs)
+            if (vectorIndex != null) {
+                for (TransportNetworkVectorIndex.RouteCrossing rc : vectorIndex.findRouteCrossings(path)) {
+                    if (rc.category() != TransportCategory.RAILWAY) {
+                        continue;
+                    }
+                    railwayRobs++;
+                    Map<String, Object> props = new LinkedHashMap<>();
+                    props.put("featureRole", "GRADE_SEPARATED_CROSSING");
+                    props.put("segmentRole", "FEEDER_SPUR");
+                    props.put("parentSpurId", spurId);
+                    props.put("servedHubName", hubName);
+                    props.put("crossingId", "SPUR-ROB-" + railwayRobs + "-" + rc.corridorRef());
+                    props.put("crossedCorridorRef", rc.corridorRef());
+                    props.put("crossedCorridorName", rc.corridorName());
+                    props.put("crossedCategory", rc.category().name());
+                    props.put("structureType", rc.category().defaultCrossingStructureType());
+                    props.put("chainageKm", round(rc.chainageKm()));
+                    props.put("crossingAngleDegrees", round(rc.crossingAngleDegrees()));
+                    spurFeatures.add(Map.of(
+                            "type", "Feature",
+                            "properties", props,
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(rc.point().lon(), rc.point().lat()))));
+                }
+            }
+
+            // L7: Perennial River Bridges along feeder spur
+            if (riverVectorIndex != null) {
+                for (RiverNetworkVectorIndex.RouteRiverCrossing rrc : riverVectorIndex.findRouteRiverCrossings(path)) {
+                    riverBridges++;
+                    Map<String, Object> props = new LinkedHashMap<>();
+                    props.put("featureRole", "RIVER_BRIDGE");
+                    props.put("segmentRole", "FEEDER_SPUR");
+                    props.put("parentSpurId", spurId);
+                    props.put("servedHubName", hubName);
+                    props.put("bridgeId", "SPUR-RB-" + riverBridges + "-" + rrc.riverId().replace("RIV-", ""));
+                    props.put("riverName", rrc.riverName());
+                    props.put("riverClass", rrc.riverClass().name());
+                    props.put("structureType", rrc.riverClass().bridgeStructureType());
+                    props.put("estimatedSkewSpanMeters", round(rrc.effectiveSkewSpanMeters()));
+                    props.put("effectiveSkewSpanMeters", round(rrc.effectiveSkewSpanMeters()));
+                    props.put("crossingAngleDegrees", round(rrc.crossingAngleDegrees()));
+                    props.put("chainageKm", round(rrc.chainageKm()));
+                    spurFeatures.add(Map.of(
+                            "type", "Feature",
+                            "properties", props,
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(rrc.point().lon(), rrc.point().lat()))));
+                }
+            }
+
+            // L8: Wildlife Corridor Passages along feeder spur
+            if (wildlifeVectorIndex != null) {
+                for (WildlifeCorridorVectorIndex.RouteWildlifeCrossing rwc : wildlifeVectorIndex.findRouteCorridorCrossings(path)) {
+                    wildlifePassages++;
+                    Map<String, Object> props = new LinkedHashMap<>();
+                    props.put("featureRole", "WILDLIFE_PASSAGE");
+                    props.put("segmentRole", "FEEDER_SPUR");
+                    props.put("parentSpurId", spurId);
+                    props.put("servedHubName", hubName);
+                    props.put("passageId", "SPUR-WP-" + wildlifePassages + "-" + rwc.corridorId().replace("WLC-", ""));
+                    props.put("corridorName", rwc.corridorName());
+                    props.put("corridorTier", rwc.corridorTier().name());
+                    props.put("mitigationStructure", rwc.corridorTier().passageStructureType());
+                    props.put("recommendedPassageSpanMeters", round(rwc.recommendedPassageSpanMeters()));
+                    props.put("crossingAngleDegrees", round(rwc.crossingAngleDegrees()));
+                    props.put("chainageKm", round(rwc.chainageKm()));
+                    spurFeatures.add(Map.of(
+                            "type", "Feature",
+                            "properties", props,
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(rwc.point().lon(), rwc.point().lat()))));
+                }
+            }
+
+            // L9: Geotechnical & Landslide Stabilization Zones along feeder spur
+            if (geotechVectorIndex != null) {
+                for (GeotechLineamentVectorIndex.RouteGeotechCrossing rgc : geotechVectorIndex.findRouteLineamentCrossings(path)) {
+                    geotechZones++;
+                    Map<String, Object> props = new LinkedHashMap<>();
+                    props.put("featureRole", "GEOTECH_MITIGATION_ZONE");
+                    props.put("segmentRole", "FEEDER_SPUR");
+                    props.put("parentSpurId", spurId);
+                    props.put("servedHubName", hubName);
+                    props.put("mitigationId", "SPUR-GM-" + geotechZones + "-" + rgc.lineamentId().replace("GEO-", ""));
+                    props.put("name", rgc.lineamentName());
+                    props.put("featureName", rgc.lineamentName());
+                    props.put("hazardTier", rgc.hazardTier().name());
+                    props.put("mitigationStructure", rgc.hazardTier().mitigationStructureType());
+                    props.put("recommendedStabilizationLengthMeters", round(rgc.recommendedStabilizationLengthMeters()));
+                    props.put("crossingAngleDegrees", round(rgc.crossingAngleDegrees()));
+                    props.put("chainageKm", round(rgc.chainageKm()));
+                    spurFeatures.add(Map.of(
+                            "type", "Feature",
+                            "properties", props,
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(rgc.point().lon(), rgc.point().lat()))));
+                }
+            }
+
+            // L10: High-Voltage Utility Crossings along feeder spur
+            if (utilityVectorIndex != null) {
+                for (UtilityNetworkVectorIndex.RouteUtilityCrossing ruc : utilityVectorIndex.findRouteUtilityCrossings(path)) {
+                    utilityCrossings++;
+                    Map<String, Object> props = new LinkedHashMap<>();
+                    props.put("featureRole", "UTILITY_CROSSING_PROTECTION");
+                    props.put("segmentRole", "FEEDER_SPUR");
+                    props.put("parentSpurId", spurId);
+                    props.put("servedHubName", hubName);
+                    props.put("crossingId", "SPUR-UC-" + utilityCrossings + "-" + ruc.lineId().replace("PWR-", ""));
+                    props.put("lineName", ruc.lineName());
+                    props.put("utilityTier", ruc.tier().name());
+                    props.put("voltageKv", ruc.voltageKv());
+                    props.put("protectionType", ruc.tier().crossingProtectionStructureType());
+                    props.put("recommendedProtectiveSpanMeters", round(ruc.recommendedProtectiveSpanMeters()));
+                    props.put("crossingAngleDegrees", round(ruc.crossingAngleDegrees()));
+                    props.put("chainageKm", round(ruc.chainageKm()));
+                    spurFeatures.add(Map.of(
+                            "type", "Feature",
+                            "properties", props,
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(ruc.point().lon(), ruc.point().lat()))));
+                }
+            }
+
+            // L13: Cross-Drainage Culverts / Aqueducts along feeder spur (30 m IRC spur footprint)
+            if (drainageVectorIndex != null && rowCorridorEngine != null) {
+                RightOfWayCorridorEngine.CorridorFootprint spurFp =
+                        rowCorridorEngine.buildCorridorFootprint(path, FacilityMode.NATIONAL_HIGHWAY);
+                DrainageWetlandVectorIndex.RouteDrainageWetlandImpact dwImpact =
+                        drainageVectorIndex.evaluateCorridorDrainageAndWetlandImpact(path, spurFp);
+                for (DrainageWetlandVectorIndex.DrainageInfrastructureRequirement req :
+                        dwImpact.drainageInfrastructureRequirements()) {
+                    drainageStructures++;
+                    Map<String, Object> props = new LinkedHashMap<>();
+                    props.put("featureRole", "DRAINAGE_CROSSING_STRUCTURE");
+                    props.put("segmentRole", "FEEDER_SPUR");
+                    props.put("parentSpurId", spurId);
+                    props.put("servedHubName", hubName);
+                    props.put("structureId", "SPUR-" + req.requirementId());
+                    props.put("targetFeatureName", req.targetFeatureName());
+                    props.put("sublayerType", req.sublayerType().name());
+                    props.put("structureType", req.structureType());
+                    props.put("chainageKm", req.chainageKm());
+                    props.put("recommendedClearSpanOrWidthMeters", req.recommendedClearSpanOrWidthMeters());
+                    props.put("designDischargeM3PerSec", req.designDischargeM3PerSec());
+                    spurFeatures.add(Map.of(
+                            "type", "Feature",
+                            "properties", props,
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(req.location().lon(), req.location().lat()))));
+                }
+            }
+        }
+
+        Map<String, Object> summary = new LinkedHashMap<>();
+        summary.put("spursEvaluated", spurs.size());
+        summary.put("spurRailwayRobsCount", railwayRobs);
+        summary.put("spurRiverBridgesCount", riverBridges);
+        summary.put("spurWildlifePassagesCount", wildlifePassages);
+        summary.put("spurGeotechZonesCount", geotechZones);
+        summary.put("spurUtilityCrossingsCount", utilityCrossings);
+        summary.put("spurDrainageStructuresCount", drainageStructures);
+        summary.put("totalSpurEngineeringStructuresCount",
+                railwayRobs + riverBridges + wildlifePassages + geotechZones + utilityCrossings + drainageStructures);
+        return new SpurEngineeringAnalysis(List.copyOf(spurFeatures), summary);
+    }
+
     private static List<List<Double>> toLonLatList(List<GeoPoint> points) {
         return points.stream()
                 .map(p -> List.of(p.lon(), p.lat()))

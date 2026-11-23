@@ -10,6 +10,7 @@ import {
 } from "./layers/layerCatalog";
 import LayerAuditPanel from "./components/LayerAuditPanel";
 import MapLensHud from "./components/MapLensHud";
+import EngineeringDossier from "./components/EngineeringDossier";
 
 // -------------------------------------------------------------
 // India & Benchmark Region Constants
@@ -189,9 +190,29 @@ export default function App() {
   const [currentFeatures, setCurrentFeatures] = useState([]);
   const [layerAudit, setLayerAudit] = useState([]);
   const [routeLayerProfile, setRouteLayerProfile] = useState([]);
+  const [spurLayerProfiles, setSpurLayerProfiles] = useState([]);
+  const [routeDiagnostics, setRouteDiagnostics] = useState(null);
+  const [terminalRoadConnections, setTerminalRoadConnections] = useState(null);
+  const [spurEngineeringSummary, setSpurEngineeringSummary] = useState(null);
   const [activeLayerId, setActiveLayerId] = useState(null);
   const [pinnedLayerIds, setPinnedLayerIds] = useState(() => new Set());
   const [showMultiArchetypes, setShowMultiArchetypes] = useState(true);
+
+  // Botanical Atelier Collapsible Drawers & Viewport Refs
+  const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
+  const mapStudioRef = useRef(null);
+  const dossierRef = useRef(null);
+
+  // Re-measure Leaflet map smoothly whenever Left or Right drawer collapses/expands
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize({ animate: true });
+      }
+    }, 280);
+    return () => clearTimeout(timer);
+  }, [leftDrawerOpen, rightDrawerOpen]);
 
   // Coords Key Tracker: Automatically clear cached routes if endpoints change
   const currentCoordsKey = start && end ? `${start.lat.toFixed(4)},${start.lng.toFixed(4)}->${end.lat.toFixed(4)},${end.lng.toFixed(4)}` : null;
@@ -205,6 +226,10 @@ export default function App() {
       setCurrentFeatures([]);
       setLayerAudit([]);
       setRouteLayerProfile([]);
+      setSpurLayerProfiles([]);
+      setRouteDiagnostics(null);
+      setTerminalRoadConnections(null);
+      setSpurEngineeringSummary(null);
       setActiveLayerId(null);
       setPinnedLayerIds(new Set());
     }
@@ -312,7 +337,7 @@ export default function App() {
   }, []);
 
   // -----------------------------------------------------------
-  // Multi-Basemap Switcher (OSM, OpenTopoMap, Esri Satellite/Relief, CartoDB - Free, No Keys)
+  // Multi-Basemap Switcher (OSM, OpenTopoMap, Esri Satellite/Topo/Light Gray/Street - 100% Free, No API Keys)
   // -----------------------------------------------------------
   useEffect(() => {
     if (!mapRef.current) return;
@@ -321,18 +346,27 @@ export default function App() {
     }
     const cfg = getBasemapConfig(baseMapType);
     let tileErrors = 0;
-    const newLayer = L.tileLayer(cfg.url, cfg.options);
-    newLayer.on("tileerror", () => {
+    const baseTiles = L.tileLayer(cfg.url, cfg.options);
+    baseTiles.on("tileerror", () => {
       tileErrors += 1;
       if (tileErrors === 4 && cfg.fallbackId && cfg.fallbackId !== baseMapType) {
         setBaseMapType(cfg.fallbackId);
       }
     });
-    newLayer.addTo(mapRef.current);
-    if (typeof newLayer.bringToBack === "function") {
-      newLayer.bringToBack();
+
+    if (cfg.overlayUrl) {
+      const refTiles = L.tileLayer(cfg.overlayUrl, {
+        ...cfg.options,
+        attribution: "",
+      });
+      const group = L.layerGroup([baseTiles, refTiles]).addTo(mapRef.current);
+      if (typeof baseTiles.bringToBack === "function") baseTiles.bringToBack();
+      baseTileLayerRef.current = group;
+    } else {
+      baseTiles.addTo(mapRef.current);
+      if (typeof baseTiles.bringToBack === "function") baseTiles.bringToBack();
+      baseTileLayerRef.current = baseTiles;
     }
-    baseTileLayerRef.current = newLayer;
   }, [baseMapType]);
 
   // -----------------------------------------------------------
@@ -450,7 +484,7 @@ export default function App() {
       env: 1.0,
       social: 1.0,
       direct: 1.0,
-      color: "var(--primary)",
+      color: "#1B4332",
       description: "Harmonized IRC:SP:84 engineering weighting across environment, communities & directness",
     },
     ECO_SHIELD: {
@@ -504,7 +538,11 @@ export default function App() {
       setCurrentFeatures(cached.features || []);
       setLayerAudit(cached.layerAudit || []);
       setRouteLayerProfile(cached.routeLayerProfile || []);
-      renderGeoJsonFeatures(cached.features || [], targetKey, activeLayerId, pinnedLayerIds, cached.routeLayerProfile || [], false);
+      setSpurLayerProfiles(cached.spurLayerProfiles || []);
+      setRouteDiagnostics(cached.routeDiagnostics || null);
+      setTerminalRoadConnections(cached.terminalRoadConnections || null);
+      setSpurEngineeringSummary(cached.spurEngineeringSummary || null);
+      renderGeoJsonFeatures(cached.features || [], targetKey, activeLayerId, pinnedLayerIds, cached.routeLayerProfile || [], cached.spurLayerProfiles || [], false);
       setRouteInfo(cached.routeInfo);
       setNetworkSummary(cached.networkSummary);
       setTradeOffProfile(cached.tradeOffProfile);
@@ -583,7 +621,7 @@ export default function App() {
           `<div style="font-size:11px;">
             <strong style="color:${pDef.color};">${pDef.label || pDef.shortLabel}</strong><br/>
             <span>Mainline: <b>${altLength} km</b> (+${altDev}%)</span><br/>
-            <span style="font-size:9.5px; color:#38bdf8; font-weight:700;">⚡ Click alignment to activate</span>
+            <span style="font-size:10px; color:#2D6A4F; font-weight:700;">⚡ Click alignment to activate</span>
           </div>`,
           { sticky: true }
         );
@@ -620,6 +658,10 @@ export default function App() {
     setCurrentFeatures([]);
     setLayerAudit([]);
     setRouteLayerProfile([]);
+    setSpurLayerProfiles([]);
+    setRouteDiagnostics(null);
+    setTerminalRoadConnections(null);
+    setSpurEngineeringSummary(null);
     setActiveLayerId(null);
     setPinnedLayerIds(new Set());
     if (!lockBasemap) {
@@ -715,6 +757,11 @@ export default function App() {
       let snapTriggered = false;
       const snapDetails = { start: null, end: null };
 
+      let resolvedStartLat = start.lat;
+      let resolvedStartLng = start.lng;
+      let resolvedEndLat = end.lat;
+      let resolvedEndLng = end.lng;
+
       if (endpointRes) {
         // Start Point Snapped?
         if (endpointRes.startSnapped && endpointRes.resolvedStart && endpointRes.requestedStart) {
@@ -732,7 +779,9 @@ export default function App() {
           };
 
           // Update local start state to the resolved feasible coordinate!
-          setStart({ lat: res.lat, lng: res.lon ?? res.lng });
+          resolvedStartLat = res.lat;
+          resolvedStartLng = res.lon ?? res.lng;
+          setStart({ lat: resolvedStartLat, lng: resolvedStartLng });
 
           // Plot ghost marker at the original requested click
           if (snapVectorGroupRef.current) {
@@ -781,7 +830,9 @@ export default function App() {
           };
 
           // Update local end state to the resolved feasible coordinate!
-          setEnd({ lat: res.lat, lng: res.lon ?? res.lng });
+          resolvedEndLat = res.lat;
+          resolvedEndLng = res.lon ?? res.lng;
+          setEnd({ lat: resolvedEndLat, lng: resolvedEndLng });
 
           if (snapVectorGroupRef.current) {
             const origIcon = L.divIcon({
@@ -814,6 +865,9 @@ export default function App() {
       }
 
       if (snapTriggered) {
+        // Synchronize lastCoordsKeyRef to the backend-snapped coordinates BEFORE React runs
+        // the currentCoordsKey reset effect so it never wipes the route we just generated!
+        lastCoordsKeyRef.current = `${Number(resolvedStartLat).toFixed(4)},${Number(resolvedStartLng).toFixed(4)}->${Number(resolvedEndLat).toFixed(4)},${Number(resolvedEndLng).toFixed(4)}`;
         setSnapNotice(snapDetails);
       }
 
@@ -821,8 +875,6 @@ export default function App() {
       // 2. RENDER MULTI-FEATURE GEOJSON LAYERS & CACHE RESULT
       // ---------------------------------------------------------
       const targetPreset = tradeOffPreset || "BALANCED";
-      renderGeoJsonFeatures(data.features, targetPreset);
-
       applyRouteResult(data, targetPreset);
 
       setStatus("✅ MARG composite highway alignment & network plan computed successfully.");
@@ -849,12 +901,18 @@ export default function App() {
     const termConn = meta.terminalRoadConnections || {};
     const auditList = Array.isArray(meta.layerAudit) ? meta.layerAudit : [];
     const layerProfile = Array.isArray(meta.routeLayerProfile) ? meta.routeLayerProfile : [];
+    const spurProfiles = Array.isArray(meta.spurLayerProfiles) ? meta.spurLayerProfiles : [];
+    const spurSummary = meta.spurEngineeringSummary || null;
     const feats = Array.isArray(data.features) ? data.features : [];
 
     setCurrentFeatures(feats);
     setLayerAudit(auditList);
     setRouteLayerProfile(layerProfile);
-    renderGeoJsonFeatures(feats, targetKey, activeLayerId, pinnedLayerIds, layerProfile, true);
+    setSpurLayerProfiles(spurProfiles);
+    setRouteDiagnostics(diag);
+    setTerminalRoadConnections(termConn);
+    setSpurEngineeringSummary(spurSummary);
+    renderGeoJsonFeatures(feats, targetKey, activeLayerId, pinnedLayerIds, layerProfile, spurProfiles, true);
 
     const mainlineFeat = data.features.find(
       (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
@@ -941,6 +999,10 @@ export default function App() {
       features: feats,
       layerAudit: auditList,
       routeLayerProfile: layerProfile,
+      spurLayerProfiles: spurProfiles,
+      routeDiagnostics: diag,
+      terminalRoadConnections: termConn,
+      spurEngineeringSummary: spurSummary,
       routeInfo: newRouteInfo,
       networkSummary: newNetSummary,
       tradeOffProfile: profile,
@@ -958,7 +1020,7 @@ export default function App() {
 
     // Synchronize alternativeRoutes list
     const pDef = PRESET_DEFINITIONS[targetKey];
-    const altColor = pDef?.color || "var(--primary)";
+    const altColor = pDef?.color || "#1B4332";
     const altLabel = pDef?.label || (targetKey + " Route");
 
     setAlternativeRoutes((prev) => {
@@ -1061,6 +1123,10 @@ export default function App() {
       "GREENFIELD_MAINLINE",
       "DISTANCE_BASELINE",
       "BASELINE",
+      "DEDICATED_FEEDER_SPUR",
+      "FEEDER_SPUR_HIGHWAY",
+      "TERMINAL_ACCESS_ROAD",
+      "ROAD_TIE_IN",
     ]);
     const activeIds = new Set(pinnedSet ? Array.from(pinnedSet) : []);
     if (lensId) activeIds.add(lensId);
@@ -1074,87 +1140,99 @@ export default function App() {
   }
 
   // -----------------------------------------------------------
-  // Paint Color-Coded Route Segments for Raster Layers (LULC, Flood, DEM Slope, Settlements, Geotech, Demographics, Drainage)
+  // Paint Color-Coded Route Segments for Raster Layers (Mainline + All Feeder/Terminal Spurs)
   // -----------------------------------------------------------
-  function renderColorizedRouteRibbon(profile, lensId) {
+  function renderColorizedRouteRibbon(profile, spurProfiles, lensId) {
     if (!colorizedRouteGroupRef.current) return;
     colorizedRouteGroupRef.current.clearLayers();
 
     const cfg = lensId ? LAYER_BY_ID[lensId] : null;
-    if (!cfg || !cfg.profileField || !Array.isArray(profile) || profile.length < 2) {
+    if (!cfg || !cfg.profileField) {
       return;
     }
 
     const group = colorizedRouteGroupRef.current;
     const field = cfg.profileField;
 
-    // Group contiguous samples with the same class color so polylines stay crisp & fast
-    let runCoords = [];
-    let runVal = null;
-    let runStartCh = 0;
-    let runMaxSlope = 0;
+    const paintSamples = (samples, segmentTitle, isSpur) => {
+      if (!Array.isArray(samples) || samples.length < 2) return;
+      let runCoords = [];
+      let runVal = null;
+      let runStartCh = 0;
+      let runMaxSlope = 0;
 
-    const flushRun = (endCh) => {
-      if (runCoords.length < 2) return;
-      const color = getSegmentColor(cfg, runVal);
-      // Dark outer casing for crisp visibility on both Satellite and Topo basemaps
-      const casing = L.polyline(runCoords, {
-        color: "#0f172a",
-        weight: 9,
-        opacity: 0.72,
-        lineCap: "round",
-        lineJoin: "round",
-      });
-      const ribbon = L.polyline(runCoords, {
-        color,
-        weight: 5.5,
-        opacity: 0.98,
-        lineCap: "round",
-        lineJoin: "round",
-      });
-      const slopeExtra =
-        cfg.id === "L3_SLOPE"
-          ? `<br/>Peak Slope in Segment: <b>${runMaxSlope.toFixed(1)}°</b>`
-          : "";
-      ribbon.bindTooltip(
-        `<div style="font-size:11px;line-height:1.35;">` +
-          `<b>${cfg.icon} L${cfg.number}: ${cfg.shortName}</b><br/>` +
-          `Class: <b style="color:${color};">${formatClassLabel(runVal)}</b>${slopeExtra}<br/>` +
-          `Chainage: km ${runStartCh.toFixed(1)} – ${endCh.toFixed(1)}` +
-          `</div>`,
-        { sticky: true }
-      );
-      group.addLayer(casing);
-      group.addLayer(ribbon);
+      const flushRun = (endCh) => {
+        if (runCoords.length < 2) return;
+        const color = getSegmentColor(cfg, runVal);
+        const casing = L.polyline(runCoords, {
+          color: "#0f172a",
+          weight: isSpur ? 7.2 : 9,
+          opacity: 0.72,
+          lineCap: "round",
+          lineJoin: "round",
+        });
+        const ribbon = L.polyline(runCoords, {
+          color,
+          weight: isSpur ? 4.2 : 5.5,
+          opacity: 0.98,
+          lineCap: "round",
+          lineJoin: "round",
+        });
+        const slopeExtra =
+          cfg.id === "L3_SLOPE"
+            ? `<br/>Peak Slope in Segment: <b>${runMaxSlope.toFixed(1)}°</b>`
+            : "";
+        ribbon.bindTooltip(
+          `<div style="font-size:11px;line-height:1.35;">` +
+            `<b>${cfg.icon} L${cfg.number}: ${cfg.shortName}</b><br/>` +
+            `<span style="color:#94a3b8;">${segmentTitle}</span><br/>` +
+            `Class: <b style="color:${color};">${formatClassLabel(runVal)}</b>${slopeExtra}<br/>` +
+            `Chainage: km ${runStartCh.toFixed(1)} – ${endCh.toFixed(1)}` +
+            `</div>`,
+          { sticky: true }
+        );
+        group.addLayer(casing);
+        group.addLayer(ribbon);
+      };
+
+      for (let i = 0; i < samples.length; i++) {
+        const pt = samples[i];
+        if (typeof pt.lat !== "number" || typeof pt.lon !== "number") continue;
+        const val = pt[field] ?? "UNKNOWN";
+        const slopeVal = typeof pt.slopeDeg === "number" ? pt.slopeDeg : 0;
+
+        if (runCoords.length === 0) {
+          runCoords = [[pt.lat, pt.lon]];
+          runVal = val;
+          runStartCh = Number(pt.chKm || 0);
+          runMaxSlope = slopeVal;
+        } else if (val === runVal) {
+          runCoords.push([pt.lat, pt.lon]);
+          if (slopeVal > runMaxSlope) runMaxSlope = slopeVal;
+        } else {
+          runCoords.push([pt.lat, pt.lon]);
+          flushRun(Number(pt.chKm || runStartCh));
+          runCoords = [[pt.lat, pt.lon]];
+          runVal = val;
+          runStartCh = Number(pt.chKm || 0);
+          runMaxSlope = slopeVal;
+        }
+      }
+      if (runCoords.length >= 2) {
+        const lastCh = Number(samples[samples.length - 1]?.chKm || runStartCh);
+        flushRun(lastCh);
+      }
     };
 
-    for (let i = 0; i < profile.length; i++) {
-      const pt = profile[i];
-      if (typeof pt.lat !== "number" || typeof pt.lon !== "number") continue;
-      const val = pt[field] ?? "UNKNOWN";
-      const slopeVal = typeof pt.slopeDeg === "number" ? pt.slopeDeg : 0;
+    // Paint Mainline
+    paintSamples(profile, "Mainline Alignment", false);
 
-      if (runCoords.length === 0) {
-        runCoords = [[pt.lat, pt.lon]];
-        runVal = val;
-        runStartCh = Number(pt.chKm || 0);
-        runMaxSlope = slopeVal;
-      } else if (val === runVal) {
-        runCoords.push([pt.lat, pt.lon]);
-        if (slopeVal > runMaxSlope) runMaxSlope = slopeVal;
-      } else {
-        // Connect seamlessly to transition vertex before flushing
-        runCoords.push([pt.lat, pt.lon]);
-        flushRun(Number(pt.chKm || runStartCh));
-        runCoords = [[pt.lat, pt.lon]];
-        runVal = val;
-        runStartCh = Number(pt.chKm || 0);
-        runMaxSlope = slopeVal;
-      }
-    }
-    if (runCoords.length >= 2) {
-      const lastCh = Number(profile[profile.length - 1]?.chKm || runStartCh);
-      flushRun(lastCh);
+    // Paint Every Feeder Spur & Terminal Spur with identical 13-layer color coding
+    if (Array.isArray(spurProfiles)) {
+      spurProfiles.forEach((sp) => {
+        const label = sp?.servedHubName ? `Feeder Spur — ${sp.servedHubName}` : "Feeder Spur";
+        paintSamples(sp?.samples, label, true);
+      });
     }
   }
 
@@ -1167,6 +1245,7 @@ export default function App() {
     lensIdOverride,
     pinnedOverride,
     profileOverride,
+    spurProfilesOverride,
     shouldFitBounds = false
   ) {
     if (!mapRef.current || !routeLayersGroupRef.current) return;
@@ -1175,17 +1254,26 @@ export default function App() {
     const effectiveLens = lensIdOverride !== undefined ? lensIdOverride : activeLayerId;
     const effectivePinned = pinnedOverride !== undefined ? pinnedOverride : pinnedLayerIds;
     const effectiveProfile = profileOverride !== undefined ? profileOverride : routeLayerProfile;
+    const effectiveSpurProfiles = spurProfilesOverride !== undefined ? spurProfilesOverride : spurLayerProfiles;
 
     const allowedRoles = computeAllowedFeatureRoles(effectiveLens, effectivePinned);
     const activeLensCfg = effectiveLens ? LAYER_BY_ID[effectiveLens] : null;
     const hasColorizedRibbon = Boolean(
       activeLensCfg?.profileField && Array.isArray(effectiveProfile) && effectiveProfile.length >= 2
     );
+    const hasColorizedSpurs = Boolean(
+      activeLensCfg?.profileField && Array.isArray(effectiveSpurProfiles) && effectiveSpurProfiles.length > 0
+    );
 
     const group = routeLayersGroupRef.current;
     let boundsToFit = null;
     const currentPreset = activePresetKey || tradeOffPreset || "BALANCED";
     const mainlineColor = PRESET_DEFINITIONS[currentPreset]?.color || "#10b981";
+
+    const spurTagHtml = (props) =>
+      props?.segmentRole === "FEEDER_SPUR"
+        ? `<div style="margin-bottom:4px;font-size:10px;font-weight:700;color:#a855f7;">🟣 Feeder Spur — ${props.servedHubName || props.parentSpurId || "Hub"}</div>`
+        : "";
 
     (features || []).forEach((feature) => {
       const role = feature.properties?.featureRole || "";
@@ -1236,8 +1324,8 @@ export default function App() {
         const layer = L.geoJSON(feature, {
           style: {
             color: props.sixLaneExpansionRecommended ? "#f59e0b" : "#a855f7",
-            weight: 5,
-            opacity: 0.95,
+            weight: hasColorizedSpurs ? 2.5 : 5,
+            opacity: hasColorizedSpurs ? 0.35 : 0.95,
           },
         }).bindPopup(
           `<b>Dedicated Feeder Spur</b><br/>Connecting to: <b>${props.servedHubName || props.connectingHub || "Regional Hub"}</b><br/>Length: ${props.spurLengthKm || props.lengthKm || "—"} km<br/>Tie-In: ${props.tieInRoadRef || "Existing Road"}${reasonHtml}`
@@ -1315,7 +1403,7 @@ export default function App() {
           iconAnchor: [13, 13],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Perennial River Bridge</div><div class="popup-meta">River: ${props.riverName || "Major River"}<br/>Skew Span: ${props.estimatedSkewSpanMeters || props.effectiveSkewSpanMeters || "—"} m<br/>Crossing Angle: ${props.crossingAngleDegrees || "—"}°</div>`
+          `<div class="popup-title">Perennial River Bridge</div>${spurTagHtml(props)}<div class="popup-meta">River: ${props.riverName || "Major River"}<br/>Skew Span: ${props.estimatedSkewSpanMeters || props.effectiveSkewSpanMeters || "—"} m<br/>Crossing Angle: ${props.crossingAngleDegrees || "—"}°</div>`
         );
         group.addLayer(marker);
       }
@@ -1330,7 +1418,7 @@ export default function App() {
           iconAnchor: [13, 13],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Wildlife Migration Viaduct</div><div class="popup-meta">Corridor: ${props.corridorName || "Wildlife Corridor"}<br/>Passage Span: ${props.recommendedPassageSpanMeters || "—"} m<br/>Mitigation: ${formatClassLabel(props.mitigationStructure || "Elevated Viaduct Structure")}</div>`
+          `<div class="popup-title">Wildlife Migration Viaduct</div>${spurTagHtml(props)}<div class="popup-meta">Corridor: ${props.corridorName || "Wildlife Corridor"}<br/>Passage Span: ${props.recommendedPassageSpanMeters || "—"} m<br/>Mitigation: ${formatClassLabel(props.mitigationStructure || "Elevated Viaduct Structure")}</div>`
         );
         group.addLayer(marker);
       }
@@ -1388,6 +1476,7 @@ export default function App() {
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
           `<div class="popup-title">${isRail ? "Railway Over Bridge (ROB)" : "Elevated Road Bridge / Overpass"}</div>` +
+            spurTagHtml(props) +
             `<div class="popup-meta">` +
             `<b>Crossed Infrastructure:</b> ${props.crossedCorridorRef || props.crossedCorridorName || "Existing Road"}<br/>` +
             `<b>Category:</b> ${(props.crossedCategory || "HIGHWAY").replace(/_/g, " ")}<br/>` +
@@ -1423,7 +1512,7 @@ export default function App() {
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Canal Aqueduct / Cross-Drainage Structure</div><div class="popup-meta">Target: ${props.targetFeatureName || "Drainage Channel"}<br/>Type: ${formatClassLabel(props.structureType || "Box Culvert")}<br/>Span: ${props.recommendedClearSpanOrWidthMeters || "—"} m<br/>Discharge: ${props.designDischargeM3PerSec || "—"} m³/s</div>`
+          `<div class="popup-title">Canal Aqueduct / Cross-Drainage Structure</div>${spurTagHtml(props)}<div class="popup-meta">Target: ${props.targetFeatureName || "Drainage Channel"}<br/>Type: ${formatClassLabel(props.structureType || "Box Culvert")}<br/>Span: ${props.recommendedClearSpanOrWidthMeters || "—"} m<br/>Discharge: ${props.designDischargeM3PerSec || "—"} m³/s</div>`
         );
         group.addLayer(marker);
       }
@@ -1524,7 +1613,7 @@ export default function App() {
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">🪨 Geotechnical Stabilization Zone</div><div class="popup-meta">` +
+          `<div class="popup-title">🪨 Geotechnical Stabilization Zone</div>${spurTagHtml(props)}<div class="popup-meta">` +
             `<b>Hazard Feature:</b> ${props.name || props.featureName || "Geological Lineament / Scarp"}<br/>` +
             `<b>Treatment:</b> ${formatClassLabel(props.mitigationStructure || props.recommendedEngineeringMitigation || "Anchored Retaining Wall")}<br/>` +
             `<b>Stabilization Length:</b> ${props.recommendedStabilizationLengthMeters ?? "—"} m<br/>` +
@@ -1543,7 +1632,7 @@ export default function App() {
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">⚡ High-Voltage Utility Crossing Protection</div><div class="popup-meta">` +
+          `<div class="popup-title">⚡ High-Voltage Utility Crossing Protection</div>${spurTagHtml(props)}<div class="popup-meta">` +
             `<b>Transmission Line:</b> ${props.lineName || props.name || "EHV Line"}<br/>` +
             `<b>Voltage Tier:</b> ${formatClassLabel(props.utilityTier || props.tier || "EHV")}<br/>` +
             `<b>Protection Spec:</b> ${formatClassLabel(props.protectionType || props.recommendedProtection || "Guard Cradle & Tower Extension")}<br/>` +
@@ -1572,8 +1661,8 @@ export default function App() {
       }
     });
 
-    // Paint Colorized Route Ribbon on top when a raster lens is active
-    renderColorizedRouteRibbon(effectiveProfile, effectiveLens);
+    // Paint Colorized Route Ribbon on top (Mainline + Feeder/Terminal Spurs) when a raster lens is active
+    renderColorizedRouteRibbon(effectiveProfile, effectiveSpurProfiles, effectiveLens);
 
     if (shouldFitBounds && boundsToFit && boundsToFit.isValid()) {
       mapRef.current.fitBounds(boundsToFit, { padding: [40, 40], maxZoom: 14 });
@@ -1588,8 +1677,8 @@ export default function App() {
       colorizedRouteGroupRef.current?.clearLayers();
       return;
     }
-    renderGeoJsonFeatures(currentFeatures, tradeOffPreset, activeLayerId, pinnedLayerIds, routeLayerProfile, false);
-  }, [currentFeatures, routeLayerProfile, activeLayerId, pinnedLayerIds, tradeOffPreset]);
+    renderGeoJsonFeatures(currentFeatures, tradeOffPreset, activeLayerId, pinnedLayerIds, routeLayerProfile, spurLayerProfiles, false);
+  }, [currentFeatures, routeLayerProfile, spurLayerProfiles, activeLayerId, pinnedLayerIds, tradeOffPreset]);
 
   // -----------------------------------------------------------
   // 13-Layer Lens, Pin, Basemap Reset & Fly-To Handlers
@@ -1648,17 +1737,42 @@ export default function App() {
     }
   }
 
+  function handleInspectLayerFromDossier(layerId) {
+    setRightDrawerOpen(true);
+    handleSelectLayer(layerId);
+    if (mapStudioRef.current) {
+      mapStudioRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function handleLocateFromDossier(lat, lng, label) {
+    if (mapStudioRef.current) {
+      mapStudioRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setTimeout(() => {
+      handleFocusFeature(lat, lng, label);
+    }, 320);
+  }
+
+  function scrollToDossier() {
+    if (dossierRef.current) {
+      dossierRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  const activeLayerCfg = activeLayerId ? LAYER_BY_ID[activeLayerId] : null;
+
   return (
-    <div className="app-container">
+    <div className="app-shell">
       {/* =======================================================
-          TOP NAVBAR
+          SLIM LUXURY PORCELAIN HEADER
           ======================================================= */}
       <header className="navbar">
         <div className="nav-brand">
           <div className="brand-badge">MARG</div>
           <div className="nav-title">
-            <h1>Multi-Objective AI for Responsible Geospatial Highway Planning</h1>
-            <span>Ministry of Road Transport & Highways (MoRTH) / IRC Engineering Prototype</span>
+            <h1>MARG Corridor Studio</h1>
+            <span>Multi-Objective AI for Responsible Geospatial Highway Planning · MoRTH / IRC</span>
           </div>
         </div>
 
@@ -1670,6 +1784,7 @@ export default function App() {
               const p = PRESET_CORRIDORS.find((x) => x.id === e.target.value);
               if (p) applyPreset(p);
             }}
+            aria-label="Quick Select Benchmark Corridor"
           >
             <option value="custom">Custom Pan-India Coordinates</option>
             {PRESET_CORRIDORS.map((p) => (
@@ -1679,1562 +1794,175 @@ export default function App() {
             ))}
           </select>
 
-          <div className="badge-pill" style={{ background: "rgba(147, 51, 234, 0.15)", borderColor: "rgba(147, 51, 234, 0.4)" }}>
-            <span style={{ color: "#c084fc", fontWeight: "600" }}>900+ Administrative Entities Indexed</span>
+          <div className="badge-pill badge-pill-subtle">
+            <span>900+ Districts Indexed</span>
           </div>
 
-          <div className="badge-pill">
-            <div className="status-dot" />
+          <div className="badge-pill badge-pill-ready">
+            <span className="status-dot" />
             <span>2-Tier Engine Ready</span>
           </div>
+
+          {routeInfo && (
+            <button
+              type="button"
+              className="nav-dossier-btn"
+              onClick={scrollToDossier}
+              title="Jump down to the 6-Chapter Engineering Dossier"
+            >
+              <span>Engineering Dossier</span>
+              <span aria-hidden="true">↓</span>
+            </button>
+          )}
         </div>
       </header>
 
       {/* =======================================================
-          MAIN WORKSPACE
+          ABOVE-THE-FOLD HERO MAP STUDIO (LEFT DRAWER · MAP · RIGHT DRAWER)
           ======================================================= */}
-      <div className="main-layout">
-        {/* SIDEBAR CONTROLS */}
-        <aside className="sidebar">
-          {/* Section 1: Presets & Benchmark Corridors */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Benchmark Corridors & Modes</span>
-            </div>
-
-            <div className="presets-grid">
-              {PRESET_CORRIDORS.map((preset) => (
-                <button
-                  key={preset.id}
-                  className={`preset-chip ${selectedPresetId === preset.id ? "active" : ""}`}
-                  onClick={() => applyPreset(preset)}
-                >
-                  <strong>{preset.name.split(":")[0]}</strong>
-                  <br />
-                  <span>{preset.tag}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Facility Mode Buttons */}
-            <div className="facility-selector">
-              {["EXPRESSWAY", "NATIONAL_HIGHWAY", "STATE_HIGHWAY"].map((mode) => (
-                <button
-                  key={mode}
-                  className={`facility-btn ${facilityMode === mode ? "active" : ""}`}
-                  onClick={() => setFacilityMode(mode)}
-                >
-                  {mode === "EXPRESSWAY" ? "Expressway" : mode === "NATIONAL_HIGHWAY" ? "NH Trunk" : "State Hwy"}
-                </button>
-              ))}
-            </div>
-
-            {/* Deep 13-Layer On-Demand Toggle */}
-            <div className="toggle-row">
-              <div className="toggle-label">
-                <strong>Deep 13-Layer On-Demand Ingestion</strong>
-                <span>Synthesize rasters for arbitrary coordinates (deep=true)</span>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={deepIngestion}
-                  onChange={(e) => setDeepIngestion(e.target.checked)}
-                />
-                <span className="slider" />
-              </label>
-            </div>
-          </div>
-
-          {/* Section 2: Highway Design & Connectivity Controls */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Design Requirements & Controls</span>
-            </div>
-
-            {/* Auto-Connect Intermediate Hubs Feature Toggle */}
-            <div className="toggle-row" style={{ marginBottom: "10px" }}>
-              <div className="toggle-label">
-                <strong>🤖 Auto-Connect Intermediate Hubs</strong>
-                <span>Autonomously connect prominent cities along corridor</span>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={autoConnectHubs}
-                  onChange={(e) => setAutoConnectHubs(e.target.checked)}
-                />
-                <span className="slider" />
-              </label>
-            </div>
-
-            {/* City Count Number Selector (when Auto-Connect is ON) */}
-            {autoConnectHubs ? (
-              <div className="auto-hubs-count-card" style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-                padding: "10px 14px",
-                marginBottom: "12px"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                  <div style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-main)" }}>
-                    Number of Cities to Connect:
-                  </div>
-                  <span style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    color: "var(--primary)",
-                    background: "rgba(59, 130, 246, 0.15)",
-                    padding: "2px 8px",
-                    borderRadius: "12px"
-                  }}>
-                    {maxAutoHubs} {maxAutoHubs === 1 ? "City" : "Cities"}
-                  </span>
-                </div>
-                
-                {/* Number Buttons: 1, 2, 3, 4, 5 */}
-                <div style={{ display: "flex", gap: "6px" }}>
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <button
-                      key={num}
-                      type="button"
-                      className={`num-hub-btn ${maxAutoHubs === num ? "active" : ""}`}
-                      onClick={() => setMaxAutoHubs(num)}
-                      style={{
-                        flex: 1,
-                        padding: "7px 0",
-                        fontSize: "12px",
-                        fontWeight: maxAutoHubs === num ? "700" : "500",
-                        borderRadius: "6px",
-                        border: maxAutoHubs === num ? "1px solid var(--primary)" : "1px solid var(--border)",
-                        background: maxAutoHubs === num ? "var(--primary)" : "var(--bg-input)",
-                        color: maxAutoHubs === num ? "#fff" : "var(--text-main)",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease"
-                      }}
-                      title={`Connect up to ${num} cities autonomously`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "6px" }}>
-                  Auto-selects up to {maxAutoHubs} cities via Highway Value Index (HVI) & IRC:SP:84 spacing.
-                </div>
-              </div>
-            ) : (
-              <div style={{
-                background: "rgba(100, 116, 139, 0.08)",
-                border: "1px dashed var(--border)",
-                borderRadius: "8px",
-                padding: "8px 12px",
-                marginBottom: "12px",
-                fontSize: "11px",
-                color: "var(--text-muted)"
-              }}>
-                ℹ️ Auto-connect is turned off. The alignment will only connect to user-specified cities below.
-              </div>
-            )}
-
-            {/* 1. Intermediate Cities & Feeder Spurs (targetHubs) */}
-            <div className="hubs-box">
-              <div className="hubs-header">
-                <div>
-                  <span className="hubs-title">🏙️ User-Specified Cities & Tehsils</span>
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
-                    Explicitly specify cities or mandis to connect (always prioritized)
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className={`pick-map-btn ${mapSelectionMode === "hub" ? "active" : ""}`}
-                  onClick={() => {
-                    const next = mapSelectionMode === "hub" ? null : "hub";
-                    mapSelectionModeRef.current = next;
-                    setMapSelectionMode(next);
-                    if (next) setStatus("Click anywhere on the map to add an intermediate city/hub.");
-                  }}
-                >
-                  {mapSelectionMode === "hub" ? "Cancel Pick" : "Pick on Map"}
-                </button>
-              </div>
-
-              {/* Input Row with All-India District Autocomplete */}
-              <div className="district-autocomplete-container">
-                <div className="hubs-input-row">
-                  <input
-                    type="text"
-                    placeholder="Search any Indian district or town (e.g. Satara, Barabanki)..."
-                    value={customHubInput}
-                    onChange={(e) => setCustomHubInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && customHubInput.trim()) {
-                        e.preventDefault();
-                        const val = customHubInput.trim();
-                        if (!targetHubs.includes(val)) {
-                          setTargetHubs([...targetHubs, val]);
-                        }
-                        setCustomHubInput("");
-                        setDistrictSuggestions([]);
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="hubs-add-btn"
-                    onClick={() => {
-                      if (customHubInput.trim()) {
-                        const val = customHubInput.trim();
-                        if (!targetHubs.includes(val)) {
-                          setTargetHubs([...targetHubs, val]);
-                        }
-                        setCustomHubInput("");
-                        setDistrictSuggestions([]);
-                      }
-                    }}
-                  >
-                    + Add
-                  </button>
-                </div>
-
-                {districtSuggestions.length > 0 && (
-                  <div className="district-autocomplete-dropdown">
-                    {districtSuggestions.map((d) => {
-                      const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION" || d.adminLevel === "TALUK" || d.adminLevel === "MANDAL";
-                      const badgeClass = (d.adminLevel || "district").toLowerCase();
-                      const val = isSub
-                        ? `${d.name} (${d.parentDistrict} - ${d.stateCode})`
-                        : `${d.name} (${d.stateCode})`;
-                      return (
-                        <div
-                          key={d.id}
-                          className="district-autocomplete-item"
-                          onClick={() => {
-                            if (!targetHubs.includes(val)) {
-                              setTargetHubs([...targetHubs, val]);
-                            }
-                            setCustomHubInput("");
-                            setDistrictSuggestions([]);
-                            if (mapRef.current) {
-                              mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
-                            }
-                          }}
-                        >
-                          <div className="district-item-main">
-                            <strong>{d.name}</strong>
-                            <span className={`admin-level-badge ${badgeClass}`}>
-                              {d.adminLevel || "DISTRICT"}
-                            </span>
-                            <span className="district-state-badge">{d.stateCode}</span>
-                          </div>
-                          <div className="district-item-sub">
-                            {isSub
-                              ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District • ${d.state}`
-                              : `District HQ: ${d.headquarters || d.name} • ${d.state}`}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Selected Hubs Tags */}
-              {targetHubs.length > 0 && (
-                <div className="hubs-selected-list">
-                  {targetHubs.map((hub) => (
-                    <span key={hub} className="hub-selected-tag">
-                      <span>{hub}</span>
-                      <button
-                        type="button"
-                        className="hub-remove-btn"
-                        onClick={() => setTargetHubs(targetHubs.filter((h) => h !== hub))}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Preset Suggested Hubs Chips */}
-              {(() => {
-                const activePreset = PRESET_CORRIDORS.find((p) => p.id === selectedPresetId);
-                const suggestions = activePreset?.suggestedHubs || [];
-                if (suggestions.length === 0) return null;
-                return (
-                  <div>
-                    <div className="hubs-suggestions-label">Suggested Regional Hubs:</div>
-                    <div className="hubs-suggestions">
-                      {suggestions.map((hubName) => {
-                        const isSelected = targetHubs.includes(hubName);
-                        return (
-                          <button
-                            key={hubName}
-                            type="button"
-                            className={`hub-suggest-chip ${isSelected ? "active" : ""}`}
-                            onClick={() => {
-                              if (isSelected) {
-                                setTargetHubs(targetHubs.filter((h) => h !== hubName));
-                              } else {
-                                setTargetHubs([...targetHubs, hubName]);
-                              }
-                            }}
-                          >
-                            {isSelected ? `✓ ${hubName}` : `+ ${hubName}`}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* 2. Level of Service (Target V/C Ratio Toggle) */}
-            <div style={{ marginBottom: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-main)", marginBottom: "6px" }}>
-                Traffic Level of Service (Target V/C Ratio)
-              </div>
-              <div className="los-selector">
-                <button
-                  type="button"
-                  className={`los-btn ${maxVcRatio === 0.70 ? "active" : ""}`}
-                  onClick={() => setMaxVcRatio(0.70)}
-                >
-                  <strong>Free-Flow (V/C ≤ 0.70)</strong>
-                  <span>High capacity & speed buffer (LOS B)</span>
-                </button>
-                <button
-                  type="button"
-                  className={`los-btn ${maxVcRatio === 0.85 ? "active" : ""}`}
-                  onClick={() => setMaxVcRatio(0.85)}
-                >
-                  <strong>Economical (V/C ≤ 0.85)</strong>
-                  <span>Max hub intake before bottleneck (LOS C)</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 3. Max Alignment Deviation Slider */}
-            <div className="deviation-box">
-              <div className="deviation-header">
-                <span className="deviation-title">Max Alignment Deviation</span>
-                <span className="deviation-badge">{maxDeviationPercent}%</span>
-              </div>
-              <input
-                type="range"
-                className="deviation-slider"
-                min="10"
-                max="30"
-                step="1"
-                value={maxDeviationPercent}
-                onChange={(e) => setMaxDeviationPercent(Number(e.target.value))}
-              />
-              <div className="deviation-scale">
-                <span>10% (Direct/Tight)</span>
-                <span>20% (Standard)</span>
-                <span>30% (Wide Terrain Search)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Endpoint Coordinates */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Corridor Endpoints</span>
-            </div>
-
-            {/* Origin (Start) */}
-            <div className="coord-box">
-              <div className="coord-header">
-                <span className="coord-title start">📍 Origin Point (A)</span>
-                <button
-                  className={`pick-map-btn ${mapSelectionMode === "start" ? "active" : ""}`}
-                  onClick={() => {
-                    const next = mapSelectionMode === "start" ? null : "start";
-                    mapSelectionModeRef.current = next;
-                    setMapSelectionMode(next);
-                    if (next) setStatus("Click anywhere on the map to set Origin.");
-                  }}
-                >
-                  {mapSelectionMode === "start" ? "Cancel Click" : "Pick on Map"}
-                </button>
-              </div>
-
-              {/* District Quick Search for Origin */}
-              <div className="district-autocomplete-container" style={{ marginBottom: "6px" }}>
-                <input
-                  type="text"
-                  className="district-quick-input"
-                  placeholder="🔍 Quick Find Origin District (e.g. Pune, Lucknow)..."
-                  value={startDistrictQuery}
-                  onChange={(e) => setStartDistrictQuery(e.target.value)}
-                />
-                {startDistrictSuggestions.length > 0 && (
-                  <div className="district-autocomplete-dropdown">
-                    {startDistrictSuggestions.map((d) => {
-                      const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
-                      const badgeClass = (d.adminLevel || "district").toLowerCase();
-                      return (
-                        <div
-                          key={d.id}
-                          className="district-autocomplete-item"
-                          onClick={() => {
-                            setStart({ lat: d.lat, lng: d.lon });
-                            setSelectedPresetId("custom");
-                            setStartDistrictQuery("");
-                            setStartDistrictSuggestions([]);
-                            if (mapRef.current) {
-                              mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
-                            }
-                          }}
-                        >
-                          <div className="district-item-main">
-                            <strong>{d.name}</strong>
-                            <span className={`admin-level-badge ${badgeClass}`}>
-                              {d.adminLevel || "DISTRICT"}
-                            </span>
-                            <span className="district-state-badge">{d.stateCode}</span>
-                          </div>
-                          <div className="district-item-sub">
-                            {isSub
-                              ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District • ${d.state}`
-                              : `District HQ: ${d.headquarters || d.name} • ${d.state}`}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className="coord-grid">
-                <div className="input-group">
-                  <label>Latitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={start.lat}
-                    onChange={(e) => {
-                      setStart((s) => ({ ...s, lat: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Longitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={start.lng}
-                    onChange={(e) => {
-                      setStart((s) => ({ ...s, lng: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Destination (End) */}
-            <div className="coord-box">
-              <div className="coord-header">
-                <span className="coord-title end">🏁 Destination Point (B)</span>
-                <button
-                  className={`pick-map-btn ${mapSelectionMode === "end" ? "active" : ""}`}
-                  onClick={() => {
-                    const next = mapSelectionMode === "end" ? null : "end";
-                    mapSelectionModeRef.current = next;
-                    setMapSelectionMode(next);
-                    if (next) setStatus("Click anywhere on the map to set Destination.");
-                  }}
-                >
-                  {mapSelectionMode === "end" ? "Cancel Click" : "Pick on Map"}
-                </button>
-              </div>
-
-              {/* District Quick Search for Destination */}
-              <div className="district-autocomplete-container" style={{ marginBottom: "6px" }}>
-                <input
-                  type="text"
-                  className="district-quick-input"
-                  placeholder="🔍 Quick Find Goal District (e.g. Satara, Varanasi)..."
-                  value={endDistrictQuery}
-                  onChange={(e) => setEndDistrictQuery(e.target.value)}
-                />
-                {endDistrictSuggestions.length > 0 && (
-                  <div className="district-autocomplete-dropdown">
-                    {endDistrictSuggestions.map((d) => {
-                      const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
-                      const badgeClass = (d.adminLevel || "district").toLowerCase();
-                      return (
-                        <div
-                          key={d.id}
-                          className="district-autocomplete-item"
-                          onClick={() => {
-                            setEnd({ lat: d.lat, lng: d.lon });
-                            setSelectedPresetId("custom");
-                            setEndDistrictQuery("");
-                            setEndDistrictSuggestions([]);
-                            if (mapRef.current) {
-                              mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
-                            }
-                          }}
-                        >
-                          <div className="district-item-main">
-                            <strong>{d.name}</strong>
-                            <span className={`admin-level-badge ${badgeClass}`}>
-                              {d.adminLevel || "DISTRICT"}
-                            </span>
-                            <span className="district-state-badge">{d.stateCode}</span>
-                          </div>
-                          <div className="district-item-sub">
-                            {isSub
-                              ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District • ${d.state}`
-                              : `District HQ: ${d.headquarters || d.name} • ${d.state}`}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className="coord-grid">
-                <div className="input-group">
-                  <label>Latitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={end.lat}
-                    onChange={(e) => {
-                      setEnd((s) => ({ ...s, lat: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Longitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={end.lng}
-                    onChange={(e) => {
-                      setEnd((s) => ({ ...s, lng: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Run Button */}
-            <button className="generate-btn" onClick={generateRoute} disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <div className="spinner" />
-                  <span>Computing Multi-Objective Alignment...</span>
-                </>
-              ) : (
-                <>
-                  <span>🚀</span>
-                  <span>Generate MARG Alignment</span>
-                </>
-              )}
+      <section ref={mapStudioRef} className="map-studio-stage" aria-label="Interactive Corridor Map Studio">
+        {/* LEFT COLLAPSIBLE DRAWER: CORRIDOR PLANNER (INPUTS ONLY) */}
+        <aside className={`studio-drawer left-drawer ${leftDrawerOpen ? "open" : "collapsed"}`}>
+          {!leftDrawerOpen ? (
+            <button
+              type="button"
+              className="drawer-collapsed-rail"
+              onClick={() => setLeftDrawerOpen(true)}
+              title="Open Corridor Planner Drawer"
+            >
+              <span className="rail-chevron">»</span>
+              <span className="rail-label">Corridor Planner</span>
             </button>
-
-            {/* Status Text */}
-            <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "8px", textAlign: "center" }}>
-              {status}
-            </div>
-
-            {/* Routing Error Alert */}
-            {routingError && (
-              <div className="error-card">
-                <div className="error-card-title">⚠️ {routingError.title}</div>
-                <div className="error-card-message">{routingError.message}</div>
-              </div>
-            )}
-
-            {/* SMART ENDPOINT AUTO-SHIFT ALERT NOTIFICATION */}
-            {snapNotice && (
-              <div className="snap-alert-card">
-                <div className="snap-alert-header">
-                  <span>⚠️</span>
-                  <span>Endpoint Auto-Adjustment Applied</span>
+          ) : (
+            <div className="drawer-inner">
+              <div className="drawer-topbar">
+                <div>
+                  <span className="drawer-eyebrow">STUDIO INPUTS</span>
+                  <h2 className="drawer-title">Corridor Planner</h2>
                 </div>
-
-                {snapNotice.start && (
-                  <div className="snap-item">
-                    <div className="snap-item-title">
-                      <span style={{ color: "var(--emerald)" }}>Origin Point Auto-Shifted</span>
-                      <span className="snap-badge">+{snapNotice.start.distanceMeters}m</span>
-                    </div>
-                    <div className="snap-reason">
-                      <strong>Obstacle:</strong> {snapNotice.start.reason}
-                    </div>
-                    <div className="snap-coords-compare">
-                      <div>Requested: <del>{snapNotice.start.requested.lat}, {snapNotice.start.requested.lng}</del></div>
-                      <div>Feasible: <ins>{snapNotice.start.resolved.lat}, {snapNotice.start.resolved.lng}</ins></div>
-                    </div>
-                  </div>
-                )}
-
-                {snapNotice.end && (
-                  <div className="snap-item">
-                    <div className="snap-item-title">
-                      <span style={{ color: "var(--rose)" }}>Destination Point Auto-Shifted</span>
-                      <span className="snap-badge">+{snapNotice.end.distanceMeters}m</span>
-                    </div>
-                    <div className="snap-reason">
-                      <strong>Obstacle:</strong> {snapNotice.end.reason}
-                    </div>
-                    <div className="snap-coords-compare">
-                      <div>Requested: <del>{snapNotice.end.requested.lat}, {snapNotice.end.requested.lng}</del></div>
-                      <div>Feasible: <ins>{snapNotice.end.resolved.lat}, {snapNotice.end.resolved.lng}</ins></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Section 3: 13-Layer Verification & Interactive Map Lenses */}
-          <LayerAuditPanel
-            layerAudit={layerAudit}
-            routeLayerProfile={routeLayerProfile}
-            allFeatures={currentFeatures}
-            activeLayerId={activeLayerId}
-            pinnedLayerIds={pinnedLayerIds}
-            onSelectLayer={handleSelectLayer}
-            onTogglePinLayer={handleTogglePinLayer}
-            onClearToOverview={handleClearToOverview}
-            onFocusFeature={handleFocusFeature}
-            showMultiArchetypes={showMultiArchetypes}
-            onToggleMultiArchetypes={() => setShowMultiArchetypes((v) => !v)}
-            cachedArchetypesCount={Object.keys(cachedArchetypes).length}
-          />
-
-          {/* Section 4: Route Metrics & Engineering Plan */}
-          {routeInfo && (
-            <div className="sidebar-section">
-              <div className="section-header">
-                <span className="section-title">Geometric & Feasibility Metrics</span>
-              </div>
-
-              {/* ============================================================ */}
-              {/* 🚨 STATUTORY NBWL & FOREST CLEARANCE ALERT (MANDATORY)       */}
-              {/* ============================================================ */}
-              {statutoryClearanceReport?.hasSanctuaryIntersection && (
-                <div className="statutory-clearance-card">
-                  <div className="statutory-badge-banner">
-                    <span className="statutory-badge-pill">
-                      <span>🚨</span>
-                      <span>Mandatory Statutory NBWL & Forest Clearance</span>
-                    </span>
-                    <span style={{ fontSize: "11px", color: "#fca5a5", fontWeight: 700 }}>
-                      WPA 1972 §29/35
-                    </span>
-                  </div>
-
-                  <div className="statutory-headline">
-                    🚨 {statutoryClearanceReport.legalConsequenceHeadline || "MANDATORY STATUTORY CLEARANCE: Alignment intersects notified Sanctuary"}
-                  </div>
-
-                  <div className="statutory-statute-citation">
-                    📜 {statutoryClearanceReport.legalStatuteCitation || "Wildlife (Protection) Act, 1972 (Section 29/35) & Van (Sanrakshan Evam Samvardhan) Adhiniyam, 2023"}
-                  </div>
-
-                  <div className="statutory-impact-metrics">
-                    <div className="statutory-metric-box">
-                      <div className="statutory-metric-label">Sanctuary Core Length</div>
-                      <div className="statutory-metric-val">{statutoryClearanceReport.totalSanctuaryLengthKm} km</div>
-                    </div>
-                    <div className="statutory-metric-box">
-                      <div className="statutory-metric-label">Direct Forest Area Diverted</div>
-                      <div className="statutory-metric-val">{statutoryClearanceReport.directSanctuaryForestTakeHectares} ha</div>
-                    </div>
-                    <div className="statutory-metric-box">
-                      <div className="statutory-metric-label">Sanctuaries Affected</div>
-                      <div className="statutory-metric-val">{statutoryClearanceReport.traversedSanctuaryNames?.length || 1}</div>
-                    </div>
-                  </div>
-
-                  {/* Sanctuary Crossing Details */}
-                  {statutoryClearanceReport.sanctuaryCrossings && statutoryClearanceReport.sanctuaryCrossings.length > 0 && (
-                    <div className="statutory-crossings-list">
-                      <div className="statutory-crossings-title">
-                        <span>🐾</span>
-                        <span>Traversed Protected Entities & Direct Environmental Take:</span>
-                      </div>
-                      {statutoryClearanceReport.sanctuaryCrossings.map((sc, idx) => (
-                        <div key={idx} className="statutory-crossing-item">
-                          <div>
-                            <strong style={{ color: "#ffffff" }}>{sc.sanctuaryName}</strong> ({sc.state} — {sc.district})
-                          </div>
-                          <div style={{ fontSize: "10px", color: "#fca5a5", marginTop: "2px" }}>
-                            Chainage: km {sc.startKm} to {sc.endKm} ({sc.crossingLengthKm} km core traversal) • <b>Direct Forest Take:</b> {sc.directForestTakeHectares} ha
-                          </div>
-                          <div style={{ fontSize: "9.5px", color: "#fecaca", marginTop: "2px" }}>
-                            <b>Target Species:</b> {sc.keySpecies}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* 6-Point Statutory Checklist */}
-                  {statutoryClearanceReport.mandatoryClearancesChecklist && (
-                    <div className="statutory-checklist-box">
-                      <div className="statutory-checklist-title">
-                        <span>📋</span>
-                        <span>Mandatory Statutory Clearances Checklist Before Construction:</span>
-                      </div>
-                      {statutoryClearanceReport.mandatoryClearancesChecklist.map((step, idx) => (
-                        <div key={idx} className="statutory-checklist-item">
-                          <span style={{ color: "#f87171", fontWeight: 800 }}>⚠️</span>
-                          <span>{step}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Direct Statutory Clearance Portal Links */}
-                  <div className="statutory-actions-row">
-                    <a
-                      href={statutoryClearanceReport.pariveshPortalUrl || "https://parivesh.nic.in/"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="statutory-action-btn"
-                    >
-                      <span>🌐</span>
-                      <span>MoEFCC PARIVESH 2.0 Portal</span>
-                    </a>
-                    <a
-                      href={statutoryClearanceReport.nbwlGuidanceUrl || "https://cpc.parivesh.nic.in/writereaddata/Final_Guidelines_NBWL_recomme_for_PA.pdf"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="statutory-action-btn secondary"
-                    >
-                      <span>📄</span>
-                      <span>NBWL PA Guidelines</span>
-                    </a>
-                  </div>
-                </div>
-              )}
-
-              {/* Affirmative Statutory Compliance Banner when 100% bypass achieved */}
-              {statutoryClearanceReport && !statutoryClearanceReport.hasSanctuaryIntersection && (
-                <div className="statutory-compliance-chip">
-                  <span className="compliance-icon">🛡️</span>
-                  <div>
-                    <div className="compliance-title">100% Statutory Wildlife Compliance</div>
-                    <div className="compliance-sub">
-                      Zero encroachment on notified Wildlife Sanctuaries or National Parks (Wildlife Protection Act, 1972)
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="metrics-summary-grid">
-                <div className="metric-stat-box">
-                  <div className="stat-label">Mainline</div>
-                  <div className="stat-value highlight">{routeInfo.routeLengthKm} km</div>
-                </div>
-                <div className="metric-stat-box">
-                  <div className="stat-label">Baseline</div>
-                  <div className="stat-value">{routeInfo.baselineLengthKm} km</div>
-                </div>
-                <div className="metric-stat-box">
-                  <div className="stat-label">Deviation</div>
-                  <div className="stat-value good">+{routeInfo.deviationPercent}%</div>
-                </div>
-              </div>
-
-              {/* ============================================================ */}
-              {/* 🌟 SPECIFIC ROUTE IMPROVEMENTS & QUANTIFIABLE VALUE CARD */}
-              {/* ============================================================ */}
-              {tradeOffProfile?.routeImprovements && (
-                <div
-                  className="route-improvement-card"
-                  style={{
-                    borderLeft: `4px solid ${PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)"}`,
-                  }}
+                <button
+                  type="button"
+                  className="drawer-toggle-btn"
+                  onClick={() => setLeftDrawerOpen(false)}
+                  title="Collapse Corridor Planner to widen the map"
+                  aria-label="Collapse Corridor Planner"
                 >
-                  <div className="route-improvement-header">
-                    <div className="route-improvement-title">
-                      <span style={{ fontSize: "16px" }}>🌟</span>
-                      <div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <span style={{ fontWeight: 800, fontSize: "12px", color: "var(--text-main)" }}>
-                            Specific Route Improvements & Value
-                          </span>
-                          <span
-                            className="archetype-badge-pill"
-                            style={{
-                              backgroundColor: `${PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)"}22`,
-                              color: PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)",
-                              borderColor: PRESET_DEFINITIONS[tradeOffPreset]?.color || "var(--primary)",
-                            }}
-                          >
-                            {PRESET_DEFINITIONS[tradeOffPreset]?.label || tradeOffPreset}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                          IRC:SP:30 & MoRTH Quantitative Design Valuation
-                        </div>
-                      </div>
-                    </div>
+                  «
+                </button>
+              </div>
+
+              <div className="drawer-scroll-body">
+                {/* Group 1: Benchmark Corridors & Facility Mode */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Benchmark Corridors</span>
                   </div>
 
-                  {/* Prominent Headline Callout */}
-                  <div className="improvement-headline-banner">
-                    <span className="headline-icon">⚡</span>
-                    <span className="headline-text">
-                      {tradeOffProfile.routeImprovements.headline}
-                    </span>
-                  </div>
-
-                  {/* Quantified Benefit Badges Grid (4 Cards) */}
-                  {tradeOffProfile.routeImprovements.quantifiedBenefits && (
-                    <div className="benefit-badges-grid">
-                      {tradeOffProfile.routeImprovements.quantifiedBenefits.map((b, idx) => (
-                        <div key={idx} className="benefit-badge-item" style={{ "--badge-accent": b.color }}>
-                          <div className="badge-item-top">
-                            <span className="badge-item-label">{b.label}</span>
-                          </div>
-                          <div className="badge-item-val" style={{ color: b.color }}>
-                            {b.value}
-                          </div>
-                          <div className="badge-item-detail">{b.detail}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Live Comparative Delta vs Balanced Corridor (when active is not Balanced) */}
-                  {comparativeDeltasVsBalanced && (
-                    <div className="live-deltas-container">
-                      <div className="live-deltas-title">
-                        <span>📊 Live Comparison vs Balanced Alignment:</span>
-                      </div>
-                      <div className="live-deltas-pills">
-                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaKm < 0 ? "gain" : "concession"}`}>
-                          📏 {comparativeDeltasVsBalanced.deltaKm < 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaKm)} km shorter` : `+${comparativeDeltasVsBalanced.deltaKm} km detour`}
-                        </span>
-                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaMins < 0 ? "gain" : "concession"}`}>
-                          ⏱️ {comparativeDeltasVsBalanced.deltaMins < 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaMins)} mins faster` : `+${comparativeDeltasVsBalanced.deltaMins} mins extra`}
-                        </span>
-                        {comparativeDeltasVsBalanced.deltaVocLakh !== 0 && (
-                          <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaVocLakh > 0 ? "gain" : "concession"}`}>
-                            💰 {comparativeDeltasVsBalanced.deltaVocLakh > 0 ? `+₹${comparativeDeltasVsBalanced.deltaVocLakh} L/yr VOC saved` : `₹${Math.abs(comparativeDeltasVsBalanced.deltaVocLakh)} L/yr higher VOC`}
-                          </span>
-                        )}
-                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaForestHa <= 0 ? "gain" : "concession"}`}>
-                          🌿 {comparativeDeltasVsBalanced.deltaForestHa <= 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaForestHa)} ha forest spared` : `+${comparativeDeltasVsBalanced.deltaForestHa} ha forest take`}
-                        </span>
-                        <span className={`delta-pill ${comparativeDeltasVsBalanced.deltaDisplaced <= 0 ? "gain" : "concession"}`}>
-                          🏡 {comparativeDeltasVsBalanced.deltaDisplaced <= 0 ? `${Math.abs(comparativeDeltasVsBalanced.deltaDisplaced)} residents spared` : `+${comparativeDeltasVsBalanced.deltaDisplaced} displaced`}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Engineering Rationale & Trade-Off Transparency */}
-                  <div className="improvement-engineering-box">
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong style={{ color: "var(--accent)" }}>🎯 Engineering Advantage: </strong>
-                      <span style={{ color: "var(--text-main)" }}>{tradeOffProfile.routeImprovements.engineeringAdvantage}</span>
-                    </div>
-                    <div>
-                      <strong style={{ color: "var(--amber)" }}>⚖️ Trade-Off Accepted: </strong>
-                      <span style={{ color: "var(--text-dim)" }}>{tradeOffProfile.routeImprovements.tradeOffAccepted}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ============================================================ */}
-              {/* ⚖️ MULTI-OBJECTIVE TRADE-OFFS & ALIGNMENT TUNING DASHBOARD */}
-              {/* ============================================================ */}
-              {tradeOffProfile && (
-                <div className="tradeoff-dashboard-card">
-                  <div className="tradeoff-dashboard-header">
-                    <div className="tradeoff-dashboard-title">
-                      <span>⚖️</span>
-                      <span>Multi-Objective Trade-Offs & Alignment Tuning</span>
-                    </div>
-                    <div className="composite-score-badge">
-                      <span>Index:</span>
-                      <span>{tradeOffProfile.compositeAlignmentIndex ?? 85}/100</span>
-                    </div>
-                  </div>
-
-                  {/* 4-Pillar Scorecard Bars */}
-                  <div className="pillar-scorecard">
-                    {/* 1. Nature & Water */}
-                    <div className="pillar-row">
-                      <div className="pillar-meta-row">
-                        <span className="pillar-label">
-                          <span>🌿</span>
-                          <span>Nature & Riparian Protection</span>
-                        </span>
-                        <span className="pillar-value" style={{ color: "#34d399" }}>
-                          {tradeOffProfile.scores?.environmentalScore ?? 85}/100
-                        </span>
-                      </div>
-                      <div className="pillar-bar-bg">
-                        <div
-                          className="pillar-bar-fill"
-                          style={{
-                            width: `${tradeOffProfile.scores?.environmentalScore ?? 85}%`,
-                            background: "linear-gradient(90deg, #059669, #10b981)",
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* 2. Social & Communities */}
-                    <div className="pillar-row">
-                      <div className="pillar-meta-row">
-                        <span className="pillar-label">
-                          <span>👥</span>
-                          <span>Social & Community Safeguard</span>
-                        </span>
-                        <span className="pillar-value" style={{ color: "#a78bfa" }}>
-                          {tradeOffProfile.scores?.socialScore ?? 88}/100
-                        </span>
-                      </div>
-                      <div className="pillar-bar-bg">
-                        <div
-                          className="pillar-bar-fill"
-                          style={{
-                            width: `${tradeOffProfile.scores?.socialScore ?? 88}%`,
-                            background: "linear-gradient(90deg, #7c3aed, #8b5cf6)",
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* 3. Directness & Geometric Economy */}
-                    <div className="pillar-row">
-                      <div className="pillar-meta-row">
-                        <span className="pillar-label">
-                          <span>⚡</span>
-                          <span>Directness & Travel Economy</span>
-                        </span>
-                        <span className="pillar-value" style={{ color: "#38bdf8" }}>
-                          {tradeOffProfile.scores?.directnessScore ?? 80}/100
-                        </span>
-                      </div>
-                      <div className="pillar-bar-bg">
-                        <div
-                          className="pillar-bar-fill"
-                          style={{
-                            width: `${tradeOffProfile.scores?.directnessScore ?? 80}%`,
-                            background: "linear-gradient(90deg, #0284c7, #06b6d4)",
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* 4. Regional Connectivity */}
-                    <div className="pillar-row">
-                      <div className="pillar-meta-row">
-                        <span className="pillar-label">
-                          <span>🏙️</span>
-                          <span>Regional Economic Connectivity</span>
-                        </span>
-                        <span className="pillar-value" style={{ color: "#fbbf24" }}>
-                          {tradeOffProfile.scores?.connectivityScore ?? 90}/100
-                        </span>
-                      </div>
-                      <div className="pillar-bar-bg">
-                        <div
-                          className="pillar-bar-fill"
-                          style={{
-                            width: `${tradeOffProfile.scores?.connectivityScore ?? 90}%`,
-                            background: "linear-gradient(90deg, #d97706, #f59e0b)",
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Human-Readable Trade-Off Narrative */}
-                  {tradeOffProfile.tradeOffNarrative && (
-                    <div className="tradeoff-narrative-box">
-                      {tradeOffProfile.tradeOffNarrative}
-                    </div>
-                  )}
-
-                  {/* Key Compromises Bullet Breakdown */}
-                  {tradeOffProfile.keyCompromises && tradeOffProfile.keyCompromises.length > 0 && (
-                    <div className="key-compromises-list">
-                      <div className="key-compromises-title">Key Engineering Compromises</div>
-                      {tradeOffProfile.keyCompromises.map((comp, idx) => (
-                        <div key={idx} className="compromise-item">{comp}</div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* One-Click Quick-Chips with Instant Memory Switch */}
-                  <div className="quick-chips-title">
-                    <span>Align With Archetype (Quick-Chips):</span>
-                    <span style={{ fontSize: "10px", color: "var(--text-dim)", fontWeight: "normal" }}>
-                      Instant switch for cached (0 ms)
-                    </span>
-                  </div>
-                  <div className="quick-chips-container">
-                    {Object.values(PRESET_DEFINITIONS).map((preset) => {
-                      const isCached = Boolean(cachedArchetypes[preset.id]);
-                      return (
-                        <button
-                          key={preset.id}
-                          type="button"
-                          className={`quick-chip ${tradeOffPreset === preset.id ? "active" : ""}`}
-                          style={{ "--chip-color": preset.color }}
-                          onClick={() => handleSelectPreset(preset.id)}
-                          title={preset.description}
-                        >
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                            <span>{preset.label}</span>
-                            {isCached && (
-                              <span className="cached-badge-mini" title="Generated in memory — Click for instant switch">
-                                Ready ⚡
-                              </span>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Fine-Tuning Continuous Preference Sliders */}
-                  <div className="sliders-box">
-                    <div style={{ fontSize: "10.5px", fontWeight: "700", color: "var(--text-main)", marginBottom: "8px" }}>
-                      🎛️ Fine-Tuning Continuous Controls (0.5× – 3.0×):
-                    </div>
-
-                    <div className="slider-group">
-                      <div className="slider-header">
-                        <span className="slider-label">🌿 Environmental Priority</span>
-                        <span className="slider-val" style={{ color: "#34d399" }}>{envWeight.toFixed(1)}×</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0.5"
-                        max="3.0"
-                        step="0.1"
-                        value={envWeight}
-                        className="pref-slider"
-                        style={{ "--slider-color": "#10b981" }}
-                        onChange={(e) => handleSliderChange("env", e.target.value)}
-                      />
-                    </div>
-
-                    <div className="slider-group">
-                      <div className="slider-header">
-                        <span className="slider-label">👥 Social Safeguard</span>
-                        <span className="slider-val" style={{ color: "#a78bfa" }}>{socialWeight.toFixed(1)}×</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0.5"
-                        max="3.0"
-                        step="0.1"
-                        value={socialWeight}
-                        className="pref-slider"
-                        style={{ "--slider-color": "#8b5cf6" }}
-                        onChange={(e) => handleSliderChange("social", e.target.value)}
-                      />
-                    </div>
-
-                    <div className="slider-group">
-                      <div className="slider-header">
-                        <span className="slider-label">⚡ Directness Economy</span>
-                        <span className="slider-val" style={{ color: "#38bdf8" }}>{directnessWeight.toFixed(1)}×</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0.5"
-                        max="3.0"
-                        step="0.1"
-                        value={directnessWeight}
-                        className="pref-slider"
-                        style={{ "--slider-color": "#06b6d4" }}
-                        onChange={(e) => handleSliderChange("direct", e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Re-Align Action Button */}
-                  <button
-                    type="button"
-                    className="realign-btn"
-                    disabled={isRealigning || isLoading}
-                    onClick={() => realignAlignment()}
-                  >
-                    {isRealigning ? (
-                      <>
-                        <div className="spinner" style={{ width: "12px", height: "12px" }} />
-                        <span>Synthesizing Preferences & Re-Aligning...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>✨</span>
-                        <span>Re-Align Route Based on Preferences</span>
-                      </>
-                    )}
-                  </button>
-
-                  {/* Side-by-Side Alternative Route Comparison Card */}
-                  {alternativeRoutes.length > 0 && (
-                    <div className="comparison-card">
-                      <div className="comparison-header">
-                        <span>Generated Archetypes ({alternativeRoutes.length})</span>
-                        <span style={{ fontSize: "10px", color: "#38bdf8" }}>⚡ Click any route to switch instantly</span>
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                        {alternativeRoutes.map((alt) => {
-                          const isActive = tradeOffPreset === alt.preset || activeAlternativeId === alt.id;
-                          return (
-                            <div
-                              key={alt.id}
-                              onClick={() => switchToArchetype(alt.preset)}
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: "8px 10px",
-                                background: isActive ? "rgba(59, 130, 246, 0.2)" : "rgba(0,0,0,0.25)",
-                                border: "1px solid " + (isActive ? "var(--primary)" : "var(--border)"),
-                                borderRadius: "6px",
-                                fontSize: "11px",
-                                cursor: "pointer",
-                                transition: "all 0.15s ease",
-                              }}
-                              className="alt-route-row-btn"
-                              title="Click to instantly switch to this alignment"
-                            >
-                              <div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                                  <strong style={{ color: alt.color }}>{alt.label}</strong>
-                                  {isActive ? (
-                                    <span style={{ fontSize: "9px", background: "var(--primary)", color: "#fff", padding: "1px 5px", borderRadius: "10px", fontWeight: "700" }}>Active</span>
-                                  ) : (
-                                    <span style={{ fontSize: "9px", background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", padding: "1px 5px", borderRadius: "10px" }}>Switch ⚡</span>
-                                  )}
-                                </div>
-                                <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
-                                  {alt.routeLengthKm} km (+{alt.deviationPercent}%) • Index: {alt.compositeIndex}/100
-                                </div>
-                              </div>
-                              <div style={{ textAlign: "right", fontSize: "10px" }}>
-                                <div style={{ color: "#34d399" }}>Forest: {alt.forestHa} ha</div>
-                                <div style={{ color: "var(--amber)" }}>Displaced: {alt.displacedPop}</div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Side-by-Side Quick Comparison Matrix if 2+ routes generated */}
-                      {alternativeRoutes.length > 1 && (
-                        <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "8px" }}>
-                          <div style={{ fontSize: "10px", fontWeight: "700", color: "#94a3b8", marginBottom: "6px" }}>
-                            📐 Archetype Direct Comparison Matrix:
-                          </div>
-                          <div style={{ overflowX: "auto" }}>
-                            <table style={{ width: "100%", fontSize: "10px", borderCollapse: "collapse", textAlign: "left" }}>
-                              <thead>
-                                <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--text-dim)" }}>
-                                  <th style={{ padding: "4px" }}>Archetype</th>
-                                  <th style={{ padding: "4px" }}>Length</th>
-                                  <th style={{ padding: "4px" }}>Dev</th>
-                                  <th style={{ padding: "4px" }}>Forest</th>
-                                  <th style={{ padding: "4px" }}>Displaced</th>
-                                  <th style={{ padding: "4px" }}>Action</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {alternativeRoutes.map((alt) => {
-                                  const isActive = tradeOffPreset === alt.preset || activeAlternativeId === alt.id;
-                                  return (
-                                    <tr
-                                      key={alt.id}
-                                      style={{
-                                        borderBottom: "1px solid rgba(255,255,255,0.05)",
-                                        background: isActive ? "rgba(59, 130, 246, 0.12)" : "transparent",
-                                      }}
-                                    >
-                                      <td style={{ padding: "4px", color: alt.color, fontWeight: "700" }}>
-                                        {alt.preset === "SHORTEST_PATH" ? "Direct Express" : alt.preset === "ECO_SHIELD" ? "Eco-Shield" : alt.preset === "COMMUNITY_SAFEGUARD" ? "Community" : "Balanced"}
-                                      </td>
-                                      <td style={{ padding: "4px" }}>{alt.routeLengthKm} km</td>
-                                      <td style={{ padding: "4px" }}>+{alt.deviationPercent}%</td>
-                                      <td style={{ padding: "4px", color: "#34d399" }}>{alt.forestHa} ha</td>
-                                      <td style={{ padding: "4px", color: "var(--amber)" }}>{alt.displacedPop}</td>
-                                      <td style={{ padding: "4px" }}>
-                                        {isActive ? (
-                                          <span style={{ color: "var(--primary)", fontWeight: "700" }}>Active</span>
-                                        ) : (
-                                          <button
-                                            type="button"
-                                            onClick={() => switchToArchetype(alt.preset)}
-                                            style={{
-                                              background: "rgba(59, 130, 246, 0.2)",
-                                              border: "1px solid var(--primary)",
-                                              color: "#93c5fd",
-                                              padding: "1px 6px",
-                                              borderRadius: "4px",
-                                              cursor: "pointer",
-                                              fontSize: "9.5px",
-                                            }}
-                                          >
-                                            Switch
-                                          </button>
-                                        )}
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {networkSummary && (
-                <>
-                  {/* 6-LANE CAPACITY UPGRADE / VIOLATION REASON ADVISORY CARD */}
-                  {trafficCapacity?.sixLaneRecommended && (
-                    <div style={{
-                      background: "linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.08) 100%)",
-                      border: "1px solid rgba(245, 158, 11, 0.4)",
-                      borderRadius: "8px",
-                      padding: "10px 14px",
-                      marginTop: "12px",
-                      marginBottom: "6px"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-                        <span style={{ fontSize: "16px" }}>⚡</span>
-                        <strong style={{ color: "var(--amber)", fontSize: "12px" }}>
-                          IRC:SP:84 Section 2.2: 6-Lane Expressway Configuration Recommended
-                        </strong>
-                      </div>
-                      <div style={{ fontSize: "11px", color: "var(--text-main)", lineHeight: "1.4", marginBottom: "8px" }}>
-                        {trafficCapacity.capacityStandardNote || "Projected peak traffic exceeds standard 4-lane design capacity. Alignment extended to 6-lane design capacity under IRC:SP:84 Section 2.2."}
-                      </div>
-                      <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: "10px",
-                        background: "rgba(0, 0, 0, 0.25)",
-                        padding: "6px 10px",
-                        borderRadius: "6px",
-                        border: "1px solid rgba(245, 158, 11, 0.25)"
-                      }}>
-                        <div>
-                          <span style={{ color: "var(--text-muted)" }}>4-Lane V/C: </span>
-                          <span style={{ color: "var(--rose)", fontWeight: "700" }}>{trafficCapacity.projectedVcRatio}</span>
-                          <span style={{ color: "var(--text-muted)", marginLeft: "3px" }}>(Exceeds {trafficCapacity.maxVcRatioCapApplied ?? maxVcRatio ?? 0.70} Cap)</span>
-                        </div>
-                        <div style={{ color: "var(--text-muted)" }}>➔</div>
-                        <div>
-                          <span style={{ color: "var(--text-muted)" }}>6-Lane V/C: </span>
-                          <span style={{ color: "var(--emerald)", fontWeight: "700" }}>
-                            {trafficCapacity.projectedSixLaneVcRatio || (trafficCapacity.projectedTotalPeakTrafficPcuHr ? (trafficCapacity.projectedTotalPeakTrafficPcuHr / 7200).toFixed(2) : "0.54")}
-                          </span>
-                          <span style={{ color: "var(--emerald)", marginLeft: "3px" }}>({trafficCapacity.levelOfService || "LOS B"})</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="section-header" style={{ marginTop: "12px" }}>
-                    <span className="section-title">Network Structures & Civil Works</span>
-                  </div>
-
-                  <div className="structures-list">
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>✦</span>
-                        <span>Planned Interchanges</span>
-                      </div>
-                      <div className="struct-count">{networkSummary.interchanges}</div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>↗</span>
-                        <span>Dedicated Feeder Spurs</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.feederSpurs} ({networkSummary.feederSpurKm} km)
-                      </div>
-                    </div>
-
-                    {connectedHubs.length > 0 && (
-                      <div style={{
-                        marginTop: "4px",
-                        marginBottom: "8px",
-                        padding: "8px 10px",
-                        background: "rgba(168, 85, 247, 0.08)",
-                        border: "1px solid rgba(168, 85, 247, 0.25)",
-                        borderRadius: "6px",
-                        fontSize: "11px"
-                      }}>
-                        <div style={{ fontWeight: "700", color: "#a855f7", marginBottom: "6px", display: "flex", justifyContent: "space-between" }}>
-                          <span>Connected Hubs & Mandis ({connectedHubs.length}):</span>
-                          <span style={{ fontSize: "10px", fontWeight: "normal", color: "var(--text-muted)" }}>IRC:SP:84 Grade-Separated</span>
-                        </div>
-                        {connectedHubs.map((h, i) => (
-                          <div key={i} style={{
-                            padding: "6px 0",
-                            borderBottom: i < connectedHubs.length - 1 ? "1px dashed rgba(168, 85, 247, 0.15)" : "none"
-                          }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <div>
-                                <strong style={{ color: "var(--text-main)" }}>{h.name}</strong>
-                                {h.isUserOverride ? (
-                                  <span style={{
-                                    marginLeft: "5px",
-                                    fontSize: "9px",
-                                    padding: "1px 5px",
-                                    borderRadius: "4px",
-                                    background: "rgba(59, 130, 246, 0.2)",
-                                    color: "var(--primary)"
-                                  }}>USER PICK</span>
-                                ) : (
-                                  <span style={{
-                                    marginLeft: "5px",
-                                    fontSize: "9px",
-                                    padding: "1px 5px",
-                                    borderRadius: "4px",
-                                    background: "rgba(16, 185, 129, 0.2)",
-                                    color: "var(--emerald)"
-                                  }}>AUTO HVI</span>
-                                )}
-                                {h.sixLaneRecommended && (
-                                  <span style={{
-                                    marginLeft: "5px",
-                                    fontSize: "9px",
-                                    padding: "1px 5px",
-                                    borderRadius: "4px",
-                                    background: "rgba(245, 158, 11, 0.2)",
-                                    color: "var(--amber)",
-                                    fontWeight: "700"
-                                  }}>6-LANE EXTENSION</span>
-                                )}
-                              </div>
-                              <div style={{ textAlign: "right", fontWeight: "600", color: "#a855f7" }}>
-                                {h.spurKm} km spur
-                              </div>
-                            </div>
-                            <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
-                              {h.tieInRoadRef} • Pop: {h.population.toLocaleString()}
-                            </div>
-                            {h.decisionReason && (
-                              <div style={{
-                                fontSize: "10px",
-                                color: h.sixLaneRecommended ? "var(--amber)" : "var(--text-muted)",
-                                marginTop: "3px",
-                                lineHeight: "1.3",
-                                background: "rgba(0,0,0,0.15)",
-                                padding: "3px 6px",
-                                borderRadius: "4px"
-                              }}>
-                                <strong>Reason / Rule:</strong> {h.decisionReason}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🛣️</span>
-                        <span>Existing Road Tie-In Connectors</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.terminalAccessKm} km ({networkSummary.startRoadRef} → {networkSummary.goalRoadRef})
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🌉</span>
-                        <span>Perennial River Bridges</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.riverBridges} ({networkSummary.riverBridgeSpanM}m span)
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🌊</span>
-                        <span>Canal Aqueducts / Culverts</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.drainageStructures} structures
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🐾</span>
-                        <span>Wildlife Overpasses / Viaducts</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.wildlifePassages} ({networkSummary.wildlifeSpanM}m span)
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🚊</span>
-                        <span>Railway ROBs & Flyovers</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.railwayRobs} ROBs / {networkSummary.roadFlyovers} Flyovers
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>📐</span>
-                        <span>Direct RoW Land Acquisition</span>
-                      </div>
-                      <div className="struct-count" style={{ color: "#60a5fa" }}>
-                        {networkSummary.rowHectares} ha ({networkSummary.rowWidthM}m width)
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🏚️</span>
-                        <span>Buildings to Demolish (Direct RoW)</span>
-                      </div>
-                      <div
-                        className="struct-count"
-                        style={{ color: networkSummary.buildingsInRow > 0 ? "#ef4444" : "var(--emerald)" }}
+                  <div className="presets-grid">
+                    {PRESET_CORRIDORS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        className={`preset-chip ${selectedPresetId === preset.id ? "active" : ""}`}
+                        onClick={() => applyPreset(preset)}
                       >
-                        {networkSummary.buildingsInRow} structures
-                        {networkSummary.buildingsByType &&
-                          Object.values(networkSummary.buildingsByType).some((v) => v > 0) && (
-                            <span style={{ fontSize: "10px", marginLeft: "4px", opacity: 0.85 }}>
-                              (
-                              {Object.entries(networkSummary.buildingsByType)
-                                .filter(([, v]) => v > 0)
-                                .map(([k, v]) => `${k.slice(0, 3)}:${v}`)
-                                .join(" ")}
-                              )
-                            </span>
-                          )}
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>👥</span>
-                        <span>Est. Displaced Population (RFCTLARR)</span>
-                      </div>
-                      <div className="struct-count" style={{ color: "var(--amber)" }}>
-                        {networkSummary.displacedPop} persons
-                        {networkSummary.displacedHouseholds > 0 && ` (~${networkSummary.displacedHouseholds} HH)`}
-                      </div>
-                    </div>
+                        <strong>{preset.name.split(":")[0]}</strong>
+                        <span>{preset.tag}</span>
+                      </button>
+                    ))}
                   </div>
 
-                  {/* EXPANDABLE COMPLIANCE & EVALUATION LOG */}
-                  {hubDecisions.length > 0 && (
-                    <div style={{ marginTop: "12px" }}>
+                  <div className="facility-selector">
+                    {["EXPRESSWAY", "NATIONAL_HIGHWAY", "STATE_HIGHWAY"].map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        className={`facility-btn ${facilityMode === mode ? "active" : ""}`}
+                        onClick={() => setFacilityMode(mode)}
+                      >
+                        {mode === "EXPRESSWAY" ? "Expressway" : mode === "NATIONAL_HIGHWAY" ? "NH Trunk" : "State Hwy"}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      <strong>Deep 13-Layer On-Demand Ingestion</strong>
+                      <span>Synthesize rasters for arbitrary coordinates (deep=true)</span>
+                    </div>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={deepIngestion}
+                        onChange={(e) => setDeepIngestion(e.target.checked)}
+                      />
+                      <span className="slider" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Group 2: Corridor Endpoints */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Corridor Endpoints</span>
+                  </div>
+
+                  {/* Origin (Start) */}
+                  <div className="coord-box">
+                    <div className="coord-header">
+                      <span className="coord-title start">Origin Point (A)</span>
                       <button
                         type="button"
-                        onClick={() => setShowAllDecisions((s) => !s)}
-                        style={{
-                          width: "100%",
-                          padding: "8px 10px",
-                          background: "var(--bg-card)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "6px",
-                          color: "var(--text-muted)",
-                          fontSize: "11px",
-                          fontWeight: "600",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease"
+                        className={`pick-map-btn ${mapSelectionMode === "start" ? "active" : ""}`}
+                        onClick={() => {
+                          const next = mapSelectionMode === "start" ? null : "start";
+                          mapSelectionModeRef.current = next;
+                          setMapSelectionMode(next);
+                          if (next) setStatus("Click anywhere on the map to set Origin.");
                         }}
                       >
-                        <span>📋 All Evaluated Cities & Constraint Decisions ({hubDecisions.length})</span>
-                        <span>{showAllDecisions ? "▲ Hide" : "▼ View Decisions"}</span>
+                        {mapSelectionMode === "start" ? "Cancel Pick" : "Pick on Map"}
                       </button>
+                    </div>
 
-                      {showAllDecisions && (
-                        <div style={{
-                          marginTop: "6px",
-                          maxHeight: "260px",
-                          overflowY: "auto",
-                          background: "var(--bg-card)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "6px",
-                          padding: "8px"
-                        }}>
-                          {hubDecisions.map((d, idx) => {
-                            const isAcc = d.accepted;
-                            const isSixLane = d.reason && d.reason.includes("6-lane");
-                            const badgeColor = isAcc
-                              ? (isSixLane ? "var(--amber)" : "var(--emerald)")
-                              : "var(--text-muted)";
+                    <div className="district-autocomplete-container">
+                      <input
+                        type="text"
+                        className="district-quick-input"
+                        placeholder="Quick find origin district (e.g. Pune, Lucknow)..."
+                        value={startDistrictQuery}
+                        onChange={(e) => setStartDistrictQuery(e.target.value)}
+                      />
+                      {startDistrictSuggestions.length > 0 && (
+                        <div className="district-autocomplete-dropdown">
+                          {startDistrictSuggestions.map((d) => {
+                            const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
+                            const badgeClass = (d.adminLevel || "district").toLowerCase();
                             return (
                               <div
-                                key={idx}
-                                style={{
-                                  padding: "6px 0",
-                                  borderBottom: idx < hubDecisions.length - 1 ? "1px solid var(--border)" : "none",
-                                  fontSize: "11px"
+                                key={d.id}
+                                className="district-autocomplete-item"
+                                onClick={() => {
+                                  setStart({ lat: d.lat, lng: d.lon });
+                                  setSelectedPresetId("custom");
+                                  setStartDistrictQuery("");
+                                  setStartDistrictSuggestions([]);
+                                  if (mapRef.current) {
+                                    mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
+                                  }
                                 }}
                               >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                  <strong style={{ color: isAcc ? "var(--text-main)" : "var(--text-muted)" }}>
-                                    {d.name} {d.district ? `(${d.district})` : ""}
-                                  </strong>
-                                  <span style={{
-                                    fontSize: "9px",
-                                    padding: "1px 6px",
-                                    borderRadius: "4px",
-                                    fontWeight: "700",
-                                    background: isAcc
-                                      ? (isSixLane ? "rgba(245, 158, 11, 0.15)" : "rgba(16, 185, 129, 0.15)")
-                                      : "rgba(100, 116, 139, 0.15)",
-                                    color: badgeColor
-                                  }}>
-                                    {d.status || (isAcc ? "ACCEPTED" : "EXCLUDED")}
+                                <div className="district-item-main">
+                                  <strong>{d.name}</strong>
+                                  <span className={`admin-level-badge ${badgeClass}`}>
+                                    {d.adminLevel || "DISTRICT"}
                                   </span>
+                                  <span className="district-state-badge">{d.stateCode}</span>
                                 </div>
-                                <div style={{
-                                  fontSize: "10px",
-                                  color: isAcc ? (isSixLane ? "var(--amber)" : "var(--emerald)") : "var(--rose)",
-                                  marginTop: "2px",
-                                  lineHeight: "1.3"
-                                }}>
-                                  {d.reason}
-                                </div>
-                                <div style={{ fontSize: "9px", color: "var(--text-muted)", marginTop: "1px" }}>
-                                  Lateral Dist: {d.distanceToCenterlineKm ?? "—"} km • Induced: +{d.inducedPeakTrafficPcuHr ?? 0} PCU/hr • V/C: {d.projectedVcRatio ?? "—"}
+                                <div className="district-item-sub">
+                                  {isSub
+                                    ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District · ${d.state}`
+                                    : `District HQ: ${d.headquarters || d.name} · ${d.state}`}
                                 </div>
                               </div>
                             );
@@ -3242,18 +1970,459 @@ export default function App() {
                         </div>
                       )}
                     </div>
+
+                    <div className="coord-grid">
+                      <div className="input-group">
+                        <label>Latitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={start.lat}
+                          onChange={(e) => {
+                            setStart((s) => ({ ...s, lat: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Longitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={start.lng}
+                          onChange={(e) => {
+                            setStart((s) => ({ ...s, lng: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Destination (End) */}
+                  <div className="coord-box">
+                    <div className="coord-header">
+                      <span className="coord-title end">Destination Point (B)</span>
+                      <button
+                        type="button"
+                        className={`pick-map-btn ${mapSelectionMode === "end" ? "active" : ""}`}
+                        onClick={() => {
+                          const next = mapSelectionMode === "end" ? null : "end";
+                          mapSelectionModeRef.current = next;
+                          setMapSelectionMode(next);
+                          if (next) setStatus("Click anywhere on the map to set Destination.");
+                        }}
+                      >
+                        {mapSelectionMode === "end" ? "Cancel Pick" : "Pick on Map"}
+                      </button>
+                    </div>
+
+                    <div className="district-autocomplete-container">
+                      <input
+                        type="text"
+                        className="district-quick-input"
+                        placeholder="Quick find destination district (e.g. Satara, Varanasi)..."
+                        value={endDistrictQuery}
+                        onChange={(e) => setEndDistrictQuery(e.target.value)}
+                      />
+                      {endDistrictSuggestions.length > 0 && (
+                        <div className="district-autocomplete-dropdown">
+                          {endDistrictSuggestions.map((d) => {
+                            const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
+                            const badgeClass = (d.adminLevel || "district").toLowerCase();
+                            return (
+                              <div
+                                key={d.id}
+                                className="district-autocomplete-item"
+                                onClick={() => {
+                                  setEnd({ lat: d.lat, lng: d.lon });
+                                  setSelectedPresetId("custom");
+                                  setEndDistrictQuery("");
+                                  setEndDistrictSuggestions([]);
+                                  if (mapRef.current) {
+                                    mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
+                                  }
+                                }}
+                              >
+                                <div className="district-item-main">
+                                  <strong>{d.name}</strong>
+                                  <span className={`admin-level-badge ${badgeClass}`}>
+                                    {d.adminLevel || "DISTRICT"}
+                                  </span>
+                                  <span className="district-state-badge">{d.stateCode}</span>
+                                </div>
+                                <div className="district-item-sub">
+                                  {isSub
+                                    ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District · ${d.state}`
+                                    : `District HQ: ${d.headquarters || d.name} · ${d.state}`}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="coord-grid">
+                      <div className="input-group">
+                        <label>Latitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={end.lat}
+                          onChange={(e) => {
+                            setEnd((s) => ({ ...s, lat: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Longitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={end.lng}
+                          onChange={(e) => {
+                            setEnd((s) => ({ ...s, lng: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Group 3: Intermediate Cities & Feeder Hubs */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Cities & Design Envelope</span>
+                  </div>
+
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      <strong>Auto-Connect Intermediate Hubs</strong>
+                      <span>Autonomously link prominent cities along corridor</span>
+                    </div>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={autoConnectHubs}
+                        onChange={(e) => setAutoConnectHubs(e.target.checked)}
+                      />
+                      <span className="slider" />
+                    </label>
+                  </div>
+
+                  {autoConnectHubs ? (
+                    <div className="auto-hubs-count-card">
+                      <div className="auto-hubs-count-head">
+                        <span>Cities to Connect</span>
+                        <span className="auto-hubs-pill">
+                          {maxAutoHubs} {maxAutoHubs === 1 ? "City" : "Cities"}
+                        </span>
+                      </div>
+                      <div className="auto-hubs-btn-row">
+                        {[1, 2, 3, 4, 5].map((num) => (
+                          <button
+                            key={num}
+                            type="button"
+                            className={`num-hub-btn ${maxAutoHubs === num ? "active" : ""}`}
+                            onClick={() => setMaxAutoHubs(num)}
+                            title={`Connect up to ${num} cities autonomously`}
+                          >
+                            {num}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="auto-hubs-caption">
+                        Selected via Highway Value Index (HVI) & IRC:SP:84 spacing.
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="planner-note-box">
+                      Auto-connect is off. Alignment connects only user-specified hubs below.
+                    </div>
                   )}
-                </>
-              )}
+
+                  {/* User-Specified Cities & Tehsils */}
+                  <div className="hubs-box">
+                    <div className="hubs-header">
+                      <div>
+                        <span className="hubs-title">User-Specified Cities & Tehsils</span>
+                        <div className="hubs-sub">Explicitly prioritized towns or mandis</div>
+                      </div>
+                      <button
+                        type="button"
+                        className={`pick-map-btn ${mapSelectionMode === "hub" ? "active" : ""}`}
+                        onClick={() => {
+                          const next = mapSelectionMode === "hub" ? null : "hub";
+                          mapSelectionModeRef.current = next;
+                          setMapSelectionMode(next);
+                          if (next) setStatus("Click anywhere on the map to add an intermediate city/hub.");
+                        }}
+                      >
+                        {mapSelectionMode === "hub" ? "Cancel Pick" : "Pick on Map"}
+                      </button>
+                    </div>
+
+                    <div className="district-autocomplete-container">
+                      <div className="hubs-input-row">
+                        <input
+                          type="text"
+                          placeholder="Search district or town (e.g. Satara, Wai)..."
+                          value={customHubInput}
+                          onChange={(e) => setCustomHubInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && customHubInput.trim()) {
+                              e.preventDefault();
+                              const val = customHubInput.trim();
+                              if (!targetHubs.includes(val)) {
+                                setTargetHubs([...targetHubs, val]);
+                              }
+                              setCustomHubInput("");
+                              setDistrictSuggestions([]);
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="hubs-add-btn"
+                          onClick={() => {
+                            if (customHubInput.trim()) {
+                              const val = customHubInput.trim();
+                              if (!targetHubs.includes(val)) {
+                                setTargetHubs([...targetHubs, val]);
+                              }
+                              setCustomHubInput("");
+                              setDistrictSuggestions([]);
+                            }
+                          }}
+                        >
+                          + Add
+                        </button>
+                      </div>
+
+                      {districtSuggestions.length > 0 && (
+                        <div className="district-autocomplete-dropdown">
+                          {districtSuggestions.map((d) => {
+                            const isSub =
+                              d.adminLevel === "TEHSIL" ||
+                              d.adminLevel === "TOWN" ||
+                              d.adminLevel === "SUBDIVISION" ||
+                              d.adminLevel === "TALUK" ||
+                              d.adminLevel === "MANDAL";
+                            const badgeClass = (d.adminLevel || "district").toLowerCase();
+                            const val = isSub
+                              ? `${d.name} (${d.parentDistrict} - ${d.stateCode})`
+                              : `${d.name} (${d.stateCode})`;
+                            return (
+                              <div
+                                key={d.id}
+                                className="district-autocomplete-item"
+                                onClick={() => {
+                                  if (!targetHubs.includes(val)) {
+                                    setTargetHubs([...targetHubs, val]);
+                                  }
+                                  setCustomHubInput("");
+                                  setDistrictSuggestions([]);
+                                  if (mapRef.current) {
+                                    mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
+                                  }
+                                }}
+                              >
+                                <div className="district-item-main">
+                                  <strong>{d.name}</strong>
+                                  <span className={`admin-level-badge ${badgeClass}`}>
+                                    {d.adminLevel || "DISTRICT"}
+                                  </span>
+                                  <span className="district-state-badge">{d.stateCode}</span>
+                                </div>
+                                <div className="district-item-sub">
+                                  {isSub
+                                    ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District · ${d.state}`
+                                    : `District HQ: ${d.headquarters || d.name} · ${d.state}`}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {targetHubs.length > 0 && (
+                      <div className="hubs-selected-list">
+                        {targetHubs.map((hub) => (
+                          <span key={hub} className="hub-selected-tag">
+                            <span>{hub}</span>
+                            <button
+                              type="button"
+                              className="hub-remove-btn"
+                              onClick={() => setTargetHubs(targetHubs.filter((h) => h !== hub))}
+                              title="Remove"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {(() => {
+                      const activePreset = PRESET_CORRIDORS.find((p) => p.id === selectedPresetId);
+                      const suggestions = activePreset?.suggestedHubs || [];
+                      if (suggestions.length === 0) return null;
+                      return (
+                        <div className="hubs-suggestions-wrap">
+                          <div className="hubs-suggestions-label">Suggested Regional Hubs</div>
+                          <div className="hubs-suggestions">
+                            {suggestions.map((hubName) => {
+                              const isSelected = targetHubs.includes(hubName);
+                              return (
+                                <button
+                                  key={hubName}
+                                  type="button"
+                                  className={`hub-suggest-chip ${isSelected ? "active" : ""}`}
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      setTargetHubs(targetHubs.filter((h) => h !== hubName));
+                                    } else {
+                                      setTargetHubs([...targetHubs, hubName]);
+                                    }
+                                  }}
+                                >
+                                  {isSelected ? `✓ ${hubName}` : `+ ${hubName}`}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Level of Service (Target V/C Ratio) */}
+                  <div className="los-block">
+                    <div className="planner-field-label">Traffic Level of Service (Target V/C Ratio)</div>
+                    <div className="los-selector">
+                      <button
+                        type="button"
+                        className={`los-btn ${maxVcRatio === 0.70 ? "active" : ""}`}
+                        onClick={() => setMaxVcRatio(0.70)}
+                      >
+                        <strong>Free-Flow (≤ 0.70)</strong>
+                        <span>High speed buffer · LOS B</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`los-btn ${maxVcRatio === 0.85 ? "active" : ""}`}
+                        onClick={() => setMaxVcRatio(0.85)}
+                      >
+                        <strong>Economical (≤ 0.85)</strong>
+                        <span>Max hub intake · LOS C</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Max Alignment Deviation Slider */}
+                  <div className="deviation-box">
+                    <div className="deviation-header">
+                      <span className="deviation-title">Max Alignment Deviation</span>
+                      <span className="deviation-badge">{maxDeviationPercent}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      className="deviation-slider"
+                      min="10"
+                      max="30"
+                      step="1"
+                      value={maxDeviationPercent}
+                      onChange={(e) => setMaxDeviationPercent(Number(e.target.value))}
+                    />
+                    <div className="deviation-scale">
+                      <span>10% Direct</span>
+                      <span>20% Standard</span>
+                      <span>30% Wide Search</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Primary CTA + Status / Error / Snap */}
+                <div className="planner-cta-group">
+                  <button
+                    type="button"
+                    className="generate-btn"
+                    onClick={generateRoute}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="spinner" />
+                        <span>Computing Alignment...</span>
+                      </>
+                    ) : (
+                      <span>Generate MARG Alignment</span>
+                    )}
+                  </button>
+
+                  <div className="planner-status-line">{status}</div>
+
+                  {routingError && (
+                    <div className="error-card">
+                      <div className="error-card-title">{routingError.title}</div>
+                      <div className="error-card-message">{routingError.message}</div>
+                    </div>
+                  )}
+
+                  {snapNotice && (
+                    <div className="snap-alert-card">
+                      <div className="snap-alert-header">
+                        <span>Endpoint Auto-Adjustment Applied</span>
+                      </div>
+
+                      {snapNotice.start && (
+                        <div className="snap-item">
+                          <div className="snap-item-title">
+                            <span className="snap-origin-label">Origin Auto-Shifted</span>
+                            <span className="snap-badge">+{snapNotice.start.distanceMeters} m</span>
+                          </div>
+                          <div className="snap-reason">
+                            <strong>Constraint:</strong> {snapNotice.start.reason}
+                          </div>
+                          <div className="snap-coords-compare">
+                            <div>Requested: <del>{snapNotice.start.requested.lat}, {snapNotice.start.requested.lng}</del></div>
+                            <div>Feasible: <ins>{snapNotice.start.resolved.lat}, {snapNotice.start.resolved.lng}</ins></div>
+                          </div>
+                        </div>
+                      )}
+
+                      {snapNotice.end && (
+                        <div className="snap-item">
+                          <div className="snap-item-title">
+                            <span className="snap-dest-label">Destination Auto-Shifted</span>
+                            <span className="snap-badge">+{snapNotice.end.distanceMeters} m</span>
+                          </div>
+                          <div className="snap-reason">
+                            <strong>Constraint:</strong> {snapNotice.end.reason}
+                          </div>
+                          <div className="snap-coords-compare">
+                            <div>Requested: <del>{snapNotice.end.requested.lat}, {snapNotice.end.requested.lng}</del></div>
+                            <div>Feasible: <ins>{snapNotice.end.resolved.lat}, {snapNotice.end.resolved.lng}</ins></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </aside>
 
-        {/* MAP VIEWPORT */}
+        {/* CENTER FRAMED HERO MAP VIEWPORT */}
         <main className="map-viewport">
-          <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
+          <div ref={mapContainerRef} className="leaflet-canvas-host" />
 
-          {/* Floating Basemap Controls & Active 13-Layer Lens Legend HUD */}
+          {/* Floating Cream-Glass Basemap Controls & Active 13-Layer Lens Legend HUD */}
           <MapLensHud
             baseMapType={baseMapType}
             lockBasemap={lockBasemap}
@@ -3271,6 +2440,123 @@ export default function App() {
             onExitLens={handleClearToOverview}
           />
         </main>
+
+        {/* RIGHT COLLAPSIBLE DRAWER: DEDICATED 13-LAYER MAP LENSES */}
+        <aside className={`studio-drawer right-drawer ${rightDrawerOpen ? "open" : "collapsed"}`}>
+          {!rightDrawerOpen ? (
+            <button
+              type="button"
+              className="drawer-collapsed-rail"
+              onClick={() => setRightDrawerOpen(true)}
+              title="Open 13-Layer Map Lenses Drawer"
+            >
+              <span className="rail-chevron">«</span>
+              {activeLayerCfg && (
+                <span
+                  className="rail-active-dot"
+                  style={{ background: activeLayerCfg.accentColor }}
+                  title={`Active: L${activeLayerCfg.number} ${activeLayerCfg.shortName}`}
+                />
+              )}
+              <span className="rail-label">13-Layer Lenses</span>
+            </button>
+          ) : (
+            <div className="drawer-inner">
+              <div className="drawer-topbar">
+                <div>
+                  <span className="drawer-eyebrow">GEOSPATIAL VERIFICATION</span>
+                  <h2 className="drawer-title">13-Layer Map Lenses</h2>
+                </div>
+                <button
+                  type="button"
+                  className="drawer-toggle-btn"
+                  onClick={() => setRightDrawerOpen(false)}
+                  title="Collapse 13-Layer Map Lenses to widen the map"
+                  aria-label="Collapse 13-Layer Map Lenses"
+                >
+                  »
+                </button>
+              </div>
+
+              <div className="drawer-scroll-body drawer-scroll-layers">
+                <LayerAuditPanel
+                  layerAudit={layerAudit}
+                  routeLayerProfile={routeLayerProfile}
+                  allFeatures={currentFeatures}
+                  activeLayerId={activeLayerId}
+                  pinnedLayerIds={pinnedLayerIds}
+                  onSelectLayer={handleSelectLayer}
+                  onTogglePinLayer={handleTogglePinLayer}
+                  onClearToOverview={handleClearToOverview}
+                  onFocusFeature={handleFocusFeature}
+                  showMultiArchetypes={showMultiArchetypes}
+                  onToggleMultiArchetypes={() => setShowMultiArchetypes((v) => !v)}
+                  cachedArchetypesCount={Object.keys(cachedArchetypes).length}
+                />
+              </div>
+            </div>
+          )}
+        </aside>
+      </section>
+
+      {/* =======================================================
+          SERENE EDITORIAL TRANSITION STRIP
+          ======================================================= */}
+      {routeInfo && (
+        <div className="dossier-scroll-cue">
+          <div className="dossier-scroll-cue-inner">
+            <div className="cue-meta">
+              <span className="cue-eyebrow">ALIGNMENT SYNTHESIZED</span>
+              <span className="cue-summary">
+                <strong>{routeInfo.routeLengthKm} km</strong> mainline ·{" "}
+                <strong>{networkSummary?.feederSpurs ?? 0}</strong> feeder spurs ·{" "}
+                <strong>{layerAudit.length || 13}</strong> spatial layers audited
+              </span>
+            </div>
+            <button type="button" className="cue-scroll-btn" onClick={scrollToDossier}>
+              <span>Scroll to Engineering Dossier (6 Chapters)</span>
+              <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* =======================================================
+          BELOW-THE-FOLD SPACIOUS 6-CHAPTER ENGINEERING DOSSIER
+          ======================================================= */}
+      <div ref={dossierRef}>
+        <EngineeringDossier
+          routeInfo={routeInfo}
+          networkSummary={networkSummary}
+          tradeOffProfile={tradeOffProfile}
+          statutoryClearanceReport={statutoryClearanceReport}
+          layerAudit={layerAudit}
+          routeLayerProfile={routeLayerProfile}
+          routeDiagnostics={routeDiagnostics}
+          terminalRoadConnections={terminalRoadConnections}
+          spurEngineeringSummary={spurEngineeringSummary}
+          currentFeatures={currentFeatures}
+          connectedHubs={connectedHubs}
+          trafficCapacity={trafficCapacity}
+          hubDecisions={hubDecisions}
+          snapNotice={snapNotice}
+          facilityMode={facilityMode}
+          presetDefinitions={PRESET_DEFINITIONS}
+          tradeOffPreset={tradeOffPreset}
+          envWeight={envWeight}
+          socialWeight={socialWeight}
+          directnessWeight={directnessWeight}
+          isRealigning={isRealigning}
+          alternativeRoutes={alternativeRoutes}
+          activeAlternativeId={activeAlternativeId}
+          comparativeDeltasVsBalanced={comparativeDeltasVsBalanced}
+          onSelectPreset={handleSelectPreset}
+          onSliderChange={handleSliderChange}
+          onRealign={() => realignAlignment()}
+          onSwitchArchetype={switchToArchetype}
+          onInspectLayerOnMap={handleInspectLayerFromDossier}
+          onLocateOnMap={handleLocateFromDossier}
+        />
       </div>
     </div>
   );

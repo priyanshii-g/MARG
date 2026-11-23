@@ -153,4 +153,34 @@ class TradeOffEvaluationServiceTest {
         assertTrue(benefits.stream().anyMatch(b -> "PARETO_INDEX".equals(b.get("key"))));
         assertTrue(benefits.stream().anyMatch(b -> "REGIONAL_CONNECTIVITY".equals(b.get("key"))));
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testForestHectaresExtractedFromRealCompositeRouteDiagnosticsKeys() {
+        // 1. Exact 2D RoW swath key (rightOfWayCorridorSummary.lulcAcquisitionHectares)
+        Map<String, Object> diagWith2dRow = Map.of(
+                "lulcExposureKm", Map.of("FOREST", 69.8, "BARREN_WASTELAND", 38.0),
+                "rightOfWayCorridorSummary", Map.of(
+                        "designRowWidthMeters", 60.0,
+                        "lulcAcquisitionHectares", Map.of("FOREST", 418.61, "BARREN_WASTELAND", 227.68)
+                )
+        );
+        Map<String, Object> profile2d = TradeOffEvaluationService.evaluateTradeOffs(
+                diagWith2dRow, Map.of(), 84.0, 110.38, 31.4, AlignmentPreference.BALANCED
+        );
+        Map<String, Object> env2d = (Map<String, Object>) profile2d.get("environmentalSummary");
+        assertEquals(418.61, ((Number) env2d.get("forestHectaresDirectRow")).doubleValue(), 0.01,
+                "Must use exact 2D RoW lulcAcquisitionHectares.FOREST when present");
+
+        // 2. Fallback to lulcExposureKm scaled by RoW width (60 m => 6.0 ha/km)
+        Map<String, Object> diagExposureOnly = Map.of(
+                "lulcExposureKm", Map.of("FOREST", 50.0, "AGRICULTURE", 20.0)
+        );
+        Map<String, Object> profileExp = TradeOffEvaluationService.evaluateTradeOffs(
+                diagExposureOnly, Map.of(), 60.0, 70.0, 16.7, AlignmentPreference.BALANCED
+        );
+        Map<String, Object> envExp = (Map<String, Object>) profileExp.get("environmentalSummary");
+        assertEquals(300.0, ((Number) envExp.get("forestHectaresDirectRow")).doubleValue(), 0.01,
+                "Must compute forest hectares from lulcExposureKm * (rowWidthMeters / 10.0) when 2D swath is absent");
+    }
 }

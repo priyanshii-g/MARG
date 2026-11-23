@@ -128,38 +128,38 @@ function SlopeSparkline({ profile, onFocusPoint }) {
           y1={limitY}
           x2={width - padR}
           y2={limitY}
-          stroke="#ef4444"
+          stroke="#B85C38"
           strokeWidth="1"
           strokeDasharray="3,3"
         />
-        <text x={2} y={limitY + 3} fontSize="7.5" fill="#fca5a5">
+        <text x={2} y={limitY + 3} fontSize="7.5" fill="#B85C38" fontWeight="600">
           30°
         </text>
-        <text x={2} y={padT + innerH + 2} fontSize="7.5" fill="#94a3b8">
+        <text x={2} y={padT + innerH + 2} fontSize="7.5" fill="#6C7A72">
           0°
         </text>
 
-        <path d={areaD} fill="rgba(245, 158, 11, 0.18)" />
-        <path d={pathD} fill="none" stroke="#f59e0b" strokeWidth="1.6" />
+        <path d={areaD} fill="rgba(45, 106, 79, 0.15)" />
+        <path d={pathD} fill="none" stroke="#2D6A4F" strokeWidth="1.7" />
 
         {/* Peak marker clickable */}
         <circle
           cx={xOf(peak.chKm)}
           cy={yOf(peak.slopeDeg)}
-          r="3.2"
-          fill="#ef4444"
-          stroke="#fff"
-          strokeWidth="1"
+          r="3.4"
+          fill="#B85C38"
+          stroke="#FFFFFF"
+          strokeWidth="1.2"
           style={{ cursor: "pointer" }}
           onClick={() => onFocusPoint && onFocusPoint(peak.lat, peak.lon, `Peak Slope ${peak.slopeDeg}° @ km ${peak.chKm}`)}
         >
           <title>Click to zoom to peak slope ({peak.slopeDeg}° at km {peak.chKm})</title>
         </circle>
 
-        <text x={padL} y={height - 3} fontSize="7.5" fill="#94a3b8">
+        <text x={padL} y={height - 3} fontSize="7.5" fill="#6C7A72">
           0 km
         </text>
-        <text x={width - padR} y={height - 3} fontSize="7.5" fill="#94a3b8" textAnchor="end">
+        <text x={width - padR} y={height - 3} fontSize="7.5" fill="#6C7A72" textAnchor="end">
           {maxCh.toFixed(1)} km
         </text>
       </svg>
