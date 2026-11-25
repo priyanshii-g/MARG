@@ -1,6 +1,19 @@
 spring:
   application:
     name: marg-routing-prototype
+  ai:
+    mcp:
+      server:
+        protocol: STATELESS
+        type: SYNC
+        annotation-scanner:
+          enabled: true
+  servlet:
+    multipart:
+      max-file-size: 51MB
+      max-request-size: 51MB
+  mongodb:
+    uri: ${MARG_MONGODB_URI:mongodb://localhost:27017/marg?serverSelectionTimeoutMS=2000&connectTimeoutMS=2000}
 
 server:
   port: 8080
@@ -11,8 +24,34 @@ management:
       exposure:
         include: health,info
 
+logging:
+  level:
+    org.apache.pdfbox.pdmodel.font: ERROR
+
 marg:
   study-region: kaziranga-karbi-anglong
+  eia:
+    template-path: ${MARG_EIA_TEMPLATE_PATH:data/templates/mode1-environmental-eia-section-template.docx}
+    output-directory: ${MARG_EIA_OUTPUT_DIRECTORY:data/generated-reports}
+    knowledge-directory: ${MARG_EIA_KNOWLEDGE_DIRECTORY:${user.dir}/..}
+    auto-index: ${MARG_EIA_AUTO_INDEX:false}
+    retrieval-limit: ${MARG_EIA_RETRIEVAL_LIMIT:8}
+    chunk-size: ${MARG_EIA_CHUNK_SIZE:1200}
+    chunk-overlap: ${MARG_EIA_CHUNK_OVERLAP:200}
+    minimum-pdf-pages: ${MARG_EIA_MINIMUM_PDF_PAGES:8}
+    libreoffice-binary: ${MARG_LIBREOFFICE_BIN:/Applications/LibreOffice.app/Contents/MacOS/soffice}
+    llm:
+      enabled: ${MARG_EIA_LLM_ENABLED:false}
+      base-url: ${MARG_EIA_LLM_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
+      api-key: ${MARG_EIA_LLM_API_KEY:}
+      model: ${MARG_EIA_LLM_MODEL:gemini-3.5-flash-lite}
+      timeout-seconds: ${MARG_EIA_LLM_TIMEOUT_SECONDS:90}
+      fallback-models: ${MARG_EIA_LLM_FALLBACK_MODELS:gemini-3.8-flash,gemini-3.1-flash-lite}
+      retry-delay-millis: ${MARG_EIA_LLM_RETRY_DELAY_MILLIS:500}
+  mode2:
+    projects-directory: ${MARG_MODE2_PROJECTS_DIRECTORY:data/mode2/projects}
+  mcp:
+    bearer-token: ${MARG_MCP_BEARER_TOKEN:}
   routing:
     corridor-buffer-deg: 0.15
     # Internal routing grid. Coordinates are projected to UTM 46N before search.

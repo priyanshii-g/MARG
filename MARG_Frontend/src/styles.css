@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg-dark: #0f172a;
   --bg-sidebar: #1e293b;
@@ -388,6 +392,125 @@ input:checked + .slider:before {
 
 .input-group input:focus {
   border-color: var(--primary);
+}
+
+.eia-help {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: -3px 0 12px;
+}
+
+.eia-field {
+  margin-bottom: 9px;
+}
+
+.eia-field input {
+  font-family: var(--font);
+}
+
+.eia-field small {
+  display: block;
+  color: var(--text-dim);
+  font-size: 9px;
+  margin-top: 4px;
+}
+
+.eia-grid {
+  margin-bottom: 10px;
+}
+
+.eia-library-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-muted);
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px;
+  font-size: 10px;
+  margin: 10px 0;
+}
+
+.eia-findings-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: rgba(15, 23, 42, 0.35);
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.eia-findings-preview div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eia-findings-preview strong { color: var(--text-main); }
+.eia-findings-preview small { color: var(--text-dim); }
+
+.eia-secondary-btn,
+.eia-downloads button {
+  width: 100%;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eia-secondary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.eia-generate-btn {
+  margin-top: 8px;
+}
+
+.eia-status,
+.eia-error {
+  font-size: 10px;
+  line-height: 1.5;
+  margin-top: 9px;
+}
+
+.eia-status { color: var(--cyan); }
+.eia-error { color: #fda4af; }
+
+.eia-job-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.eia-job-card small {
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+.eia-downloads {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 4px;
 }
 
 /* Action Button */
@@ -1173,5 +1296,197 @@ input:checked + .slider:before {
 .num-hub-btn.active {
   box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
+
+body:has(.marg-home) {
+  height: auto;
+  min-height: 100vh;
+  overflow: auto;
+  background: #17211d;
+  color: #e7ece7;
+}
+
+.home-nav-btn {
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--text-main);
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.home-nav-btn:hover {
+  border-color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Shared, quiet forest palette for the workflow pages. */
+.marg-home {
+  background-color: #17211d !important;
+  color: #e7ece7 !important;
+}
+
+.marg-home > header {
+  background: #19241f;
+  border-color: #34443a;
+}
+
+.marg-home [class~="bg-[#fbfbf8]"],
+.marg-home [class~="bg-white"] {
+  background-color: #202c26 !important;
+}
+
+.marg-home [class~="border-[#d9ddd3]"],
+.marg-home [class~="border-[#cbd2c8]"],
+.marg-home [class~="border-[#e2e5dd]"],
+.marg-home [class~="border-[#aeb8ad]"] {
+  border-color: #3a4b40 !important;
+}
+
+.marg-home article,
+.marg-home section,
+.marg-home [class~="border"] {
+  border-radius: 15px;
+}
+
+.marg-home h1,
+.marg-home h2,
+.marg-home h3 {
+  color: #edf1ed;
+}
+
+.marg-home p,
+.marg-home label,
+.marg-home li {
+  color: #bdc9bf;
+}
+
+.marg-home input:not([type="file"]),
+.marg-home select,
+.marg-home textarea {
+  color: #e7ece7;
+  background-color: #18231e;
+  border: 1px solid #405247;
+  border-radius: 10px;
+}
+
+.marg-home input::placeholder,
+.marg-home textarea::placeholder {
+  color: #89998d;
+}
+
+.marg-home button {
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: none;
+  font: inherit;
+  cursor: pointer;
+  color: #e7ece7;
+  background-color: #26362d;
+  border: 1px solid #405247;
+  border-radius: 10px;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.marg-home button.workflow-action {
+  width: 100%;
+  min-height: 54px;
+  margin-top: auto;
+  padding: 0 16px;
+  justify-content: space-between;
+  color: #e3eae3;
+  background: #2a3b31;
+  border: 1px solid #405649;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.marg-home button:hover:not(:disabled) {
+  background-color: #304238;
+  border-color: #78917e;
+}
+
+.marg-home button.workflow-action:hover:not(:disabled) {
+  background: #34493b;
+  color: #f3f6f2;
+  border-color: #6b876f;
+}
+
+.marg-home button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.marg-home button[class~="bg-[#294b3b]"] {
+  background-color: #42634d !important;
+  border-color: #58765f;
+}
+
+.marg-home button[class~="hover:bg-[#355f4b]"]:hover:not(:disabled) {
+  background-color: #52765d !important;
+}
+
+.marg-home [class~="border-dashed"] {
+  background-color: #1b2821;
+}
+
+.marg-home [role="alert"] {
+  color: #f1c2b4;
+  background-color: #392824;
+  border-color: #785148;
+}
+
+.marg-home [role="status"] {
+  color: #c4d9c8;
+  background-color: #26382c;
+  border-color: #4b6853;
+}
+
+/* Ensure Mode 2 tables, cards, and status tags are sharp and legible */
+.marg-home table th,
+.marg-home table td {
+  border-radius: 0 !important;
+}
+
+.marg-home .text-white {
+  color: #ffffff !important;
+}
+
+.marg-home .text-slate-100 {
+  color: #f1f5f9 !important;
+}
+
+.marg-home .text-slate-200 {
+  color: #e2e8f0 !important;
+}
+
+.marg-home .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+.marg-home .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.marg-home .text-emerald-200 {
+  color: #a7f3d0 !important;
+}
+
+.marg-home .text-emerald-300 {
+  color: #6ee7b7 !important;
+}
+
+.marg-home .text-emerald-400 {
+  color: #34d399 !important;
+}
+
+.marg-home .text-amber-300 {
+  color: #fcd34d !important;
+}
+
+.marg-home .text-amber-400 {
+  color: #fbbf24 !important;
+}
+
 
 

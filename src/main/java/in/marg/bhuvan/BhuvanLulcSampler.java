@@ -4,7 +4,6 @@ import in.marg.model.GeoPoint;
 import in.marg.routing.LulcClass;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +33,7 @@ public class BhuvanLulcSampler {
     private final Map<SampleKey, SampleResult> cache = new ConcurrentHashMap<>();
     private final Map<SampleKey, TimedFailure> recentFailures =
             new ConcurrentHashMap<>();
+    private volatile boolean persistentCacheLoaded;
     // Keep failed requests in memory for 60 seconds before retrying.
     private final long failureCacheTtlMillis = 60_000L;
 
@@ -54,8 +54,9 @@ public class BhuvanLulcSampler {
         this.objectMapper = objectMapper;
     }
 
-    @PostConstruct
-    void loadPersistentCache() {
+    private synchronized void loadPersistentCacheIfNeeded() {
+        if (persistentCacheLoaded) return;
+        persistentCacheLoaded = true;
         if (!java.nio.file.Files.exists(cacheFile)) return;
         try {
             List<PersistedSample> saved = objectMapper.readValue(
@@ -75,6 +76,11 @@ public class BhuvanLulcSampler {
         }
     }
 
+    // Retained as a package-visible hook for cache-loading regression tests.
+    void loadPersistentCache() {
+        loadPersistentCacheIfNeeded();
+    }
+
     // public LulcClass sample(GeoPoint point) {
     //     SampleKey key = key(point);
     //     return cache.computeIfAbsent(key, this::load).type();
@@ -84,6 +90,9 @@ public class BhuvanLulcSampler {
     }
 
     public SampleResult sampleDetailed(GeoPoint point) {
+        // The local cache can be several megabytes. Load it on first LULC use so
+        // Spring can expose health and non-LULC endpoints without parsing it.
+        loadPersistentCacheIfNeeded();
         SampleKey key = key(point);
 
         SampleResult known = cache.get(key);

@@ -2,6 +2,7 @@ package in.marg.routing;
 
 import in.marg.api.CompositeRoutingController;
 import in.marg.api.StudyRegionController;
+import in.marg.eia.Mode1EnvironmentalSection;
 import in.marg.model.GeoPoint;
 import in.marg.model.StudyRegion;
 import in.marg.region.CorridorIngestionService;
@@ -9,6 +10,7 @@ import in.marg.region.CorridorTierMode;
 import in.marg.region.RegionalCorridorPreset;
 import in.marg.region.RegionalCorridorRegistry;
 import in.marg.spatial.Wgs84UtmProjection;
+import in.marg.transport.FacilityMode;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,6 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PanIndiaMultiRegionRoutingValidationTest {
+
+    @Test
+    void acceptsUiStateHighwayFacilityModeAsRegionalHighwayProfile() {
+        assertEquals(FacilityMode.NATIONAL_HIGHWAY,
+                FacilityMode.fromParam("STATE_HIGHWAY", FacilityMode.EXPRESSWAY));
+    }
 
     @Test
     void validateTwoTierCatalogAndLazyLoadingSemantics() {
@@ -98,6 +106,13 @@ class PanIndiaMultiRegionRoutingValidationTest {
         );
         assertEquals("assam", assamUserQuery.get("regionId"));
         assertTrue(((Number) ((Map<?, ?>) assamUserQuery.get("metadata")).get("routeLengthKm")).doubleValue() > 20.0);
+        Map<?, ?> assamUserMetadata = (Map<?, ?>) assamUserQuery.get("metadata");
+        Mode1EnvironmentalSection environmentalSection =
+                (Mode1EnvironmentalSection) assamUserMetadata.get("environmentalSectionInput");
+        assertNotNull(environmentalSection, "Preset Mode 1 routes must include the GIS screening needed by EIA");
+        assertEquals("mode1_environmental_screening", environmentalSection.sectionId());
+        assertFalse(environmentalSection.findings().isEmpty(),
+                "The saved Mode 1 route should carry GIS findings from its route diagnostics");
 
         // Query 1b: (26.620, 93.360) lies inside the Kaziranga Protected Area mask (lat > 26.60)
         Map<String, Object> assamSnapped = registry.route(

@@ -1,5 +1,6 @@
 package in.marg.api;
 
+import in.marg.eia.Mode1EnvironmentalSectionAssembler;
 import in.marg.config.BuildingRoutingProperties;
 import in.marg.config.DemographicRoutingProperties;
 import in.marg.config.DrainageRoutingProperties;
@@ -1045,6 +1046,13 @@ public class CompositeRoutingController {
                         + "2D Right-of-Way (RoW) building footprint & settlement conflict minimization, "
                         + "population-scaled & demographic-vulnerability-weighted corridor exposure minimization, "
                         + "and IRC:SP:13 / IRC:SP:42 cross-drainage structure sizing & wetland/thalweg obstruction avoidance.");
+
+        metadata.put(
+                "environmentalSectionInput",
+                Mode1EnvironmentalSectionAssembler.assemble(
+                        mainlineProperties,
+                        metadata,
+                        routeDiagnostics));
 
         List<Map<String, Object>> features =
                 networkPlannerService.buildGeoJsonFeatures(

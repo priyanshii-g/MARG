@@ -1,5 +1,6 @@
 package in.marg.region;
 
+import in.marg.eia.Mode1EnvironmentalSectionAssembler;
 import in.marg.building.BuildingDensityRasterProvider;
 import in.marg.building.BuildingFootprintVectorIndex;
 import in.marg.config.BuildingRoutingProperties;
@@ -805,14 +806,21 @@ public class RegionalCorridorRegistry {
 
         // Stage 3b: Connect user-given origin & destination to nearest feasible existing road
         // and stitch feasible terminal access connectors into mainline so all route metrics include them.
+        // For short segment reviews (e.g. Mode 2 corridor checks where start and goal are close together),
+        // do not stitch distant regional tie-ins that exceed the corridor baseline distance itself.
+        double directEndpointDistanceKm = bundle.projection().distanceMeters(start, goal) / 1000.0;
+        double maxFeasibleTieInDistanceMeters = Math.min(6000.0, directEndpointDistanceKm * 400.0);
+
         TransportNetworkVectorIndex.NearestRoadTieIn startTieIn = bundle.transportIndex().findNearestRoadTieIn(
-                start, pt -> fullRegion.contains(pt) && !built.surface().assess(pt).blocked());
+                start, pt -> fullRegion.contains(pt) && searchWindow.contains(pt)
+                        && !built.surface().assess(pt).blocked());
         TransportNetworkVectorIndex.NearestRoadTieIn goalTieIn = bundle.transportIndex().findNearestRoadTieIn(
-                goal, pt -> fullRegion.contains(pt) && !built.surface().assess(pt).blocked());
+                goal, pt -> fullRegion.contains(pt) && searchWindow.contains(pt)
+                        && !built.surface().assess(pt).blocked());
 
         List<GeoPoint> startConnectorPath = List.of();
         double startConnectorKm = 0.0;
-        if (startTieIn != null) {
+        if (startTieIn != null && startTieIn.distanceMeters() <= maxFeasibleTieInDistanceMeters) {
             if (startTieIn.distanceMeters() > 35.0) {
                 startConnectorPath = routeTerminalAccessConnector(
                         fullRegion,
@@ -830,7 +838,7 @@ public class RegionalCorridorRegistry {
 
         List<GeoPoint> goalConnectorPath = List.of();
         double goalConnectorKm = 0.0;
-        if (goalTieIn != null) {
+        if (goalTieIn != null && goalTieIn.distanceMeters() <= maxFeasibleTieInDistanceMeters) {
             if (goalTieIn.distanceMeters() > 35.0) {
                 goalConnectorPath = routeTerminalAccessConnector(
                         fullRegion,
@@ -1057,6 +1065,12 @@ public class RegionalCorridorRegistry {
         mainlineProperties.put("pointCount", mainline.size());
         mainlineProperties.put("greenfield", true);
         mainlineProperties.put("dataDriven", true);
+
+        // Keep the saved Mode 1 route and its EIA screening evidence together. The
+        // direct CompositeRoutingController path already exposes this section; preset
+        // routes must expose the same object for the Mode 1 save-for-EIA workflow.
+        metadata.put("environmentalSectionInput",
+                Mode1EnvironmentalSectionAssembler.assemble(mainlineProperties, metadata, routeDiagnostics));
 
         List<Map<String, Object>> features = new ArrayList<>(bundle.networkPlannerService().buildGeoJsonFeatures(
                 mainline,
@@ -1540,7 +1554,7 @@ public class RegionalCorridorRegistry {
         return value;
     }
 
-    private static boolean containsWithMargin(StudyRegion region, GeoPoint point, double marginDeg) {
+    public static boolean containsWithMargin(StudyRegion region, GeoPoint point, double marginDeg) {
         return point.lat() >= region.minLat() - marginDeg
                 && point.lat() <= region.maxLat() + marginDeg
                 && point.lon() >= region.minLon() - marginDeg

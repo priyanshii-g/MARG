@@ -540,9 +540,14 @@ public class PanIndiaDynamicCorridorService {
         }
 
         // Route feasible A* road connectors joining user start/goal to nearest existing highway and include in mainline/stats
+        // For short segment reviews (e.g. Mode 2 corridor checks where start and goal are close together),
+        // do not stitch distant regional tie-ins that exceed the corridor baseline distance itself.
+        double directEndpointDistanceKm = projection.distanceMeters(start, goal) / 1000.0;
+        double maxFeasibleTieInDistanceMeters = Math.min(6000.0, directEndpointDistanceKm * 400.0);
+
         List<GeoPoint> startConnectorPath = List.of();
         double startConnectorKm = 0.0;
-        if (startTieIn != null) {
+        if (startTieIn != null && startTieIn.distanceMeters() <= maxFeasibleTieInDistanceMeters) {
             if (startTieIn.distanceMeters() > DIRECT_ROAD_TIE_IN_THRESHOLD_METERS) {
                 startConnectorPath = routeDynamicConnector(
                         router, snapService, mode, startTieIn.tieInPoint(), start, bufferDeg);
@@ -554,7 +559,7 @@ public class PanIndiaDynamicCorridorService {
 
         List<GeoPoint> goalConnectorPath = List.of();
         double goalConnectorKm = 0.0;
-        if (goalTieIn != null) {
+        if (goalTieIn != null && goalTieIn.distanceMeters() <= maxFeasibleTieInDistanceMeters) {
             if (goalTieIn.distanceMeters() > DIRECT_ROAD_TIE_IN_THRESHOLD_METERS) {
                 goalConnectorPath = routeDynamicConnector(
                         router, snapService, mode, goal, goalTieIn.tieInPoint(), bufferDeg);
