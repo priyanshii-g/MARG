@@ -632,9 +632,16 @@ public class PanIndiaDynamicCorridorService {
         }
 
         // Route feasible building-safe A* road connectors joining user start/goal to nearest existing highway
+        // For short segment reviews (e.g. Mode 2 corridor checks where start and goal are close together),
+        // do not stitch distant regional tie-ins that exceed the corridor baseline distance itself.
+        double directEndpointDistanceKm = projection.distanceMeters(start, goal) / 1000.0;
+        double maxFeasibleTieInDistanceMeters = directEndpointDistanceKm < 15.0
+                ? Math.min(6000.0, directEndpointDistanceKm * 400.0)
+                : Double.POSITIVE_INFINITY;
+
         List<GeoPoint> startConnectorPath = List.of();
         double startConnectorKm = 0.0;
-        if (startTieIn != null) {
+        if (startTieIn != null && startTieIn.distanceMeters() <= maxFeasibleTieInDistanceMeters) {
             if (startTieIn.distanceMeters() > DIRECT_ROAD_TIE_IN_THRESHOLD_METERS) {
                 startConnectorPath = routeDynamicConnector(
                         router, snapService, mode, startTieIn.tieInPoint(), start, bufferDeg, osmIndex);
@@ -646,7 +653,7 @@ public class PanIndiaDynamicCorridorService {
 
         List<GeoPoint> goalConnectorPath = List.of();
         double goalConnectorKm = 0.0;
-        if (goalTieIn != null) {
+        if (goalTieIn != null && goalTieIn.distanceMeters() <= maxFeasibleTieInDistanceMeters) {
             if (goalTieIn.distanceMeters() > DIRECT_ROAD_TIE_IN_THRESHOLD_METERS) {
                 goalConnectorPath = routeDynamicConnector(
                         router, snapService, mode, goal, goalTieIn.tieInPoint(), bufferDeg, osmIndex);
@@ -917,6 +924,14 @@ public class PanIndiaDynamicCorridorService {
                 "POPULATION_DENSITY_AND_DEMOGRAPHICS",
                 "WETLANDS_SEASONAL_STREAMS_AND_DRAINAGE"
         ));
+
+        Map<String, Object> envRouteProps = new LinkedHashMap<>();
+        envRouteProps.put("profile", "COMPOSITE_13_LAYER_PAN_INDIA");
+        envRouteProps.put("routeLengthKm", round(routeLengthKm));
+        envRouteProps.put("distanceBaselineKm", round(baselineLengthKm));
+        envRouteProps.put("deviationPercent", round(deviationPercent));
+        metadata.put("environmentalSectionInput",
+                in.marg.eia.Mode1EnvironmentalSectionAssembler.assemble(envRouteProps, metadata, routeDiagnostics));
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("type", "FeatureCollection");

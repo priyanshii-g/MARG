@@ -817,7 +817,12 @@ public class TransportNetworkVectorIndex {
         if (bestCleanConnector != null) {
             return bestCleanConnector;
         }
-        return bestNavigable != null ? bestNavigable : (connectorSafePredicate == null ? bestAny : null);
+        if (bestNavigable != null) {
+            return bestNavigable;
+        }
+        // When a feasibility predicate is supplied, never return a road that failed it.
+        // In particular, callers may only have raster coverage for a bounded analysis window.
+        return (navigablePredicate == null && connectorSafePredicate == null) ? bestAny : null;
     }
 
     /**

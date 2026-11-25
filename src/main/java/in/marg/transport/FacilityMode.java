@@ -30,7 +30,9 @@ public enum FacilityMode {
         String norm = raw.trim().toUpperCase(Locale.ROOT).replace('-', '_');
         return switch (norm) {
             case "EXPRESSWAY", "EXP" -> EXPRESSWAY;
-            case "NATIONAL_HIGHWAY", "NH", "HIGHWAY", "REGIONAL_HIGHWAY" -> NATIONAL_HIGHWAY;
+            // The UI exposes State Hwy as a regional facility class. The routing
+            // engine models regional collectors using the NATIONAL_HIGHWAY profile.
+            case "NATIONAL_HIGHWAY", "NH", "HIGHWAY", "REGIONAL_HIGHWAY", "STATE_HIGHWAY", "SH" -> NATIONAL_HIGHWAY;
             default -> throw new IllegalArgumentException(
                     "Unsupported facilityMode '" + raw + "'. Use EXPRESSWAY or NATIONAL_HIGHWAY.");
         };

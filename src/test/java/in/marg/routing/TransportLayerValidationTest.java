@@ -36,12 +36,25 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TransportLayerValidationTest {
 
     private final CoordinateProjection projection = new Wgs84UtmProjection(46);
     private final GreenfieldAStarRouter router = new GreenfieldAStarRouter(projection);
+
+    @Test
+    void nearestRoadTieInDoesNotFallBackToCandidateRejectedByNavigabilityPredicate() {
+        TransportNetworkVectorIndex vectorIndex = new TransportNetworkVectorIndex(
+                projection,
+                "data/processed/transport/assam_transport_network.geojson",
+                "data/processed/transport/assam_regional_hubs.geojson");
+
+        assertNull(vectorIndex.findNearestRoadTieIn(
+                new GeoPoint(26.5897, 93.40035),
+                candidate -> false));
+    }
     private final StudyRegion fullRegion = new StudyRegion(
             "Kaziranga–Karbi Anglong, Assam",
             25.75, 93.10, 26.65, 93.75,

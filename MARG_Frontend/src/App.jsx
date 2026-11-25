@@ -11,6 +11,8 @@ import {
 import LayerAuditPanel from "./components/LayerAuditPanel";
 import MapLensHud from "./components/MapLensHud";
 import EngineeringDossier from "./components/EngineeringDossier";
+import Mode2Workspace from "./Mode2Workspace.jsx";
+import Mode1EiaWorkspace from "./Mode1EiaWorkspace.jsx";
 
 // -------------------------------------------------------------
 // India & Benchmark Region Constants
@@ -69,6 +71,57 @@ const PRESET_CORRIDORS = [
 
 function isInsideIndia(lat, lng) {
   return lat >= 6.5 && lat <= 37.5 && lng >= 68.0 && lng <= 97.5;
+}
+
+function extractMainlineCoordinates(features) {
+  const feature = features?.find((item) => ["GREENFIELD_MAINLINE", "MAINLINE"].includes(item.properties?.featureRole));
+  const geometry = feature?.geometry;
+  if (geometry?.type === "LineString") return geometry.coordinates;
+  if (geometry?.type === "MultiLineString") return geometry.coordinates.flat();
+  return [];
+}
+
+function HomePage({ onMode1, onMode2, onEia }) {
+  const modes = [
+    { number: "01", title: "Greenfield route planning", detail: "Compare a new corridor against terrain, settlements and environmental constraints.", action: "Open route planner", onClick: onMode1 },
+    { number: "02", title: "Existing project review", detail: "Bring project documents and a route into MARG for evidence-led review.", action: "Open project review", onClick: onMode2 },
+    { number: "03", title: "Environmental EIA report", detail: "Choose a saved Mode 1 route and prepare its evidence-linked environmental report.", action: "Open EIA reports", onClick: onEia },
+  ];
+
+  return (
+    <main className="marg-home min-h-screen bg-[#f4f3ed] text-[#202820]">
+      <header className="flex items-center justify-between border-b border-[#d9ddd3] px-6 py-5 sm:px-10">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#294b3b] text-sm font-bold tracking-wide text-white">M</div>
+          <div><p className="text-sm font-semibold tracking-[0.18em]">MARG</p><p className="text-xs text-[#68736b]">Responsible infrastructure planning</p></div>
+        </div>
+        <span className="hidden text-xs uppercase tracking-[0.16em] text-[#68736b] sm:block">Geospatial decision support</span>
+      </header>
+      <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 sm:px-10 sm:pt-20">
+        <div className="grid gap-10 border-b border-[#d9ddd3] pb-12 md:grid-cols-[1.15fr_0.85fr] md:items-end">
+          <div>
+            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#557260]">Planning workspace</p>
+            <h1 className="max-w-2xl text-4xl font-medium leading-[1.12] tracking-tight sm:text-6xl">Plan routes.<br />Review projects.<br /><span className="text-[#557260]">Prepare assessments.</span></h1>
+          </div>
+          <div className="max-w-md md:justify-self-end">
+            <p className="text-base leading-7 text-[#59645c]">Choose a workflow to get started. MARG combines spatial analysis with project evidence to support early infrastructure decisions.</p>
+            <div className="mt-7 flex items-center gap-3 text-xs text-[#68736b]"><span className="h-px w-10 bg-[#8c9b8d]" /> India infrastructure planning prototype</div>
+          </div>
+        </div>
+        <div className="grid gap-4 pt-7 md:grid-cols-3">
+          {modes.map((mode) => <article key={mode.number} className="group flex min-h-[280px] flex-col border border-[#d9ddd3] bg-[#fbfbf8] p-6 transition-colors hover:border-[#8c9b8d] sm:p-7">
+            <div className="flex items-center justify-between"><span className="font-mono text-xs text-[#7c887e]">{mode.number}</span><span className="h-2 w-2 rounded-full bg-[#91a28f]" /></div>
+            <h2 className="mt-10 text-xl font-medium tracking-tight">{mode.title}</h2>
+            <p className="mt-3 text-sm leading-6 text-[#68736b]">{mode.detail}</p>
+            <button type="button" onClick={mode.onClick} className="workflow-action mt-auto flex items-center justify-between border-t border-[#e2e5dd] pt-5 text-left text-sm font-semibold text-[#294b3b] hover:text-[#557260]">
+              {mode.action}<span aria-hidden="true" className="text-lg transition-transform group-hover:translate-x-1">→</span>
+            </button>
+          </article>)}
+        </div>
+        <footer className="mt-10 flex flex-col gap-2 border-t border-[#d9ddd3] pt-5 text-xs leading-5 text-[#7c887e] sm:flex-row sm:justify-between"><span>Preliminary decision support; findings require project-specific verification.</span><span>MARG · Environmental and corridor planning</span></footer>
+      </section>
+    </main>
+  );
 }
 
 function humanizeSnapReason(reason) {
@@ -168,6 +221,27 @@ export default function App() {
   const [hubDecisions, setHubDecisions] = useState([]);
   const [showAllDecisions, setShowAllDecisions] = useState(false);
 
+  // Unified Workspace Navigation & Mode 1 EIA / MongoDB Route Persistence State
+  const [activeWorkspace, setActiveWorkspace] = useState("home");
+  const [mode1GisScreening, setMode1GisScreening] = useState(null);
+  const [mode1RouteSignature, setMode1RouteSignature] = useState(null);
+  const [eiaProjectName, setEiaProjectName] = useState("");
+  const [eiaProjectProponent, setEiaProjectProponent] = useState("");
+  const [eiaStudyArea, setEiaStudyArea] = useState("Kaziranga–Karbi Anglong corridor");
+  const [eiaProjectState, setEiaProjectState] = useState("Assam");
+  const [eiaAssessmentDate, setEiaAssessmentDate] = useState(new Date().toISOString().slice(0, 10));
+  const [eiaLibraryStatus, setEiaLibraryStatus] = useState(null);
+  const [eiaBusy, setEiaBusy] = useState(false);
+  const [eiaMessage, setEiaMessage] = useState("");
+  const [eiaJob, setEiaJob] = useState(null);
+  const [eiaError, setEiaError] = useState("");
+  const [savedRouteId, setSavedRouteId] = useState("");
+  const [mongoStatus, setMongoStatus] = useState("Routes save to MongoDB when you choose Save generated route for EIA.");
+  const [hasPendingRoute, setHasPendingRoute] = useState(false);
+  const [routeSaveBusy, setRouteSaveBusy] = useState(false);
+  const [routeSaveMessage, setRouteSaveMessage] = useState("");
+  const pendingRouteRef = useRef(null);
+
   // Multi-Objective Trade-Off & Request-Scoped User Alignment Tuning State
   const [tradeOffProfile, setTradeOffProfile] = useState(null);
   const [tradeOffPreset, setTradeOffPreset] = useState("BALANCED");
@@ -232,6 +306,12 @@ export default function App() {
       setSpurEngineeringSummary(null);
       setActiveLayerId(null);
       setPinnedLayerIds(new Set());
+      setMode1GisScreening(null);
+      setMode1RouteSignature(null);
+      pendingRouteRef.current = null;
+      setHasPendingRoute(false);
+      setSavedRouteId("");
+      setRouteSaveMessage("");
     }
     lastCoordsKeyRef.current = currentCoordsKey;
   }, [currentCoordsKey]);
@@ -271,7 +351,7 @@ export default function App() {
   // Initialize Leaflet Map
   // -----------------------------------------------------------
   useEffect(() => {
-    if (mapRef.current) return;
+    if (activeWorkspace !== "mode1" || !mapContainerRef.current || mapRef.current) return;
 
     const map = L.map(mapContainerRef.current, {
       center: [26.25, 93.42],
@@ -309,12 +389,24 @@ export default function App() {
 
       if (mode === "start") {
         setStart({ lat, lng });
+        setMode1GisScreening(null);
+        setMode1RouteSignature(null);
+        setRouteInfo(null);
+        pendingRouteRef.current = null;
+        setHasPendingRoute(false);
+        setSavedRouteId("");
         setSelectedPresetId("custom");
         mapSelectionModeRef.current = null;
         setMapSelectionMode(null);
         setStatus(`📍 Origin selected: ${lat}, ${lng}`);
       } else if (mode === "end") {
         setEnd({ lat, lng });
+        setMode1GisScreening(null);
+        setMode1RouteSignature(null);
+        setRouteInfo(null);
+        pendingRouteRef.current = null;
+        setHasPendingRoute(false);
+        setSavedRouteId("");
         setSelectedPresetId("custom");
         mapSelectionModeRef.current = null;
         setMapSelectionMode(null);
@@ -329,12 +421,23 @@ export default function App() {
     });
 
     mapRef.current = map;
+    if (currentFeatures.length > 0) {
+      renderGeoJsonFeatures(currentFeatures, tradeOffPreset, activeLayerId, pinnedLayerIds, routeLayerProfile, spurLayerProfiles, true);
+    }
 
     return () => {
       map.remove();
       mapRef.current = null;
+      baseTileLayerRef.current = null;
+      startMarkerRef.current = null;
+      endMarkerRef.current = null;
+      snapVectorGroupRef.current = null;
+      routeLayersGroupRef.current = null;
+      colorizedRouteGroupRef.current = null;
+      focusHighlightGroupRef.current = null;
+      comparativeRoutesGroupRef.current = null;
     };
-  }, []);
+  }, [activeWorkspace]);
 
   // -----------------------------------------------------------
   // Multi-Basemap Switcher (OSM, OpenTopoMap, Esri Satellite/Topo/Light Gray/Street - 100% Free, No API Keys)
@@ -367,7 +470,7 @@ export default function App() {
       if (typeof baseTiles.bringToBack === "function") baseTiles.bringToBack();
       baseTileLayerRef.current = baseTiles;
     }
-  }, [baseMapType]);
+  }, [baseMapType, activeWorkspace]);
 
   // -----------------------------------------------------------
   // Update Start & End Markers
@@ -404,7 +507,7 @@ export default function App() {
         .addTo(mapRef.current)
         .bindPopup("<b>Highway Destination (B)</b>");
     }
-  }, [start, end]);
+  }, [start, end, activeWorkspace]);
 
   // Handle Crosshair cursor during map-selection
   useEffect(() => {
@@ -415,7 +518,7 @@ export default function App() {
     } else {
       container.classList.remove("crosshair-cursor");
     }
-  }, [mapSelectionMode]);
+  }, [mapSelectionMode, activeWorkspace]);
 
   // Debounced Search for Intermediate District Hubs
   useEffect(() => {
@@ -551,6 +654,20 @@ export default function App() {
       setHubDecisions(cached.hubDecisions);
       setStatutoryClearanceReport(cached.statutoryClearanceReport || cached.tradeOffProfile?.statutoryClearanceReport || null);
 
+      const cachedData = cached.data || null;
+      const cachedCoords = extractMainlineCoordinates(cached.features || []);
+      pendingRouteRef.current = cachedData && cachedCoords.length >= 2 ? cachedData : null;
+      setHasPendingRoute(Boolean(pendingRouteRef.current));
+      setMode1GisScreening(cachedData?.metadata?.environmentalSectionInput ?? null);
+      const cachedStart = cachedData?.metadata?.endpointResolution?.resolvedStart;
+      const cachedGoal = cachedData?.metadata?.endpointResolution?.resolvedGoal;
+      setMode1RouteSignature(routeSignature(
+        cachedStart ? { lat: cachedStart.lat, lng: cachedStart.lon ?? cachedStart.lng } : start,
+        cachedGoal ? { lat: cachedGoal.lat, lng: cachedGoal.lon ?? cachedGoal.lng } : end,
+      ));
+      setSavedRouteId("");
+      setRouteSaveMessage("");
+
       setActiveAlternativeId("alt-" + targetKey);
       setStatus(`⚡ Instantly switched to cached ${p.label} corridor (${cached.routeInfo.routeLengthKm} km) with zero recalculation delay.`);
       return;
@@ -640,7 +757,7 @@ export default function App() {
         comparativeRoutesGroupRef.current.addLayer(layer);
       }
     });
-  }, [cachedArchetypes, tradeOffPreset, showMultiArchetypes]);
+  }, [cachedArchetypes, tradeOffPreset, showMultiArchetypes, activeWorkspace]);
 
   // -----------------------------------------------------------
   // Preset Selection Handler
@@ -664,6 +781,20 @@ export default function App() {
     setSpurEngineeringSummary(null);
     setActiveLayerId(null);
     setPinnedLayerIds(new Set());
+    setMode1GisScreening(null);
+    setMode1RouteSignature(null);
+    setRouteInfo(null);
+    pendingRouteRef.current = null;
+    setHasPendingRoute(false);
+    setSavedRouteId("");
+    setRouteSaveMessage("");
+    setEiaJob(null);
+    setEiaProjectName(preset.name);
+    setEiaStudyArea(preset.name);
+    setEiaProjectState(preset.id === "western_ghats" ? "Maharashtra"
+      : preset.id === "gangetic_plains" ? "Uttar Pradesh"
+      : preset.id === "interstate_pan_india" ? "Maharashtra; Madhya Pradesh"
+      : "Assam");
     if (!lockBasemap) {
       setBaseMapType("osm");
     }
@@ -687,6 +818,14 @@ export default function App() {
     }
 
     setIsLoading(true);
+    pendingRouteRef.current = null;
+    setHasPendingRoute(false);
+    setSavedRouteId("");
+    setRouteSaveMessage("");
+    setMode1GisScreening(null);
+    setMode1RouteSignature(null);
+    setEiaJob(null);
+    setEiaError("");
     setRoutingError(null);
     setSnapNotice(null);
     setConnectedHubs([]);
@@ -992,6 +1131,20 @@ export default function App() {
 
     const clearanceReport = data.statutoryClearanceReport || meta.statutoryClearanceReport || profile?.statutoryClearanceReport || null;
     setStatutoryClearanceReport(clearanceReport);
+
+    // Sync Mode 1 Environmental EIA screening & MongoDB persistence payload
+    setMode1GisScreening(meta.environmentalSectionInput ?? null);
+    const resolvedStartPt = meta.endpointResolution?.resolvedStart;
+    const resolvedGoalPt = meta.endpointResolution?.resolvedGoal;
+    setMode1RouteSignature(routeSignature(
+      resolvedStartPt ? { lat: resolvedStartPt.lat, lng: resolvedStartPt.lon ?? resolvedStartPt.lng } : start,
+      resolvedGoalPt ? { lat: resolvedGoalPt.lat, lng: resolvedGoalPt.lon ?? resolvedGoalPt.lng } : end,
+    ));
+    const mainlineCoords = extractMainlineCoordinates(feats);
+    pendingRouteRef.current = mainlineCoords.length >= 2 ? data : null;
+    setHasPendingRoute(mainlineCoords.length >= 2);
+    setRouteSaveMessage("");
+    setSavedRouteId("");
 
     // Save full snapshot in Archetype Cache
     const snapshot = {
@@ -1760,6 +1913,221 @@ export default function App() {
     }
   }
 
+  function routeSignature(startPoint = start, endPoint = end) {
+    return JSON.stringify({
+      start: startPoint,
+      end: endPoint,
+      selectedPresetId,
+      facilityMode,
+      deepIngestion,
+      autoConnectHubs,
+      maxAutoHubs,
+      targetHubs,
+      maxVcRatio,
+      maxDeviationPercent,
+    });
+  }
+
+  async function saveCurrentRoute() {
+    const data = pendingRouteRef.current;
+    if (!data) return;
+    if (mode1RouteSignature !== routeSignature()) {
+      setRouteSaveMessage("Route settings changed. Generate the alignment again before saving it.");
+      return;
+    }
+    const coordinates = extractMainlineCoordinates(data.features);
+    if (coordinates.length < 2) {
+      setRouteSaveMessage("The generated response did not contain a usable mainline geometry.");
+      return;
+    }
+    const metadata = data.metadata || {};
+    const diagnostics = metadata.routeDiagnostics || {};
+    const fallbackName = PRESET_CORRIDORS.find((preset) => preset.id === selectedPresetId)?.name;
+    const projectName = eiaProjectName.trim() || fallbackName || "MARG Greenfield Highway Route";
+    setRouteSaveBusy(true);
+    setRouteSaveMessage("");
+    try {
+      const response = await fetch("/api/routes/saved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(60000),
+        body: JSON.stringify({
+          projectName,
+          projectProponent: eiaProjectProponent.trim() || null,
+          studyArea: eiaStudyArea.trim() || projectName,
+          projectState: eiaProjectState.trim() || null,
+          facilityMode: metadata.facilityMode || facilityMode,
+          regionId: metadata.regionId || (selectedPresetId !== "custom" ? selectedPresetId : null),
+          coordinates,
+          routeSummary: {
+            routeLengthKm: routeInfo?.routeLengthKm ?? diagnostics.routeLengthKm ?? metadata.routeLengthKm ?? null,
+            baselineLengthKm: routeInfo?.baselineLengthKm ?? diagnostics.directDistanceBaselineKm ?? metadata.directDistanceBaselineKm ?? null,
+            deviationPercent: routeInfo?.deviationPercent ?? diagnostics.alignmentDeviationPercent ?? metadata.deviationPercent ?? null,
+            facilityMode: metadata.facilityMode || facilityMode,
+            tierMode: data.corridorTierMode || metadata.corridorTierMode || "TIER_1_DYNAMIC_PAN_INDIA",
+          },
+          routeMetadata: {
+            routeDiagnostics: diagnostics,
+            endpointResolution: metadata.endpointResolution || {},
+            transportNetworkAndCapacitySummary: metadata.transportNetworkAndCapacitySummary || {},
+            coordinateReferenceSystem: metadata.coordinateReferenceSystem || "EPSG:4326",
+          },
+          gisScreening: metadata.environmentalSectionInput || {},
+        }),
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const saved = await response.json();
+      setSavedRouteId(saved.routeId);
+      setHasPendingRoute(false);
+      setMongoStatus("MongoDB connected · generated routes are available for later reports.");
+      setRouteSaveMessage(`Saved “${saved.projectName}” for EIA generation. Route ID: ${saved.routeId}`);
+    } catch (error) {
+      setRouteSaveMessage(`Could not save route to MongoDB: ${error.message || "database unavailable"}`);
+    } finally {
+      setRouteSaveBusy(false);
+    }
+  }
+
+  async function eiaRequest(url, options = {}) {
+    const headers = new Headers(options.headers || {});
+    if (options.body && !(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
+    const response = await fetch(url, { ...options, headers });
+    if (!response.ok) {
+      let message = `Request failed (${response.status})`;
+      const rawBody = await response.text();
+      try {
+        const body = JSON.parse(rawBody);
+        message = body.error || body.message || message;
+      } catch {
+        if (rawBody) message = rawBody;
+      }
+      throw new Error(message);
+    }
+    return response;
+  }
+
+  async function refreshEiaLibrary() {
+    setEiaBusy(true);
+    setEiaError("");
+    setEiaMessage("Refreshing the environmental PDF library…");
+    try {
+      const response = await eiaRequest("/api/eia/library/refresh", { method: "POST" });
+      const library = await response.json();
+      setEiaLibraryStatus(library);
+      setEiaMessage(`Indexed ${library.documentCount} documents and ${library.chunkCount} page-preserving chunks.`);
+    } catch (error) {
+      setEiaError(error.message || "Could not refresh the environmental library.");
+      setEiaMessage("");
+    } finally {
+      setEiaBusy(false);
+    }
+  }
+
+  async function generateEnvironmentalReport() {
+    if (mode1GisScreening && (!mode1RouteSignature || mode1RouteSignature !== routeSignature())) {
+      setEiaError("Route settings have changed since the displayed alignment was generated. Generate the route again before drafting its report.");
+      return;
+    }
+    if (!eiaProjectName.trim() || !eiaStudyArea.trim() || !eiaProjectState.trim() || !eiaAssessmentDate) {
+      setEiaError("Project name, study area, state/UT, and assessment date are required.");
+      return;
+    }
+
+    setEiaBusy(true);
+    setEiaError("");
+    setEiaJob(null);
+    setEiaMessage("Indexing current root-folder PDFs before evidence retrieval…");
+    try {
+      const refreshResponse = await eiaRequest("/api/eia/library/refresh", { method: "POST" });
+      const library = await refreshResponse.json();
+      setEiaLibraryStatus(library);
+      if (!library.chunkCount) throw new Error("No readable PDF passages were indexed. Add the required environmental PDFs to the configured knowledge folder and refresh.");
+
+      setEiaMessage("Retrieving guidance, screening legal references, and drafting evidence-linked sections…");
+      const generationResponse = await eiaRequest("/api/eia/reports/from-library", {
+        method: "POST",
+        body: JSON.stringify({
+          projectName: eiaProjectName.trim(),
+          projectProponent: eiaProjectProponent.trim() || null,
+          routeAlternativeName: mode1GisScreening ? "MARG Greenfield Route Alternative" : null,
+          studyArea: eiaStudyArea.trim(),
+          projectState: eiaProjectState.trim(),
+          reportVersion: "v1.0",
+          assessmentDate: eiaAssessmentDate,
+          gisScreening: mode1GisScreening || null,
+          projectFacts: [],
+        }),
+      });
+      const receipt = await generationResponse.json();
+      setEiaJob(receipt);
+      if (receipt.state === "REJECTED" || receipt.state === "FAILED") {
+        setEiaError(receipt.validationIssues?.map((issue) => issue.message).join(" ") || receipt.message || "The report job was rejected.");
+        setEiaMessage("");
+        return;
+      }
+
+      const terminalStates = new Set(["COMPLETED", "REJECTED", "FAILED"]);
+      let latest = receipt;
+      for (let attempt = 0; attempt < 180 && !terminalStates.has(latest.state); attempt += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const statusResponse = await eiaRequest(`/api/eia/reports/jobs/${encodeURIComponent(receipt.jobId)}`);
+        latest = await statusResponse.json();
+        setEiaJob(latest);
+        setEiaMessage(latest.message || `Report job is ${latest.state.toLowerCase()}…`);
+      }
+      if (latest.state === "COMPLETED") {
+        setEiaMessage(`Environmental report is ready (${latest.pageCount ?? "—"} pages).`);
+      } else if (latest.state === "REJECTED" || latest.state === "FAILED") {
+        setEiaError(latest.validationIssues?.map((issue) => issue.message).join(" ") || latest.message || "Report generation failed.");
+        setEiaMessage("");
+      } else {
+        setEiaMessage("Report is still processing. You can check again using this job ID: " + receipt.jobId);
+      }
+    } catch (error) {
+      setEiaError(error.message || "Environmental report generation failed.");
+      setEiaMessage("");
+    } finally {
+      setEiaBusy(false);
+    }
+  }
+
+  async function downloadEiaArtifact(format) {
+    if (!eiaJob?.jobId) return;
+    setEiaError("");
+    try {
+      const response = await eiaRequest(`/api/eia/reports/${encodeURIComponent(eiaJob.jobId)}/${format}`);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `marg-environmental-eia-${eiaJob.jobId}.${format === "pdf" ? "pdf" : "docx"}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      setEiaError(error.message || "Report download failed.");
+    }
+  }
+
+  if (activeWorkspace === "home") {
+    return (
+      <HomePage
+        onMode1={() => setActiveWorkspace("mode1")}
+        onMode2={() => setActiveWorkspace("mode2")}
+        onEia={() => setActiveWorkspace("eia")}
+      />
+    );
+  }
+
+  if (activeWorkspace === "eia") {
+    return <Mode1EiaWorkspace onHome={() => setActiveWorkspace("home")} />;
+  }
+
+  if (activeWorkspace === "mode2") {
+    return <Mode2Workspace onHome={() => setActiveWorkspace("home")} />;
+  }
+
   const activeLayerCfg = activeLayerId ? LAYER_BY_ID[activeLayerId] : null;
 
   return (
@@ -1777,6 +2145,15 @@ export default function App() {
         </div>
 
         <div className="nav-actions">
+          <button
+            type="button"
+            className="home-nav-btn"
+            onClick={() => setActiveWorkspace("home")}
+            title="Switch between Greenfield Planner, Project Review (Mode 2), and EIA Reports"
+          >
+            ← All Workflows
+          </button>
+
           <select
             className="corridor-quick-select"
             value={selectedPresetId}
@@ -2366,6 +2743,36 @@ export default function App() {
 
                   <div className="planner-status-line">{status}</div>
 
+                  {routeInfo && (
+                    <div className="eia-save-box">
+                      <button
+                        className="eia-secondary-btn"
+                        type="button"
+                        onClick={saveCurrentRoute}
+                        disabled={!hasPendingRoute || routeSaveBusy || mode1RouteSignature !== routeSignature()}
+                      >
+                        {routeSaveBusy
+                          ? "Saving route to MongoDB…"
+                          : savedRouteId && mode1RouteSignature === routeSignature()
+                          ? "✓ Route saved to MongoDB"
+                          : "Save generated route for EIA"}
+                      </button>
+                      {savedRouteId && (
+                        <button
+                          className="eia-secondary-btn"
+                          type="button"
+                          onClick={() => setActiveWorkspace("eia")}
+                          style={{ marginTop: "6px" }}
+                        >
+                          Open EIA Report Workspace →
+                        </button>
+                      )}
+                      {(routeSaveMessage || mongoStatus) && (
+                        <p className="eia-help" role="status">{routeSaveMessage || mongoStatus}</p>
+                      )}
+                    </div>
+                  )}
+
                   {routingError && (
                     <div className="error-card">
                       <div className="error-card-title">{routingError.title}</div>
@@ -2413,6 +2820,116 @@ export default function App() {
                     </div>
                   )}
                 </div>
+
+                {/* Group 4: Mode 1 Environmental EIA Quick-Draft */}
+                <section className="planner-group eia-panel">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Mode 1 Environmental EIA</span>
+                  </div>
+                  <p className="eia-help">
+                    Draft an environmental-only report using the indexed PDF library and route GIS screening when available.
+                    The output is preliminary decision support and requires expert review.
+                  </p>
+                  <div className="input-group eia-field">
+                    <label htmlFor="eia-project-name">Project / corridor name</label>
+                    <input
+                      id="eia-project-name"
+                      value={eiaProjectName}
+                      onChange={(event) => setEiaProjectName(event.target.value)}
+                      placeholder="e.g. Kaziranga–Karbi Anglong Greenfield Highway"
+                    />
+                  </div>
+                  <div className="input-group eia-field">
+                    <label htmlFor="eia-project-proponent">Project proponent (optional)</label>
+                    <input
+                      id="eia-project-proponent"
+                      value={eiaProjectProponent}
+                      onChange={(event) => setEiaProjectProponent(event.target.value)}
+                      placeholder="Organization / agency"
+                    />
+                  </div>
+                  <div className="input-group eia-field">
+                    <label htmlFor="eia-study-area">Study area</label>
+                    <input
+                      id="eia-study-area"
+                      value={eiaStudyArea}
+                      onChange={(event) => setEiaStudyArea(event.target.value)}
+                    />
+                  </div>
+                  <div className="coord-grid eia-grid">
+                    <div className="input-group eia-field">
+                      <label htmlFor="eia-project-state">State / UT</label>
+                      <input
+                        id="eia-project-state"
+                        value={eiaProjectState}
+                        onChange={(event) => setEiaProjectState(event.target.value)}
+                        placeholder="Assam"
+                      />
+                    </div>
+                    <div className="input-group eia-field">
+                      <label htmlFor="eia-assessment-date">Assessment date</label>
+                      <input
+                        id="eia-assessment-date"
+                        type="date"
+                        value={eiaAssessmentDate}
+                        onChange={(event) => setEiaAssessmentDate(event.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="eia-library-summary">
+                    <span>GIS observations: {mode1GisScreening ? (mode1GisScreening.findings?.length ?? 0) : "not supplied"}</span>
+                    <span>Library: {eiaLibraryStatus ? `${eiaLibraryStatus.documentCount} PDFs · ${eiaLibraryStatus.chunkCount} chunks` : "not checked"}</span>
+                  </div>
+                  {mode1GisScreening?.findings?.length > 0 && (
+                    <div className="eia-findings-preview">
+                      {mode1GisScreening.findings.slice(0, 4).map((finding) => (
+                        <div key={finding.evidenceId}>
+                          <strong>{finding.environmentalComponent}</strong>
+                          <span>{finding.metric}: {finding.value} {finding.units}</span>
+                        </div>
+                      ))}
+                      {mode1GisScreening.findings.length > 4 && (
+                        <small>+ {mode1GisScreening.findings.length - 4} additional cited GIS observations</small>
+                      )}
+                    </div>
+                  )}
+                  <button
+                    className="eia-secondary-btn"
+                    type="button"
+                    onClick={refreshEiaLibrary}
+                    disabled={eiaBusy}
+                  >
+                    Refresh environmental PDF library
+                  </button>
+                  <button
+                    className="generate-btn eia-generate-btn"
+                    type="button"
+                    onClick={generateEnvironmentalReport}
+                    disabled={eiaBusy}
+                  >
+                    {eiaBusy ? <><span className="spinner" /> Preparing report…</> : "Generate environmental report"}
+                  </button>
+                  {eiaMessage && <p className="eia-status" role="status">{eiaMessage}</p>}
+                  {eiaError && <p className="eia-error" role="alert">{eiaError}</p>}
+                  {eiaJob && (
+                    <div className="eia-job-card">
+                      <strong>Job {eiaJob.state}</strong>
+                      {eiaJob.pageCount != null && <span>{eiaJob.pageCount} pages</span>}
+                      <small>{eiaJob.jobId}</small>
+                      {eiaJob.state === "COMPLETED" && (
+                        <div className="eia-downloads">
+                          <button type="button" onClick={() => downloadEiaArtifact("pdf")}>Download PDF</button>
+                          <button type="button" onClick={() => downloadEiaArtifact("document")}>Download DOCX</button>
+                        </div>
+                      )}
+                      {eiaJob.state === "FAILED" && eiaJob.downloadUrl && (
+                        <div className="eia-downloads">
+                          <button type="button" onClick={() => downloadEiaArtifact("document")}>Download draft DOCX</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
               </div>
             </div>
           )}

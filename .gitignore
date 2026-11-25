@@ -99,3 +99,7 @@ data/tmp/
 application-local.yml
 application-local.yaml
 application-local.properties
+# Scratch and test files
+cp.txt
+data/generated-reports/
+data/mode2/projects/
