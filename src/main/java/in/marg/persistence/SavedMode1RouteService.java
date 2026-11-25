@@ -7,12 +7,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SavedMode1RouteService {
+    private static final Logger log = LoggerFactory.getLogger(SavedMode1RouteService.class);
     private static final int MAX_VERTICES = 20_000;
     private final MongoTemplate mongo;
 
@@ -33,24 +36,46 @@ public class SavedMode1RouteService {
                 name, clean(request.projectProponent()), clean(request.studyArea()), clean(request.projectState()),
                 clean(request.facilityMode()), clean(request.regionId()), now, now, coordinates,
                 request.routeSummary(), request.routeMetadata(), request.gisScreening());
-        return mongo.save(route);
+        try {
+            return mongo.save(route);
+        } catch (Exception ex) {
+            log.error("Failed to save route to MongoDB: {}", ex.getMessage(), ex);
+            throw new IllegalStateException("Failed to save route in MongoDB: " + ex.getMessage(), ex);
+        }
     }
 
     public List<SavedMode1Route> list() {
-        return mongo.findAll(SavedMode1Route.class).stream()
-                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt())).toList();
+        try {
+            return mongo.findAll(SavedMode1Route.class).stream()
+                    .sorted((a, b) -> b.createdAt().compareTo(a.createdAt())).toList();
+        } catch (Exception ex) {
+            log.error("Failed to query saved routes from MongoDB: {}", ex.getMessage(), ex);
+            throw new IllegalStateException("MongoDB query failed: " + ex.getMessage(), ex);
+        }
     }
 
     public SavedMode1Route find(String routeId) {
-        SavedMode1Route route = mongo.findById(routeId, SavedMode1Route.class);
-        if (route == null) throw new IllegalArgumentException("Saved route was not found.");
-        return route;
+        try {
+            SavedMode1Route route = mongo.findById(routeId, SavedMode1Route.class);
+            if (route == null) throw new IllegalArgumentException("Saved route was not found.");
+            return route;
+        } catch (IllegalArgumentException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Failed to find route {} in MongoDB: {}", routeId, ex.getMessage(), ex);
+            throw new IllegalStateException("MongoDB lookup failed: " + ex.getMessage(), ex);
+        }
     }
 
     public Map<String, Object> health() {
-        Document response = mongo.getDb().runCommand(new Document("ping", 1));
-        return Map.of("available", response.get("ok") instanceof Number ok && ok.doubleValue() == 1.0,
-                "database", mongo.getDb().getName(), "collection", "mode1_saved_routes");
+        try {
+            Document response = mongo.getDb().runCommand(new Document("ping", 1));
+            return Map.of("available", response.get("ok") instanceof Number ok && ok.doubleValue() == 1.0,
+                    "database", mongo.getDb().getName(), "collection", "mode1_saved_routes");
+        } catch (Exception ex) {
+            log.error("MongoDB health check ping failed: {}", ex.getMessage(), ex);
+            return Map.of("available", false, "error", ex.getMessage(), "collection", "mode1_saved_routes");
+        }
     }
 
     private List<List<Double>> validateCoordinates(List<List<Double>> input) {

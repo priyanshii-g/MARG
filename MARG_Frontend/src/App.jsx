@@ -1034,7 +1034,7 @@ export default function App() {
       const response = await fetch("/api/routes/saved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(60000),
         body: JSON.stringify({
           projectName,
           projectProponent: eiaProjectProponent.trim() || null,

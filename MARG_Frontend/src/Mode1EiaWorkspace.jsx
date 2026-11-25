@@ -22,7 +22,7 @@ function getGisCoverage(findings) {
 }
 
 async function requestJson(url, options = {}) {
-  const { timeoutMs = 15000, ...fetchOptions } = options;
+  const { timeoutMs = 60000, ...fetchOptions } = options;
   const headers = new Headers(fetchOptions.headers || {});
   if (fetchOptions.body) headers.set("Content-Type", "application/json");
   const response = await fetch(url, {
