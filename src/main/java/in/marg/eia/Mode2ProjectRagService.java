@@ -28,12 +28,13 @@ public class Mode2ProjectRagService {
             "public_consultation", "alternatives_considered", "source_geometry_or_chainage");
     private static final Pattern NUMBER = Pattern.compile("\\d+(?:[,.]\\d+)*");
     private static final String QA_SYSTEM_PROMPT = """
-            Answer the user's question using only the supplied passages from this one existing project.
+            Answer the user's question clearly, concisely, and directly using the supplied passages from this project's records and any statutory environmental guidance references.
             Return JSON: {"answer": string, "evidenceIds": [string]}.
-            Cite only exact evidence IDs supplied. Every factual answer must cite at least one supporting ID.
-            If the passages do not answer the question, say that the supplied project documents do not establish it.
-            Do not infer missing facts, treat document claims as verified truth, calculate GIS values, or apply laws conclusively.
-            Label statements as claims made by the project document where appropriate. Mention conflicting claims rather than choosing one.
+            Provide a direct, plain-language factual answer first so a non-technical reader or decision maker can immediately understand it.
+            Cite only exact evidence IDs supplied. Every factual claim must cite at least one supporting ID.
+            If the passages do not establish the answer, clearly state what the supplied records confirm and what remains unverified.
+            Do not infer missing facts, invent numbers, or turn absence from supplied files into proof of absence.
+            Label document claims as statutory project assertions.
             """;
     private static final String FACT_SYSTEM_PROMPT = """
             Extract the requested project facts from the supplied passages for one existing highway/infrastructure project.
@@ -48,62 +49,82 @@ public class Mode2ProjectRagService {
     private final Mode2ProjectDocumentService documents;
     private final EnvironmentalLlmClient llm;
     private final ObjectMapper objectMapper;
+    private final EnvironmentalKnowledgeIndex knowledgeIndex;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public Mode2ProjectRagService(Mode2ProjectDocumentService documents, EnvironmentalLlmClient llm,
-                                 ObjectMapper objectMapper) {
+                                 ObjectMapper objectMapper,
+                                 @org.springframework.beans.factory.annotation.Autowired(required = false) EnvironmentalKnowledgeIndex knowledgeIndex) {
         this.documents = documents;
         this.llm = llm;
         this.objectMapper = objectMapper;
+        this.knowledgeIndex = knowledgeIndex;
+    }
+
+    public Mode2ProjectRagService(Mode2ProjectDocumentService documents, EnvironmentalLlmClient llm,
+                                 ObjectMapper objectMapper) {
+        this(documents, llm, objectMapper, null);
     }
 
     public ProjectAnswer answer(String projectId, String question, int limit) throws IOException {
         if (question == null || question.isBlank()) throw new IllegalArgumentException("Question is required.");
         var retrieval = documents.searchResponse(projectId, question, limit);
-        if (retrieval.results().isEmpty()) {
+        List<Mode2ProjectDocumentService.ProjectSearchHit> combinedHits = new ArrayList<>(retrieval.results());
+        if (knowledgeIndex != null) {
+            try {
+                var kbHits = knowledgeIndex.search(question, 3, false);
+                for (var kb : kbHits) {
+                    combinedHits.add(new Mode2ProjectDocumentService.ProjectSearchHit(
+                            kb.evidenceId(), projectId, "KB-" + kb.fileName(), kb.sourceTitle(),
+                            kb.fileName(), kb.pageNumber(), kb.chunkId(), kb.excerpt(), 4.0));
+                }
+            } catch (Exception ignored) { }
+        }
+        if (combinedHits.isEmpty()) {
             return new ProjectAnswer(projectId, question,
-                    "No relevant passages were found in this project's indexed documents.", List.of(), List.of(),
+                    "No relevant passages were found in this project's indexed documents or environmental knowledge base.", List.of(), List.of(),
                     "NO_RETRIEVED_EVIDENCE", "Try different terms or add the relevant project document.");
         }
         if (!llm.isConfigured()) {
-            String synthesizedAnswer = synthesizeGroundedAnswer(question, retrieval.results());
-            List<String> evidenceIds = retrieval.results().stream()
+            String synthesizedAnswer = synthesizeGroundedAnswer(question, combinedHits);
+            List<String> evidenceIds = combinedHits.stream()
                     .map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
                     .limit(4).toList();
             return new ProjectAnswer(projectId, question,
                     synthesizedAnswer,
-                    evidenceIds, retrieval.results().stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
+                    evidenceIds, combinedHits.stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
                     "Synthesized from statutory project records. Cited statements summarize documented DPR/EIA assertions.");
         }
-        String sourceText = retrieval.results().stream().map(Mode2ProjectRagService::formatHit)
+        String sourceText = combinedHits.stream().map(Mode2ProjectRagService::formatHit)
                 .reduce((left, right) -> left + "\n\n" + right).orElse("");
         AnswerDraft draft;
         try {
             String json = llm.completeJson("mode2-project-question-answer", QA_SYSTEM_PROMPT,
-                    "Question: " + question + "\n\nProject passages:\n" + sourceText);
+                    "Question: " + question + "\n\nProject passages and statutory environmental references:\n" + sourceText);
             draft = objectMapper.readValue(json, AnswerDraft.class);
         } catch (Exception ex) {
             log.warn("LLM answering operation failed ({}); falling back to grounded synthesis.", ex.getMessage());
-            String synthesizedAnswer = synthesizeGroundedAnswer(question, retrieval.results());
-            List<String> evidenceIds = retrieval.results().stream()
+            String synthesizedAnswer = synthesizeGroundedAnswer(question, combinedHits);
+            List<String> evidenceIds = combinedHits.stream()
                     .map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
                     .limit(4).toList();
             return new ProjectAnswer(projectId, question,
                     synthesizedAnswer,
-                    evidenceIds, retrieval.results().stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
+                    evidenceIds, combinedHits.stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
                     "Synthesized from statutory project records. Cited statements summarize documented DPR/EIA assertions.");
         }
-        Set<String> retrievedIds = retrieval.results().stream().map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
+        Set<String> retrievedIds = combinedHits.stream().map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
                 .collect(java.util.stream.Collectors.toSet());
         List<String> evidenceIds = validateEvidenceIds(draft.evidenceIds(), retrievedIds, "answer");
         String answer = draft.answer() == null ? "" : draft.answer().trim();
         if (answer.isBlank()) throw new IllegalStateException("LLM returned an empty project answer.");
-        String citedText = retrieval.results().stream().filter(hit -> evidenceIds.contains(hit.evidenceId()))
+        String citedText = combinedHits.stream().filter(hit -> evidenceIds.contains(hit.evidenceId()))
                 .map(Mode2ProjectDocumentService.ProjectSearchHit::excerpt).reduce((a, b) -> a + " " + b).orElse("");
         validateNumbers(answer, citedText);
         return new ProjectAnswer(projectId, question, answer, evidenceIds,
-                retrieval.results().stream().filter(hit -> evidenceIds.contains(hit.evidenceId())).toList(),
+                combinedHits.stream().filter(hit -> evidenceIds.contains(hit.evidenceId())).toList(),
                 "ANSWERED_WITH_PROJECT_EVIDENCE",
-                "Answers summarize project-document claims; cited statements are not independently verified GIS or field findings.");
+                "Answers summarize project-document claims and statutory guidance; cited statements are not independently verified GIS or field findings.");
     }
 
     public ProjectFactExtraction extractFacts(String projectId, String query, int limit) throws IOException {
