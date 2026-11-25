@@ -45,9 +45,9 @@ marg:
       base-url: ${MARG_EIA_LLM_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
       api-key: ${MARG_EIA_LLM_API_KEY:}
       model: ${MARG_EIA_LLM_MODEL:gemini-3.5-flash-lite}
-      timeout-seconds: ${MARG_EIA_LLM_TIMEOUT_SECONDS:90}
+      timeout-seconds: ${MARG_EIA_LLM_TIMEOUT_SECONDS:120}
       fallback-models: ${MARG_EIA_LLM_FALLBACK_MODELS:gemini-flash-lite-latest,gemini-3.8-flash,gemini-flash-latest}
-      retry-delay-millis: ${MARG_EIA_LLM_RETRY_DELAY_MILLIS:500}
+      retry-delay-millis: ${MARG_EIA_LLM_RETRY_DELAY_MILLIS:1500}
   mode2:
     projects-directory: ${MARG_MODE2_PROJECTS_DIRECTORY:data/mode2/projects}
   mcp:
