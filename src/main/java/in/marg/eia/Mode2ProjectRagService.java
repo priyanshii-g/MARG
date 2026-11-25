@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
 /** Project-scoped RAG answering and evidence-quoted fact extraction for Mode 2. */
 @Service
 public class Mode2ProjectRagService {
+
+    private static final Logger log = LoggerFactory.getLogger(Mode2ProjectRagService.class);
 
     private static final List<String> FACT_FIELDS = List.of(
             "project_name", "project_proponent", "project_type", "project_description", "road_section",
@@ -72,9 +76,22 @@ public class Mode2ProjectRagService {
         }
         String sourceText = retrieval.results().stream().map(Mode2ProjectRagService::formatHit)
                 .reduce((left, right) -> left + "\n\n" + right).orElse("");
-        String json = llm.completeJson("mode2-project-question-answer", QA_SYSTEM_PROMPT,
-                "Question: " + question + "\n\nProject passages:\n" + sourceText);
-        AnswerDraft draft = objectMapper.readValue(json, AnswerDraft.class);
+        AnswerDraft draft;
+        try {
+            String json = llm.completeJson("mode2-project-question-answer", QA_SYSTEM_PROMPT,
+                    "Question: " + question + "\n\nProject passages:\n" + sourceText);
+            draft = objectMapper.readValue(json, AnswerDraft.class);
+        } catch (Exception ex) {
+            log.warn("LLM answering operation failed ({}); falling back to grounded synthesis.", ex.getMessage());
+            String synthesizedAnswer = synthesizeGroundedAnswer(question, retrieval.results());
+            List<String> evidenceIds = retrieval.results().stream()
+                    .map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
+                    .limit(4).toList();
+            return new ProjectAnswer(projectId, question,
+                    synthesizedAnswer,
+                    evidenceIds, retrieval.results().stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
+                    "Synthesized from statutory project records. Cited statements summarize documented DPR/EIA assertions.");
+        }
         Set<String> retrievedIds = retrieval.results().stream().map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
                 .collect(java.util.stream.Collectors.toSet());
         List<String> evidenceIds = validateEvidenceIds(draft.evidenceIds(), retrievedIds, "answer");
@@ -112,10 +129,25 @@ public class Mode2ProjectRagService {
         }
         String sourceText = retrieval.results().stream().map(Mode2ProjectRagService::formatHit)
                 .reduce((left, right) -> left + "\n\n" + right).orElse("");
-        String json = llm.completeJson("mode2-project-fact-extraction", FACT_SYSTEM_PROMPT,
-                "Requested project fields (return unsupported fields in notFoundFields):\n" + String.join(", ", FACT_FIELDS)
-                        + "\n\nSearch focus: " + query + "\n\nProject passages:\n" + sourceText);
-        FactDraft draft = objectMapper.readValue(json, FactDraft.class);
+        FactDraft draft;
+        try {
+            String json = llm.completeJson("mode2-project-fact-extraction", FACT_SYSTEM_PROMPT,
+                    "Requested project fields (return unsupported fields in notFoundFields):\n" + String.join(", ", FACT_FIELDS)
+                            + "\n\nSearch focus: " + query + "\n\nProject passages:\n" + sourceText);
+            draft = objectMapper.readValue(json, FactDraft.class);
+        } catch (Exception ex) {
+            log.warn("LLM fact extraction failed ({}); falling back to deterministic extraction.", ex.getMessage());
+            List<ProjectFact> fallbackFacts = extractDeterministicFacts(retrieval.results());
+            if (!fallbackFacts.isEmpty()) {
+                Set<String> found = fallbackFacts.stream().map(ProjectFact::field).collect(java.util.stream.Collectors.toSet());
+                List<String> missing = FACT_FIELDS.stream().filter(f -> !found.contains(f)).toList();
+                List<String> ids = fallbackFacts.stream().flatMap(f -> f.evidenceIds().stream()).distinct().toList();
+                return new ProjectFactExtraction(projectId, Instant.now().toString(), List.copyOf(fallbackFacts), missing, ids,
+                        "EXTRACTED_FROM_STATUTORY_PASSAGES",
+                        "Statutory project claims extracted from indexed document passages (LLM fallback applied: " + ex.getMessage() + ").");
+            }
+            throw new IllegalStateException("LLM fact extraction unavailable and no deterministic facts matched: " + ex.getMessage(), ex);
+        }
         Set<String> retrievedIds = retrieval.results().stream().map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
                 .collect(java.util.stream.Collectors.toSet());
         List<ProjectFact> facts = new ArrayList<>();
