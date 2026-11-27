@@ -54,10 +54,10 @@ export function RunActionButton({
       whileHover={!disabled && !busy ? { scale: 1.015 } : undefined}
       whileTap={!disabled && !busy ? { scale: 0.97 } : undefined}
       transition={{ type: "spring", stiffness: 320, damping: 22 }}
-      className={`group relative inline-flex min-h-[44px] items-center justify-center gap-2.5 overflow-hidden rounded-xl px-5 py-2.5 text-sm font-semibold shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+      className={`group relative inline-flex min-h-[48px] items-center justify-center gap-2.5 overflow-hidden rounded-2xl px-6 py-3 text-sm font-semibold shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
         isPrimary
-          ? "bg-[#1B4332] text-[#F7F5F0] hover:bg-[#24523E] border border-[#1B4332] shadow-[0_6px_18px_rgba(27,67,50,0.18)]"
-          : "bg-[#FFFFFF] text-[#1B4332] hover:bg-[#EEF4EF] border border-[#B8D0BF]"
+          ? "bg-[#2D6A4F] text-[#F7F5F0] hover:bg-[#40916C] border border-[#2D6A4F] shadow-[0_6px_18px_rgba(45,106,79,0.18)]"
+          : "bg-[#FFFFFF] text-[#24523E] hover:bg-[#EEF4EF] border border-[#B8D0BF]"
       } ${className}`}
     >
       <span className="relative z-10 flex items-center gap-2">

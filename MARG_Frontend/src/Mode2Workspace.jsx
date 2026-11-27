@@ -622,10 +622,10 @@ export default function Mode2Workspace({ onHome }) {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-[#D9DDD3] bg-[#FFFFFF]/95 px-6 py-4 backdrop-blur-sm sm:px-10">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#1B4332] text-sm font-bold text-[#F7F5F0]">M</div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#2D6A4F] text-sm font-bold text-[#F7F5F0]">M</div>
           <div><p className="text-sm font-semibold tracking-[0.16em]">MARG · MODE 2</p><p className="text-xs text-[#68736b]">Existing project review & GIS screening</p></div>
         </div>
-        <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#1B4332] hover:bg-[#EEF4EF] transition-colors">← All Tools</button>
+        <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#EEF4EF] transition-colors">← All Tools</button>
       </header>
 
       <div className="mx-auto max-w-[1720px] px-4 py-6 sm:px-6 lg:px-8">
@@ -641,7 +641,7 @@ export default function Mode2Workspace({ onHome }) {
         </div>
 
         {(notice || error) && (
-          <div className={`mb-5 rounded-lg border px-4 py-3 text-sm font-medium ${error ? "border-rose-500/80 bg-rose-50 text-[#991B1B]" : "border-emerald-500/80 bg-[#E9F2EC] text-[#1B4332]"}`} role={error ? "alert" : "status"}>
+          <div className={`mb-5 rounded-lg border px-4 py-3 text-sm font-medium ${error ? "border-rose-500/80 bg-rose-50 text-[#991B1B]" : "border-emerald-500/80 bg-[#E9F2EC] text-[#24523E]"}`} role={error ? "alert" : "status"}>
             {error || notice}
           </div>
         )}
@@ -649,7 +649,7 @@ export default function Mode2Workspace({ onHome }) {
         {/* Workspace Quick-Select & Sample Document Toolbar */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#D8E8DD] bg-[#FFFFFF] p-4 shadow-xl">
           <div className="flex flex-1 items-center gap-3 min-w-[300px]">
-            <label className="text-xs font-bold uppercase tracking-wider text-[#1B4332] whitespace-nowrap">Active Workspace:</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-[#24523E] whitespace-nowrap">Active Workspace:</label>
             <select
               value={projectId}
               onChange={(e) => { setProjectId(e.target.value); setAnswer(null); setComparison(null); setError(""); }}
@@ -670,7 +670,7 @@ export default function Mode2Workspace({ onHome }) {
               type="button"
               onClick={() => attachSampleDocument("nh29")}
               disabled={busy || !projectId}
-              className="flex items-center gap-2 rounded-lg border border-emerald-500/80 bg-[#E9F2EC] px-3.5 py-2 text-xs font-bold text-[#1B4332] hover:bg-emerald-800 transition-all shadow-md disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl border border-[#B8D0BF] bg-[#EEF4EF] hover:bg-[#E2EFE6] px-4 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-emerald-800 transition-all shadow-md disabled:opacity-50"
             >
               📄 Load NH-29 Comprehensive EIA & EMP Report (Assam Corridor)
             </button>
@@ -678,7 +678,7 @@ export default function Mode2Workspace({ onHome }) {
               type="button"
               onClick={() => attachSampleDocument("pulicat")}
               disabled={busy || !projectId}
-              className="flex items-center gap-2 rounded-lg border border-[#CBD2C8] bg-[#FAF9F6] px-3.5 py-2 text-xs font-semibold text-[#2A352E] hover:bg-slate-700 transition-all shadow-md disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] hover:bg-[#EEF4EF] px-3.5 py-2 text-xs font-semibold text-[#2A352E] hover:bg-slate-700 transition-all shadow-md disabled:opacity-50"
             >
               📄 Load Pulicat Bridge EIA Report
             </button>
@@ -688,19 +688,19 @@ export default function Mode2Workspace({ onHome }) {
         <div className="grid gap-6 lg:grid-cols-[300px_1fr] xl:grid-cols-[320px_1fr]">
           {/* Sidebar */}
           <aside className="space-y-5">
-            <section className="border border-[#d9ddd3] bg-[#fbfbf8] p-5">
+            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-semibold">Project workspaces</h2>
-                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="text-xs font-medium text-[#557260] rounded-lg border border-[#D8E8DD] bg-[#FAF9F6] px-3 py-1.5 hover:bg-[#EEF4EF]">Refresh</button>
+                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] px-3.5 py-2 text-xs font-semibold text-[#2D6A4F] hover:bg-[#EEF4EF] transition-colors">Refresh</button>
               </div>
               <form onSubmit={createProject} className="flex gap-2">
-                <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project / proposal name" className="min-w-0 flex-1 border border-[#cbd2c8] bg-white px-3 py-2 text-sm outline-none focus:border-[#557260]" />
-                <button disabled={busy || !projectName.trim()} className="bg-[#1B4332] px-4 py-2 text-sm font-semibold text-[#F7F5F0] rounded-lg disabled:opacity-50" type="submit">New</button>
+                <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project / proposal name" className="min-w-0 flex-1 rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-2.5 text-sm outline-none focus:border-[#2D6A4F] focus:bg-white" />
+                <button disabled={busy || !projectName.trim()} className="bg-[#2D6A4F] px-4 py-2 text-sm font-semibold text-[#F7F5F0] rounded-lg disabled:opacity-50" type="submit">New</button>
               </form>
               <div className="mt-4 max-h-72 space-y-1 overflow-auto">
                 {projects.map((project) => (
                   <button type="button" key={project.projectId} onClick={() => { setProjectId(project.projectId); setAnswer(null); setComparison(null); setError(""); }}
-                    className={`block w-full border-l-2 px-3 py-3 text-left ${projectId === project.projectId ? "border-emerald-400 bg-[#E9F2EC] text-[#1C2420] font-semibold" : "border-transparent text-[#4A5950] hover:bg-[#EEF4EF]"}`}>
+                    className={`block w-full rounded-xl border px-4 py-3 text-left transition-all ${projectId === project.projectId ? "border-[#2D6A4F]/50 bg-[#EEF4EF] text-[#24523E] font-semibold shadow-xs" : "border-[#E5ECE6] bg-[#FAF9F6] text-[#4A5950] hover:border-[#C4D6C8] hover:bg-[#FFFFFF]"}`}>
                     <span className="block text-sm font-medium">{project.name}</span>
                     <span className="mt-1 block truncate font-mono text-[10px] text-[#68736B]">{project.projectId}</span>
                   </button>
@@ -709,7 +709,7 @@ export default function Mode2Workspace({ onHome }) {
               {!projects.length && <p className="mt-4 text-xs leading-5 text-[#7c887e]">Create a workspace to keep each proposal's PDFs and evidence separate.</p>}
             </section>
 
-            <section className="border border-[#d9ddd3] bg-[#fbfbf8] p-5">
+            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <h2 className="font-semibold">Project documents</h2>
               <p className="mt-1 text-xs leading-5 text-[#7c887e]">PDF only · Text and page provenance indexed on upload.</p>
               <div className="mt-3 mb-3 space-y-2">
@@ -717,7 +717,7 @@ export default function Mode2Workspace({ onHome }) {
                   type="button"
                   onClick={() => attachSampleDocument("nh29")}
                   disabled={busy || !projectId}
-                  className="w-full rounded-lg border border-emerald-500/80 bg-[#E9F2EC] px-3 py-2 text-xs font-bold text-[#1B4332] hover:bg-emerald-800 transition-colors shadow-sm disabled:opacity-50 text-left"
+                  className="w-full rounded-xl border border-[#B8D0BF] bg-[#EEF4EF] hover:bg-[#E2EFE6] px-4 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-emerald-800 transition-colors shadow-sm disabled:opacity-50 text-left"
                 >
                   📄 1-Click: Attach NH-29 Comprehensive EIA Report
                 </button>
@@ -725,7 +725,7 @@ export default function Mode2Workspace({ onHome }) {
                   type="button"
                   onClick={() => attachSampleDocument("pulicat")}
                   disabled={busy || !projectId}
-                  className="w-full rounded-lg border border-[#CBD2C8] bg-[#FAF9F6] px-3 py-2 text-xs font-semibold text-[#2A352E] hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50 text-left"
+                  className="w-full rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] hover:bg-[#EEF4EF] px-4 py-2.5 text-xs font-semibold text-[#2A352E] hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50 text-left"
                 >
                   📄 1-Click: Attach Pulicat Bridge EIA
                 </button>
@@ -759,7 +759,7 @@ export default function Mode2Workspace({ onHome }) {
           {/* Main workspace sections */}
           <div className="space-y-6">
             {/* 01 · Alignment Input & Form */}
-            <section className="border border-[#d9ddd3] bg-[#fbfbf8] p-5 sm:p-6">
+            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 sm:p-7 shadow-sm">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#557260]">01 · Run MARG GIS</p>
                 <h2 className="mt-1 text-xl font-medium">Screen an existing alignment and explore an alternative</h2>
@@ -833,7 +833,7 @@ export default function Mode2Workspace({ onHome }) {
                     } catch {}
                   }} rows={5}
                     placeholder="Load a route KML/GeoJSON above, choose a demo corridor, or paste [longitude, latitude] points."
-                    className="mt-2 block w-full border border-[#cbd2c8] bg-white px-3 py-2.5 font-mono text-xs leading-5 outline-none focus:border-[#557260]" />
+                    className="mt-2 block w-full rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-3 font-mono text-xs leading-5 outline-none focus:border-[#2D6A4F] focus:bg-white" />
                 </label>
 
                 <div className="flex flex-wrap gap-3">
@@ -892,7 +892,7 @@ export default function Mode2Workspace({ onHome }) {
                 <div className="mt-8 space-y-6 rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-2xl">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1B4332]">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#24523E]">
                         Multi-Objective GIS Alternatives · {alternative.existingRoute?.regionDisplayName}
                       </p>
                       <h3 className="mt-1 text-2xl font-bold tracking-tight text-[#1C2420] flex items-center gap-3">
@@ -966,7 +966,7 @@ export default function Mode2Workspace({ onHome }) {
                     </div>
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-inner">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Candidate Length</span>
-                      <span className="text-xl font-bold text-[#1B4332] mt-1 block">{activeOpt.routeLengthKm ?? "—"} km</span>
+                      <span className="text-xl font-bold text-[#24523E] mt-1 block">{activeOpt.routeLengthKm ?? "—"} km</span>
                     </div>
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-inner">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Length Delta</span>
@@ -1003,13 +1003,13 @@ export default function Mode2Workspace({ onHome }) {
                                 <tr key={item.metric} className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                   <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                     {formatIndicatorName(item.metric)}
-                                    <span className="block font-mono text-[10px] text-[#1B4332] mt-0.5">{item.metric}</span>
+                                    <span className="block font-mono text-[10px] text-[#24523E] mt-0.5">{item.metric}</span>
                                   </td>
                                   <td className="py-3 px-3.5 text-[#2A352E] font-medium">
                                     {item.existingValue} <span className="text-[#68736B] font-normal">{item.units}</span>
                                   </td>
                                   <td className="py-3 px-3.5 font-bold text-[#2D6A4F]">
-                                    {item.candidateValue} <span className="text-[#1B4332]/80 font-normal">{item.units}</span>
+                                    {item.candidateValue} <span className="text-[#24523E]/80 font-normal">{item.units}</span>
                                   </td>
                                   <td className="py-3 px-3.5">
                                     <span className={`px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm ${
@@ -1044,7 +1044,7 @@ export default function Mode2Workspace({ onHome }) {
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1B4332]">Screening complete · {comparison.gisScreening?.regionDisplayName}</p>
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#24523E]">Screening complete · {comparison.gisScreening?.regionDisplayName}</p>
                         <h3 className="mt-1 text-2xl font-bold tracking-tight text-[#1C2420]">Layer-by-Layer GIS Analysis & Claim Verification</h3>
                       </div>
                       <span className="rounded-full bg-[#E9F2EC] px-4 py-1.5 text-xs font-bold text-[#2D6A4F] border border-emerald-500 shadow-md">
@@ -1052,20 +1052,20 @@ export default function Mode2Workspace({ onHome }) {
                       </span>
                     </div>
                     <p className="mt-1.5 text-sm font-medium text-[#4A5950]">
-                      {comparison.gisScreening?.alignmentName || "Submitted route"} · {comparison.gisScreening?.vertexCount} vertices · <span className="text-[#1B4332] font-mono">{comparison.gisScreening?.facilityMode}</span>
+                      {comparison.gisScreening?.alignmentName || "Submitted route"} · {comparison.gisScreening?.vertexCount} vertices · <span className="text-[#24523E] font-mono">{comparison.gisScreening?.facilityMode}</span>
                     </p>
                   </div>
 
                   {/* Consumed GIS Layers breakdown badge list */}
                   <div className="rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] p-4 shadow-inner">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#1B4332] mb-2.5">GIS Spatial Layers Consumed for this Alignment:</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#24523E] mb-2.5">GIS Spatial Layers Consumed for this Alignment:</p>
                     <div className="flex flex-wrap gap-2">
                       {(comparison.gisScreening?.assessedLayers?.length ? comparison.gisScreening.assessedLayers : [
                         "ROUTE_GEOMETRY", "LAND_COVER", "FLOOD_HAZARD", "SLOPE", "PROTECTED_AREAS",
                         "SETTLEMENT_EXPOSURE", "WATER_BODIES", "WILDLIFE_CORRIDORS_AND_ESZ", "GEOTECH_HAZARDS",
                         "DRAINAGE_AND_WETLANDS", "UTILITY_CORRIDORS", "BUILDING_DENSITY", "POPULATION_DENSITY"
                       ]).map((layer) => (
-                        <span key={layer} className="rounded-md border border-emerald-700/60 bg-[#16231c] px-2.5 py-1 font-mono text-[11px] font-semibold text-[#1B4332] shadow-sm">
+                        <span key={layer} className="rounded-md border border-emerald-700/60 bg-[#16231c] px-2.5 py-1 font-mono text-[11px] font-semibold text-[#24523E] shadow-sm">
                           ✓ {layer}
                         </span>
                       ))}
@@ -1084,7 +1084,7 @@ export default function Mode2Workspace({ onHome }) {
                         </h4>
                       </div>
                       <div className="text-right">
-                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#1B4332] border border-emerald-600/80 shadow-inner">
+                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#24523E] border border-emerald-600/80 shadow-inner">
                           RECOMMENDED FOR STAGE-I APPRAISAL WITH EMP CONDITIONS
                         </span>
                       </div>
@@ -1155,7 +1155,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Route Length & Geometry
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1B4332]">ROUTE_GEOMETRY</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#24523E]">ROUTE_GEOMETRY</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">PARIVESH KML Centerline / OSM</td>
                                 <td className="py-3 px-3.5">
@@ -1171,7 +1171,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3 px-3.5">
                                   <span className="font-bold text-[#2D6A4F] text-sm">{ev?.value ?? "5.43"} {ev?.units ?? "km"}</span>
-                                  <span className="block font-mono text-[9px] text-[#1B4332]/90 font-semibold">Forest Section (km 18+200 - 23+630)</span>
+                                  <span className="block font-mono text-[9px] text-[#24523E]/90 font-semibold">Forest Section (km 18+200 - 23+630)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[9px] text-[#7C887E]">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
@@ -1192,7 +1192,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Land Use & Forest Diversion
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1B4332]">LAND_COVER (LULC)</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#24523E]">LAND_COVER (LULC)</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">Bhuvan LULC 1:50,000 (NRSC/ISRO)</td>
                                 <td className="py-3 px-3.5">
@@ -1229,7 +1229,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Water Bodies & Cross-Drainage
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1B4332]">WATER_BODIES & DRAINAGE</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#24523E]">WATER_BODIES & DRAINAGE</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">CWC National River Basin / Hydro</td>
                                 <td className="py-3 px-3.5">
@@ -1245,7 +1245,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3 px-3.5">
                                   <span className="font-bold text-[#2D6A4F] text-sm">14 structures</span>
-                                  <span className="block font-mono text-[9px] text-[#1B4332]/90 font-semibold">0 major river severance (all swales bridged)</span>
+                                  <span className="block font-mono text-[9px] text-[#24523E]/90 font-semibold">0 major river severance (all swales bridged)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[9px] text-[#68736B]">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
@@ -1266,7 +1266,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Protected Areas & ESZ
-                                  <span className="block font-mono text-xs font-semibold text-[#1B4332] mt-0.5">PROTECTED_AREAS</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#24523E] mt-0.5">PROTECTED_AREAS</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">MoEFCC / WII Protected Area Mask</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1279,7 +1279,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
                                   <span className="font-bold text-[#2D6A4F] text-sm">0.00 km Core Encroachment</span>
-                                  <span className="block font-mono text-xs text-[#1B4332]/90 font-semibold mt-0.5">2.45 km in Notified Transition Buffer Zone</span>
+                                  <span className="block font-mono text-xs text-[#24523E]/90 font-semibold mt-0.5">2.45 km in Notified Transition Buffer Zone</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
@@ -1300,7 +1300,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Wildlife & Elephant Corridors
-                                  <span className="block font-mono text-xs font-semibold text-[#1B4332] mt-0.5">WILDLIFE_CORRIDORS_AND_ESZ</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#24523E] mt-0.5">WILDLIFE_CORRIDORS_AND_ESZ</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">WII Right of Passage Elephant Corridors</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1313,7 +1313,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
                                   <span className="font-bold text-[#2D6A4F] text-sm">{val > 0 ? `${val} km Buffer Zone Traversal` : "2.45 km Buffer Zone Traversal"}</span>
-                                  <span className="block font-mono text-xs text-[#1B4332]/90 font-semibold mt-0.5">0 km Core Reserve Severance (3 WUPs Mandated)</span>
+                                  <span className="block font-mono text-xs text-[#24523E]/90 font-semibold mt-0.5">0 km Core Reserve Severance (3 WUPs Mandated)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
@@ -1333,7 +1333,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Flood Hazard & Inundation
-                                  <span className="block font-mono text-xs font-semibold text-[#1B4332] mt-0.5">FLOOD_HAZARD</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#24523E] mt-0.5">FLOOD_HAZARD</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">Bhuvan Multi-Year Flood Inundation Mosaic</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1342,7 +1342,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
                                   <span className="font-bold text-[#2D6A4F] text-sm">0.00 km Active Inundation</span>
-                                  <span className="block font-mono text-xs text-[#1B4332]/90 font-semibold mt-0.5">100% Flood-Free (Elevated Piedmont Plain)</span>
+                                  <span className="block font-mono text-xs text-[#24523E]/90 font-semibold mt-0.5">100% Flood-Free (Elevated Piedmont Plain)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
@@ -1362,7 +1362,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Terrain & Steep Slopes (&gt;15%)
-                                  <span className="block font-mono text-xs font-semibold text-[#1B4332] mt-0.5">SLOPE (DEM)</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#24523E] mt-0.5">SLOPE (DEM)</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">SRTM / CartoDEM 30m Grid</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1371,7 +1371,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
                                   <span className="font-bold text-[#2D6A4F] text-sm">5.43 km Plain to Rolling</span>
-                                  <span className="block font-mono text-xs text-[#1B4332]/90 font-semibold mt-0.5">&lt;15% grade (3.85 km flat, 1.58 km rolling)</span>
+                                  <span className="block font-mono text-xs text-[#24523E]/90 font-semibold mt-0.5">&lt;15% grade (3.85 km flat, 1.58 km rolling)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
@@ -1391,7 +1391,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Settlements & Built-up Exposure
-                                  <span className="block font-mono text-xs font-semibold text-[#1B4332] mt-0.5">SETTLEMENT_EXPOSURE</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#24523E] mt-0.5">SETTLEMENT_EXPOSURE</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">Survey of India Settlements Catalog</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1400,7 +1400,7 @@ export default function Mode2Workspace({ onHome }) {
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
                                   <span className="font-bold text-[#2D6A4F] text-sm">0 Homes Displaced</span>
-                                  <span className="block font-mono text-xs text-[#1B4332]/90 font-semibold mt-0.5">0.18 km Ribbon Edge (RoW Confined)</span>
+                                  <span className="block font-mono text-xs text-[#24523E]/90 font-semibold mt-0.5">0.18 km Ribbon Edge (RoW Confined)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
@@ -1423,7 +1423,7 @@ export default function Mode2Workspace({ onHome }) {
                               <tr className="bg-[#FFFFFF] hover:bg-[#EEF4EF]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Tree Felling & Canopy Removal
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1B4332]">FOREST_CANOPY / EMP</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#24523E]">FOREST_CANOPY / EMP</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">Statutory EIA / ESIA Report Record</td>
                                 <td className="py-3 px-3.5">
@@ -1491,7 +1491,7 @@ export default function Mode2Workspace({ onHome }) {
                             </div>
                             <p className="text-sm leading-6 text-[#4A5950] font-medium">Document claim: <b className="text-[#B45309] font-bold">{item.projectClaim ?? "—"} {item.projectUnits || ""}</b></p>
                             <p className="text-sm leading-6 text-[#4A5950] font-medium">GIS observation: <b className="text-[#2D6A4F] font-bold">{gisObsDisplay}</b></p>
-                            <div className="mt-3 rounded bg-[#EEF4EF] p-3 border border-[#E5ECE6] text-xs leading-relaxed text-[#1B4332]">
+                            <div className="mt-3 rounded bg-[#EEF4EF] p-3 border border-[#E5ECE6] text-xs leading-relaxed text-[#24523E]">
                               <strong className="font-bold text-[#2D6A4F]">Executive Takeaway: </strong>
                               {item.projectField === "project_length" && "Centerline geometry precisely corresponds to the 5.43 km forest stretch under review (Chainage km 18+200 to 23+630). Sub-section verified."}
                               {item.projectField === "forest_diversion" && "Corridor requires 14.56 ha statutory reserve forest diversion under FCA 1980. Mapped alignment traverses 2.68 km canopy."}
@@ -1504,8 +1504,8 @@ export default function Mode2Workspace({ onHome }) {
                             {item.limitation && <p className="mt-2.5 text-xs leading-5 text-[#68736B] italic">{item.limitation}</p>}
                           </div>
                           <div className="mt-3.5 pt-2.5 border-t border-[#E5ECE6]">
-                            {item.projectEvidenceIds?.length > 0 && <p className="font-mono text-xs text-[#1B4332] truncate">Project evidence: {item.projectEvidenceIds.join(", ")}</p>}
-                            {item.gisEvidenceId && <p className="font-mono text-xs text-[#1B4332] truncate">GIS evidence: {item.gisEvidenceId}</p>}
+                            {item.projectEvidenceIds?.length > 0 && <p className="font-mono text-xs text-[#24523E] truncate">Project evidence: {item.projectEvidenceIds.join(", ")}</p>}
+                            {item.gisEvidenceId && <p className="font-mono text-xs text-[#24523E] truncate">GIS evidence: {item.gisEvidenceId}</p>}
                           </div>
                         </article>
                       );
@@ -1514,13 +1514,13 @@ export default function Mode2Workspace({ onHome }) {
 
                   {(comparison.gisScreening?.evidence || []).length > 0 && (
                     <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-lg">
-                      <summary className="cursor-pointer text-sm font-bold text-[#1B4332] hover:text-[#2D6A4F]">
+                      <summary className="cursor-pointer text-sm font-bold text-[#24523E] hover:text-[#2D6A4F]">
                         Detailed GIS Evidence Register ({comparison.gisScreening.evidence.length} Layer Records)
                       </summary>
                       <div className="mt-3 space-y-2">
                         {comparison.gisScreening.evidence.map((item) => (
                           <div key={item.evidenceId} className="border-t border-[#E5ECE6] py-2.5 text-xs">
-                            <strong className="font-mono text-[#1B4332]">{item.evidenceId}</strong>
+                            <strong className="font-mono text-[#24523E]">{item.evidenceId}</strong>
                             <p className="mt-1 font-semibold text-[#2A352E]">{item.layer} · {item.operation} · {item.metric}: <span className="font-bold text-[#2D6A4F]">{item.value} {item.units}</span></p>
                             <p className="text-[#68736B] mt-0.5">{item.limitation}</p>
                           </div>
@@ -1530,14 +1530,14 @@ export default function Mode2Workspace({ onHome }) {
                   )}
 
                   <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-lg">
-                    <summary className="cursor-pointer text-sm font-bold text-[#1B4332] hover:text-[#2D6A4F]">Extracted Project Claims ({comparison.projectFacts?.facts?.length || 0})</summary>
+                    <summary className="cursor-pointer text-sm font-bold text-[#24523E] hover:text-[#2D6A4F]">Extracted Project Claims ({comparison.projectFacts?.facts?.length || 0})</summary>
                     <div className="mt-3 space-y-3">
                       {comparison.projectFacts?.facts?.map((fact, i) => (
                         <div key={`${fact.field}-${i}`} className="border-t border-[#E5ECE6] pt-3">
                           <p className="text-sm font-bold text-[#1C2420]">{fact.field}: <span className="text-[#B45309] font-bold">{fact.value} {fact.units || ""}</span></p>
                           <p className="mt-1.5 text-xs leading-5 text-[#2A352E] bg-[#FFFFFF] p-3 rounded-lg border border-[#E5ECE6] italic">"{fact.supportingExcerpt}"</p>
                           {fact.sources?.map((source) => (
-                            <div key={source.evidenceId} className="mt-1.5 font-mono text-[10px] text-[#1B4332]">{source.evidenceId} · {source.fileName} · page {source.pageNumber}</div>
+                            <div key={source.evidenceId} className="mt-1.5 font-mono text-[10px] text-[#24523E]">{source.evidenceId} · {source.fileName} · page {source.pageNumber}</div>
                           ))}
                         </div>
                       ))}
@@ -1564,14 +1564,14 @@ export default function Mode2Workspace({ onHome }) {
                       <a
                         href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/pdf`}
                         download={`marg-executive-brief-${projectId}.pdf`}
-                        className="rounded-lg bg-[#1B4332] px-4 py-2.5 text-xs font-bold text-[#F7F5F0] hover:bg-emerald-500 transition-colors shadow-sm"
+                        className="rounded-lg bg-[#2D6A4F] px-4 py-2.5 text-xs font-bold text-[#F7F5F0] hover:bg-emerald-500 transition-colors shadow-sm"
                       >
                         ⬇ Download 2-Page Brief (PDF)
                       </a>
                       <a
                         href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/docx`}
                         download={`marg-executive-brief-${projectId}.docx`}
-                        className="rounded-lg border border-[#2D6A4F]/40 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#1B4332] hover:bg-emerald-900 transition-colors"
+                        className="rounded-lg border border-[#2D6A4F]/40 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#24523E] hover:bg-emerald-900 transition-colors"
                       >
                         ⬇ Download Brief (DOCX)
                       </a>
@@ -1583,7 +1583,7 @@ export default function Mode2Workspace({ onHome }) {
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-xl space-y-5">
                       <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#E5ECE6] pb-4">
                         <div>
-                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1B4332]">
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#24523E]">
                             Statutory Risk &amp; Clearance Delay Scorer (Red-Flag Engine)
                           </span>
                           <h4 className="mt-1 text-lg font-bold text-[#1C2420] flex flex-wrap items-center gap-2.5">
@@ -1599,7 +1599,7 @@ export default function Mode2Workspace({ onHome }) {
                         <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] px-5 py-3 text-center min-w-[140px]">
                           <span className="block text-[10px] font-bold uppercase tracking-wider text-[#68736B]">Readiness Score</span>
                           <span className={`text-3xl font-extrabold font-mono mt-0.5 block ${
-                            statutoryRisk.score >= 80 ? "text-[#1B4332]" : statutoryRisk.score >= 50 ? "text-[#B45309]" : "text-[#B91C1C]"
+                            statutoryRisk.score >= 80 ? "text-[#24523E]" : statutoryRisk.score >= 50 ? "text-[#B45309]" : "text-[#B91C1C]"
                           }`}>
                             {statutoryRisk.score}<span className="text-sm text-[#68736B]">/100</span>
                           </span>
@@ -1677,7 +1677,7 @@ export default function Mode2Workspace({ onHome }) {
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-xl space-y-5">
                       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5ECE6] pb-3">
                         <div>
-                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1B4332]">
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#24523E]">
                             Automated Mitigation &amp; CAMPA Cost Calculator
                           </span>
                           <h4 className="mt-1 text-lg font-bold text-[#1C2420]">
@@ -1810,7 +1810,7 @@ export default function Mode2Workspace({ onHome }) {
                     <span className="rounded bg-emerald-500/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#2D6A4F] border border-[#D8E8DD]">
                       ✓ GIS Screened &amp; Cross-Verified Active
                     </span>
-                    <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#1B4332]">02 · Cross-Verified Question Answering</p>
+                    <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#24523E]">02 · Cross-Verified Question Answering</p>
                   </div>
                   <span className="text-sm font-semibold text-[#4A5950]">
                     Verified against {comparison.gisScreening?.assessedLayers?.length || 13} GIS Layers
@@ -1833,7 +1833,7 @@ export default function Mode2Workspace({ onHome }) {
                       key={q}
                       type="button"
                       onClick={() => setQuestion(q)}
-                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#1B4332] hover:bg-emerald-800/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
+                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#24523E] hover:bg-emerald-800/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
                     >
                       💬 {q}
                     </button>

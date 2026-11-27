@@ -183,10 +183,10 @@ export default function Hero21({
                 type="button"
                 variants={navItemVariants}
                 onClick={btn.onClick}
-                className={`cursor-pointer rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 border ${
+                className={`cursor-pointer rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 border ${
                   idx === 1
-                    ? "bg-[#1B4332] text-[#F7F5F0] border-[#1B4332] shadow-sm hover:bg-[#24523E]"
-                    : "bg-[#FFFFFF]/80 text-[#1B4332] border-[#1B4332]/20 backdrop-blur-sm hover:bg-[#FFFFFF] hover:border-[#1B4332]/45"
+                    ? "bg-[#2D6A4F] text-[#F7F5F0] border-[#2D6A4F] shadow-sm hover:bg-[#40916C]"
+                    : "bg-[#FFFFFF]/85 text-[#24523E] border-[#2D6A4F]/20 backdrop-blur-sm hover:bg-[#FFFFFF] hover:border-[#2D6A4F]/45"
                 }`}
               >
                 {btn.label}
@@ -209,11 +209,11 @@ export default function Hero21({
               {description}
             </motion.p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-5">
+            <div className="mt-7 flex flex-wrap items-center gap-5">
               <motion.a
                 variants={ctaVariants}
                 href="#modes"
-                className="group inline-flex items-center gap-2 rounded-full bg-[#1B4332] px-6 py-2.5 text-sm font-semibold text-[#F7F5F0] no-underline shadow-md transition-all hover:bg-[#24523E] hover:shadow-lg"
+                className="group inline-flex items-center gap-2 rounded-full bg-[#2D6A4F] px-7 py-3 text-sm font-semibold text-[#F7F5F0] no-underline shadow-md transition-all hover:bg-[#40916C] hover:shadow-lg"
               >
                 Explore Workflows
                 <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -221,7 +221,7 @@ export default function Hero21({
               <motion.a
                 variants={ctaVariants}
                 href="#about"
-                className="group inline-flex items-center gap-1.5 border-b border-[#1B4332]/50 pb-0.5 text-sm font-semibold text-[#1B4332] no-underline transition-opacity hover:opacity-75"
+                className="group inline-flex items-center gap-1.5 rounded-full border border-[#2D6A4F]/25 bg-[#FFFFFF]/70 px-5 py-2.5 text-sm font-semibold text-[#24523E] no-underline backdrop-blur-sm transition-all hover:bg-[#FFFFFF]"
               >
                 About MARG
                 <ArrowRight className="size-3.5 -rotate-45 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

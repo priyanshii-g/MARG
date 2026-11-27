@@ -93,7 +93,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
       detail: "See how a new highway can safely navigate around forests, floods, steep hills, and local homes.",
       action: "Open route planner",
       icon: Compass,
-      image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=75",
+      image: "/images/mode1_image.jpg",
       onClick: onMode1,
     },
     {
@@ -103,7 +103,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
       detail: "Upload a proposed route and project reports to check statutory risks, CAMPA costs, and 3-option alternatives.",
       action: "Open project review",
       icon: ShieldCheck,
-      image: "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=900&q=75",
+      image: "/images/mode2_button.png",
       onClick: onMode2,
     },
     {
@@ -113,7 +113,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
       detail: "Pick a saved route and generate a structured, evidence-backed EIA report with live atmospheric & LULC baselines.",
       action: "Open environmental reports",
       icon: FileCheck2,
-      image: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=75",
+      image: "/images/eia_button.jpg",
       onClick: onEia,
     },
   ];
@@ -157,34 +157,34 @@ function HomePage({ onMode1, onMode2, onEia }) {
                 transition={{ type: "spring", stiffness: 240, damping: 24, delay: idx * 0.08 }}
                 whileHover={{ y: -8 }}
                 onClick={mode.onClick}
-                className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF]/95 p-2.5 shadow-[0_20px_50px_rgba(27,67,50,0.10)] backdrop-blur-md transition-shadow duration-300 hover:border-[#2D6A4F]/50 hover:shadow-[0_28px_64px_rgba(27,67,50,0.18)]"
+                className="group flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF]/95 p-3 shadow-[0_20px_50px_rgba(45,106,79,0.09)] backdrop-blur-md transition-shadow duration-300 hover:border-[#40916C]/50 hover:shadow-[0_28px_64px_rgba(45,106,79,0.16)]"
               >
-                <div className="space-y-1.5 px-4 pt-3 pb-3">
+                <div className="space-y-2 px-4 pt-3.5 pb-4">
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF4EF] px-2.5 py-0.5 font-mono text-[11px] font-semibold text-[#1B4332]">
-                      <Icon className="size-3.5 text-[#2D6A4F]" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF4EF] px-3 py-1 font-mono text-[11px] font-semibold text-[#2D6A4F]">
+                      <Icon className="size-3.5 text-[#40916C]" />
                       {mode.number} · {mode.tag}
                     </span>
-                    <span className="h-2 w-2 rounded-full bg-[#40916C] transition-transform group-hover:scale-125" />
+                    <span className="h-2 w-2 rounded-full bg-[#52B788] transition-transform group-hover:scale-125" />
                   </div>
-                  <h2 className="pt-2 text-lg font-semibold tracking-tight text-[#1B4332]">
+                  <h2 className="pt-1.5 text-lg font-semibold tracking-tight text-[#24523E]">
                     {mode.title}
                   </h2>
-                  <p className="text-xs leading-5 text-[#59645C]">
+                  <p className="text-xs leading-relaxed text-[#59645C]">
                     {mode.detail}
                   </p>
                 </div>
 
-                <div className="relative mt-auto overflow-hidden rounded-xl">
+                <div className="relative mt-auto overflow-hidden rounded-2xl">
                   <img
                     src={mode.image}
                     alt={mode.title}
                     className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1B4332]/85 via-[#1B4332]/15 to-transparent" />
-                  <div className="absolute inset-x-3.5 bottom-3 flex items-center justify-between text-xs font-semibold text-[#F7F5F0]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#24523E]/75 via-[#24523E]/10 to-transparent" />
+                  <div className="absolute inset-x-4 bottom-3.5 flex items-center justify-between text-xs font-semibold text-[#F7F5F0]">
                     <span>{mode.action}</span>
-                    <span className="flex size-7 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform group-hover:translate-x-1">
+                    <span className="flex size-8 items-center justify-center rounded-full bg-white/25 backdrop-blur-sm transition-transform group-hover:translate-x-1">
                       <ArrowRight className="size-3.5" />
                     </span>
                   </div>

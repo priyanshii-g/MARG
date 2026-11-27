@@ -2,7 +2,7 @@ export function ShimmerButton({ children, className = "", disabled = false, ...p
   return (
     <button
       disabled={disabled}
-      className={`group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-[#1B4332] px-5 py-2.5 text-sm font-semibold text-amber-50 shadow-sm transition-all duration-300 hover:bg-[#24523E] hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#2D6A4F] px-6 py-3 text-sm font-semibold text-amber-50 shadow-sm transition-all duration-300 hover:bg-[#40916C] hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     >
       <span className="relative z-10 flex items-center gap-2">{children}</span>
