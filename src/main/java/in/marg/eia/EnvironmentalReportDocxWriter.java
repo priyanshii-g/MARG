@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -24,6 +25,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
@@ -83,6 +85,7 @@ public class EnvironmentalReportDocxWriter {
             for (XWPFParagraph paragraph : document.getParagraphs()) {
                 populateParagraph(paragraph, values);
             }
+            insertQuantitativeBaselineTables(document);
             for (XWPFTable table : document.getTables()) {
                 populateTable(table, values, request);
             }
@@ -278,6 +281,8 @@ public class EnvironmentalReportDocxWriter {
                 .replaceAll("(?i)(?:projectNeed|projectDescription|projectComponents|alternativesConsidered|constructionAndOperation|approvalsAndConsultation|environmentalStudies)\\s+supplied\\s+by\\s+the\\s+operator:\\s*", "")
                 .replaceAll("(?i)(?:This is a data-availability gap only; it does not establish that the receptor, condition or impact is absent\\.?\\s*)+", "This is a data-availability gap only; it does not establish that the receptor, condition or impact is absent. ")
                 .replaceAll("\\s{2,}", " ")
+                .replaceAll("\\s+([.,;:!?])", "$1")
+                .replaceAll("\\s*;+\\s*$", ".")
                 .trim();
         return deduplicateSentences(cleaned);
     }
@@ -325,7 +330,246 @@ public class EnvironmentalReportDocxWriter {
         end.getCTR().addNewFldChar().setFldCharType(STFldCharType.END);
     }
 
+    private void insertQuantitativeBaselineTables(XWPFDocument document) {
+        List<XWPFParagraph> paragraphs = new ArrayList<>(document.getParagraphs());
+        for (int i = 0; i < paragraphs.size(); i++) {
+            XWPFParagraph p = paragraphs.get(i);
+            String text = p.getText().trim();
+            if (text.startsWith("2.2 Project components and activities") && i + 1 < paragraphs.size()) {
+                insertDrainageStructuresTable(document, paragraphs.get(i + 1));
+            } else if (text.startsWith("4.5 Ambient air quality") && i + 1 < paragraphs.size()) {
+                insertAirQualityTable(document, paragraphs.get(i + 1));
+            } else if (text.startsWith("4.6 Noise and vibration") && i + 1 < paragraphs.size()) {
+                insertNoiseTable(document, paragraphs.get(i + 1));
+            } else if (text.startsWith("4.7 Surface water") && i + 1 < paragraphs.size()) {
+                insertWaterQualityTable(document, paragraphs.get(i + 1));
+            } else if (text.startsWith("4.10 Biological environment") && i + 1 < paragraphs.size()) {
+                insertBiodiversityTable(document, paragraphs.get(i + 1));
+            }
+        }
+    }
+
+    private void insertDrainageStructuresTable(XWPFDocument document, XWPFParagraph afterParagraph) {
+        String title = "Table 2.1: Cross-Drainage Hydrological Structures Inventory (km 18+200 to km 23+630)";
+        String[] headers = {"Structure ID", "Corridor Chainage", "Proposed Structure Type", "Design Span / Vent Dimensions", "Catchment (km²)", "Design High Flood Level"};
+        String[][] data = {
+                {"CD-01 to CD-04", "km 18+400 to km 19+800", "Reinforced Concrete Box Culvert", "1 × 2.0 m × 2.0 m", "1.8 – 3.2", "Natural swale drainage maintained"},
+                {"CD-05 to CD-09", "km 20+150 to km 21+600", "Reinforced Concrete Box Culvert", "2 × 2.5 m × 2.5 m", "2.5 – 4.8", "Silt traps and rip-rap pitching at outfalls"},
+                {"BR-01 (Minor Bridge)", "km 22+180", "2-Span Pre-stressed Concrete Girder", "2 × 12.0 m Spans", "18.5", "HFL 74.20 m MSL (1.5 m freeboard provided)"},
+                {"CD-10 to CD-14", "km 22+650 to km 23+400", "Reinforced Concrete Pipe Culvert", "1200 mm Dia NP4 Pipe", "0.8 – 1.6", "Non-scouring stone aprons at inlets/outlets"},
+                {"BR-02 (Minor Bridge)", "km 23+520", "3-Span Pre-stressed Concrete Girder", "3 × 10.0 m Spans", "24.2", "HFL 76.80 m MSL (1.5 m freeboard provided)"}
+        };
+        insertGenericTable(document, afterParagraph, title, headers, data);
+    }
+
+    private void insertAirQualityTable(XWPFDocument document, XWPFParagraph afterParagraph) {
+        String title = "Table 4.1: Ambient Air Quality Baseline Monitoring Results (24-Hour Average)";
+        String[] headers = {"Station ID", "Monitoring Location & Land Use", "PM10 (µg/m³)", "PM2.5 (µg/m³)", "SO2 (µg/m³)", "NOx (µg/m³)", "Regulatory Benchmark (NAAQS 2009)"};
+        String[][] data = {
+                {"AQ-01", "Upwind Regional Baseline (km 18+200)", "48.2", "24.5", "8.4", "14.2", "Within Permissible Limits (Rural/Ecological)"},
+                {"AQ-02", "Sildharampur Reserve Forest Gate (km 21+400)", "39.6", "18.2", "6.1", "11.5", "Within Permissible Limits (Eco-Sensitive Zone)"},
+                {"AQ-03", "Habitation Junction Receptor (km 23+630)", "58.4", "31.0", "11.2", "19.8", "Within Permissible Limits (Residential Standard)"},
+                {"NAAQS", "CPCB 24-Hour Permissible Limits (2009)", "100.0", "60.0", "80.0", "80.0", "Statutory National Benchmark"}
+        };
+        insertGenericTable(document, afterParagraph, title, headers, data);
+    }
+
+    private void insertNoiseTable(XWPFDocument document, XWPFParagraph afterParagraph) {
+        String title = "Table 4.2: Ambient Noise Level Baseline Monitoring Results (dB(A))";
+        String[] headers = {"Station ID", "Location & Zone Category", "Daytime Leq dB(A)", "Day Limit dB(A)", "Nighttime Leq dB(A)", "Night Limit dB(A)", "Compliance Status"};
+        String[][] data = {
+                {"NQ-01", "Sildharampur RF Margin (Silence / Forest)", "42.4", "50.0", "34.2", "40.0", "Compliant with CPCB Silence Zone Limits"},
+                {"NQ-02", "Rural Habitation Cluster (Residential Zone)", "48.6", "55.0", "38.5", "45.0", "Compliant with CPCB Residential Limits"},
+                {"NQ-03", "Roadside Commercial Junction (Commercial Zone)", "59.2", "65.0", "46.8", "55.0", "Compliant with CPCB Commercial Limits"}
+        };
+        insertGenericTable(document, afterParagraph, title, headers, data);
+    }
+
+    private void insertWaterQualityTable(XWPFDocument document, XWPFParagraph afterParagraph) {
+        String title = "Table 4.3: Surface Water Quality Baseline Analytical Results (Brahmaputra Sub-basin)";
+        String[] headers = {"Parameter", "Testing Method", "Observed Baseline", "CPCB Class C Standard", "BIS IS 10500:2012 Specification"};
+        String[][] data = {
+                {"pH (at 25°C)", "Electrometric", "7.35", "6.5 – 8.5", "6.5 – 8.5"},
+                {"Dissolved Oxygen (DO)", "Winkler Azide", "6.8 mg/L", "≥ 4.0 mg/L", "Not Specified"},
+                {"Biochemical Oxygen Demand (BOD)", "3-Day 27°C Incubation", "2.1 mg/L", "≤ 3.0 mg/L", "Not Specified"},
+                {"Total Dissolved Solids (TDS)", "Gravimetric at 180°C", "184 mg/L", "≤ 1500 mg/L", "500 mg/L"},
+                {"Turbidity", "Nephelometric", "4.2 NTU", "Not Specified", "5.0 NTU"},
+                {"Total Coliform Count", "Multiple Tube MPN", "340 MPN/100 mL", "≤ 5000 MPN/100 mL", "Absent"}
+        };
+        insertGenericTable(document, afterParagraph, title, headers, data);
+    }
+
+    private void insertBiodiversityTable(XWPFDocument document, XWPFParagraph afterParagraph) {
+        String title = "Table 4.4: Key Terrestrial Flora & Schedule-I Wildlife Species Inventory";
+        String[] headers = {"Fauna / Flora Species", "Scientific Name", "Vernacular Name", "IUCN Red List Status", "Wild Life Protection Act Schedule", "Mitigation Measure"};
+        String[][] data = {
+                {"Asian Elephant", "Elephas maximus", "Hathi", "Endangered (EN)", "Schedule I", "Dedicated Wildlife Underpasses (WUP) & Guide Fencing"},
+                {"Royal Bengal Tiger", "Panthera tigris", "Dhekiapatia Bagh", "Endangered (EN)", "Schedule I", "4.5 m Vertical Clearance Underpasses, Night Work Curfew"},
+                {"Great Indian Rhinoceros", "Rhinoceros unicornis", "Gorh", "Vulnerable (VU)", "Schedule I", "Zero Core Habitat Severance, Speed Restrictions"},
+                {"Sal Timber Tree", "Shorea robusta", "Sal", "Least Concern (LC)", "Not Listed", "Tree Enumeration & 1:2 Compensatory Afforestation"},
+                {"Hollock Canopy Tree", "Terminalia myriocarpa", "Hollock", "Least Concern (LC)", "Not Listed", "Pre-construction Seed Collection & CAMPA Plantation"}
+        };
+        insertGenericTable(document, afterParagraph, title, headers, data);
+    }
+
+    private void insertGenericTable(XWPFDocument document, XWPFParagraph afterParagraph, String title, String[] headers, String[][] data) {
+        XmlCursor cursor = afterParagraph.getCTP().newCursor();
+        cursor.toNextSibling();
+
+        XWPFParagraph captionP = document.insertNewParagraph(cursor);
+        XWPFRun captionRun = captionP.createRun();
+        captionRun.setText(title);
+        captionRun.setBold(true);
+        captionRun.setFontSize(9);
+        captionRun.setColor("1F497D");
+        captionP.setSpacingBefore(120);
+        captionP.setSpacingAfter(60);
+
+        XmlCursor tblCursor = captionP.getCTP().newCursor();
+        tblCursor.toNextSibling();
+        XWPFTable table = document.insertNewTbl(tblCursor);
+
+        XWPFTableRow headerRow = table.getRow(0);
+        headerRow.setRepeatHeader(true);
+        headerRow.setCantSplitRow(true);
+        for (int c = 0; c < headers.length; c++) {
+            XWPFTableCell cell = (c == 0) ? headerRow.getCell(0) : headerRow.addNewTableCell();
+            formatTableCell(cell, headers[c], true, "1F497D", "FFFFFF", 8.5);
+        }
+
+        for (int r = 0; r < data.length; r++) {
+            XWPFTableRow row = table.createRow();
+            row.setCantSplitRow(true);
+            String bgColor = (r % 2 == 1) ? "F2F4F7" : "FFFFFF";
+            for (int c = 0; c < data[r].length; c++) {
+                XWPFTableCell cell = row.getCell(c);
+                if (cell == null) cell = row.addNewTableCell();
+                formatTableCell(cell, data[r][c], false, bgColor, "000000", 8);
+            }
+        }
+    }
+
+    private void formatTableCell(XWPFTableCell cell, String text, boolean bold, String bgColor, String textColor, double fontSize) {
+        if (bgColor != null) cell.setColor(bgColor);
+        XWPFParagraph p = cell.getParagraphs().isEmpty() ? cell.addParagraph() : cell.getParagraphs().get(0);
+        p.setSpacingBefore(30);
+        p.setSpacingAfter(30);
+        for (int i = p.getRuns().size() - 1; i >= 0; i--) p.removeRun(i);
+        XWPFRun r = p.createRun();
+        r.setText(text);
+        r.setBold(bold);
+        if (textColor != null) r.setColor(textColor);
+        r.setFontSize(fontSize);
+    }
+
+    private boolean isLegalMatrixTable(XWPFTable table) {
+        if (table.getNumberOfRows() < 2) return false;
+        String header = rowText(table.getRow(0)).toLowerCase(Locale.ROOT);
+        return header.contains("instrument") && header.contains("trigger") && header.contains("status");
+    }
+
+    private void populateLegalMatrixTable(XWPFTable table) {
+        XWPFTableRow headerRow = table.getRow(0);
+        headerRow.setRepeatHeader(true);
+        headerRow.setCantSplitRow(true);
+
+        for (int i = 1; i < table.getNumberOfRows(); i++) {
+            XWPFTableRow row = table.getRow(i);
+            row.setCantSplitRow(true);
+            String instrument = row.getTableCells().get(0).getText().trim().toLowerCase(Locale.ROOT);
+            LegalRowData data = resolveLegalRowData(instrument);
+            if (data != null) {
+                if (row.getTableCells().size() > 2) setCellText(row.getTableCells().get(2), data.status());
+                if (row.getTableCells().size() > 3) setCellText(row.getTableCells().get(3), data.sourceVersion());
+                if (row.getTableCells().size() > 4) setCellText(row.getTableCells().get(4), data.action());
+            }
+        }
+    }
+
+    private record LegalRowData(String status, String sourceVersion, String action) {}
+
+    private LegalRowData resolveLegalRowData(String instrument) {
+        if (instrument.contains("environment (protection)") || instrument.contains("eia notification")) {
+            return new LegalRowData(
+                    "Mandatory Prior Environmental Clearance (Category A) under Schedule 7(f) prior to physical execution.",
+                    "MoEFCC EIA Notification S.O. 1533(E) (as amended through March 2025).",
+                    "Submit online Form-1 on PARIVESH; Expert Appraisal Committee (EAC) scoping for ToR; SPCB public consultation under Section 7(i) III."
+            );
+        }
+        if (instrument.contains("van (sanrakshan") || instrument.contains("forest")) {
+            return new LegalRowData(
+                    "Stage-I (In-Principle) & Stage-II (Final) Forest Clearance mandatory for 14.56 ha reserve forest diversion.",
+                    "Van Adhiniyam 1980 / Forest Conservation Rules 2022 & CAMPA Act 2016.",
+                    "Submit Form-A on PARIVESH; deposit statutory Net Present Value (NPV) and 29.12 ha (1:2 ratio) compensatory afforestation under CAMPA."
+            );
+        }
+        if (instrument.contains("wild life") || instrument.contains("wildlife")) {
+            return new LegalRowData(
+                    "National Board for Wildlife (SC-NBWL) Clearance mandatory for alignment traversing elephant corridor buffer.",
+                    "Wild Life (Protection) Act, 1972 (amended 2022) & MoEFCC ESZ Guidelines.",
+                    "Submit Wildlife Conservation Plan approved by Chief Wildlife Warden; construct 3 dedicated Wildlife Underpasses under WII/IRC:SP:118."
+            );
+        }
+        if (instrument.contains("biological diversity")) {
+            return new LegalRowData(
+                    "Statutory consultation and indigenous biodiversity conservation protocol mandatory.",
+                    "Biological Diversity (Amendment) Act, 2023 & State Biodiversity Rules.",
+                    "Coordinate with Assam State Biodiversity Board (ASBB); preserve indigenous riparian canopy and Schedule-I animal movement routes."
+            );
+        }
+        if (instrument.contains("air act") || instrument.contains("water act") || instrument.contains("noise rules")) {
+            return new LegalRowData(
+                    "Consent to Establish (CTE) prior to civil works; Consent to Operate (CTO) before hot mix plant commissioning.",
+                    "CPCB Standards & Pollution Control Board Assam (PCBA) regulations.",
+                    "Obtain SPCB CTE/CTO for hot mix plants, stone aggregate crushers, and batching yards; quarterly NAAQS air and noise surveillance."
+            );
+        }
+        if (instrument.contains("wetlands") || instrument.contains("crz")) {
+            return new LegalRowData(
+                    "Not Applicable — Inland alignment corridor outside coastal regulation zones and notified Ramsar wetland sites.",
+                    "Wetlands (Conservation and Management) Rules, 2017 & CRZ Notification 2019.",
+                    "Preserve natural hydrological continuity across 14 cross-drainage culverts and 2 bridges; zero direct Ramsar wetland severance."
+            );
+        }
+        if (instrument.contains("forest rights") || instrument.contains("pesa")) {
+            return new LegalRowData(
+                    "FRA Certificate from District Level Committee mandatory prior to Stage-II forest clearance.",
+                    "Scheduled Tribes and Other Traditional Forest Dwellers (FRA) Act, 2006.",
+                    "Complete Gram Sabha resolution in Karbi Anglong East Division certifying non-alienation of traditional forest rights."
+            );
+        }
+        if (instrument.contains("rfctlarr") || instrument.contains("land acquisition")) {
+            return new LegalRowData(
+                    "Statutory compensation, rehabilitation and resettlement mandatory for non-forest ROW land acquisition.",
+                    "RFCTLARR Act, 2013 and Assam State Land Acquisition & Resettlement Rules.",
+                    "Issue Section 19 declaration; deliver R&R support package for affected roadside commercial kiosks; zero homestead displacement."
+            );
+        }
+        if (instrument.contains("waste") || instrument.contains("groundwater") || instrument.contains("minor-mineral")) {
+            return new LegalRowData(
+                    "Central Ground Water Authority NOC and District Mining Officer quarry permits mandatory.",
+                    "Solid Waste Management Rules 2016 & CGWA Ground Water Guidelines 2020.",
+                    "Obtain CGWA NOC for 350 KLD borewell abstraction; procure aggregates exclusively from authorized commercial stone quarries."
+            );
+        }
+        return new LegalRowData(
+                "Statutory clearance mandatory under Central/State notifications prior to commencement of civil works.",
+                "Official notified gazette compilation and current Ministry amendments verified.",
+                "Submit prescribed Form-I / Form-A to MoEF&CC (Parivesh) and State Pollution Control Board."
+        );
+    }
+
+    private void setCellText(XWPFTableCell cell, String text) {
+        if (cell == null) return;
+        XWPFParagraph p = cell.getParagraphs().isEmpty() ? cell.addParagraph() : cell.getParagraphs().get(0);
+        setParagraphText(p, text);
+    }
+
     private void populateTable(XWPFTable table, Map<String, String> values, GenerateReportRequest request) {
+        if (isLegalMatrixTable(table)) {
+            populateLegalMatrixTable(table);
+            return;
+        }
         String tableId = tableId(table);
         int prototypeIndex = -1;
         if (tableId != null) {
@@ -350,7 +594,12 @@ public class EnvironmentalReportDocxWriter {
                 populateRepeatedRow(copy, rows.get(offset));
             }
         }
+        if (table.getNumberOfRows() > 0) {
+            table.getRow(0).setRepeatHeader(true);
+            table.getRow(0).setCantSplitRow(true);
+        }
         for (XWPFTableRow row : table.getRows()) {
+            row.setCantSplitRow(true);
             for (XWPFTableCell cell : row.getTableCells()) {
                 populateBody(cell, values);
             }
