@@ -313,7 +313,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
           <p className="text-xs text-[#59645C]">Environmental Impact Assessment report workspace</p>
         </div>
       </div>
-      <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">
+      <button type="button" onClick={onHome} className="rounded-full border border-[#8CB396] bg-[#C9DFCF] px-5 py-2 text-xs font-semibold text-[#143627] hover:bg-[#B4D2BC] transition-colors">
         ← All workflows
       </button>
     </header>
@@ -359,7 +359,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
           <div>
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-[#143627]">1. Select Saved Alignment</h2>
-              <button type="button" onClick={refreshRoutes} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">Refresh routes</button>
+              <button type="button" onClick={refreshRoutes} className="rounded-full border border-[#8CB396] bg-[#C9DFCF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#B4D2BC] transition-colors">Refresh routes</button>
             </div>
             <label className="mt-2 block">
               <select
@@ -1061,7 +1061,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
                   <ShimmerButton type="button" onClick={() => download("pdf")} className="px-4 py-2 text-xs">
                     Download PDF
                   </ShimmerButton>
-                  <button type="button" onClick={() => download("document")} className="rounded-full border border-[#D5E2D8] bg-[#D1E3D6] px-5 py-2.5 text-xs font-semibold text-[#143627] hover:bg-[#BDD6C5] transition-colors">
+                  <button type="button" onClick={() => download("document")} className="rounded-full border border-[#2D6A4F] bg-[#2D6A4F] px-5 py-2.5 text-xs font-semibold text-[#FFFFFF] hover:bg-[#1D4635] transition-colors">
                     Download DOCX
                   </button>
                 </div>

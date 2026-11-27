@@ -185,8 +185,8 @@ export default function Hero21({
                 onClick={btn.onClick}
                 className={`cursor-pointer rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 border ${
                   idx === 1
-                    ? "bg-[#143627] text-[#F7F5F0] border-[#143627] shadow-sm hover:bg-[#1C4A36]"
-                    : "bg-[#FFFFFF]/85 text-[#143627] border-[#143627]/20 backdrop-blur-sm hover:bg-[#FFFFFF] hover:border-[#143627]/45"
+                    ? "bg-[#143627] text-[#F7F5F0] border-[#143627] shadow-sm hover:bg-[#1E4D38]"
+                    : "bg-[#2D6A4F] text-[#F7F5F0] border-[#2D6A4F] shadow-sm hover:bg-[#1D4635]"
                 }`}
               >
                 {btn.label}

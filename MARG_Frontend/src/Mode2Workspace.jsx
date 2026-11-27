@@ -625,7 +625,7 @@ export default function Mode2Workspace({ onHome }) {
           <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#143627] text-sm font-bold text-[#F7F5F0]">M</div>
           <div><p className="text-sm font-semibold tracking-[0.16em]">MARG · MODE 2</p><p className="text-xs text-[#68736b]">Existing project review & GIS screening</p></div>
         </div>
-        <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">← All Tools</button>
+        <button type="button" onClick={onHome} className="rounded-full border border-[#8CB396] bg-[#C9DFCF] px-5 py-2 text-xs font-semibold text-[#143627] hover:bg-[#B4D2BC] transition-colors">← All Tools</button>
       </header>
 
       <div className="mx-auto max-w-[1720px] px-4 py-6 sm:px-6 lg:px-8">
@@ -691,7 +691,7 @@ export default function Mode2Workspace({ onHome }) {
             <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-semibold">Project workspaces</h2>
-                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">Refresh</button>
+                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-full border border-[#8CB396] bg-[#C9DFCF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#B4D2BC] transition-colors">Refresh</button>
               </div>
               <form onSubmit={createProject} className="flex gap-2">
                 <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project / proposal name" className="min-w-0 flex-1 rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-2.5 text-sm outline-none focus:border-[#143627] focus:bg-white" />
