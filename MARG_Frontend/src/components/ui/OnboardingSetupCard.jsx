@@ -11,7 +11,7 @@ const spring = {
 
 export function OnboardingSetupCard({
   title = "Configure EIA Appraisal Profile",
-  subtitle = "Tailor statutory framework, corridor scale, and authoring perspective before generating the report.",
+  subtitle = "Configure statutory framework, corridor scale, and authoring perspective to support balanced, sustainable infrastructure appraisal.",
   focusOptions = [
     { id: "moefcc-cat-a", label: "MoEFCC Category A (NHAI)" },
     { id: "fca-forest", label: "FCA Forest Diversion" },
