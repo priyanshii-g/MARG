@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { getBasemapConfig } from "./layers/basemaps";
@@ -278,6 +278,18 @@ export default function App() {
   const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
   const mapStudioRef = useRef(null);
   const dossierRef = useRef(null);
+
+  // Always reset viewport scroll to the very top when switching workspaces (Home ↔ Planner ↔ Mode 2 ↔ EIA)
+  useLayoutEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    scrollToTop();
+    const rafId = requestAnimationFrame(scrollToTop);
+    return () => cancelAnimationFrame(rafId);
+  }, [activeWorkspace]);
 
   // Re-measure Leaflet map smoothly whenever Left or Right drawer collapses/expands
   useEffect(() => {
@@ -1064,11 +1076,11 @@ export default function App() {
     const devPct = Number(diag.alignmentDeviationPercent ?? meta.alignmentDeviationPercent ?? mainProps.deviationPercent ?? 0);
 
     const spurFeatures = (data.features || []).filter(
-      (f) => f.properties?.featureRole === "DEDICATED_FEEDER_SPUR"
+      (f) => f.properties?.featureRole === "DEDICATED_FEEDER_SPUR" || f.properties?.featureRole === "FEEDER_SPUR_HIGHWAY"
     );
     const hubList = spurFeatures.map((f) => ({
-      name: f.properties?.servedHubName || "Regional Hub",
-      spurKm: Number(f.properties?.spurLengthKm || 0).toFixed(1),
+      name: f.properties?.servedHubName || f.properties?.connectingHub || "Regional Hub",
+      spurKm: Number(f.properties?.spurLengthKm ?? f.properties?.lengthKm ?? 0).toFixed(1),
       population: f.properties?.catchmentPopulationServed || 0,
       isUserOverride: Boolean(f.properties?.immutableUserOverride),
       traffic: Math.round(f.properties?.inducedPeakTrafficPcuHr || 0),
@@ -1992,7 +2004,8 @@ export default function App() {
       const rawBody = await response.text();
       try {
         const body = JSON.parse(rawBody);
-        message = body.error || body.message || message;
+        const primary = body.error || body.message || message;
+        message = body.detail ? `${primary} (${body.detail})` : primary;
       } catch {
         if (rawBody) message = rawBody;
       }

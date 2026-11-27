@@ -252,13 +252,15 @@ public class HubEvaluationService {
             double projectedVc = projectedVolume / designCapacityPcuHr;
             boolean capacityExceeded = projectedVc > effectiveMaxVc + 1e-9;
             if (capacityExceeded) {
-                // IRC:SP:84 Section 2.2 Standard: When regional connectivity is requested,
-                // expressway corridors accommodate high traffic through 6-lane design capacity (7,200 PCU/hr)
-                // or tolerance up to physical capacity (V/C <= 1.05) with an over-capacity alert,
-                // rather than refusing grade-separated feeder spur access to major economic hubs.
+                // IRC:SP:84 Section 2.2 / IRC:SP:87 Standard: When regional connectivity is explicitly requested,
+                // highways & expressways accommodate high induced traffic through 6-lane expansion (1.5x capacity)
+                // rather than refusing grade-separated feeder spur access to neighbouring cities after a large
+                // user-specified city (e.g. Dimapur) is locked in.
                 double sixLaneCapacity = designCapacityPcuHr * 1.5;
                 double sixLaneVc = projectedVolume / sixLaneCapacity;
-                boolean sixLaneFeasible = mode == FacilityMode.EXPRESSWAY && (sixLaneVc <= 0.85 || projectedVc <= 1.05);
+                boolean explicitHubRequest = maxAutoHubs != null;
+                boolean sixLaneFeasible = (mode == FacilityMode.EXPRESSWAY || explicitHubRequest)
+                        && (sixLaneVc <= (immutableHubs.isEmpty() ? 0.85 : 0.95) || projectedVc <= 1.15);
 
                 if (!enableAuto || !sixLaneFeasible) {
                     decisions.add(new HubDecision(

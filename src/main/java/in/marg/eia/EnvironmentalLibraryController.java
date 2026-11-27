@@ -68,7 +68,14 @@ public class EnvironmentalLibraryController {
     }
 
     @PostMapping("/refresh")
-    public EnvironmentalKnowledgeIndex.IndexStatus refresh() throws IOException {
-        return index.reindex();
+    public ResponseEntity<?> refresh() {
+        try {
+            return ResponseEntity.ok(index.reindex());
+        } catch (IOException exception) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", exception.getMessage() == null || exception.getMessage().isBlank()
+                            ? "Could not refresh the environmental PDF library."
+                            : exception.getMessage()));
+        }
     }
 }

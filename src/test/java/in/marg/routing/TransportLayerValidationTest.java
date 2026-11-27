@@ -55,6 +55,33 @@ class TransportLayerValidationTest {
                 new GeoPoint(26.5897, 93.40035),
                 candidate -> false));
     }
+
+    @Test
+    void nationalHighwayWithDimapurAndExplicitAutoHubsConnectsNeighbouringCitiesToo() {
+        TransportNetworkVectorIndex vectorIndex = new TransportNetworkVectorIndex(
+                projection,
+                "data/processed/transport/assam_transport_network.geojson",
+                "data/processed/transport/assam_regional_hubs.geojson");
+        TransportRoutingProperties props = new TransportRoutingProperties();
+        HubEvaluationService hubService = new HubEvaluationService(vectorIndex, projection, props);
+
+        var eval = hubService.evaluate(
+                fullRegion.origin(),
+                fullRegion.destination(),
+                fullRegion,
+                FacilityMode.NATIONAL_HIGHWAY,
+                List.of("Dimapur"),
+                null,
+                0.70,
+                true,
+                3);
+
+        assertTrue(eval.approvedHubs().stream().anyMatch(h -> h.name().toLowerCase().contains("dimapur")),
+                "User-selected Dimapur must be connected");
+        assertTrue(eval.approvedHubs().size() >= 3,
+                "With autoConnectHubs=true and maxAutoHubs=3 alongside Dimapur on NH, neighbouring cities must also connect, got: "
+                        + eval.approvedHubs().stream().map(h -> h.name()).toList());
+    }
     private final StudyRegion fullRegion = new StudyRegion(
             "Kaziranga–Karbi Anglong, Assam",
             25.75, 93.10, 26.65, 93.75,

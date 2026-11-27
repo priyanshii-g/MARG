@@ -456,7 +456,7 @@ public class PanIndiaDynamicCorridorService {
             }
         }
 
-        // Autonomous discovery of intermediate districts along corridor when enabled
+        // Autonomous discovery of intermediate districts/towns along corridor when enabled
         boolean enableAuto = autoConnectHubs == null || Boolean.TRUE.equals(autoConnectHubs);
         int autoLimit = (maxAutoHubs != null && maxAutoHubs >= 0) ? maxAutoHubs : 2;
         if (enableAuto && districtsCatalog != null && autoLimit > 0) {
@@ -465,50 +465,102 @@ public class PanIndiaDynamicCorridorService {
                 double dVx = goal.lon() - start.lon();
                 double dVy = goal.lat() - start.lat();
                 double vLen = Math.hypot(dVx, dVy);
-                if (vLen > 0.40) { // Only discover along corridors > ~45 km span
-                    double uVx = dVx / vLen;
-                    double uVy = dVy / vLen;
-                    Set<String> alreadyChosen = new HashSet<>();
-                    for (ResolvedIntermediateHub h : resolvedHubs) {
-                        alreadyChosen.add(h.id().toLowerCase(Locale.ROOT));
-                    }
-
-                    List<DistrictRecord> candidates = new ArrayList<>();
-                    double marginDeg = 0.25; // ~28 km setback from start and goal terminals
-                    for (DistrictRecord dr : districtsCatalog.getAllDistricts()) {
-                        if (!dr.isDistrict()) continue; // Prioritize major district headquarters
-                        if (alreadyChosen.contains(dr.id().toLowerCase(Locale.ROOT))) continue;
-
-                        double relX = dr.lon() - start.lon();
-                        double relY = dr.lat() - start.lat();
-                        double projDist = relX * uVx + relY * uVy;
-                        if (projDist <= marginDeg || projDist >= vLen - marginDeg) continue;
-
-                        double perpX = relX - projDist * uVx;
-                        double perpY = relY - projDist * uVy;
-                        double perpDistDeg = Math.hypot(perpX, perpY);
-                        if (perpDistDeg <= 0.32) { // Within ~35 km lateral corridor reach
-                            candidates.add(dr);
+                if (vLen > 0.12) { // Discover along corridors > ~13 km span
+                    // Build guide polyline (start -> any user-selected hubs ordered along corridor -> goal)
+                    // so neighbouring cities are discovered along the actual curved route, not only the bare chord.
+                    List<GeoPoint> guideChain = new ArrayList<>();
+                    guideChain.add(start);
+                    if (!resolvedHubs.isEmpty()) {
+                        double lenSq = dVx * dVx + dVy * dVy;
+                        List<ResolvedIntermediateHub> orderedUserHubs = new ArrayList<>(resolvedHubs);
+                        orderedUserHubs.sort(Comparator.comparingDouble(h -> {
+                            if (lenSq <= 1e-12) return 0.0;
+                            return ((h.location().lon() - start.lon()) * dVx + (h.location().lat() - start.lat()) * dVy) / lenSq;
+                        }));
+                        for (ResolvedIntermediateHub uh : orderedUserHubs) {
+                            guideChain.add(uh.location());
                         }
                     }
+                    guideChain.add(goal);
 
-                    candidates.sort(Comparator.comparingDouble((DistrictRecord dr) -> {
-                        double relX = dr.lon() - start.lon();
-                        double relY = dr.lat() - start.lat();
-                        double projDist = relX * uVx + relY * uVy;
-                        double perpX = relX - projDist * uVx;
-                        double perpY = relY - projDist * uVy;
-                        return Math.hypot(perpX, perpY) + dr.tier() * 0.05;
-                    }));
+                    Set<String> alreadyChosenIds = new HashSet<>();
+                    Set<String> alreadyChosenNames = new HashSet<>();
+                    List<GeoPoint> chosenPoints = new ArrayList<>();
+                    for (ResolvedIntermediateHub h : resolvedHubs) {
+                        alreadyChosenIds.add(h.id().toLowerCase(Locale.ROOT));
+                        alreadyChosenNames.add(normalizeHubNameKey(h.name()));
+                        chosenPoints.add(h.location());
+                    }
+
+                    // Scale terminal setback and inter-hub spacing proportionally to corridor span
+                    double endpointSetbackDeg = Math.min(0.18, Math.max(0.05, vLen * 0.12));
+                    double minHubSpacingDeg = Math.min(0.12, Math.max(0.06, vLen / (autoLimit + 2.5)));
+
+                    // Progressive discovery passes:
+                    // Pass 1: District HQs within ~38 km of corridor
+                    // Pass 2: Prominent towns/tehsils/subdivisions within ~31 km of corridor
+                    // Pass 3: Wider-reach District HQs & towns within ~60 km for sparse corridors
+                    double[][] passConfigs = new double[][]{
+                            {1.0, 0.35},
+                            {0.0, 0.28},
+                            {0.0, 0.55}
+                    };
 
                     int added = 0;
-                    for (DistrictRecord dr : candidates) {
+                    for (double[] pass : passConfigs) {
                         if (added >= needed) break;
-                        resolvedHubs.add(new ResolvedIntermediateHub(
-                                dr.id(),
-                                dr.displayLabel() + " (Auto-Discovered)",
-                                dr.toGeoPoint()));
-                        added++;
+                        boolean districtsOnly = pass[0] > 0.5;
+                        double maxLateralDeg = pass[1];
+
+                        List<DistrictRecord> candidates = new ArrayList<>();
+                        for (DistrictRecord dr : districtsCatalog.getAllDistricts()) {
+                            if (districtsOnly && !dr.isDistrict()) continue;
+                            if (alreadyChosenIds.contains(dr.id().toLowerCase(Locale.ROOT))) continue;
+                            if (alreadyChosenNames.contains(normalizeHubNameKey(dr.name()))) continue;
+
+                            GeoPoint pt = dr.toGeoPoint();
+                            double distToStartDeg = Math.hypot(pt.lon() - start.lon(), pt.lat() - start.lat());
+                            double distToGoalDeg = Math.hypot(pt.lon() - goal.lon(), pt.lat() - goal.lat());
+                            if (distToStartDeg <= endpointSetbackDeg || distToGoalDeg <= endpointSetbackDeg) {
+                                continue;
+                            }
+
+                            double distToCorridorDeg = minDistanceToPolylineDeg(pt, guideChain);
+                            if (distToCorridorDeg <= maxLateralDeg) {
+                                candidates.add(dr);
+                            }
+                        }
+
+                        candidates.sort(Comparator.comparingDouble((DistrictRecord dr) -> {
+                            double d = minDistanceToPolylineDeg(dr.toGeoPoint(), guideChain);
+                            double levelPenalty = dr.isDistrict() ? 0.0 : 0.08;
+                            return d + dr.tier() * 0.04 + levelPenalty;
+                        }));
+
+                        for (DistrictRecord dr : candidates) {
+                            if (added >= needed) break;
+                            String normName = normalizeHubNameKey(dr.name());
+                            if (alreadyChosenNames.contains(normName)) continue;
+
+                            GeoPoint pt = dr.toGeoPoint();
+                            boolean tooClose = false;
+                            for (GeoPoint existing : chosenPoints) {
+                                if (Math.hypot(pt.lon() - existing.lon(), pt.lat() - existing.lat()) < minHubSpacingDeg) {
+                                    tooClose = true;
+                                    break;
+                                }
+                            }
+                            if (tooClose) continue;
+
+                            resolvedHubs.add(new ResolvedIntermediateHub(
+                                    dr.id(),
+                                    dr.displayLabel() + " (Auto-Discovered)",
+                                    pt));
+                            alreadyChosenIds.add(dr.id().toLowerCase(Locale.ROOT));
+                            alreadyChosenNames.add(normName);
+                            chosenPoints.add(pt);
+                            added++;
+                        }
                     }
                 }
             }
@@ -1456,6 +1508,34 @@ public class PanIndiaDynamicCorridorService {
                 a,
                 b
         );
+    }
+
+    private static String normalizeHubNameKey(String name) {
+        if (name == null) return "";
+        String base = name.replaceAll("\\s*\\([^)]*\\)", "").trim().toLowerCase(Locale.ROOT);
+        return base.replaceAll("[^a-z0-9]", "");
+    }
+
+    private static double minDistanceToPolylineDeg(GeoPoint pt, List<GeoPoint> polyline) {
+        if (polyline == null || polyline.isEmpty()) return Double.POSITIVE_INFINITY;
+        if (polyline.size() == 1) {
+            return Math.hypot(pt.lon() - polyline.get(0).lon(), pt.lat() - polyline.get(0).lat());
+        }
+        double best = Double.POSITIVE_INFINITY;
+        for (int i = 0; i < polyline.size() - 1; i++) {
+            GeoPoint a = polyline.get(i);
+            GeoPoint b = polyline.get(i + 1);
+            double dx = b.lon() - a.lon();
+            double dy = b.lat() - a.lat();
+            double lenSq = dx * dx + dy * dy;
+            double t = lenSq <= 1e-12
+                    ? 0.0
+                    : Math.max(0.0, Math.min(1.0, ((pt.lon() - a.lon()) * dx + (pt.lat() - a.lat()) * dy) / lenSq));
+            double px = a.lon() + t * dx;
+            double py = a.lat() + t * dy;
+            best = Math.min(best, Math.hypot(pt.lon() - px, pt.lat() - py));
+        }
+        return best;
     }
 
     private static double round(double v) {
