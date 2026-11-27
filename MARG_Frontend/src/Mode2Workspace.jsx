@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { ShimmerButton } from "./components/ui/ShimmerButton.jsx";
+import { RunActionButton } from "./components/ui/RunActionButton.jsx";
+import { FileUploadDropzone } from "./components/ui/FileUploadDropzone.jsx";
 
 function formatIndicatorName(metric) {
   if (!metric) return "Indicator";
@@ -728,11 +731,18 @@ export default function Mode2Workspace({ onHome }) {
                 </button>
               </div>
               <form onSubmit={uploadDocuments} className="mt-2 space-y-3">
-                <input type="file" accept="application/pdf,.pdf" multiple disabled={busy} onChange={(e) => setFiles([...e.target.files])}
-                  className="block w-full text-xs text-[#59645c] file:mr-3 file:border-0 file:bg-[#e9eee7] file:px-3 file:py-2 file:text-xs file:font-medium file:text-[#294b3b]" />
-                <button disabled={!files.length || busy} type="submit" className="w-full border border-[#aeb8ad] px-4 py-2 text-sm font-medium hover:bg-white disabled:opacity-50">
-                  {busy ? "Working…" : `Upload ${files.length || "PDF"}${files.length > 1 ? "s" : ""}`}
-                </button>
+                <FileUploadDropzone
+                  title="Upload DPR / EIA PDFs"
+                  description="Drop PDF files here or click to browse"
+                  accept="application/pdf,.pdf"
+                  multiple={true}
+                  files={files}
+                  onFilesSelect={(selected) => setFiles(selected)}
+                  onFileRemove={(idx) => setFiles((prev) => prev.filter((_, i) => i !== idx))}
+                />
+                <ShimmerButton disabled={!files.length || busy} type="submit" className="w-full justify-center">
+                  {busy ? "Indexing…" : `Upload ${files.length || "PDF"}${files.length > 1 ? "s" : ""}`}
+                </ShimmerButton>
               </form>
               <div className="mt-4 space-y-2">
                 {documents.map((doc) => (
@@ -799,12 +809,14 @@ export default function Mode2Workspace({ onHome }) {
                   </label>
                 </div>
 
-                <label className="block text-xs font-medium text-[#59645c]">Load KML or GeoJSON route
-                  <span className="ml-2 font-normal text-[#7c887e]">(LineString or Polygon corridor — centerline extracted automatically)</span>
-                  <input type="file" accept=".kml,.json,.geojson,application/geo+json,application/json"
-                    onChange={(e) => loadAlignmentFile(e.target.files?.[0])}
-                    className="mt-2 block w-full text-xs file:mr-3 file:border-0 file:bg-[#e9eee7] file:px-3 file:py-2 file:text-xs file:font-medium file:text-[#294b3b]" />
-                </label>
+                <FileUploadDropzone
+                  title="Load KML or GeoJSON Route"
+                  description="LineString or Polygon corridor — centerline extracted automatically"
+                  accept=".kml,.json,.geojson,application/geo+json,application/json"
+                  multiple={false}
+                  files={[]}
+                  onFilesSelect={(selected) => loadAlignmentFile(selected?.[0])}
+                />
 
                 {parseNote && (
                   <div className="border border-[#c8d4c6] bg-[#eaf1e8] px-3 py-2 text-xs leading-5 text-[#35543d]">
@@ -825,14 +837,27 @@ export default function Mode2Workspace({ onHome }) {
                 </label>
 
                 <div className="flex flex-wrap gap-3">
-                  <button disabled={!coordinatesText.trim() || busy} type="submit"
-                    className="bg-[#294b3b] px-5 py-3 text-sm font-medium text-white disabled:opacity-50">
-                    {busy ? "Running evidence and GIS checks…" : "Compare project claims with GIS"}
-                  </button>
-                  <button disabled={!coordinatesText.trim() || busy} type="button" onClick={recommendAlternative}
-                    className="border border-[#78907e] px-5 py-3 text-sm font-medium text-[#294b3b] hover:bg-[#edf1eb] disabled:opacity-50">
-                    Generate GIS alternative
-                  </button>
+                  <RunActionButton
+                    type="submit"
+                    idleLabel="Compare project claims with GIS"
+                    runningLabel="Running evidence & GIS checks…"
+                    doneLabel="Claims & GIS Screened"
+                    busy={busy}
+                    done={Boolean(comparison)}
+                    disabled={!coordinatesText.trim()}
+                    variant="primary"
+                  />
+                  <RunActionButton
+                    type="button"
+                    onClick={recommendAlternative}
+                    idleLabel="Generate GIS alternative"
+                    runningLabel="Computing 3 route options…"
+                    doneLabel="3 Alternatives Ready"
+                    busy={busy}
+                    done={Boolean(alternative)}
+                    disabled={!coordinatesText.trim()}
+                    variant="secondary"
+                  />
                 </div>
               </form>
 

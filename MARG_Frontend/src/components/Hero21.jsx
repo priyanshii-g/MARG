@@ -156,7 +156,7 @@ function FloatingCard({ previewImage, previewLabel, onClick, variants }) {
       variants={variants}
       animate={{ y: [0, -10, 0] }}
       transition={{ duration: 4, ease: "easeInOut", repeat: Infinity, repeatType: "loop" }}
-      className="group absolute bottom-8 left-7 z-20 w-[230px] cursor-pointer rounded-md bg-emerald-950/25 p-1.5 text-left shadow-[0_20px_50px_rgba(6,78,59,0.22),inset_0_0_0_1px_rgba(255,255,255,0.18)] backdrop-blur-md transition-[background-color,box-shadow] duration-300 ease-out hover:bg-emerald-950/35 hover:shadow-[0_28px_60px_rgba(6,78,59,0.32),inset_0_0_0_1px_rgba(255,255,255,0.26)] active:scale-[0.96] sm:left-11 lg:left-14"
+      className="group absolute bottom-24 left-7 z-20 hidden w-[230px] cursor-pointer rounded-md bg-emerald-950/30 p-1.5 text-left shadow-[0_20px_50px_rgba(6,78,59,0.22),inset_0_0_0_1px_rgba(255,255,255,0.22)] backdrop-blur-md transition-[background-color,box-shadow] duration-300 ease-out hover:bg-emerald-950/40 hover:shadow-[0_28px_60px_rgba(6,78,59,0.32),inset_0_0_0_1px_rgba(255,255,255,0.3)] active:scale-[0.96] sm:left-11 md:block lg:left-14"
     >
       <img
         src={previewImage}
@@ -270,15 +270,21 @@ export default function Hero21({
               variants={navItemVariants}
               type="button"
               onClick={onMode2}
-              className="group inline-flex min-h-10 items-center justify-center gap-2 rounded-sm bg-emerald-900 px-5 text-sm font-medium text-amber-50 shadow-[inset_0_1px_4px_2px_rgba(255,255,255,0.2),inset_0_-1px_4px_2px_rgba(0,0,0,0.2)] transition-[background-color,transform,box-shadow] duration-200 ease-out hover:bg-emerald-950 active:scale-[0.96]"
+              className="group relative inline-flex min-h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-emerald-900 px-5 text-sm font-medium text-amber-50 shadow-[inset_0_1px_4px_2px_rgba(255,255,255,0.2),inset_0_-1px_4px_2px_rgba(0,0,0,0.2)] transition-[background-color,transform,box-shadow] duration-200 ease-out hover:bg-emerald-950 active:scale-[0.96]"
             >
-              {actionLabel}
-              <ArrowRight className="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
+              <span className="relative z-10 inline-flex items-center gap-2">
+                {actionLabel}
+                <ArrowRight className="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
+              </span>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+              />
             </motion.button>
           </div>
         </motion.nav>
 
-        <div className="relative z-10 flex flex-1 flex-col justify-center pt-16 pb-32 sm:pt-20 md:pb-36 lg:pt-10">
+        <div className="relative z-10 flex flex-1 flex-col justify-center pt-14 pb-44 sm:pt-16 md:pb-52 lg:pt-8">
           <div className="max-w-5xl">
             <h1 className="max-w-5xl text-[clamp(3.25rem,5.4vw,5.15rem)] leading-[0.94] font-normal tracking-[-0.065em] text-emerald-900">
               <DropCharsLine text={headingLine1} />
@@ -313,7 +319,7 @@ export default function Hero21({
         <motion.p
           variants={trustVariants}
           style={{ perspective: 600 }}
-          className="absolute right-7 bottom-9 z-20 hidden max-w-[12rem] text-left text-sm leading-snug font-normal text-white drop-shadow-[0_2px_12px_rgba(6,78,59,0.3)] sm:block sm:right-11 md:text-right lg:right-14"
+          className="absolute right-7 bottom-24 z-20 hidden max-w-[12rem] text-left text-sm leading-snug font-normal text-white drop-shadow-[0_2px_12px_rgba(6,78,59,0.45)] sm:block sm:right-11 md:text-right lg:right-14"
         >
           {trustLabelLine1}
           <br />

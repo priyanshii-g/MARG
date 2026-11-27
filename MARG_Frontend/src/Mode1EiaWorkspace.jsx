@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { OnboardingSetupCard } from "./components/ui/OnboardingSetupCard.jsx";
+import { RunActionButton } from "./components/ui/RunActionButton.jsx";
+import { ShimmerButton } from "./components/ui/ShimmerButton.jsx";
 
 const GIS_COVERAGE_TOPICS = [
   ["Land use and land cover", ["land_cover", "land cover", "lulc", "land use"]],
@@ -121,6 +124,9 @@ export default function Mode1EiaWorkspace({ onHome }) {
   // Guided statutory DPR / EIA inputs
   const [specs, setSpecs] = useState(DEFAULT_SPECS);
   const [activeSpecTab, setActiveSpecTab] = useState("engineering");
+  const [appraisalFocus, setAppraisalFocus] = useState("moefcc-cat-a");
+  const [corridorScale, setCorridorScale] = useState("< 25 km (Section)");
+  const [appraiserRole, setAppraiserRole] = useState("NHAI PIU / NABET EIA Consultant");
 
   const [library, setLibrary] = useState(null);
   const [job, setJob] = useState(null);
@@ -326,6 +332,26 @@ export default function Mode1EiaWorkspace({ onHome }) {
           {error || message}
         </div>
       )}
+
+      <div className="mt-6">
+        <OnboardingSetupCard
+          selectedFocus={appraisalFocus}
+          onFocusChange={(focusId) => {
+            setAppraisalFocus(focusId);
+            if (focusId === "fca-forest") setActiveSpecTab("forest");
+            else if (focusId === "nbwl-wildlife") setActiveSpecTab("structures");
+            else setActiveSpecTab("approvals");
+          }}
+          selectedScale={corridorScale}
+          onScaleChange={setCorridorScale}
+          role={appraiserRole}
+          onRoleChange={setAppraiserRole}
+          step={selectedRoute ? 2 : 1}
+          totalSteps={3}
+          onContinue={() => setActiveSpecTab("engineering")}
+          continueLabel="Apply Appraisal Profile"
+        />
+      </div>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]">
         <div className="space-y-6 rounded-lg border border-[#34443a] bg-[#1e2a24] p-5 sm:p-6 shadow-sm">
@@ -948,14 +974,18 @@ export default function Mode1EiaWorkspace({ onHome }) {
             </div>
           </div>
 
-          <button
+          <RunActionButton
             type="button"
             onClick={generateReport}
-            disabled={!selectedRoute || busy}
-            className="w-full rounded-md bg-[#294b3b] px-5 py-3 text-sm font-semibold text-white hover:bg-[#355f4b] disabled:cursor-not-allowed disabled:opacity-50 transition-colors shadow-sm"
-          >
-            {busy ? "Generating report…" : "Generate Environmental EIA Report"}
-          </button>
+            idleLabel="Generate Environmental EIA Report"
+            runningLabel="Drafting EIA Report & Baselines…"
+            doneLabel="EIA Report Generated"
+            busy={busy}
+            done={job?.state === "COMPLETED"}
+            disabled={!selectedRoute}
+            variant="primary"
+            className="w-full"
+          />
         </div>
 
         {/* Aside */}
@@ -1027,11 +1057,11 @@ export default function Mode1EiaWorkspace({ onHome }) {
               <p className="mt-2.5 break-all font-mono text-xs text-[#9ab0a1]">{job.jobId}</p>
               {job.pageCount != null && <p className="mt-1.5 text-xs text-[#cbd5e1] font-semibold">{job.pageCount} pages generated</p>}
               {job.state === "COMPLETED" && (
-                <div className="mt-4 flex gap-2">
-                  <button type="button" onClick={() => download("pdf")} className="rounded bg-[#294b3b] px-3.5 py-1.5 text-xs font-medium text-white hover:bg-[#355f4b] transition-colors shadow-sm">
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <ShimmerButton type="button" onClick={() => download("pdf")} className="px-4 py-2 text-xs">
                     Download PDF
-                  </button>
-                  <button type="button" onClick={() => download("document")} className="rounded border border-[#3a4b40] bg-transparent px-3.5 py-1.5 text-xs font-medium text-[#c0d4c6] hover:bg-[#202c26] hover:text-white transition-colors">
+                  </ShimmerButton>
+                  <button type="button" onClick={() => download("document")} className="rounded-lg border border-[#3a4b40] bg-transparent px-4 py-2 text-xs font-medium text-[#c0d4c6] hover:bg-[#202c26] hover:text-white transition-colors">
                     Download DOCX
                   </button>
                 </div>
