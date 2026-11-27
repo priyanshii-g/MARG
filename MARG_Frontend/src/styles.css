@@ -4011,8 +4011,8 @@ body:has(.marg-home) {
 /* Professional EIA engineering form & tab styling */
 .eia-tab-bar {
   display: flex;
-  border-bottom: 1px solid #34443a;
-  gap: 2px;
+  border-bottom: 1px solid #D8E8DD;
+  gap: 6px;
   background: transparent;
   overflow-x: auto;
 }
@@ -4020,29 +4020,61 @@ body:has(.marg-home) {
 .eia-tab-btn {
   border: none !important;
   border-bottom: 2px solid transparent !important;
-  border-radius: 0 !important;
+  border-radius: 12px 12px 0 0 !important;
   background: transparent !important;
-  color: #8fa394 !important;
-  padding: 9px 15px !important;
+  color: #59645C !important;
+  padding: 10px 16px !important;
   font-size: 12px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.02em !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 150ms ease !important;
+  box-shadow: none !important;
+  transition: all 160ms ease !important;
 }
 
 .eia-tab-btn:hover {
-  color: #e2ece4 !important;
-  background: rgba(45, 65, 53, 0.3) !important;
+  color: #24523E !important;
+  background: #EEF4EF !important;
 }
 
 .eia-tab-btn.active {
   border-bottom: 2px solid #2D6A4F !important;
   color: #24523E !important;
-  background: #EEF4EF !important;
+  background: #E9F2EC !important;
   font-weight: 700 !important;
-  border-radius: 10px 10px 0 0 !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Modern Material Design 3 base reset for Mode 2 & EIA workspaces */
+.marg-modern button {
+  -webkit-appearance: none;
+  appearance: none;
+  border-style: solid;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 160ms ease, box-shadow 180ms ease;
+}
+
+.marg-modern input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+.marg-modern select,
+.marg-modern textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 14px;
+  border: 1px solid #D5E2D8;
+  background-color: #FAF9F6;
+  color: #1C2420;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.marg-modern input:not([type="file"]):focus,
+.marg-modern select:focus,
+.marg-modern textarea:focus {
+  background-color: #FFFFFF;
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+  outline: none;
 }
 
 .eia-spec-card {

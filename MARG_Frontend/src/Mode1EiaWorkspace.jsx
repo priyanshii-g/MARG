@@ -304,7 +304,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
   const gisCoverage = getGisCoverage(findings);
   const activeTabMeta = SPEC_TABS.find((t) => t.id === activeSpecTab) || SPEC_TABS[0];
 
-  return <main className="min-h-screen bg-[#F7F5F0] text-[#1C2420] antialiased">
+  return <main className="marg-modern min-h-screen bg-[#F7F5F0] text-[#1C2420] antialiased">
     <header className="flex items-center justify-between border-b border-[#D9DDD3] bg-[#FFFFFF]/95 px-6 py-4 backdrop-blur-sm sm:px-10">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#2D6A4F] text-sm font-bold text-[#F7F5F0] shadow-sm">M</div>
@@ -354,12 +354,12 @@ export default function Mode1EiaWorkspace({ onHome }) {
       </div>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]">
-        <div className="space-y-6 rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-5 sm:p-6 shadow-sm">
+        <div className="space-y-6 rounded-3xl border border-[#E3ECE5] bg-[#FFFFFF] p-6 sm:p-7 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
           {/* Section 1: Route Selection */}
           <div>
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-[#24523E]">1. Select Saved Alignment</h2>
-              <button type="button" onClick={refreshRoutes} className="text-xs font-medium text-[#24523E] rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] px-4 py-2 hover:bg-[#EEF4EF] transition-colors">Refresh routes</button>
+              <button type="button" onClick={refreshRoutes} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#EEF4EF] transition-colors">Refresh routes</button>
             </div>
             <label className="mt-2 block">
               <select
@@ -990,7 +990,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
 
         {/* Aside */}
         <aside className="space-y-4">
-          <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-5 shadow-sm">
+          <section className="rounded-3xl border border-[#E3ECE5] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-[#24523E]">Evidence Register</h2>
               <span className="font-mono text-[10px] text-[#24523E] bg-[#EEF4EF] px-2 py-0.5 rounded border border-[#D8E8DD]">
@@ -1049,7 +1049,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
           </section>
 
           {job && (
-            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-5 shadow-sm">
+            <section className="rounded-3xl border border-[#E3ECE5] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-[#24523E]">Report Job</h2>
                 <span className={`rounded px-2 py-0.5 font-mono text-[10px] font-bold ${job.state === "COMPLETED" ? "bg-[#E9F2EC] text-[#24523E] border border-[#B8D0BF]" : job.state === "REJECTED" || job.state === "FAILED" ? "bg-rose-50 text-rose-800 border border-rose-300" : "bg-amber-50 text-amber-800 border border-amber-300"}`}>{job.state}</span>
@@ -1061,7 +1061,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
                   <ShimmerButton type="button" onClick={() => download("pdf")} className="px-4 py-2 text-xs">
                     Download PDF
                   </ShimmerButton>
-                  <button type="button" onClick={() => download("document")} className="rounded-lg border border-[#CBD2C8] bg-transparent px-4 py-2 text-xs font-medium text-[#24523E] hover:bg-[#EEF4EF] hover:text-[#24523E] transition-colors">
+                  <button type="button" onClick={() => download("document")} className="rounded-full border border-[#D5E2D8] bg-[#EEF4EF] px-5 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-[#E1EDE4] transition-colors">
                     Download DOCX
                   </button>
                 </div>

@@ -618,7 +618,7 @@ export default function Mode2Workspace({ onHome }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#F7F5F0] text-[#1C2420] antialiased">
+    <main className="marg-modern min-h-screen bg-[#F7F5F0] text-[#1C2420] antialiased">
       {/* Header */}
       <header className="flex items-center justify-between border-b border-[#D9DDD3] bg-[#FFFFFF]/95 px-6 py-4 backdrop-blur-sm sm:px-10">
         <div className="flex items-center gap-3">
@@ -647,7 +647,7 @@ export default function Mode2Workspace({ onHome }) {
         )}
 
         {/* Workspace Quick-Select & Sample Document Toolbar */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#D8E8DD] bg-[#FFFFFF] p-4 shadow-xl">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#D8E8DD] bg-[#FFFFFF] p-4 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
           <div className="flex flex-1 items-center gap-3 min-w-[300px]">
             <label className="text-xs font-bold uppercase tracking-wider text-[#24523E] whitespace-nowrap">Active Workspace:</label>
             <select
@@ -670,7 +670,7 @@ export default function Mode2Workspace({ onHome }) {
               type="button"
               onClick={() => attachSampleDocument("nh29")}
               disabled={busy || !projectId}
-              className="flex items-center gap-2 rounded-xl border border-[#B8D0BF] bg-[#EEF4EF] hover:bg-[#E2EFE6] px-4 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-emerald-800 transition-all shadow-md disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full border border-[#CBE0D1] bg-[#EEF4EF] hover:bg-[#E1EDE4] px-4 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-[#E1EDE4] transition-all shadow-xs disabled:opacity-50"
             >
               📄 Load NH-29 Comprehensive EIA & EMP Report (Assam Corridor)
             </button>
@@ -678,7 +678,7 @@ export default function Mode2Workspace({ onHome }) {
               type="button"
               onClick={() => attachSampleDocument("pulicat")}
               disabled={busy || !projectId}
-              className="flex items-center gap-2 rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] hover:bg-[#EEF4EF] px-3.5 py-2 text-xs font-semibold text-[#2A352E] hover:bg-slate-700 transition-all shadow-md disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full border border-[#D5E2D8] bg-[#FFFFFF] hover:bg-[#F2F7F3] px-3.5 py-2 text-xs font-semibold text-[#2A352E] hover:bg-[#EEF4EF] transition-all shadow-xs disabled:opacity-50"
             >
               📄 Load Pulicat Bridge EIA Report
             </button>
@@ -688,14 +688,14 @@ export default function Mode2Workspace({ onHome }) {
         <div className="grid gap-6 lg:grid-cols-[300px_1fr] xl:grid-cols-[320px_1fr]">
           {/* Sidebar */}
           <aside className="space-y-5">
-            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
+            <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-semibold">Project workspaces</h2>
-                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] px-3.5 py-2 text-xs font-semibold text-[#2D6A4F] hover:bg-[#EEF4EF] transition-colors">Refresh</button>
+                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#EEF4EF] transition-colors">Refresh</button>
               </div>
               <form onSubmit={createProject} className="flex gap-2">
                 <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project / proposal name" className="min-w-0 flex-1 rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-2.5 text-sm outline-none focus:border-[#2D6A4F] focus:bg-white" />
-                <button disabled={busy || !projectName.trim()} className="bg-[#2D6A4F] px-4 py-2 text-sm font-semibold text-[#F7F5F0] rounded-lg disabled:opacity-50" type="submit">New</button>
+                <button disabled={busy || !projectName.trim()} className="rounded-full bg-[#2D6A4F] px-5 py-2.5 text-sm font-semibold text-[#FFFFFF] hover:bg-[#3B8263] transition-colors disabled:opacity-50 border-0" type="submit">New</button>
               </form>
               <div className="mt-4 max-h-72 space-y-1 overflow-auto">
                 {projects.map((project) => (
@@ -709,7 +709,7 @@ export default function Mode2Workspace({ onHome }) {
               {!projects.length && <p className="mt-4 text-xs leading-5 text-[#7c887e]">Create a workspace to keep each proposal's PDFs and evidence separate.</p>}
             </section>
 
-            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
+            <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <h2 className="font-semibold">Project documents</h2>
               <p className="mt-1 text-xs leading-5 text-[#7c887e]">PDF only · Text and page provenance indexed on upload.</p>
               <div className="mt-3 mb-3 space-y-2">
@@ -717,7 +717,7 @@ export default function Mode2Workspace({ onHome }) {
                   type="button"
                   onClick={() => attachSampleDocument("nh29")}
                   disabled={busy || !projectId}
-                  className="w-full rounded-xl border border-[#B8D0BF] bg-[#EEF4EF] hover:bg-[#E2EFE6] px-4 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-emerald-800 transition-colors shadow-sm disabled:opacity-50 text-left"
+                  className="w-full rounded-full border border-[#CBE0D1] bg-[#EEF4EF] hover:bg-[#E1EDE4] px-4 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-[#E1EDE4] transition-colors shadow-sm disabled:opacity-50 text-left"
                 >
                   📄 1-Click: Attach NH-29 Comprehensive EIA Report
                 </button>
@@ -725,7 +725,7 @@ export default function Mode2Workspace({ onHome }) {
                   type="button"
                   onClick={() => attachSampleDocument("pulicat")}
                   disabled={busy || !projectId}
-                  className="w-full rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] hover:bg-[#EEF4EF] px-4 py-2.5 text-xs font-semibold text-[#2A352E] hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50 text-left"
+                  className="w-full rounded-full border border-[#D5E2D8] bg-[#FFFFFF] hover:bg-[#F2F7F3] px-4 py-2.5 text-xs font-semibold text-[#2A352E] hover:bg-[#EEF4EF] transition-colors shadow-sm disabled:opacity-50 text-left"
                 >
                   📄 1-Click: Attach Pulicat Bridge EIA
                 </button>
@@ -759,7 +759,7 @@ export default function Mode2Workspace({ onHome }) {
           {/* Main workspace sections */}
           <div className="space-y-6">
             {/* 01 · Alignment Input & Form */}
-            <section className="rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 sm:p-7 shadow-sm">
+            <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 sm:p-7 shadow-sm">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#557260]">01 · Run MARG GIS</p>
                 <h2 className="mt-1 text-xl font-medium">Screen an existing alignment and explore an alternative</h2>
@@ -776,7 +776,7 @@ export default function Mode2Workspace({ onHome }) {
                   <div className="flex flex-wrap gap-2">
                     {demoAlignments.map((demo) => (
                       <button key={demo.id} type="button" onClick={() => loadDemoAlignment(demo)}
-                        className="border border-[#78907e] px-3 py-2 text-xs font-medium text-[#294b3b] hover:bg-[#edf1eb]">
+                        className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#EEF4EF] transition-colors">
                         {demo.displayName}
                       </button>
                     ))}
@@ -889,7 +889,7 @@ export default function Mode2Workspace({ onHome }) {
                 const activeComparisons = activeOpt?.environmentalComparisons || alternative.environmentalComparisons || [];
 
                 return (
-                <div className="mt-8 space-y-6 rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-2xl">
+                <div className="mt-8 space-y-6 rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#24523E]">
@@ -899,8 +899,8 @@ export default function Mode2Workspace({ onHome }) {
                         <span>{activeStatus.replaceAll("_", " ")}</span>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold font-mono border ${
                           activeStatus === "POTENTIAL_ALTERNATIVE_FOR_REVIEW" || activeStatus === "SUSTAINABLE_BYPASS_CANDIDATE_FOUND"
-                            ? "bg-[#E9F2EC] text-[#2D6A4F] border-emerald-500 shadow-md"
-                            : "bg-amber-50 text-[#B45309] border-amber-500 shadow-md"
+                            ? "bg-[#E9F2EC] text-[#2D6A4F] border-emerald-500 shadow-xs"
+                            : "bg-amber-50 text-[#B45309] border-amber-500 shadow-xs"
                         }`}>
                           {activeStatus === "POTENTIAL_ALTERNATIVE_FOR_REVIEW" ? "✓ Lower GIS Exposure" : "Advisory Screening"}
                         </span>
@@ -909,7 +909,7 @@ export default function Mode2Workspace({ onHome }) {
                     <button
                       type="button"
                       onClick={downloadAlternative}
-                      className="border border-emerald-600 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#2D6A4F] hover:bg-emerald-800 hover:text-[#1C2420] rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
+                      className="border border-emerald-600 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#2D6A4F] hover:bg-[#E1EDE4] hover:text-[#24523E] rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                       Download {activeOpt.optionId} GeoJSON
@@ -928,7 +928,7 @@ export default function Mode2Workspace({ onHome }) {
                           onClick={() => setSelectedOptionIdx(idx)}
                           className={`text-left rounded-xl border p-4 transition-all ${
                             isSelected
-                              ? "border-emerald-400 bg-[#E9F2EC] shadow-lg ring-1 ring-emerald-400/50"
+                              ? "border-emerald-400 bg-[#E9F2EC] shadow-[0_1px_4px_rgba(45,106,79,0.05)] ring-1 ring-emerald-400/50"
                               : "border-[#D9DDD3] bg-[#FAF9F6] hover:border-slate-500"
                           }`}
                         >
@@ -960,15 +960,15 @@ export default function Mode2Workspace({ onHome }) {
                   
                   {/* Summary Metric Cards */}
                   <div className="grid grid-cols-3 gap-3 my-4">
-                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-inner">
+                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-none">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Submitted Length</span>
                       <span className="text-xl font-bold text-[#B45309] mt-1 block">{alternative.existingRouteLengthKm ?? "—"} km</span>
                     </div>
-                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-inner">
+                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-none">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Candidate Length</span>
                       <span className="text-xl font-bold text-[#24523E] mt-1 block">{activeOpt.routeLengthKm ?? "—"} km</span>
                     </div>
-                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-inner">
+                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-none">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Length Delta</span>
                       <span className="text-xl font-bold text-[#1C2420] mt-1 block">
                         {activeOpt.lengthDeltaVsExistingKm != null ? (activeOpt.lengthDeltaVsExistingKm > 0 ? `+${activeOpt.lengthDeltaVsExistingKm}` : activeOpt.lengthDeltaVsExistingKm) : "—"} km
@@ -977,7 +977,7 @@ export default function Mode2Workspace({ onHome }) {
                   </div>
 
                   {activeComparisons.filter(item => !item.metric?.toLowerCase().includes("nodata")).length > 0 && (
-                    <div className="border border-[#D9DDD3] rounded-xl overflow-hidden shadow-2xl bg-[#FAF9F6]">
+                    <div className="border border-[#D9DDD3] rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(45,106,79,0.06)] bg-[#FAF9F6]">
                       <div className="bg-[#EEF4EF] px-4 py-3.5 border-b border-[#D9DDD3] flex flex-wrap items-center justify-between gap-2">
                         <h4 className="text-xs font-bold uppercase tracking-wider text-[#2D6A4F]">
                           Layer-by-Layer Environmental Indicators · {activeOpt.optionId}
@@ -1040,14 +1040,14 @@ export default function Mode2Workspace({ onHome }) {
 
               {/* Comparison (GIS vs document) results */}
               {comparison && (
-                <div className="mt-8 space-y-6 rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-2xl">
+                <div className="mt-8 space-y-6 rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#24523E]">Screening complete · {comparison.gisScreening?.regionDisplayName}</p>
                         <h3 className="mt-1 text-2xl font-bold tracking-tight text-[#1C2420]">Layer-by-Layer GIS Analysis & Claim Verification</h3>
                       </div>
-                      <span className="rounded-full bg-[#E9F2EC] px-4 py-1.5 text-xs font-bold text-[#2D6A4F] border border-emerald-500 shadow-md">
+                      <span className="rounded-full bg-[#E9F2EC] px-4 py-1.5 text-xs font-bold text-[#2D6A4F] border border-emerald-500 shadow-xs">
                         ✓ {comparison.gisScreening?.assessedLayers?.length || 13} GIS Layers Consumed
                       </span>
                     </div>
@@ -1057,7 +1057,7 @@ export default function Mode2Workspace({ onHome }) {
                   </div>
 
                   {/* Consumed GIS Layers breakdown badge list */}
-                  <div className="rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] p-4 shadow-inner">
+                  <div className="rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] p-4 shadow-none">
                     <p className="text-xs font-bold uppercase tracking-wider text-[#24523E] mb-2.5">GIS Spatial Layers Consumed for this Alignment:</p>
                     <div className="flex flex-wrap gap-2">
                       {(comparison.gisScreening?.assessedLayers?.length ? comparison.gisScreening.assessedLayers : [
@@ -1073,7 +1073,7 @@ export default function Mode2Workspace({ onHome }) {
                   </div>
 
                   {/* Executive Decision Recommendation Card */}
-                  <div className="rounded-xl border border-emerald-500/60 bg-gradient-to-br from-[#0c1c14] to-[#07130d] p-5 shadow-2xl">
+                  <div className="rounded-xl border border-emerald-500/60 bg-gradient-to-br from-[#0c1c14] to-[#07130d] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8E8DD] pb-3">
                       <div>
                         <span className="inline-block rounded-full bg-emerald-500/20 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#2D6A4F] border border-[#D8E8DD]">
@@ -1084,7 +1084,7 @@ export default function Mode2Workspace({ onHome }) {
                         </h4>
                       </div>
                       <div className="text-right">
-                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#24523E] border border-emerald-600/80 shadow-inner">
+                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#24523E] border border-emerald-600/80 shadow-none">
                           RECOMMENDED FOR STAGE-I APPRAISAL WITH EMP CONDITIONS
                         </span>
                       </div>
@@ -1123,7 +1123,7 @@ export default function Mode2Workspace({ onHome }) {
                   </div>
 
                   {/* Comprehensive Layer-by-Layer Verification Table */}
-                  <div className="border border-[#D9DDD3] rounded-xl overflow-hidden shadow-2xl bg-[#FAF9F6]">
+                  <div className="border border-[#D9DDD3] rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(45,106,79,0.06)] bg-[#FAF9F6]">
                     <div className="bg-[#EEF4EF] px-4 py-3.5 border-b border-[#D9DDD3] flex flex-wrap items-center justify-between gap-2">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#2D6A4F]">
                         Layer-by-Layer Results: Consumed Data vs. Report Claims
@@ -1481,7 +1481,7 @@ export default function Mode2Workspace({ onHome }) {
                           : `${item.gisValue ?? "0.00"} ${item.gisUnits || ""}`))));
 
                       return (
-                        <article key={`${item.projectField}-${i}`} className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-5 shadow-lg flex flex-col justify-between">
+                        <article key={`${item.projectField}-${i}`} className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-5 shadow-[0_1px_4px_rgba(45,106,79,0.05)] flex flex-col justify-between">
                           <div>
                             <div className="flex items-center justify-between mb-2.5 gap-2">
                               <h3 className="text-base font-bold text-[#1C2420]">{item.description || item.projectField}</h3>
@@ -1513,7 +1513,7 @@ export default function Mode2Workspace({ onHome }) {
                   </div>
 
                   {(comparison.gisScreening?.evidence || []).length > 0 && (
-                    <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-lg">
+                    <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-[0_1px_4px_rgba(45,106,79,0.05)]">
                       <summary className="cursor-pointer text-sm font-bold text-[#24523E] hover:text-[#2D6A4F]">
                         Detailed GIS Evidence Register ({comparison.gisScreening.evidence.length} Layer Records)
                       </summary>
@@ -1529,7 +1529,7 @@ export default function Mode2Workspace({ onHome }) {
                     </details>
                   )}
 
-                  <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-lg">
+                  <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-[0_1px_4px_rgba(45,106,79,0.05)]">
                     <summary className="cursor-pointer text-sm font-bold text-[#24523E] hover:text-[#2D6A4F]">Extracted Project Claims ({comparison.projectFacts?.facts?.length || 0})</summary>
                     <div className="mt-3 space-y-3">
                       {comparison.projectFacts?.facts?.map((fact, i) => (
@@ -1548,7 +1548,7 @@ export default function Mode2Workspace({ onHome }) {
                   </details>
 
                   {/* 2-Page Executive Decision-Support Summary Bar */}
-                  <div className="rounded-xl border border-[#D8E8DD] bg-gradient-to-r from-[#EEF4EF] to-[#F7F5F0] p-5 shadow-xl flex flex-wrap items-center justify-between gap-4">
+                  <div className="rounded-xl border border-[#D8E8DD] bg-gradient-to-r from-[#EEF4EF] to-[#F7F5F0] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#2D6A4F]">
                         Decision-Support Deliverable · NHAI / MoEFCC / Multilateral Lenders
@@ -1564,14 +1564,14 @@ export default function Mode2Workspace({ onHome }) {
                       <a
                         href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/pdf`}
                         download={`marg-executive-brief-${projectId}.pdf`}
-                        className="rounded-lg bg-[#2D6A4F] px-4 py-2.5 text-xs font-bold text-[#F7F5F0] hover:bg-emerald-500 transition-colors shadow-sm"
+                        className="rounded-lg bg-[#2D6A4F] px-4 py-2.5 text-xs font-bold text-[#F7F5F0] hover:bg-[#3B8263] transition-colors shadow-sm"
                       >
                         ⬇ Download 2-Page Brief (PDF)
                       </a>
                       <a
                         href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/docx`}
                         download={`marg-executive-brief-${projectId}.docx`}
-                        className="rounded-lg border border-[#2D6A4F]/40 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#24523E] hover:bg-emerald-900 transition-colors"
+                        className="rounded-lg border border-[#2D6A4F]/40 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#24523E] hover:bg-[#E1EDE4] transition-colors"
                       >
                         ⬇ Download Brief (DOCX)
                       </a>
@@ -1580,7 +1580,7 @@ export default function Mode2Workspace({ onHome }) {
 
                   {/* Statutory Risk & Clearance Delay Scorer (Red-Flag Engine) */}
                   {statutoryRisk && (
-                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-xl space-y-5">
+                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] space-y-5">
                       <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#E5ECE6] pb-4">
                         <div>
                           <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#24523E]">
@@ -1674,7 +1674,7 @@ export default function Mode2Workspace({ onHome }) {
 
                   {/* Automated Mitigation & CAMPA Cost Calculator */}
                   {mitigationCalc && (
-                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-xl space-y-5">
+                    <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] space-y-5">
                       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5ECE6] pb-3">
                         <div>
                           <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#24523E]">
@@ -1784,7 +1784,7 @@ export default function Mode2Workspace({ onHome }) {
 
             {/* 02 · Cross-Verified Question Answering */}
             {!comparison ? (
-              <section className="rounded-2xl border border-[#D9DDD3] bg-[#FFFFFF] p-6 text-[#4A5950]">
+              <section className="rounded-3xl border border-[#D9DDD3] bg-[#FFFFFF] p-6 text-[#4A5950]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
                     <span className="rounded bg-[#EEF4EF] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#68736B] border border-[#D9DDD3]">
@@ -1804,7 +1804,7 @@ export default function Mode2Workspace({ onHome }) {
                 </div>
               </section>
             ) : (
-              <section className="rounded-2xl border border-[#2D6A4F]/40 bg-[#FFFFFF] p-6 shadow-2xl">
+              <section className="rounded-3xl border border-[#2D6A4F]/40 bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <div className="flex items-center gap-2.5">
                     <span className="rounded bg-emerald-500/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#2D6A4F] border border-[#D8E8DD]">
@@ -1833,7 +1833,7 @@ export default function Mode2Workspace({ onHome }) {
                       key={q}
                       type="button"
                       onClick={() => setQuestion(q)}
-                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#24523E] hover:bg-emerald-800/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
+                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#24523E] hover:bg-[#E1EDE4]/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
                     >
                       💬 {q}
                     </button>
@@ -1849,7 +1849,7 @@ export default function Mode2Workspace({ onHome }) {
                   />
                   <button
                     disabled={!question.trim() || busy}
-                    className="rounded-lg bg-emerald-700 px-6 py-3.5 text-sm font-bold text-[#1C2420] hover:bg-emerald-600 disabled:opacity-50 transition-colors shadow-md"
+                    className="rounded-lg bg-emerald-700 px-6 py-3.5 text-sm font-bold text-[#1C2420] hover:bg-emerald-600 disabled:opacity-50 transition-colors shadow-xs"
                     type="submit"
                   >
                     {busy ? "Cross-examining…" : "Ask with citations"}
@@ -1864,7 +1864,7 @@ export default function Mode2Workspace({ onHome }) {
                         {answer.status}
                       </span>
                     </div>
-                    <p className="mt-3.5 whitespace-pre-wrap text-sm leading-7 text-[#2A352E] bg-[#08120d] p-5 rounded-xl border border-[#E5ECE6] shadow-inner">
+                    <p className="mt-3.5 whitespace-pre-wrap text-sm leading-7 text-[#2A352E] bg-[#08120d] p-5 rounded-xl border border-[#E5ECE6] shadow-none">
                       {answer.answer}
                     </p>
                     {answer.sources?.length > 0 && (
