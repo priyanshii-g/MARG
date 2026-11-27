@@ -2,22 +2,29 @@ import { useMemo, useState } from "react";
 import {
   LAYER_CATALOG,
   LAYER_DOMAINS,
-  formatClassLabel,
   getSegmentColor,
 } from "../layers/layerCatalog";
+import {
+  humanizeClassLabel,
+  humanizeDataFidelity,
+  humanizeLayerPurpose,
+  humanizeMetricLabel,
+  humanizeText,
+  humanizeUnit,
+} from "../utils/plainLanguage";
 
 function verdictMeta(verdict) {
   switch (verdict) {
     case "HARD_CONSTRAINT_PASS":
-      return { label: "HARD PASS", cls: "pass" };
+      return { label: "SAFE & PASSED", cls: "pass" };
     case "VERIFIED_REDUCTION":
-      return { label: "VERIFIED", cls: "verified" };
+      return { label: "RISK REDUCED", cls: "verified" };
     case "MITIGATED_BY_DESIGN":
-      return { label: "MITIGATED", cls: "mitigated" };
+      return { label: "PROTECTED", cls: "mitigated" };
     case "WARNING":
-      return { label: "ALERT", cls: "warn" };
+      return { label: "NEEDS REVIEW", cls: "warn" };
     default:
-      return { label: "AUDITED", cls: "neutral" };
+      return { label: "CHECKED", cls: "neutral" };
   }
 }
 
@@ -38,7 +45,7 @@ function extractFeatureCoordAndLabel(feature) {
     props.wetlandName ||
     props.structureType ||
     props.interchangeType ||
-    formatClassLabel(role);
+    humanizeClassLabel(role);
 
   const sub =
     props.recommendedEngineeringMitigation ||
@@ -48,7 +55,7 @@ function extractFeatureCoordAndLabel(feature) {
     props.structureType ||
     props.tieInRoadRef ||
     props.category ||
-    (props.chainageKm != null ? `ch. ${props.chainageKm} km` : "");
+    (props.chainageKm != null ? `${props.chainageKm} km from start` : "");
 
   let lat = null;
   let lng = null;
@@ -116,13 +123,13 @@ function SlopeSparkline({ profile, onFocusPoint }) {
   return (
     <div className="lens-sparkline-box">
       <div className="lens-sparkline-header">
-        <span>DEM Slope Profile along Alignment</span>
+        <span>Hill Steepness Along This Route</span>
         <span>
-          Avg <strong>{avgSlope}°</strong> • Peak <strong>{peak.slopeDeg}°</strong>
+          Avg <strong>{avgSlope}°</strong> · Steepest <strong>{peak.slopeDeg}°</strong>
         </span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="lens-sparkline-svg">
-        {/* 30° IRC Hard Limit Reference Line */}
+        {/* 30° Road Safety Limit Reference Line */}
         <line
           x1={padL}
           y1={limitY}
@@ -151,13 +158,13 @@ function SlopeSparkline({ profile, onFocusPoint }) {
           stroke="#FFFFFF"
           strokeWidth="1.2"
           style={{ cursor: "pointer" }}
-          onClick={() => onFocusPoint && onFocusPoint(peak.lat, peak.lon, `Peak Slope ${peak.slopeDeg}° @ km ${peak.chKm}`)}
+          onClick={() => onFocusPoint && onFocusPoint(peak.lat, peak.lon, `Steepest Point (${peak.slopeDeg}°) at ${peak.chKm} km from start`)}
         >
-          <title>Click to zoom to peak slope ({peak.slopeDeg}° at km {peak.chKm})</title>
+          <title>Click to view steepest point ({peak.slopeDeg}° at {peak.chKm} km from start)</title>
         </circle>
 
         <text x={padL} y={height - 3} fontSize="7.5" fill="#6C7A72">
-          0 km
+          Start
         </text>
         <text x={width - padR} y={height - 3} fontSize="7.5" fill="#6C7A72" textAnchor="end">
           {maxCh.toFixed(1)} km
@@ -213,26 +220,26 @@ export default function LayerAuditPanel({
   return (
     <div className="sidebar-section layer-audit-section">
       <div className="section-header" style={{ marginBottom: "8px" }}>
-        <span className="section-title">13-Layer Verification &amp; Map Lenses</span>
+        <span className="section-title">13 Safety &amp; Impact Map Views</span>
         {Array.isArray(layerAudit) && layerAudit.length > 0 && (
           <span className={`audit-summary-pill ${summaryStats.warnings > 0 ? "warn" : "ok"}`}>
             {summaryStats.warnings > 0
-              ? `${summaryStats.warnings} Alert${summaryStats.warnings > 1 ? "s" : ""}`
-              : `${summaryStats.passed}/${summaryStats.total} Verified`}
+              ? `${summaryStats.warnings} Review Item${summaryStats.warnings > 1 ? "s" : ""}`
+              : `${summaryStats.passed}/${summaryStats.total} Passed`}
           </span>
         )}
       </div>
 
-      {/* Mode Bar: Overview Mode vs Active Lens + Multi-Archetype Compare */}
+      {/* Mode Bar: Main Route View vs Active Topic + Compare Routes */}
       <div className="lens-mode-bar">
         <button
           type="button"
           className={`lens-overview-btn ${!activeLayerId ? "active" : ""}`}
           onClick={onClearToOverview}
-          title="Show proposed road structures (Mainline, Interchanges, Spurs, Bridges, Crossings, RoW) on basic street map"
+          title="Show the planned road, exits, side roads, and bridges on the street map"
         >
           <span>🛣️</span>
-          <span>Road Overview</span>
+          <span>Main Route</span>
         </button>
 
         {cachedArchetypesCount > 1 && (
@@ -240,7 +247,7 @@ export default function LayerAuditPanel({
             type="button"
             className={`lens-compare-btn ${showMultiArchetypes ? "active" : ""}`}
             onClick={onToggleMultiArchetypes}
-            title="Overlay previously generated alignment archetypes as dashed lines"
+            title="Show other route options you tried as dashed lines on the map"
           >
             <span>🔀</span>
             <span>Compare ({cachedArchetypesCount})</span>
@@ -250,11 +257,11 @@ export default function LayerAuditPanel({
 
       <p className="lens-helper-hint">
         {!activeLayerId
-          ? "Showing proposed road structures. Click any of the 13 layers below to inspect its map lens, terrain basemap & Baseline vs. MARG verification proof."
-          : "Active Lens focused on map. Use 📌 to pin extra layers together, or click Road Overview to reset."}
+          ? "Showing the planned road and bridges. Click any of the 13 topics below to see how this route avoids floods, forests, steep hills, and homes."
+          : "Map view active. Click 📌 to pin another topic on top, or click Main Route to return."}
       </p>
 
-      {/* 4 Domain Accordions housing all 13 layers */}
+      {/* 4 Topic Groups housing all 13 checks */}
       <div className="layer-domains-stack">
         {LAYER_DOMAINS.map((domain) => {
           const domainLayers = LAYER_CATALOG.filter((l) => l.domain === domain.id);
@@ -284,15 +291,15 @@ export default function LayerAuditPanel({
                     const vMeta = audit ? verdictMeta(audit.verdict) : null;
                     const comp = audit?.comparison;
 
-                    // Quick inline delta/status chip for collapsed row
+                    // Quick inline status chip for collapsed row
                     let rowChip = null;
                     if (audit) {
                       if (audit.verdict === "WARNING") {
-                        rowChip = { text: "ALERT", cls: "warn" };
+                        rowChip = { text: "REVIEW", cls: "warn" };
                       } else if (comp && typeof comp.deltaPercent === "number" && comp.deltaPercent <= -5) {
                         rowChip = { text: `${comp.deltaPercent}%`, cls: "verified" };
                       } else if (audit.verdict === "HARD_CONSTRAINT_PASS") {
-                        rowChip = { text: "PASS", cls: "pass" };
+                        rowChip = { text: "SAFE", cls: "pass" };
                       } else if (audit.mitigationCount > 0) {
                         rowChip = { text: `${audit.mitigationCount}x`, cls: "mitigated" };
                       } else {
@@ -300,7 +307,7 @@ export default function LayerAuditPanel({
                       }
                     }
 
-                    // Features belonging to this layer for interactive jump-list
+                    // Features belonging to this topic for interactive jump-list
                     const layerFeatures = isActive && Array.isArray(allFeatures)
                       ? allFeatures
                           .filter((f) => cfg.vectorFeatureRoles.includes(f.properties?.featureRole))
@@ -321,7 +328,7 @@ export default function LayerAuditPanel({
                             onClick={() => onSelectLayer(isActive ? null : cfg.id)}
                           >
                             <span className="layer-num-badge" style={{ background: cfg.accentColor }}>
-                              L{cfg.number}
+                              {cfg.number}
                             </span>
                             <span className="layer-row-icon">{cfg.icon}</span>
                             <span className="layer-row-name">{cfg.shortName}</span>
@@ -335,7 +342,7 @@ export default function LayerAuditPanel({
                           <button
                             type="button"
                             className={`layer-pin-btn ${isPinned ? "pinned" : ""}`}
-                            title={isPinned ? "Unpin this layer overlay" : "Pin this layer on map while inspecting others"}
+                            title={isPinned ? "Unpin this view from the map" : "Keep this view pinned while checking other topics"}
                             onClick={(e) => {
                               e.stopPropagation();
                               onTogglePinLayer(cfg.id);
@@ -345,57 +352,53 @@ export default function LayerAuditPanel({
                           </button>
                         </div>
 
-                        {/* Expanded Evaluator Verification Card */}
+                        {/* Expanded Plain-Language Check Card */}
                         {isActive && (
                           <div className="layer-card-body">
                             <p className="layer-card-desc">{cfg.description}</p>
 
                             {!audit ? (
                               <div className="layer-empty-audit">
-                                Generate an alignment to inspect quantitative Before vs. After verification proof for Layer {cfg.number}.
+                                Find a route first to see how it performs on {cfg.shortName.toLowerCase()}.
                               </div>
                             ) : (
                               <>
-                                {/* Standard & Verdict Banner */}
+                                {/* Verdict & Data Source Banner */}
                                 <div className="layer-verdict-row">
                                   <span className={`layer-verdict-badge ${vMeta.cls}`}>
                                     {vMeta.label}
                                   </span>
                                   <span className="layer-fidelity-tag">
-                                    {audit.dataFidelity === "FULL_RASTER_AND_VECTOR"
-                                      ? "Full Raster + Vector"
-                                      : audit.dataFidelity === "DYNAMIC_OSM_SRTM_PROXY"
-                                        ? "Pan-India Dynamic"
-                                        : "Regional Raster"}
+                                    {humanizeDataFidelity(audit.dataFidelity)}
                                   </span>
                                 </div>
 
                                 <div className="layer-standard-cite">
-                                  📜 {audit.standard}
+                                  {humanizeLayerPurpose(cfg.id)}
                                 </div>
 
-                                {/* Headline Proof */}
+                                {/* Headline Summary */}
                                 <div className="layer-headline-proof">
-                                  {audit.headlineProof}
+                                  {humanizeText(audit.headlineProof)}
                                 </div>
 
-                                {/* Hard Constraint Audit Box */}
+                                {/* Key Safety Check Box */}
                                 {audit.hardConstraintCheck && (
                                   <div
                                     className={`layer-hard-check ${
                                       audit.hardConstraintCheck.passed ? "pass" : "fail"
                                     }`}
                                   >
-                                    <span>{audit.hardConstraintCheck.passed ? "✅" : "🚨"}</span>
-                                    <span>{audit.hardConstraintCheck.detail}</span>
+                                    <span>{audit.hardConstraintCheck.passed ? "✅" : "⚠️"}</span>
+                                    <span>{humanizeText(audit.hardConstraintCheck.detail)}</span>
                                   </div>
                                 )}
 
-                                {/* Baseline vs MARG Quantitative Comparison */}
+                                {/* Straight-Line vs Smart Route Comparison */}
                                 {comp && (
                                   <div className="layer-comparison-box">
                                     <div className="layer-comparison-title">
-                                      <span>{comp.metricLabel}</span>
+                                      <span>{humanizeMetricLabel(comp.metricLabel)}</span>
                                       {typeof comp.deltaPercent === "number" && (
                                         <span
                                           className={`layer-delta-pill ${
@@ -416,10 +419,11 @@ export default function LayerAuditPanel({
                                         );
                                         const basePct = Math.min(100, ((Number(comp.baselineValue) || 0) / maxVal) * 100);
                                         const routePct = Math.min(100, ((Number(comp.routeValue) || 0) / maxVal) * 100);
+                                        const displayUnit = humanizeUnit(comp.unit);
                                         return (
                                           <>
                                             <div className="cmp-bar-row">
-                                              <span className="cmp-bar-label">Direct Baseline</span>
+                                              <span className="cmp-bar-label">Straight Line</span>
                                               <div className="cmp-bar-track">
                                                 <div
                                                   className="cmp-bar-fill baseline"
@@ -427,11 +431,11 @@ export default function LayerAuditPanel({
                                                 />
                                               </div>
                                               <span className="cmp-bar-val">
-                                                {comp.baselineValue} {comp.unit}
+                                                {comp.baselineValue} {displayUnit}
                                               </span>
                                             </div>
                                             <div className="cmp-bar-row">
-                                              <span className="cmp-bar-label">MARG 13-Layer</span>
+                                              <span className="cmp-bar-label">Smart Route</span>
                                               <div className="cmp-bar-track">
                                                 <div
                                                   className="cmp-bar-fill marg"
@@ -442,7 +446,7 @@ export default function LayerAuditPanel({
                                                 />
                                               </div>
                                               <span className="cmp-bar-val strong">
-                                                {comp.routeValue} {comp.unit}
+                                                {comp.routeValue} {displayUnit}
                                               </span>
                                             </div>
                                           </>
@@ -452,7 +456,7 @@ export default function LayerAuditPanel({
                                   </div>
                                 )}
 
-                                {/* DEM Slope Sparkline (Layer 3) */}
+                                {/* Hill Steepness Sparkline (Topic 3) */}
                                 {cfg.hasSlopeSparkline && (
                                   <SlopeSparkline
                                     profile={routeLayerProfile}
@@ -460,17 +464,12 @@ export default function LayerAuditPanel({
                                   />
                                 )}
 
-                                {/* Exposure Breakdown Bar */}
+                                {/* Breakdown Bar */}
                                 {audit.exposureBreakdown &&
                                   Object.keys(audit.exposureBreakdown).length > 0 && (
                                     <div className="layer-exposure-box">
                                       <div className="layer-exposure-header">
-                                        <span>Route Exposure Mix</span>
-                                        {audit.penaltyContributionKmEq > 0 && (
-                                          <span className="layer-penalty-tag">
-                                            A* Pull: {audit.penaltyContributionKmEq} km-eq
-                                          </span>
-                                        )}
+                                        <span>What This Route Passes Through</span>
                                       </div>
                                       {(() => {
                                         const entries = Object.entries(audit.exposureBreakdown)
@@ -489,7 +488,7 @@ export default function LayerAuditPanel({
                                                     width: `${(Number(v) / total) * 100}%`,
                                                     background: getSegmentColor(cfg, k),
                                                   }}
-                                                  title={`${formatClassLabel(k)}: ${v}`}
+                                                  title={`${humanizeClassLabel(k)}: ${v}`}
                                                 />
                                               ))}
                                             </div>
@@ -500,7 +499,7 @@ export default function LayerAuditPanel({
                                                     className="exposure-dot"
                                                     style={{ background: getSegmentColor(cfg, k) }}
                                                   />
-                                                  <span>{formatClassLabel(k)}</span>
+                                                  <span>{humanizeClassLabel(k)}</span>
                                                   <strong>{v}</strong>
                                                 </span>
                                               ))}
@@ -511,11 +510,11 @@ export default function LayerAuditPanel({
                                     </div>
                                   )}
 
-                                {/* Interactive Jump-to-Feature List */}
+                                {/* Interactive Jump-to-Location List */}
                                 {layerFeatures.length > 0 && (
                                   <div className="layer-features-jump">
                                     <div className="layer-jump-title">
-                                      Highlighted on Map ({layerFeatures.length}) — click to inspect:
+                                      Shown on Map ({layerFeatures.length}) — click to zoom in:
                                     </div>
                                     <div className="layer-jump-list">
                                       {layerFeatures.slice(0, 8).map((feat, idx) => (
@@ -530,13 +529,13 @@ export default function LayerAuditPanel({
                                         >
                                           <span className="jump-name">📍 {feat.label}</span>
                                           {feat.sub && (
-                                            <span className="jump-sub">{formatClassLabel(feat.sub)}</span>
+                                            <span className="jump-sub">{humanizeClassLabel(feat.sub)}</span>
                                           )}
                                         </button>
                                       ))}
                                       {layerFeatures.length > 8 && (
                                         <div className="jump-more-note">
-                                          +{layerFeatures.length - 8} more markers highlighted on map
+                                          +{layerFeatures.length - 8} more spots shown on the map
                                         </div>
                                       )}
                                     </div>

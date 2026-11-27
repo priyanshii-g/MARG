@@ -2,31 +2,40 @@ import { useMemo, useState } from "react";
 import {
   LAYER_CATALOG,
   LAYER_DOMAINS,
-  formatClassLabel,
   getSegmentColor,
 } from "../layers/layerCatalog";
+import {
+  humanizeClassLabel,
+  humanizeDataFidelity,
+  humanizeLayerPurpose,
+  humanizeMetricLabel,
+  humanizeText,
+  humanizeTrafficFlow,
+  humanizeUnit,
+} from "../utils/plainLanguage";
+import PublicSummaryCard from "./PublicSummaryCard";
 
 const CHAPTER_META = [
-  { id: "ch1", num: "I", short: "Overview", title: "Executive Alignment Overview & Statutory Clearance" },
-  { id: "ch2", num: "II", short: "13-Layer Audit", title: "13-Layer Verification Matrix — Proof of Legitimacy" },
-  { id: "ch3", num: "III", short: "Trade-Offs", title: "Multi-Objective Trade-Offs & Alignment Tuning Studio" },
-  { id: "ch4", num: "IV", short: "Structures", title: "Civil & Environmental Engineering Structures Schedule" },
-  { id: "ch5", num: "V", short: "Spurs & Traffic", title: "Feeder Spurs, Terminal Interchanges & Capacity (IRC:SP:99)" },
-  { id: "ch6", num: "VI", short: "Social & RoW", title: "Social Impact, Building Footprints & 2D Right-of-Way (RFCTLARR 2013)" },
+  { id: "ch1", num: "I", short: "Overview", title: "Route Summary & Wildlife Safety" },
+  { id: "ch2", num: "II", short: "13 Checks", title: "13 Nature, Safety & Community Checks" },
+  { id: "ch3", num: "III", short: "Route Options", title: "Compare Route Priorities (Nature vs. Homes vs. Speed)" },
+  { id: "ch4", num: "IV", short: "Bridges & Crossings", title: "Planned Bridges, Flyovers & Safety Structures" },
+  { id: "ch5", num: "V", short: "Cities & Traffic", title: "Connected Towns, Exits & Traffic Comfort" },
+  { id: "ch6", num: "VI", short: "Land & People", title: "Land Needed, Homes & Nearby Communities" },
 ];
 
 function verdictPill(verdict) {
   switch (verdict) {
     case "HARD_CONSTRAINT_PASS":
-      return { label: "Hard Constraint Passed", cls: "pass" };
+      return { label: "Safety Rule Met", cls: "pass" };
     case "VERIFIED_REDUCTION":
-      return { label: "Verified Reduction", cls: "verified" };
+      return { label: "Risk Reduced", cls: "verified" };
     case "MITIGATED_BY_DESIGN":
-      return { label: "Mitigated by Design", cls: "mitigated" };
+      return { label: "Protected by Design", cls: "mitigated" };
     case "WARNING":
-      return { label: "Statutory Alert", cls: "warn" };
+      return { label: "Needs Special Approval", cls: "warn" };
     default:
-      return { label: "Audited & Compliant", cls: "neutral" };
+      return { label: "Checked & Safe", cls: "neutral" };
   }
 }
 
@@ -63,9 +72,9 @@ function LargeSlopeChart({ profile, onFocusPoint }) {
   return (
     <div className="dossier-slope-card">
       <div className="dossier-slope-header">
-        <span>DEM Terrain Gradient Profile along Mainline</span>
+        <span>Hill Steepness Along This Route (30° is the road safety limit)</span>
         <span className="mono-num">
-          Avg <strong>{avgSlope}°</strong> &nbsp;•&nbsp; Peak <strong>{peak.slopeDeg}°</strong> (km {peak.chKm})
+          Average <strong>{avgSlope}°</strong> &nbsp;·&nbsp; Steepest <strong>{peak.slopeDeg}°</strong> ({peak.chKm} km from start)
         </span>
       </div>
       <svg viewBox={`0 0 ${width} ${height}`} className="dossier-slope-svg">
@@ -82,11 +91,11 @@ function LargeSlopeChart({ profile, onFocusPoint }) {
           stroke="#ffffff"
           strokeWidth="1.5"
           style={{ cursor: "pointer" }}
-          onClick={() => onFocusPoint && onFocusPoint(peak.lat, peak.lon, `Peak Slope ${peak.slopeDeg}° @ km ${peak.chKm}`)}
+          onClick={() => onFocusPoint && onFocusPoint(peak.lat, peak.lon, `Steepest Point (${peak.slopeDeg}°) at ${peak.chKm} km from start`)}
         >
-          <title>Click to inspect peak slope on map</title>
+          <title>Click to view the steepest point on the map</title>
         </circle>
-        <text x={padL} y={height - 5} fontSize="9" fill="#7b8780" fontFamily="IBM Plex Mono">0 km</text>
+        <text x={padL} y={height - 5} fontSize="9" fill="#7b8780" fontFamily="IBM Plex Mono">Start</text>
         <text x={width - padR} y={height - 5} fontSize="9" fill="#7b8780" fontFamily="IBM Plex Mono" textAnchor="end">
           {maxCh.toFixed(1)} km
         </text>
@@ -100,7 +109,7 @@ function DossierChapter({ id, num, title, summaryBadge, isOpen, onToggle, childr
     <section id={`dossier-${id}`} className={`dossier-chapter ${isOpen ? "open" : "closed"}`}>
       <button type="button" className="dossier-chapter-header" onClick={onToggle}>
         <div className="dossier-chapter-left">
-          <span className="dossier-chapter-num">Chapter {num}</span>
+          <span className="dossier-chapter-num">Section {num}</span>
           <h2 className="dossier-chapter-title">{title}</h2>
         </div>
         <div className="dossier-chapter-right">
@@ -116,6 +125,7 @@ function DossierChapter({ id, num, title, summaryBadge, isOpen, onToggle, childr
 }
 
 export default function EngineeringDossier({
+  corridorName,
   routeInfo,
   networkSummary,
   tradeOffProfile,
@@ -147,7 +157,7 @@ export default function EngineeringDossier({
   onInspectLayerOnMap,
   onLocateOnMap,
 }) {
-  // Chapters I & II open by default; Chapters III–VI neatly closed until clicked
+  // Sections I & II open by default; Sections III–VI neatly closed until clicked
   const [openChapters, setOpenChapters] = useState({
     ch1: true,
     ch2: true,
@@ -207,39 +217,39 @@ export default function EngineeringDossier({
         const role = p.featureRole;
         let category = "OTHER";
         let icon = "🏗️";
-        let title = "Structure";
+        let title = "Planned Structure";
         let detail = "";
 
         if (role === "RIVER_BRIDGE") {
           category = "BRIDGES";
           icon = "🌉";
-          title = p.riverName || "Perennial River Bridge";
-          detail = `Span ${p.estimatedSkewSpanMeters || p.effectiveSkewSpanMeters || "—"} m • Angle ${p.crossingAngleDegrees || "—"}°`;
+          title = p.riverName || "Major River Bridge";
+          detail = `Bridge length: ${p.estimatedSkewSpanMeters || p.effectiveSkewSpanMeters || "—"} meters · Crossing angle: ${p.crossingAngleDegrees || "—"}°`;
         } else if (role === "GRADE_SEPARATED_CROSSING") {
           category = "CROSSINGS";
           icon = p.crossedCategory === "RAILWAY" ? "🚊" : "🛣️";
-          title = p.crossedCorridorRef || p.crossedCorridorName || (p.crossedCategory === "RAILWAY" ? "Railway ROB" : "Highway Flyover");
-          detail = `${formatClassLabel(p.structureType || "Grade-Separated")} • Angle ${p.crossingAngleDegrees || 90}°`;
+          title = p.crossedCorridorRef || p.crossedCorridorName || (p.crossedCategory === "RAILWAY" ? "Railway Overbridge" : "Road Flyover");
+          detail = `${humanizeClassLabel(p.structureType || "OVERPASS")} · Safe no-stop crossing`;
         } else if (role === "WILDLIFE_PASSAGE") {
           category = "WILDLIFE";
           icon = "🐘";
-          title = p.corridorName || "Wildlife Migration Viaduct";
-          detail = `Span ${p.recommendedPassageSpanMeters || "—"} m • ${formatClassLabel(p.mitigationStructure || "Elevated Viaduct")}`;
+          title = p.corridorName || "Safe Wildlife Crossing";
+          detail = `Length: ${p.recommendedPassageSpanMeters || "—"} meters · ${humanizeClassLabel(p.mitigationStructure || "ELEVATED_VIADUCT")}`;
         } else if (role === "GEOTECH_MITIGATION_ZONE") {
           category = "GEOTECH";
           icon = "🪨";
-          title = p.name || p.featureName || "Geotech Stabilization Zone";
-          detail = `${formatClassLabel(p.mitigationStructure || "Stabilization")} • ${p.recommendedStabilizationLengthMeters || "—"} m`;
+          title = p.name || p.featureName || "Hillside & Soil Safety Support";
+          detail = `${humanizeClassLabel(p.mitigationStructure || "ANCHORED_RETAINING_WALL")} · ${p.recommendedStabilizationLengthMeters || "—"} meters long`;
         } else if (role === "UTILITY_CROSSING_PROTECTION") {
           category = "UTILITIES";
           icon = "⚡";
-          title = p.lineName || p.name || "EHV Transmission Crossing";
-          detail = `${formatClassLabel(p.protectionType || "Guard Cradle")} • Span ${p.recommendedProtectiveSpanMeters || "—"} m`;
+          title = p.lineName || p.name || "High-Voltage Power Line Crossing";
+          detail = `${humanizeClassLabel(p.protectionType || "GUARD_CRADLE")} · ${p.recommendedProtectiveSpanMeters || "—"} meters guard span`;
         } else if (role === "DRAINAGE_CROSSING_STRUCTURE") {
           category = "DRAINAGE";
           icon = "💧";
-          title = p.targetFeatureName || "Cross-Drainage Culvert";
-          detail = `${formatClassLabel(p.structureType || "Box Culvert")} • Span ${p.recommendedClearSpanOrWidthMeters || "—"} m`;
+          title = p.targetFeatureName || "Rainwater & Stream Drainage Tunnel";
+          detail = `${humanizeClassLabel(p.structureType || "BOX_CULVERT")} · ${p.recommendedClearSpanOrWidthMeters || "—"} meters wide`;
         }
 
         return {
@@ -267,12 +277,12 @@ export default function EngineeringDossier({
     return (
       <div className="dossier-empty-stage">
         <div className="dossier-empty-card">
-          <div className="dossier-empty-eyebrow">MARG 13-Layer Geospatial Intelligence</div>
-          <h2 className="dossier-empty-heading">Generate an alignment to unveil the full Engineering Dossier</h2>
+          <div className="dossier-empty-eyebrow">PUBLIC ROUTE IMPACT GUIDE</div>
+          <h2 className="dossier-empty-heading">Find a route above to read its complete Public Impact Report</h2>
           <p className="dossier-empty-copy">
-            Select one of the three offline-ready regional benchmarks (Assam, Western Ghats, Gangetic Plains)
-            or choose any two Indian districts above, then click <strong>Generate MARG Alignment</strong>.
-            Six spacious, collapsible verification chapters will open here with full Before-vs-After proof across all 13 layers.
+            Choose one of our sample regions (Assam, Western Ghats, or Uttar Pradesh) or pick any two places in India above,
+            then click <strong>Find Best Route</strong>. Six clear, easy-to-read sections will open here showing how the road
+            affects forests, rivers, wildlife, nearby towns, homes, and daily travel.
           </p>
         </div>
       </div>
@@ -283,17 +293,20 @@ export default function EngineeringDossier({
   const rowHa = networkSummary?.rowHectares ?? "—";
   const rowWidthM = networkSummary?.rowWidthM ?? (facilityMode === "EXPRESSWAY" ? 60 : 45);
   const vcRatio = trafficCapacity?.projectedVcRatio ?? "—";
-  const los = trafficCapacity?.levelOfService ? formatClassLabel(trafficCapacity.levelOfService) : "Free-Flow";
+  const flowInfo = humanizeTrafficFlow(vcRatio, trafficCapacity?.levelOfService);
   const auditPassCount = (layerAudit || []).filter((r) => r.verdict !== "WARNING").length;
   const lulcAcqHa = routeDiagnostics?.rightOfWayCorridorSummary?.lulcAcquisitionHectares || null;
   const demoSummary = routeDiagnostics?.populationAndDemographicExposureSummary || null;
   const startConn = terminalRoadConnections?.startRoadConnection || null;
   const goalConn = terminalRoadConnections?.goalRoadConnection || null;
 
+  // Support both backend keys ("scores") and fallback keys ("dimensionScores")
+  const dimScores = tradeOffProfile?.scores || tradeOffProfile?.dimensionScores || null;
+
   return (
     <div id="engineering-dossier" className="dossier-wrapper">
-      {/* Sticky Mini Chapter Navigation Bar */}
-      <nav className="dossier-sticky-nav" aria-label="Engineering Dossier Chapters">
+      {/* Sticky Mini Section Navigation Bar */}
+      <nav className="dossier-sticky-nav" aria-label="Public Impact Report Sections">
         <div className="dossier-sticky-inner">
           <div className="dossier-nav-pills">
             {CHAPTER_META.map((ch) => (
@@ -310,11 +323,11 @@ export default function EngineeringDossier({
           </div>
           <div className="dossier-nav-actions">
             <button type="button" className="dossier-action-link" onClick={() => setAllChapters(true)}>
-              Expand All
+              Open All Sections
             </button>
             <span className="dossier-action-sep">·</span>
             <button type="button" className="dossier-action-link" onClick={() => setAllChapters(false)}>
-              Collapse All
+              Close All
             </button>
           </div>
         </div>
@@ -325,76 +338,98 @@ export default function EngineeringDossier({
         <header className="dossier-masthead">
           <div className="dossier-eyebrow">
             {routeInfo.tierMode === "TIER_2_PRECACHED_BENCHMARK"
-              ? "Offline High-Resolution 13-Layer Benchmark Dossier"
-              : "Pan-India Dynamic 13-Layer Alignment Dossier"}
-            &nbsp;•&nbsp; {facilityMode === "EXPRESSWAY" ? "Access-Controlled Expressway (IRC:SP:99)" : "National Highway (IRC:SP:84)"}
+              ? "High-Detail Regional Public Report"
+              : "All-India Public Route Impact Report"}
+            &nbsp;·&nbsp;{" "}
+            {facilityMode === "EXPRESSWAY"
+              ? "Access-Controlled Expressway"
+              : facilityMode === "STATE_HIGHWAY"
+                ? "State Highway"
+                : "National Highway"}
           </div>
-          <h1 className="dossier-main-heading">Corridor Engineering &amp; Verification Dossier</h1>
+          <h1 className="dossier-main-heading">Public Route &amp; Impact Report</h1>
           <p className="dossier-subtitle">
-            CRS {routeInfo.crs} (UTM Zone {routeInfo.utmZone}N) &nbsp;•&nbsp; Active Archetype:{" "}
-            <strong>{presetDefinitions[tradeOffPreset]?.shortLabel || tradeOffPreset}</strong>
-            &nbsp;•&nbsp; {auditPassCount}/{layerAudit?.length || 13} Spatial Constraints Verified
+            Route Style: <strong>{presetDefinitions[tradeOffPreset]?.shortLabel || tradeOffPreset}</strong>
+            &nbsp;·&nbsp; {auditPassCount} of {layerAudit?.length || 13} Safety &amp; Nature Checks Passed
           </p>
         </header>
 
         {/* ============================================================
-            CHAPTER I — EXECUTIVE OVERVIEW & STATUTORY CLEARANCE
+            PLAIN-ENGLISH NATURAL-LANGUAGE SUMMARY CARD FOR CITIZENS
+            ============================================================ */}
+        <PublicSummaryCard
+          corridorName={corridorName}
+          facilityMode={facilityMode}
+          routeStyleLabel={presetDefinitions[tradeOffPreset]?.shortLabel || tradeOffPreset}
+          routeInfo={routeInfo}
+          networkSummary={networkSummary}
+          tradeOffProfile={tradeOffProfile}
+          statutoryClearanceReport={statutoryClearanceReport}
+          routeDiagnostics={routeDiagnostics}
+          connectedHubs={connectedHubs}
+          trafficCapacity={trafficCapacity}
+          layerAudit={layerAudit}
+          snapNotice={snapNotice}
+        />
+
+        {/* ============================================================
+            SECTION I — ROUTE SUMMARY & WILDLIFE SAFETY
             ============================================================ */}
         <DossierChapter
           id="ch1"
           num="I"
-          title="Executive Alignment Overview & Statutory Clearance"
-          summaryBadge={`${routeInfo.routeLengthKm} km • ${forestHa} ha Forest • ${statutoryClearanceReport?.hasSanctuaryIntersection ? "NBWL Alert" : "0 PA Violations"}`}
+          title="Route Summary & Wildlife Safety"
+          summaryBadge={`${routeInfo.routeLengthKm} km Road · ${forestHa} ha Forest · ${statutoryClearanceReport?.hasSanctuaryIntersection ? "Park Review Needed" : "0 Parks Crossed"}`}
           isOpen={openChapters.ch1}
           onToggle={() => toggleChapter("ch1")}
         >
           {/* 4 Hero Editorial KPI Cards */}
           <div className="hero-kpi-grid">
             <div className="hero-kpi-card">
-              <div className="hero-kpi-label">Mainline Length</div>
+              <div className="hero-kpi-label">Total Road Length</div>
               <div className="hero-kpi-value">{routeInfo.routeLengthKm} <span className="hero-kpi-unit">km</span></div>
               <div className="hero-kpi-sub">
-                Direct Baseline: <span className="mono-num">{routeInfo.baselineLengthKm} km</span> (+{routeInfo.deviationPercent}%)
+                Straight-line distance: <span className="mono-num">{routeInfo.baselineLengthKm} km</span> (+{routeInfo.deviationPercent}% detour to avoid obstacles)
               </div>
             </div>
 
             <div className="hero-kpi-card">
-              <div className="hero-kpi-label">Direct 2D RoW Take</div>
-              <div className="hero-kpi-value">{rowHa} <span className="hero-kpi-unit">ha</span></div>
+              <div className="hero-kpi-label">Total Land Needed</div>
+              <div className="hero-kpi-value">{rowHa} <span className="hero-kpi-unit">hectares</span></div>
               <div className="hero-kpi-sub">
-                {rowWidthM} m Mainline Swath + 30 m Feeder Spurs
+                Based on {rowWidthM} m main road width plus 30 m connecting town roads
               </div>
             </div>
 
             <div className="hero-kpi-card">
-              <div className="hero-kpi-label">Direct Forest Diversion</div>
-              <div className="hero-kpi-value">{forestHa} <span className="hero-kpi-unit">ha</span></div>
+              <div className="hero-kpi-label">Forest Land Affected</div>
+              <div className="hero-kpi-value">{forestHa} <span className="hero-kpi-unit">hectares</span></div>
               <div className="hero-kpi-sub">
-                {forestHa > 0 ? "FCA 1980 Stage-I/II Clearance Scope" : "Zero Forest Canopy Diversion"}
+                {forestHa > 0 ? "Needs official forest approval & tree replanting" : "Zero forest land disturbed"}
               </div>
             </div>
 
             <div className="hero-kpi-card">
-              <div className="hero-kpi-label">Traffic Capacity (V/C)</div>
-              <div className="hero-kpi-value">{vcRatio}</div>
+              <div className="hero-kpi-label">Expected Traffic Flow</div>
+              <div className="hero-kpi-value" style={{ fontSize: "clamp(24px, 2.2vw, 30px)" }}>{flowInfo.label}</div>
               <div className="hero-kpi-sub">
-                {los} &nbsp;•&nbsp; {connectedHubs.length} Connected Hub{connectedHubs.length === 1 ? "" : "s"}
+                {flowInfo.detail} · {connectedHubs.length} {connectedHubs.length === 1 ? "town" : "towns"} connected
               </div>
             </div>
           </div>
 
-          {/* Statutory Clearance Status Card */}
+          {/* Wildlife Park Protection Status Card */}
           {statutoryClearanceReport?.hasSanctuaryIntersection ? (
             <div className="dossier-statutory-alert">
               <div className="statutory-alert-top">
-                <span className="statutory-tag-crimson">Mandatory Statutory NBWL &amp; Forest Clearance • WPA 1972 §29/35</span>
-                <span className="mono-num">{statutoryClearanceReport.totalSanctuaryLengthKm} km Core Traversal • {statutoryClearanceReport.directSanctuaryForestTakeHectares} ha</span>
+                <span className="statutory-tag-crimson">Special Wildlife Board &amp; Forest Approval Required</span>
+                <span className="mono-num">{statutoryClearanceReport.totalSanctuaryLengthKm} km Inside Protected Park · {statutoryClearanceReport.directSanctuaryForestTakeHectares} hectares</span>
               </div>
               <h3 className="statutory-alert-heading">
-                {statutoryClearanceReport.legalConsequenceHeadline || "Alignment intersects a notified Wildlife Sanctuary"}
+                {humanizeText(statutoryClearanceReport.legalConsequenceHeadline || "This route crosses a protected Wildlife Sanctuary")}
               </h3>
               <p className="statutory-alert-cite">
-                {statutoryClearanceReport.legalStatuteCitation || "Wildlife (Protection) Act, 1972 (Section 29/35) & Van (Sanrakshan Evam Samvardhan) Adhiniyam, 2023"}
+                Under India&apos;s Wildlife Protection Law, building a road inside a National Park or Wildlife Sanctuary requires strict permission from the National Wildlife Board and Environment Ministry before work can begin.
               </p>
               {statutoryClearanceReport.sanctuaryCrossings?.length > 0 && (
                 <div className="statutory-crossings-grid">
@@ -402,9 +437,9 @@ export default function EngineeringDossier({
                     <div key={i} className="statutory-crossing-card">
                       <strong>{sc.sanctuaryName}</strong> ({sc.state} — {sc.district})
                       <div className="mono-num">
-                        km {sc.startKm}–{sc.endKm} ({sc.crossingLengthKm} km) • Direct Forest Take: {sc.directForestTakeHectares} ha
+                        {sc.startKm}–{sc.endKm} km from start ({sc.crossingLengthKm} km inside park) · Forest area: {sc.directForestTakeHectares} hectares
                       </div>
-                      <div className="statutory-species">Target Species: {sc.keySpecies}</div>
+                      <div className="statutory-species">Protected Wildlife: {sc.keySpecies}</div>
                     </div>
                   ))}
                 </div>
@@ -412,7 +447,7 @@ export default function EngineeringDossier({
               {statutoryClearanceReport.mandatoryClearancesChecklist?.length > 0 && (
                 <ul className="statutory-checklist">
                   {statutoryClearanceReport.mandatoryClearancesChecklist.map((step, i) => (
-                    <li key={i}>{step}</li>
+                    <li key={i}>{humanizeText(step)}</li>
                   ))}
                 </ul>
               )}
@@ -421,25 +456,25 @@ export default function EngineeringDossier({
             <div className="dossier-statutory-pass">
               <span className="pass-seal">✓</span>
               <div>
-                <strong>Zero Statutory Wildlife Sanctuary Breaches (WPA 1972 Compliant)</strong>
+                <strong>No National Parks or Wildlife Sanctuaries Crossed</strong>
                 <p>
-                  Verified across all 690 notified National Parks &amp; Wildlife Sanctuaries. Mainline and feeder spurs
-                  maintain strict legal exclusion outside sanctuary cores.
+                  Checked against all 690 official National Parks and Wildlife Sanctuaries across India. Both the main
+                  highway and all connecting side roads stay completely outside protected park boundaries.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Endpoint Snapping & Terminal Access Summary */}
+          {/* Start/End Safety Shift Summary */}
           {(snapNotice?.start || snapNotice?.end) && (
             <div className="dossier-snap-summary">
-              <div className="dossier-subhead">Smart Endpoint Auto-Adjustment Applied</div>
+              <div className="dossier-subhead">Start / End Point Gently Moved for Safety</div>
               <div className="dossier-snap-grid">
                 {snapNotice.start && (
                   <div className="dossier-snap-box">
                     <div className="snap-box-title">
-                      <span>Origin Auto-Shifted</span>
-                      <span className="mono-pill">+{snapNotice.start.distanceMeters} m</span>
+                      <span>Starting Point Shifted</span>
+                      <span className="mono-pill">Moved {snapNotice.start.distanceMeters} m</span>
                     </div>
                     <p>{snapNotice.start.reason}</p>
                     <div className="mono-num snap-coord-line">
@@ -450,8 +485,8 @@ export default function EngineeringDossier({
                 {snapNotice.end && (
                   <div className="dossier-snap-box">
                     <div className="snap-box-title">
-                      <span>Destination Auto-Shifted</span>
-                      <span className="mono-pill">+{snapNotice.end.distanceMeters} m</span>
+                      <span>Destination Shifted</span>
+                      <span className="mono-pill">Moved {snapNotice.end.distanceMeters} m</span>
                     </div>
                     <p>{snapNotice.end.reason}</p>
                     <div className="mono-num snap-coord-line">
@@ -465,20 +500,20 @@ export default function EngineeringDossier({
         </DossierChapter>
 
         {/* ============================================================
-            CHAPTER II — 13-LAYER VERIFICATION MATRIX (PROOF OF LEGITIMACY)
+            SECTION II — 13 NATURE, SAFETY & COMMUNITY CHECKS
             ============================================================ */}
         <DossierChapter
           id="ch2"
           num="II"
-          title="13-Layer Verification Matrix — Proof of Legitimacy"
-          summaryBadge={`${auditPassCount}/${layerAudit?.length || 13} Verified • Before vs. After Baseline Audit`}
+          title="13 Nature, Safety & Community Checks"
+          summaryBadge={`${auditPassCount} of ${layerAudit?.length || 13} Passed · Straight Line vs. Smart Route`}
           isOpen={openChapters.ch2}
           onToggle={() => toggleChapter("ch2")}
         >
           <p className="dossier-intro-copy">
-            Every layer below compares the <strong>Direct Distance Baseline</strong> against the synthesized{" "}
-            <strong>13-Layer MARG Alignment</strong>. Click <strong>Inspect on Map ↑</strong> on any card to scroll
-            directly to the interactive map studio, switch to that layer&apos;s thematic basemap, and highlight its overlays.
+            Each card below compares a simple <strong>Straight-Line Route</strong> against the{" "}
+            <strong>MARG Smart Route</strong> so anyone can verify how much flood risk, steep terrain, forest loss,
+            and neighborhood disruption was avoided. Click <strong>See on Map ↑</strong> on any topic to view it live on the map above.
           </p>
 
           <div className="dossier-domains-container">
@@ -497,11 +532,12 @@ export default function EngineeringDossier({
                   <div className="dossier-layer-grid">
                     {domainLayers.map((cfg) => {
                       const audit = auditById[cfg.id];
-                      const v = audit ? verdictPill(audit.verdict) : { label: "Pending", cls: "neutral" };
+                      const v = audit ? verdictPill(audit.verdict) : { label: "Waiting", cls: "neutral" };
                       const comp = audit?.comparison;
                       const maxVal = comp
                         ? Math.max(0.01, Number(comp.baselineValue) || 0, Number(comp.routeValue) || 0)
                         : 1;
+                      const displayUnit = comp ? humanizeUnit(comp.unit) : "";
 
                       return (
                         <article
@@ -511,31 +547,31 @@ export default function EngineeringDossier({
                         >
                           <div className="dl-card-top">
                             <div className="dl-card-identity">
-                              <span className="dl-num-pill">L{cfg.number}</span>
+                              <span className="dl-num-pill">#{cfg.number}</span>
                               <h4>{cfg.shortName}</h4>
                             </div>
                             <span className={`dl-verdict-pill ${v.cls}`}>{v.label}</span>
                           </div>
 
                           <div className="dl-standard">
-                            {audit?.standard || cfg.description}
+                            {humanizeLayerPurpose(cfg.id)}
                           </div>
 
                           {audit ? (
                             <>
-                              <p className="dl-proof-quote">{audit.headlineProof}</p>
+                              <p className="dl-proof-quote">{humanizeText(audit.headlineProof)}</p>
 
                               {audit.hardConstraintCheck && (
                                 <div className={`dl-hard-box ${audit.hardConstraintCheck.passed ? "pass" : "fail"}`}>
                                   <span>{audit.hardConstraintCheck.passed ? "✓" : "!"}</span>
-                                  <span>{audit.hardConstraintCheck.detail}</span>
+                                  <span>{humanizeText(audit.hardConstraintCheck.detail)}</span>
                                 </div>
                               )}
 
                               {comp && (
                                 <div className="dl-compare-block">
                                   <div className="dl-compare-head">
-                                    <span>{comp.metricLabel}</span>
+                                    <span>{humanizeMetricLabel(comp.metricLabel)}</span>
                                     {typeof comp.deltaPercent === "number" && (
                                       <span className={`dl-delta ${comp.deltaValue <= 0 ? "good" : "neutral"}`}>
                                         {comp.deltaValue > 0 ? "+" : ""}{comp.deltaPercent}%
@@ -544,24 +580,24 @@ export default function EngineeringDossier({
                                   </div>
                                   <div className="dl-bar-pair">
                                     <div className="dl-bar-line">
-                                      <span className="dl-bar-lbl">Direct Baseline</span>
+                                      <span className="dl-bar-lbl">Straight Line</span>
                                       <div className="dl-bar-track">
                                         <div
                                           className="dl-bar-fill baseline"
                                           style={{ width: `${Math.min(100, ((Number(comp.baselineValue) || 0) / maxVal) * 100)}%` }}
                                         />
                                       </div>
-                                      <span className="dl-bar-num">{comp.baselineValue} {comp.unit}</span>
+                                      <span className="dl-bar-num">{comp.baselineValue} {displayUnit}</span>
                                     </div>
                                     <div className="dl-bar-line">
-                                      <span className="dl-bar-lbl strong">MARG 13-Layer</span>
+                                      <span className="dl-bar-lbl strong">Smart Route</span>
                                       <div className="dl-bar-track">
                                         <div
                                           className="dl-bar-fill marg"
                                           style={{ width: `${Math.min(100, ((Number(comp.routeValue) || 0) / maxVal) * 100)}%` }}
                                         />
                                       </div>
-                                      <span className="dl-bar-num strong">{comp.routeValue} {comp.unit}</span>
+                                      <span className="dl-bar-num strong">{comp.routeValue} {displayUnit}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -580,10 +616,7 @@ export default function EngineeringDossier({
                                 return (
                                   <div className="dl-exposure">
                                     <div className="dl-exposure-head">
-                                      <span>Corridor Exposure Breakdown</span>
-                                      {audit.penaltyContributionKmEq > 0 && (
-                                        <span className="mono-num">A* Pull: {audit.penaltyContributionKmEq} km-eq</span>
-                                      )}
+                                      <span>Breakdown Along the Route</span>
                                     </div>
                                     <div className="dl-stacked-bar">
                                       {entries.map(([k, val]) => (
@@ -593,7 +626,7 @@ export default function EngineeringDossier({
                                             width: `${(Number(val) / tot) * 100}%`,
                                             background: getSegmentColor(cfg, k),
                                           }}
-                                          title={`${formatClassLabel(k)}: ${val}`}
+                                          title={`${humanizeClassLabel(k)}: ${val}`}
                                         />
                                       ))}
                                     </div>
@@ -601,7 +634,7 @@ export default function EngineeringDossier({
                                       {entries.slice(0, 5).map(([k, val]) => (
                                         <span key={k} className="dl-exp-chip">
                                           <i style={{ background: getSegmentColor(cfg, k) }} />
-                                          {formatClassLabel(k)} <strong>{val}</strong>
+                                          {humanizeClassLabel(k)} <strong>{val}</strong>
                                         </span>
                                       ))}
                                     </div>
@@ -615,18 +648,14 @@ export default function EngineeringDossier({
 
                           <div className="dl-card-footer">
                             <span className="dl-fidelity">
-                              {audit?.dataFidelity === "FULL_RASTER_AND_VECTOR"
-                                ? "Full Offline Raster + Vector"
-                                : audit?.dataFidelity === "DYNAMIC_OSM_SRTM_PROXY"
-                                  ? "Pan-India Dynamic Synthesis"
-                                  : "Regional Raster"}
+                              {humanizeDataFidelity(audit?.dataFidelity)}
                             </span>
                             <button
                               type="button"
                               className="dl-inspect-btn"
                               onClick={() => onInspectLayerOnMap && onInspectLayerOnMap(cfg.id)}
                             >
-                              Inspect on Map ↑
+                              See on Map ↑
                             </button>
                           </div>
                         </article>
@@ -640,29 +669,29 @@ export default function EngineeringDossier({
         </DossierChapter>
 
         {/* ============================================================
-            CHAPTER III — MULTI-OBJECTIVE TRADE-OFFS & ALIGNMENT TUNING
+            SECTION III — COMPARE ROUTE PRIORITIES
             ============================================================ */}
         <DossierChapter
           id="ch3"
           num="III"
-          title="Multi-Objective Trade-Offs & Alignment Tuning Studio"
-          summaryBadge={`Pareto Index ${tradeOffProfile?.compositeAlignmentIndex ?? "—"} • ${presetDefinitions[tradeOffPreset]?.shortLabel || tradeOffPreset}`}
+          title="Compare Route Priorities (Nature vs. Homes vs. Speed)"
+          summaryBadge={`Overall Score ${tradeOffProfile?.compositeAlignmentIndex ?? "—"}/100 · ${presetDefinitions[tradeOffPreset]?.shortLabel || tradeOffPreset}`}
           isOpen={openChapters.ch3}
           onToggle={() => toggleChapter("ch3")}
         >
-          {/* Route Improvements Headline & 4 Quantified Benefit Cards */}
+          {/* Key Highlights & Benefit Cards */}
           {tradeOffProfile?.routeImprovements && (
             <div className="dossier-improvements-panel">
-              <div className="imp-eyebrow">IRC:SP:30 &amp; MoRTH Quantitative Design Valuation</div>
-              <h3 className="imp-headline">{tradeOffProfile.routeImprovements.headline}</h3>
+              <div className="imp-eyebrow">What This Route Option Achieves</div>
+              <h3 className="imp-headline">{humanizeText(tradeOffProfile.routeImprovements.headline)}</h3>
 
               {tradeOffProfile.routeImprovements.quantifiedBenefits?.length > 0 && (
                 <div className="dossier-benefits-grid">
                   {tradeOffProfile.routeImprovements.quantifiedBenefits.map((b, idx) => (
                     <div key={idx} className="dossier-benefit-card">
-                      <div className="benefit-lbl">{b.label}</div>
-                      <div className="benefit-val">{b.value}</div>
-                      <div className="benefit-det">{b.detail}</div>
+                      <div className="benefit-lbl">{humanizeText(b.label)}</div>
+                      <div className="benefit-val">{humanizeText(b.value)}</div>
+                      <div className="benefit-det">{humanizeText(b.detail)}</div>
                     </div>
                   ))}
                 </div>
@@ -670,46 +699,46 @@ export default function EngineeringDossier({
 
               {comparativeDeltasVsBalanced && (
                 <div className="dossier-live-deltas">
-                  <span className="deltas-caption">Delta vs. Balanced Alignment:</span>
+                  <span className="deltas-caption">Compared to the Balanced Route:</span>
                   <span className={`delta-chip ${comparativeDeltasVsBalanced.deltaKm <= 0 ? "good" : "trade"}`}>
                     {comparativeDeltasVsBalanced.deltaKm <= 0
                       ? `${Math.abs(comparativeDeltasVsBalanced.deltaKm)} km shorter`
-                      : `+${comparativeDeltasVsBalanced.deltaKm} km detour`}
+                      : `+${comparativeDeltasVsBalanced.deltaKm} km longer`}
                   </span>
                   <span className={`delta-chip ${comparativeDeltasVsBalanced.deltaMins <= 0 ? "good" : "trade"}`}>
                     {comparativeDeltasVsBalanced.deltaMins <= 0
-                      ? `${Math.abs(comparativeDeltasVsBalanced.deltaMins)} min faster`
-                      : `+${comparativeDeltasVsBalanced.deltaMins} min`}
+                      ? `${Math.abs(comparativeDeltasVsBalanced.deltaMins)} min faster drive`
+                      : `+${comparativeDeltasVsBalanced.deltaMins} min drive`}
                   </span>
                   <span className={`delta-chip ${comparativeDeltasVsBalanced.deltaForestHa <= 0 ? "good" : "trade"}`}>
                     {comparativeDeltasVsBalanced.deltaForestHa <= 0
-                      ? `${Math.abs(comparativeDeltasVsBalanced.deltaForestHa)} ha forest spared`
-                      : `+${comparativeDeltasVsBalanced.deltaForestHa} ha forest`}
+                      ? `${Math.abs(comparativeDeltasVsBalanced.deltaForestHa)} ha forest saved`
+                      : `+${comparativeDeltasVsBalanced.deltaForestHa} ha more forest`}
                   </span>
                   <span className={`delta-chip ${comparativeDeltasVsBalanced.deltaDisplaced <= 0 ? "good" : "trade"}`}>
                     {comparativeDeltasVsBalanced.deltaDisplaced <= 0
-                      ? `${Math.abs(comparativeDeltasVsBalanced.deltaDisplaced)} residents spared`
-                      : `+${comparativeDeltasVsBalanced.deltaDisplaced} displaced`}
+                      ? `${Math.abs(comparativeDeltasVsBalanced.deltaDisplaced)} fewer people relocated`
+                      : `+${comparativeDeltasVsBalanced.deltaDisplaced} more people affected`}
                   </span>
                 </div>
               )}
 
               <div className="imp-rationale-grid">
                 <div className="imp-rationale-box">
-                  <strong>Engineering Advantage</strong>
-                  <p>{tradeOffProfile.routeImprovements.engineeringAdvantage}</p>
+                  <strong>Main Benefit</strong>
+                  <p>{humanizeText(tradeOffProfile.routeImprovements.engineeringAdvantage)}</p>
                 </div>
                 <div className="imp-rationale-box">
-                  <strong>Trade-Off Accepted</strong>
-                  <p>{tradeOffProfile.routeImprovements.tradeOffAccepted}</p>
+                  <strong>Trade-Off to Know About</strong>
+                  <p>{humanizeText(tradeOffProfile.routeImprovements.tradeOffAccepted)}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Archetype Selector Grid */}
+          {/* Route Priority Cards */}
           <div className="dossier-subhead" style={{ marginTop: "28px" }}>
-            Alignment Optimization Archetypes (Click to Compare Live)
+            Try Different Route Priorities (Click Any Card to Compare)
           </div>
           <div className="archetype-studio-grid">
             {Object.values(presetDefinitions).map((p) => {
@@ -724,7 +753,7 @@ export default function EngineeringDossier({
                 >
                   <div className="arch-card-head">
                     <strong>{p.label}</strong>
-                    {isSelected && <span className="arch-active-tag">Active</span>}
+                    {isSelected && <span className="arch-active-tag">Selected</span>}
                   </div>
                   <p>{p.description}</p>
                 </button>
@@ -732,17 +761,17 @@ export default function EngineeringDossier({
             })}
           </div>
 
-          {/* 4 Trade-Off Dimension Scores + Custom Weight Sliders */}
+          {/* 4 Easy Ratings + Custom Priority Sliders */}
           <div className="tradeoff-split-grid">
-            {tradeOffProfile?.dimensionScores && (
+            {dimScores && (
               <div className="dossier-subcard">
-                <div className="dossier-subhead">Multi-Objective Dimension Scores</div>
+                <div className="dossier-subhead">How This Route Scores (Out of 100)</div>
                 <div className="score-bars-stack">
                   {[
-                    ["Environmental Conservation", tradeOffProfile.dimensionScores.environmentalConservation],
-                    ["Social & Community Protection", tradeOffProfile.dimensionScores.socialProtection],
-                    ["Geometric Directness & Economy", tradeOffProfile.dimensionScores.directnessAndEconomy],
-                    ["Regional Hub Connectivity", tradeOffProfile.dimensionScores.regionalConnectivity],
+                    ["Nature & Forest Protection", dimScores.environmentalScore ?? dimScores.environmentalConservation],
+                    ["Protecting Homes & Villages", dimScores.socialScore ?? dimScores.socialProtection],
+                    ["Short & Fuel-Efficient Path", dimScores.directnessScore ?? dimScores.directnessAndEconomy],
+                    ["Connecting Nearby Towns", dimScores.connectivityScore ?? dimScores.regionalConnectivity],
                   ].map(([lbl, val]) => (
                     <div key={lbl} className="score-bar-row">
                       <div className="score-bar-meta">
@@ -759,25 +788,25 @@ export default function EngineeringDossier({
             )}
 
             <div className="dossier-subcard">
-              <div className="dossier-subhead">Request-Scoped Objective Weighting</div>
+              <div className="dossier-subhead">Set Your Own Priorities</div>
               <div className="weight-sliders-stack">
                 <label className="weight-slider-item">
                   <div className="weight-meta">
-                    <span>Environmental Protection Weight</span>
+                    <span>Protect Forests, Rivers &amp; Wildlife</span>
                     <strong className="mono-num">{envWeight.toFixed(1)}×</strong>
                   </div>
                   <input type="range" min="0.5" max="3.0" step="0.1" value={envWeight} onChange={(e) => onSliderChange("env", e.target.value)} />
                 </label>
                 <label className="weight-slider-item">
                   <div className="weight-meta">
-                    <span>Social &amp; Habitation Avoidance Weight</span>
+                    <span>Avoid Homes, Schools &amp; Villages</span>
                     <strong className="mono-num">{socialWeight.toFixed(1)}×</strong>
                   </div>
                   <input type="range" min="0.5" max="3.0" step="0.1" value={socialWeight} onChange={(e) => onSliderChange("social", e.target.value)} />
                 </label>
                 <label className="weight-slider-item">
                   <div className="weight-meta">
-                    <span>Geometric Directness Weight</span>
+                    <span>Keep Travel Distance Short</span>
                     <strong className="mono-num">{directnessWeight.toFixed(1)}×</strong>
                   </div>
                   <input type="range" min="0.5" max="3.0" step="0.1" value={directnessWeight} onChange={(e) => onSliderChange("direct", e.target.value)} />
@@ -788,26 +817,26 @@ export default function EngineeringDossier({
                   onClick={() => onRealign()}
                   disabled={isRealigning}
                 >
-                  {isRealigning ? "Synthesizing Re-Alignment..." : "Synthesize Custom Weighted Alignment"}
+                  {isRealigning ? "Finding Custom Route..." : "Calculate Custom Route"}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Comparative Archetype Matrix Table */}
+          {/* Side-by-Side Comparison Table */}
           {alternativeRoutes.length > 0 && (
             <div className="dossier-subcard" style={{ marginTop: "24px" }}>
-              <div className="dossier-subhead">Generated Alternatives Comparison Matrix</div>
+              <div className="dossier-subhead">Side-by-Side Comparison of Routes You Tried</div>
               <div className="dossier-table-wrap">
                 <table className="dossier-table">
                   <thead>
                     <tr>
-                      <th>Archetype</th>
-                      <th>Length</th>
-                      <th>Deviation</th>
-                      <th>Direct Forest</th>
-                      <th>Displaced Pop.</th>
-                      <th>Pareto Index</th>
+                      <th>Route Option</th>
+                      <th>Total Length</th>
+                      <th>Extra Detour</th>
+                      <th>Forest Land</th>
+                      <th>People Relocated</th>
+                      <th>Overall Score</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -821,7 +850,7 @@ export default function EngineeringDossier({
                           <td className="mono-num">+{alt.deviationPercent}%</td>
                           <td className="mono-num">{alt.forestHa} ha</td>
                           <td className="mono-num">{alt.displacedPop}</td>
-                          <td className="mono-num"><strong>{alt.compositeIndex}</strong></td>
+                          <td className="mono-num"><strong>{alt.compositeIndex}/100</strong></td>
                           <td>
                             <button
                               type="button"
@@ -829,7 +858,7 @@ export default function EngineeringDossier({
                               onClick={() => onSwitchArchetype(alt.preset)}
                               disabled={isActive}
                             >
-                              {isActive ? "Active" : "View"}
+                              {isActive ? "Showing" : "View"}
                             </button>
                           </td>
                         </tr>
@@ -843,34 +872,34 @@ export default function EngineeringDossier({
         </DossierChapter>
 
         {/* ============================================================
-            CHAPTER IV — CIVIL & ENVIRONMENTAL ENGINEERING STRUCTURES
+            SECTION IV — PLANNED BRIDGES, FLYOVERS & SAFETY STRUCTURES
             ============================================================ */}
         <DossierChapter
           id="ch4"
           num="IV"
-          title="Civil & Environmental Engineering Structures Schedule"
-          summaryBadge={`${engineeringStructures.length} Engineered Structures (Mainline + Feeder Spurs)`}
+          title="Planned Bridges, Flyovers & Safety Structures"
+          summaryBadge={`${engineeringStructures.length} Bridges & Safety Crossings (Main Road + Side Roads)`}
           isOpen={openChapters.ch4}
           onToggle={() => toggleChapter("ch4")}
         >
           <div className="structures-kpi-strip">
-            <div className="mini-kpi"><span>River Bridges</span><strong>{networkSummary?.riverBridges ?? 0}</strong><em>{networkSummary?.riverBridgeSpanM ?? 0} m span</em></div>
-            <div className="mini-kpi"><span>Rail ROBs</span><strong>{networkSummary?.railwayRobs ?? 0}</strong><em>Grade-separated</em></div>
-            <div className="mini-kpi"><span>Road Flyovers</span><strong>{networkSummary?.roadFlyovers ?? 0}</strong><em>Mainline crossings</em></div>
-            <div className="mini-kpi"><span>Wildlife Viaducts</span><strong>{networkSummary?.wildlifePassages ?? 0}</strong><em>{networkSummary?.wildlifeSpanM ?? 0} m WII span</em></div>
-            <div className="mini-kpi"><span>Drainage Culverts</span><strong>{networkSummary?.drainageStructures ?? 0}</strong><em>IRC:SP:13 sizing</em></div>
-            <div className="mini-kpi"><span>Spur Structures</span><strong>{spurEngineeringSummary?.totalSpurEngineeringStructuresCount ?? 0}</strong><em>Across {spurEngineeringSummary?.spursEvaluated ?? 0} spurs</em></div>
+            <div className="mini-kpi"><span>River Bridges</span><strong>{networkSummary?.riverBridges ?? 0}</strong><em>{networkSummary?.riverBridgeSpanM ?? 0} m total length</em></div>
+            <div className="mini-kpi"><span>Railway Bridges</span><strong>{networkSummary?.railwayRobs ?? 0}</strong><em>No train waiting</em></div>
+            <div className="mini-kpi"><span>Road Flyovers</span><strong>{networkSummary?.roadFlyovers ?? 0}</strong><em>No traffic signals</em></div>
+            <div className="mini-kpi"><span>Wildlife Bridges</span><strong>{networkSummary?.wildlifePassages ?? 0}</strong><em>{networkSummary?.wildlifeSpanM ?? 0} m safe span</em></div>
+            <div className="mini-kpi"><span>Water Culverts</span><strong>{networkSummary?.drainageStructures ?? 0}</strong><em>Monsoon drainage</em></div>
+            <div className="mini-kpi"><span>Side-Road Bridges</span><strong>{spurEngineeringSummary?.totalSpurEngineeringStructuresCount ?? 0}</strong><em>Across {spurEngineeringSummary?.spursEvaluated ?? 0} link roads</em></div>
           </div>
 
           <div className="structure-filter-tabs">
             {[
               ["ALL", `All Structures (${engineeringStructures.length})`],
               ["BRIDGES", "River Bridges"],
-              ["CROSSINGS", "ROBs & Flyovers"],
-              ["WILDLIFE", "Wildlife Viaducts"],
-              ["GEOTECH", "Geotech Zones"],
-              ["UTILITIES", "EHV Utilities"],
-              ["DRAINAGE", "Culverts & Aqueducts"],
+              ["CROSSINGS", "Railway & Road Flyovers"],
+              ["WILDLIFE", "Wildlife Crossings"],
+              ["GEOTECH", "Hillside Support"],
+              ["UTILITIES", "Power Line Guards"],
+              ["DRAINAGE", "Stream Culverts"],
             ].map(([key, label]) => (
               <button
                 key={key}
@@ -884,7 +913,7 @@ export default function EngineeringDossier({
           </div>
 
           {filteredStructures.length === 0 ? (
-            <div className="dossier-empty-inline">No crossing structures recorded in this category along the corridor.</div>
+            <div className="dossier-empty-inline">No crossings of this type are needed along this route.</div>
           ) : (
             <div className="structures-schedule-grid">
               {filteredStructures.map((st) => (
@@ -895,18 +924,18 @@ export default function EngineeringDossier({
                       <strong>{st.title}</strong>
                       <span>{st.detail}</span>
                     </div>
-                    {st.isSpur && <span className="spur-pill">Spur • {st.spurHub}</span>}
+                    {st.isSpur && <span className="spur-pill">Link Road · {st.spurHub}</span>}
                   </div>
                   <div className="struct-card-foot">
                     <span className="mono-num">
-                      {st.chainage != null ? `Chainage km ${st.chainage}` : `${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}`}
+                      {st.chainage != null ? `${st.chainage} km from start` : `${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}`}
                     </span>
                     <button
                       type="button"
                       className="dl-inspect-btn"
                       onClick={() => onLocateOnMap && onLocateOnMap(st.lat, st.lng, st.title)}
                     >
-                      Locate on Map ↑
+                      Show on Map ↑
                     </button>
                   </div>
                 </div>
@@ -916,89 +945,89 @@ export default function EngineeringDossier({
         </DossierChapter>
 
         {/* ============================================================
-            CHAPTER V — FEEDER SPURS, TERMINALS & TRAFFIC CAPACITY
+            SECTION V — CONNECTED TOWNS, EXITS & TRAFFIC COMFORT
             ============================================================ */}
         <DossierChapter
           id="ch5"
           num="V"
-          title="Feeder Spurs, Terminal Interchanges & Capacity (IRC:SP:99)"
-          summaryBadge={`${connectedHubs.length} Hubs • ${networkSummary?.feederSpurKm ?? 0} km Spurs • V/C ${vcRatio}`}
+          title="Connected Towns, Exits & Traffic Comfort"
+          summaryBadge={`${connectedHubs.length} Connected Towns · ${networkSummary?.feederSpurKm ?? 0} km Link Roads · ${flowInfo.label}`}
           isOpen={openChapters.ch5}
           onToggle={() => toggleChapter("ch5")}
         >
-          {/* Terminal Arterial Tie-Ins */}
+          {/* Start & End Road Connections */}
           <div className="terminal-cards-grid">
             <div className="dossier-subcard">
-              <div className="dossier-subhead">Origin Terminal Interchange &amp; Tie-In</div>
+              <div className="dossier-subhead">Where the Route Starts</div>
               <div className="terminal-road-title">
-                {startConn?.existingRoadRef || networkSummary?.startRoadRef || "Existing Arterial Highway"}
+                {startConn?.existingRoadRef || networkSummary?.startRoadRef || "Existing Main Highway"}
               </div>
               <p className="terminal-road-meta">
-                {startConn?.existingRoadName || "Classified Arterial Tie-In"} &nbsp;•&nbsp;{" "}
-                <strong>{formatClassLabel(startConn?.roadCategory || startConn?.category || "NATIONAL_HIGHWAY")}</strong>
+                {startConn?.existingRoadName || "Existing Highway Connection"} &nbsp;·&nbsp;{" "}
+                <strong>{humanizeClassLabel(startConn?.roadCategory || startConn?.category || "NATIONAL_HIGHWAY")}</strong>
               </p>
               <div className="terminal-spec-pills">
-                <span>{formatClassLabel(startConn?.terminalJunctionType || (facilityMode === "EXPRESSWAY" ? "Trumpet Grade-Separated Interchange" : "At-Grade Arterial Junction"))}</span>
-                {startConn?.requiresTollBarrierPlaza && <span>Barrier Toll Plaza (120 m RoW)</span>}
-                <span>Connector: {startConn?.connectorLengthKm ?? "0.0"} km</span>
+                <span>{humanizeClassLabel(startConn?.terminalJunctionType || (facilityMode === "EXPRESSWAY" ? "TRUMPET" : "At-Grade Highway Junction"))}</span>
+                {startConn?.requiresTollBarrierPlaza && <span>Main Entry Toll Plaza</span>}
+                <span>Entry Link: {startConn?.connectorLengthKm ?? "0.0"} km</span>
               </div>
             </div>
 
             <div className="dossier-subcard">
-              <div className="dossier-subhead">Destination Terminal Interchange &amp; Tie-In</div>
+              <div className="dossier-subhead">Where the Route Ends</div>
               <div className="terminal-road-title">
-                {goalConn?.existingRoadRef || networkSummary?.goalRoadRef || "Existing Arterial Highway"}
+                {goalConn?.existingRoadRef || networkSummary?.goalRoadRef || "Existing Main Highway"}
               </div>
               <p className="terminal-road-meta">
-                {goalConn?.existingRoadName || "Classified Arterial Tie-In"} &nbsp;•&nbsp;{" "}
-                <strong>{formatClassLabel(goalConn?.roadCategory || goalConn?.category || "NATIONAL_HIGHWAY")}</strong>
+                {goalConn?.existingRoadName || "Existing Highway Connection"} &nbsp;·&nbsp;{" "}
+                <strong>{humanizeClassLabel(goalConn?.roadCategory || goalConn?.category || "NATIONAL_HIGHWAY")}</strong>
               </p>
               <div className="terminal-spec-pills">
-                <span>{formatClassLabel(goalConn?.terminalJunctionType || (facilityMode === "EXPRESSWAY" ? "Trumpet Grade-Separated Interchange" : "At-Grade Arterial Junction"))}</span>
-                {goalConn?.requiresTollBarrierPlaza && <span>Barrier Toll Plaza (120 m RoW)</span>}
-                <span>Connector: {goalConn?.connectorLengthKm ?? "0.0"} km</span>
+                <span>{humanizeClassLabel(goalConn?.terminalJunctionType || (facilityMode === "EXPRESSWAY" ? "TRUMPET" : "At-Grade Highway Junction"))}</span>
+                {goalConn?.requiresTollBarrierPlaza && <span>Main Exit Toll Plaza</span>}
+                <span>Exit Link: {goalConn?.connectorLengthKm ?? "0.0"} km</span>
               </div>
             </div>
           </div>
 
-          {/* Traffic Capacity Analysis */}
+          {/* Expected Traffic & Comfort */}
           {trafficCapacity && (
             <div className="dossier-subcard" style={{ marginTop: "24px" }}>
-              <div className="dossier-subhead">IRC:SP:84 Traffic Volume-to-Capacity Analysis</div>
+              <div className="dossier-subhead">Expected Rush-Hour Traffic &amp; Driving Comfort</div>
               <div className="capacity-metrics-row">
-                <div><span>Projected Peak Traffic</span><strong className="mono-num">{Math.round(trafficCapacity.projectedTotalPeakTrafficPcuHr || 0)} PCU/hr</strong></div>
-                <div><span>Design Capacity</span><strong className="mono-num">{Math.round(trafficCapacity.designCapacityPcuHr || 4800)} PCU/hr</strong></div>
-                <div><span>Projected V/C Ratio</span><strong className="mono-num">{trafficCapacity.projectedVcRatio ?? "—"}</strong></div>
-                <div><span>Level of Service</span><strong>{los}</strong></div>
+                <div><span>Expected Peak Traffic</span><strong className="mono-num">{Math.round(trafficCapacity.projectedTotalPeakTrafficPcuHr || 0).toLocaleString()} vehicles/hr</strong></div>
+                <div><span>Road Comfort Capacity</span><strong className="mono-num">{Math.round(trafficCapacity.designCapacityPcuHr || 4800).toLocaleString()} vehicles/hr</strong></div>
+                <div><span>Road Usage</span><strong className="mono-num">{Number.isFinite(Number(trafficCapacity.projectedVcRatio)) ? `${Math.round(Number(trafficCapacity.projectedVcRatio) * 100)}% full` : "—"}</strong></div>
+                <div><span>Driving Experience</span><strong>{flowInfo.label}</strong></div>
               </div>
               {trafficCapacity.capacityStandardNote && (
-                <p className="capacity-note">{trafficCapacity.capacityStandardNote}</p>
+                <p className="capacity-note">{humanizeText(trafficCapacity.capacityStandardNote)}</p>
               )}
             </div>
           )}
 
-          {/* Connected Regional Hubs & Feeder Spurs */}
+          {/* Connected Nearby Cities */}
           {connectedHubs.length > 0 && (
             <div className="dossier-subcard" style={{ marginTop: "24px" }}>
-              <div className="dossier-subhead">Connected Regional Growth Hubs ({connectedHubs.length})</div>
+              <div className="dossier-subhead">Cities &amp; Towns Connected Along the Way ({connectedHubs.length})</div>
               <div className="hubs-cards-grid">
                 {connectedHubs.map((h, i) => (
                   <div key={i} className="hub-dossier-card">
                     <div className="hub-dossier-top">
                       <strong>{h.name}</strong>
-                      <span className="mono-pill">{h.spurKm} km Spur</span>
+                      <span className="mono-pill">{h.spurKm} km Link Road</span>
                     </div>
                     <div className="hub-dossier-meta">
-                      Tie-In: <strong>{h.tieInRoadRef}</strong> • Induced Peak: +{h.traffic} PCU/hr • Catchment: {Number(h.population || 0).toLocaleString()}
+                      Joins: <strong>{h.tieInRoadRef}</strong> · Local Traffic Added: +{h.traffic} vehicles/hr · Serves ~{Number(h.population || 0).toLocaleString()} residents
                     </div>
-                    {h.decisionReason && <p className="hub-dossier-reason">{h.decisionReason}</p>}
+                    {h.decisionReason && <p className="hub-dossier-reason">{humanizeText(h.decisionReason)}</p>}
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Expandable Full Hub Acceptance/Exclusion Ledger */}
+          {/* Expandable Full Town Selection Explanation */}
           {hubDecisions.length > 0 && (
             <div style={{ marginTop: "20px" }}>
               <button
@@ -1006,18 +1035,18 @@ export default function EngineeringDossier({
                 className="btn-botanical-outline"
                 onClick={() => setShowHubLedger((v) => !v)}
               >
-                {showHubLedger ? "Hide Hub Evaluation Audit Ledger" : `Inspect Full Hub Evaluation Ledger (${hubDecisions.length} Towns Audited)`}
+                {showHubLedger ? "Hide Town-by-Town Explanations" : `See Why Each Nearby Town Was Connected or Skipped (${hubDecisions.length} Towns Checked)`}
               </button>
               {showHubLedger && (
                 <div className="dossier-table-wrap" style={{ marginTop: "14px" }}>
                   <table className="dossier-table">
                     <thead>
                       <tr>
-                        <th>Hub / Town</th>
-                        <th>Decision</th>
-                        <th>Lateral Dist</th>
-                        <th>Induced Traffic</th>
-                        <th>Engineering Rationale</th>
+                        <th>Town / City</th>
+                        <th>Result</th>
+                        <th>Distance from Highway</th>
+                        <th>Extra Traffic</th>
+                        <th>Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1026,12 +1055,12 @@ export default function EngineeringDossier({
                           <td><strong>{d.name}</strong> {d.district ? `(${d.district})` : ""}</td>
                           <td>
                             <span className={`dl-verdict-pill ${d.accepted ? "pass" : "neutral"}`}>
-                              {d.status || (d.accepted ? "Accepted" : "Excluded")}
+                              {humanizeClassLabel(d.status || (d.accepted ? "Connected" : "Skipped"))}
                             </span>
                           </td>
                           <td className="mono-num">{d.distanceToCenterlineKm ?? "—"} km</td>
-                          <td className="mono-num">+{d.inducedPeakTrafficPcuHr ?? 0} PCU/hr</td>
-                          <td>{d.reason}</td>
+                          <td className="mono-num">+{d.inducedPeakTrafficPcuHr ?? 0} vehicles/hr</td>
+                          <td>{humanizeText(d.reason)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1043,23 +1072,23 @@ export default function EngineeringDossier({
         </DossierChapter>
 
         {/* ============================================================
-            CHAPTER VI — SOCIAL IMPACT, BUILDINGS & 2D RoW (RFCTLARR 2013)
+            SECTION VI — LAND NEEDED, HOMES & NEARBY COMMUNITIES
             ============================================================ */}
         <DossierChapter
           id="ch6"
           num="VI"
-          title="Social Impact, Building Footprints & 2D Right-of-Way (RFCTLARR 2013)"
-          summaryBadge={`${rowHa} ha RoW • ${networkSummary?.buildingsInRow ?? 0} Direct RoW Structures • ${networkSummary?.displacedPop ?? 0} Displaced`}
+          title="Land Needed, Homes & Nearby Communities"
+          summaryBadge={`${rowHa} ha Land · ${networkSummary?.buildingsInRow ?? 0} Buildings in Path · ${networkSummary?.displacedPop ?? 0} People Relocated`}
           isOpen={openChapters.ch6}
           onToggle={() => toggleChapter("ch6")}
         >
           <div className="social-row-grid">
             <div className="dossier-subcard">
-              <div className="dossier-subhead">2D Right-of-Way Land Acquisition Breakdown</div>
+              <div className="dossier-subhead">Types of Land Needed for This Highway</div>
               <div className="social-big-nums">
-                <div><span>Total Direct RoW</span><strong className="mono-num">{rowHa} ha</strong></div>
-                <div><span>Mainline Width</span><strong className="mono-num">{rowWidthM} m</strong></div>
-                <div><span>Feeder Spur Width</span><strong className="mono-num">30 m</strong></div>
+                <div><span>Total Land Area</span><strong className="mono-num">{rowHa} ha</strong></div>
+                <div><span>Main Road Width</span><strong className="mono-num">{rowWidthM} m</strong></div>
+                <div><span>Link Road Width</span><strong className="mono-num">30 m</strong></div>
               </div>
               {lulcAcqHa && Object.keys(lulcAcqHa).length > 0 && (
                 <div className="lulc-ha-list">
@@ -1068,8 +1097,8 @@ export default function EngineeringDossier({
                     .sort((a, b) => Number(b[1]) - Number(a[1]))
                     .map(([k, v]) => (
                       <div key={k} className="lulc-ha-row">
-                        <span>{formatClassLabel(k)}</span>
-                        <strong className="mono-num">{v} ha</strong>
+                        <span>{humanizeClassLabel(k)}</span>
+                        <strong className="mono-num">{v} hectares</strong>
                       </div>
                     ))}
                 </div>
@@ -1077,28 +1106,28 @@ export default function EngineeringDossier({
             </div>
 
             <div className="dossier-subcard">
-              <div className="dossier-subhead">Building Footprints &amp; Demographic Exposure (RFCTLARR 2013)</div>
+              <div className="dossier-subhead">Homes, Buildings &amp; Nearby Residents</div>
               <div className="social-big-nums">
-                <div><span>Direct RoW Buildings</span><strong className="mono-num">{networkSummary?.buildingsInRow ?? 0}</strong></div>
-                <div><span>Displaced Households</span><strong className="mono-num">{networkSummary?.displacedHouseholds ?? 0}</strong></div>
-                <div><span>Displaced Residents</span><strong className="mono-num">{networkSummary?.displacedPop ?? 0}</strong></div>
+                <div><span>Buildings in Path</span><strong className="mono-num">{networkSummary?.buildingsInRow ?? 0}</strong></div>
+                <div><span>Families Relocated</span><strong className="mono-num">{networkSummary?.displacedHouseholds ?? 0}</strong></div>
+                <div><span>People Relocated</span><strong className="mono-num">{networkSummary?.displacedPop ?? 0}</strong></div>
               </div>
               {demoSummary && (
                 <div className="lulc-ha-list">
                   <div className="lulc-ha-row">
-                    <span>Population within 250 m Environmental Buffer</span>
+                    <span>People Living Within 250 m of Road</span>
                     <strong className="mono-num">{Number(demoSummary.populationWithin250mEnvironmentalBuffer || 0).toLocaleString()}</strong>
                   </div>
                   <div className="lulc-ha-row">
-                    <span>Population within 500 m Secondary Buffer</span>
+                    <span>People Living Within 500 m of Road</span>
                     <strong className="mono-num">{Number(demoSummary.populationWithin500mSecondaryBuffer || 0).toLocaleString()}</strong>
                   </div>
                   <div className="lulc-ha-row">
-                    <span>Vulnerable-Age Population (250 m)</span>
+                    <span>Children &amp; Elderly Residents (Within 250 m)</span>
                     <strong className="mono-num">{Number(demoSummary.vulnerableAgePopulationExposedWithin250m || 0).toLocaleString()}</strong>
                   </div>
                   <div className="lulc-ha-row">
-                    <span>Scheduled Tribe &amp; Caste Exposure (250 m)</span>
+                    <span>Tribal &amp; Vulnerable Community Residents (Within 250 m)</span>
                     <strong className="mono-num">{Number(demoSummary.scheduledTribeAndCastesExposedWithin250m || 0).toLocaleString()}</strong>
                   </div>
                 </div>
@@ -1109,7 +1138,7 @@ export default function EngineeringDossier({
                     .filter(([, cnt]) => Number(cnt) > 0)
                     .map(([type, cnt]) => (
                       <span key={type} className="mono-pill">
-                        {formatClassLabel(type)}: {cnt}
+                        {humanizeClassLabel(type)}: {cnt}
                       </span>
                     ))}
                 </div>

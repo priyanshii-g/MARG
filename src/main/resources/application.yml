@@ -1,6 +1,8 @@
 spring:
   application:
     name: marg-routing-prototype
+  config:
+      import: optional:file:.env[.properties]
   ai:
     mcp:
       server:

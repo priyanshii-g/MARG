@@ -1,10 +1,10 @@
-// Free, zero-API-key Leaflet basemap registry for MARG 13-Layer Lens Explorer
+// Free, zero-API-key Leaflet basemap registry for MARG Map Views
 
 export const BASEMAPS = {
   osm: {
     id: "osm",
-    label: "Basic Street Map",
-    shortLabel: "Basic Map (OSM)",
+    label: "Street Map",
+    shortLabel: "Street Map",
     icon: "🗺️",
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     options: {
@@ -14,7 +14,7 @@ export const BASEMAPS = {
   },
   satellite: {
     id: "satellite",
-    label: "Satellite Imagery",
+    label: "Satellite View",
     shortLabel: "Satellite",
     icon: "🛰️",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -25,8 +25,8 @@ export const BASEMAPS = {
   },
   topo: {
     id: "topo",
-    label: "Elevation & Contours (Topo)",
-    shortLabel: "Topo / DEM",
+    label: "Hills & Elevation Map",
+    shortLabel: "Hills & Elevation",
     icon: "⛰️",
     url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
     options: {
@@ -37,8 +37,8 @@ export const BASEMAPS = {
   },
   relief: {
     id: "relief",
-    label: "Terrain Shaded Relief",
-    shortLabel: "Shaded Relief",
+    label: "Terrain Shaded Map",
+    shortLabel: "Terrain Relief",
     icon: "🏔️",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
     options: {
@@ -49,8 +49,8 @@ export const BASEMAPS = {
   },
   positron: {
     id: "positron",
-    label: "Clean Infrastructure Light Canvas",
-    shortLabel: "Light Canvas",
+    label: "Clean Light Map",
+    shortLabel: "Light Map",
     icon: "📐",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
     overlayUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
@@ -62,8 +62,8 @@ export const BASEMAPS = {
   },
   voyager: {
     id: "voyager",
-    label: "Hydrology & Street Contrast",
-    shortLabel: "Esri Street",
+    label: "Rivers & Roads View",
+    shortLabel: "Rivers & Roads",
     icon: "🌊",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
     options: {

@@ -22,16 +22,16 @@ export default function MapLensHud({
 
   return (
     <>
-      {/* Top-Right Basemap & Navigation Controls */}
+      {/* Top-Right Map Background & Navigation Controls */}
       <div className="map-floating-bar map-lens-controls">
-        {/* Manual Basemap Picker */}
-        <div className="basemap-select-wrap" title="Choose Map Tile Style">
+        {/* Manual Map Style Picker */}
+        <div className="basemap-select-wrap" title="Choose Map Background Style">
           <span className="basemap-select-icon">{currentBase.icon}</span>
           <select
             className="map-basemap-select"
             value={baseMapType}
             onChange={(e) => onSelectBasemap(e.target.value)}
-            aria-label="Select Basemap"
+            aria-label="Choose Map Style"
           >
             {BASEMAP_ORDER.map((id) => {
               const b = BASEMAPS[id];
@@ -44,42 +44,43 @@ export default function MapLensHud({
           </select>
         </div>
 
-        {/* One-Click Return to Basic Street Map (OSM) — keeps active lens open & auto-switch enabled */}
+        {/* One-Click Return to Street Map — keeps active view open & auto-switch enabled */}
         {baseMapType !== "osm" && (
           <button
             type="button"
             className="map-control-btn basic-map-btn"
             onClick={onResetBasicMap}
-            title="Switch back to Basic Street Map (OSM) while keeping your current layer lens open"
+            title="Switch back to the clean Street Map while keeping your selected topic open"
           >
-            🗺️ Basic Map
+            🗺️ Street Map
           </button>
         )}
 
-        {/* Auto-Switch vs Lock Basemap Toggle */}
+        {/* Auto-Switch vs Keep Current Map Style Toggle */}
         <button
           type="button"
           className={`map-control-btn lock-map-btn ${lockBasemap ? "locked" : ""}`}
           onClick={onToggleLockBasemap}
           title={
             lockBasemap
-              ? "Basemap is locked — clicking layers will not change tiles. Click to re-enable auto-switching."
-              : "Auto-switch basemap active — clicking a layer selects its ideal terrain/satellite tiles. Click to lock."
+              ? "Map background is locked. Click to let topics pick the best map style automatically."
+              : "Map background switches automatically for each topic. Click to keep your current map style."
           }
         >
-          {lockBasemap ? "🔒 Map Locked" : "🔓 Auto-Map"}
+          {lockBasemap ? "🔒 Map Locked" : "🔓 Auto Map"}
         </button>
 
         <button
           type="button"
           className="map-control-btn"
           onClick={onZoomIndia}
+          title="Zoom out to see all of India"
         >
-          🇮🇳 India
+          🇮🇳 All India
         </button>
       </div>
 
-      {/* Bottom-Left Active Lens & Route Colorization Legend HUD */}
+      {/* Bottom-Left Active Map View Legend */}
       {(activeCfg || pinnedList.length > 0) && (
         <div className="map-lens-legend-hud">
           <div className="lens-hud-header">
@@ -90,23 +91,23 @@ export default function MapLensHud({
                     className="lens-hud-badge"
                     style={{ background: activeCfg.accentColor }}
                   >
-                    L{activeCfg.number}
+                    #{activeCfg.number}
                   </span>
                   <span>
                     {activeCfg.icon} {activeCfg.shortName}
                   </span>
                 </>
               ) : (
-                <span>📌 Pinned Layers Active</span>
+                <span>📌 Pinned Map Views</span>
               )}
             </div>
             <button
               type="button"
               className="lens-hud-exit"
               onClick={onExitLens}
-              title="Return to clean Road Overview Mode"
+              title="Return to the clean Main Route view"
             >
-              ✕ Overview
+              ✕ Main Route
             </button>
           </div>
 
@@ -134,7 +135,7 @@ export default function MapLensHud({
                   style={{ borderColor: p.accentColor }}
                 >
                   <span>
-                    L{p.number} {p.shortName}
+                    #{p.number} {p.shortName}
                   </span>
                   <button
                     type="button"
