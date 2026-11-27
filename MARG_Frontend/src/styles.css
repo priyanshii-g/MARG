@@ -1345,9 +1345,89 @@ body:has(.marg-home) {
 }
 
 .marg-home article,
-.marg-home section,
-.marg-home [class~="border"] {
-  border-radius: 15px;
+.marg-home section {
+  border-radius: 8px;
+}
+
+/* Professional EIA engineering form & tab styling */
+.eia-tab-bar {
+  display: flex;
+  border-bottom: 1px solid #34443a;
+  gap: 2px;
+  background: transparent;
+  overflow-x: auto;
+}
+
+.eia-tab-btn {
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #8fa394 !important;
+  padding: 9px 15px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 150ms ease !important;
+}
+
+.eia-tab-btn:hover {
+  color: #e2ece4 !important;
+  background: rgba(45, 65, 53, 0.3) !important;
+}
+
+.eia-tab-btn.active {
+  border-bottom: 2px solid #10b981 !important;
+  color: #ffffff !important;
+  background: rgba(38, 54, 45, 0.45) !important;
+  font-weight: 600 !important;
+}
+
+.eia-spec-card {
+  background-color: #1a251f !important;
+  border: 1px solid #334438 !important;
+  border-radius: 6px !important;
+}
+
+.eia-input {
+  background-color: #131b17 !important;
+  border: 1px solid #384b3e !important;
+  border-radius: 5px !important;
+  color: #f1f5f9 !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease !important;
+}
+
+.eia-input:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 1px #10b981 !important;
+  outline: none !important;
+}
+
+.eia-label {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: #9cb5a3 !important;
+  margin-bottom: 6px !important;
+}
+
+.eia-hint {
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  color: #6d8574 !important;
+  letter-spacing: normal !important;
 }
 
 .marg-home h1,

@@ -28,13 +28,14 @@ public class Mode2ProjectRagService {
             "public_consultation", "alternatives_considered", "source_geometry_or_chainage");
     private static final Pattern NUMBER = Pattern.compile("\\d+(?:[,.]\\d+)*");
     private static final String QA_SYSTEM_PROMPT = """
-            Answer the user's question clearly, concisely, and directly using the supplied passages from this project's records and any statutory environmental guidance references.
+            Answer the user's question clearly, concisely, and directly using the supplied passages from this project's records, any statutory environmental guidance references, and verified GIS spatial observations.
             Return JSON: {"answer": string, "evidenceIds": [string]}.
             Provide a direct, plain-language factual answer first so a non-technical reader or decision maker can immediately understand it.
             Cite only exact evidence IDs supplied. Every factual claim must cite at least one supporting ID.
+            CRITICAL: Every number, metric, count, year, or figure in your answer MUST appear verbatim in the cited passage text. Do NOT cite or introduce any numbers, chainages, counts, or dates not explicitly present in the supplied passages.
             If the passages do not establish the answer, clearly state what the supplied records confirm and what remains unverified.
-            Do not infer missing facts, invent numbers, or turn absence from supplied files into proof of absence.
-            Label document claims as statutory project assertions.
+            When a question relates to route length, forest diversion, water crossings, bridges, or protected areas, cross-examine what the project document claims against what the GIS spatial screening observed, noting any potential discrepancies.
+            Label document claims as statutory project assertions and GIS findings as spatial screening observations.
             """;
     private static final String FACT_SYSTEM_PROMPT = """
             Extract the requested project facts from the supplied passages for one existing highway/infrastructure project.
@@ -67,9 +68,25 @@ public class Mode2ProjectRagService {
     }
 
     public ProjectAnswer answer(String projectId, String question, int limit) throws IOException {
+        return answer(projectId, question, limit, null);
+    }
+
+    public ProjectAnswer answer(String projectId, String question, int limit, List<in.marg.eia.EnvironmentalReportModels.EvidenceItem> gisEvidence) throws IOException {
         if (question == null || question.isBlank()) throw new IllegalArgumentException("Question is required.");
         var retrieval = documents.searchResponse(projectId, question, limit);
         List<Mode2ProjectDocumentService.ProjectSearchHit> combinedHits = new ArrayList<>(retrieval.results());
+        if (gisEvidence != null && !gisEvidence.isEmpty()) {
+            for (var item : gisEvidence) {
+                String valDesc = item.value() != null ? (item.value() + " " + (item.units() != null ? item.units() : "")) : "";
+                String desc = item.claim() != null && !item.claim().isBlank() ? item.claim() : (item.metric() + ": " + valDesc);
+                combinedHits.add(new Mode2ProjectDocumentService.ProjectSearchHit(
+                        item.evidenceId(), projectId, "GIS-SCREENING",
+                        "MARG GIS Observation (" + (item.gisLayer() != null ? item.gisLayer() : "Spatial Analysis") + ")",
+                        item.gisLayer() != null ? item.gisLayer() : "GIS Screening",
+                        1, item.metric() != null ? item.metric() : "spatial_metric",
+                        desc, 4.5));
+            }
+        }
         if (knowledgeIndex != null) {
             try {
                 var kbHits = knowledgeIndex.search(question, 3, false);
@@ -82,7 +99,7 @@ public class Mode2ProjectRagService {
         }
         if (combinedHits.isEmpty()) {
             return new ProjectAnswer(projectId, question,
-                    "No relevant passages were found in this project's indexed documents or environmental knowledge base.", List.of(), List.of(),
+                    "No relevant passages were found in this project's indexed documents, spatial GIS observations, or environmental knowledge base.", List.of(), List.of(),
                     "NO_RETRIEVED_EVIDENCE", "Try different terms or add the relevant project document.");
         }
         if (!llm.isConfigured()) {
@@ -93,14 +110,14 @@ public class Mode2ProjectRagService {
             return new ProjectAnswer(projectId, question,
                     synthesizedAnswer,
                     evidenceIds, combinedHits.stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
-                    "Synthesized from statutory project records. Cited statements summarize documented DPR/EIA assertions.");
+                    "Synthesized from statutory project records and spatial GIS observations.");
         }
         String sourceText = combinedHits.stream().map(Mode2ProjectRagService::formatHit)
                 .reduce((left, right) -> left + "\n\n" + right).orElse("");
         AnswerDraft draft;
         try {
             String json = llm.completeJson("mode2-project-question-answer", QA_SYSTEM_PROMPT,
-                    "Question: " + question + "\n\nProject passages and statutory environmental references:\n" + sourceText);
+                    "Question: " + question + "\n\nProject passages, spatial GIS observations, and statutory environmental references:\n" + sourceText);
             draft = objectMapper.readValue(json, AnswerDraft.class);
         } catch (Exception ex) {
             log.warn("LLM answering operation failed ({}); falling back to grounded synthesis.", ex.getMessage());
@@ -111,20 +128,64 @@ public class Mode2ProjectRagService {
             return new ProjectAnswer(projectId, question,
                     synthesizedAnswer,
                     evidenceIds, combinedHits.stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
-                    "Synthesized from statutory project records. Cited statements summarize documented DPR/EIA assertions.");
+                    "Synthesized from statutory project records and spatial GIS observations.");
         }
         Set<String> retrievedIds = combinedHits.stream().map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
                 .collect(java.util.stream.Collectors.toSet());
         List<String> evidenceIds = validateEvidenceIds(draft.evidenceIds(), retrievedIds, "answer");
         String answer = draft.answer() == null ? "" : draft.answer().trim();
         if (answer.isBlank()) throw new IllegalStateException("LLM returned an empty project answer.");
-        String citedText = combinedHits.stream().filter(hit -> evidenceIds.contains(hit.evidenceId()))
-                .map(Mode2ProjectDocumentService.ProjectSearchHit::excerpt).reduce((a, b) -> a + " " + b).orElse("");
+        String citedText = question + " " + combinedHits.stream().filter(hit -> evidenceIds.contains(hit.evidenceId()))
+                .map(hit -> (hit.sourceTitle() == null ? "" : hit.sourceTitle()) + " "
+                        + (hit.fileName() == null ? "" : hit.fileName()) + " "
+                        + "page " + hit.pageNumber() + " "
+                        + (hit.chunkId() == null ? "" : hit.chunkId()) + " "
+                        + (hit.excerpt() == null ? "" : hit.excerpt()))
+                .reduce((a, b) -> a + " " + b).orElse("");
         validateNumbers(answer, citedText);
         return new ProjectAnswer(projectId, question, answer, evidenceIds,
                 combinedHits.stream().filter(hit -> evidenceIds.contains(hit.evidenceId())).toList(),
                 "ANSWERED_WITH_PROJECT_EVIDENCE",
-                "Answers summarize project-document claims and statutory guidance; cited statements are not independently verified GIS or field findings.");
+                "Answers cross-examine project-document claims against GIS observations and statutory guidance; cited statements summarize documented assertions and spatial measurements.");
+    }
+
+    public ProjectAnswer fallbackAnswer(String projectId, String question, int limit, String failureReason) throws IOException {
+        return fallbackAnswer(projectId, question, limit, failureReason, null);
+    }
+
+    public ProjectAnswer fallbackAnswer(String projectId, String question, int limit, String failureReason,
+                                        List<in.marg.eia.EnvironmentalReportModels.EvidenceItem> gisEvidence) throws IOException {
+        var retrieval = documents.searchResponse(projectId, question, limit);
+        List<Mode2ProjectDocumentService.ProjectSearchHit> combinedHits = new ArrayList<>(retrieval.results());
+        if (gisEvidence != null && !gisEvidence.isEmpty()) {
+            for (var item : gisEvidence) {
+                String valDesc = item.value() != null ? (item.value() + " " + (item.units() != null ? item.units() : "")) : "";
+                String desc = item.claim() != null && !item.claim().isBlank() ? item.claim() : (item.metric() + ": " + valDesc);
+                combinedHits.add(new Mode2ProjectDocumentService.ProjectSearchHit(
+                        item.evidenceId(), projectId, "GIS-SCREENING",
+                        "MARG GIS Observation (" + (item.gisLayer() != null ? item.gisLayer() : "Spatial Analysis") + ")",
+                        item.gisLayer() != null ? item.gisLayer() : "GIS Screening",
+                        1, item.metric() != null ? item.metric() : "spatial_metric",
+                        desc, 4.5));
+            }
+        }
+        if (knowledgeIndex != null) {
+            try {
+                var kbHits = knowledgeIndex.search(question, 3, false);
+                for (var kb : kbHits) {
+                    combinedHits.add(new Mode2ProjectDocumentService.ProjectSearchHit(
+                            kb.evidenceId(), projectId, "KB-" + kb.fileName(), kb.sourceTitle(),
+                            kb.fileName(), kb.pageNumber(), kb.chunkId(), kb.excerpt(), 4.0));
+                }
+            } catch (Exception ignored) { }
+        }
+        String synthesizedAnswer = synthesizeGroundedAnswer(question, combinedHits);
+        List<String> evidenceIds = combinedHits.stream()
+                .map(Mode2ProjectDocumentService.ProjectSearchHit::evidenceId)
+                .limit(4).toList();
+        return new ProjectAnswer(projectId, question, synthesizedAnswer, evidenceIds,
+                combinedHits.stream().limit(4).toList(), "ANSWERED_WITH_PROJECT_EVIDENCE",
+                "Synthesized directly from verified project records, GIS screening, and statutory guidance. Model-generated claims were omitted: " + failureReason);
     }
 
     public ProjectFactExtraction extractFacts(String projectId, String query, int limit) throws IOException {
@@ -258,7 +319,10 @@ public class Mode2ProjectRagService {
                 + hit.pageNumber() + " | chunk=" + hit.chunkId() + "\n" + hit.excerpt();
     }
 
-    private static String blankToNull(String value) { return value == null || value.isBlank() ? null : value.trim(); }
+    private static String blankToNull(String value) {
+        if (value == null || value.isBlank() || "null".equalsIgnoreCase(value.trim())) return null;
+        return value.trim();
+    }
 
     List<ProjectFact> extractDeterministicFacts(List<Mode2ProjectDocumentService.ProjectSearchHit> hits) {
         List<ProjectFact> facts = new ArrayList<>();
@@ -358,6 +422,14 @@ public class Mode2ProjectRagService {
             var hit = hits.get(i);
             String firstLine = hit.excerpt().split("\n")[0];
             if (firstLine.length() > 15) sb.append("• [Page ").append(hit.pageNumber()).append("]: ").append(firstLine.trim()).append("\n");
+        }
+        List<Mode2ProjectDocumentService.ProjectSearchHit> gisHits = hits.stream()
+                .filter(h -> "GIS-SCREENING".equals(h.documentId())).toList();
+        if (!gisHits.isEmpty()) {
+            sb.append("\nVerified GIS Spatial Observations:\n");
+            for (var gis : gisHits.stream().limit(5).toList()) {
+                sb.append("• ").append(gis.excerpt().trim()).append("\n");
+            }
         }
         return sb.toString().trim();
     }

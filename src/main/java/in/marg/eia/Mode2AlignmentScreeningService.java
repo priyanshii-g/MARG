@@ -49,6 +49,7 @@ public class Mode2AlignmentScreeningService {
     private final RegionalCorridorRegistry corridors;
     private final Mode2GisMetricsProvider gisMetrics;
     private final Mode2GisEvidenceAssembler evidenceAssembler;
+    private final java.util.concurrent.ConcurrentHashMap<String, AlignmentScreeningResult> latestScreenings = new java.util.concurrent.ConcurrentHashMap<>();
 
     public Mode2AlignmentScreeningService(Mode2ProjectDocumentService projects,
                                           RegionalCorridorRegistry corridors,
@@ -58,6 +59,15 @@ public class Mode2AlignmentScreeningService {
         this.corridors = corridors;
         this.gisMetrics = gisMetrics;
         this.evidenceAssembler = evidenceAssembler;
+    }
+
+    public AlignmentScreeningResult getLatestScreening(String projectId) {
+        if (projectId == null) return null;
+        return latestScreenings.get(projectId);
+    }
+
+    public boolean hasScreening(String projectId) {
+        return projectId != null && latestScreenings.containsKey(projectId);
     }
 
     public AlignmentScreeningResult screen(String projectId, AlignmentScreeningRequest request) throws IOException {
@@ -95,9 +105,11 @@ public class Mode2AlignmentScreeningService {
                 "gisRegionCrs", preset.epsgCode(), "regionId", preset.id(), "facilityMode", facilityMode.name(),
                 "vertexCount", route.size(), "routeFingerprint", fingerprint, "generatedAt", Instant.now().toString(),
                 "sourceGeometryModified", false);
-        return new AlignmentScreeningResult(project.projectId(), project.name(), alignmentName, preset.id(),
+        AlignmentScreeningResult result = new AlignmentScreeningResult(project.projectId(), project.name(), alignmentName, preset.id(),
                 preset.displayName(), facilityMode.name(), route.size(), fingerprint, metadata, method,
                 diagnostics, evidence, availableLayerNames(availableKeys), notAssessed, limitations);
+        latestScreenings.put(projectId, result);
+        return result;
     }
 
     private RegionalCorridorPreset choosePreset(String requestedRegion, List<GeoPoint> route) {
