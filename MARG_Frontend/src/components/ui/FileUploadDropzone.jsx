@@ -31,7 +31,7 @@ export function FileUploadDropzone({
   }
 
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className={`space-y-2.5 ${className}`}>
       <motion.div
         whileHover={{ scale: 1.005 }}
         onDragOver={(e) => {
@@ -47,8 +47,8 @@ export function FileUploadDropzone({
         onClick={() => inputRef.current?.click()}
         className={`cursor-pointer rounded-xl border-2 border-dashed p-5 text-center transition-all ${
           dragging
-            ? "border-emerald-400 bg-emerald-950/50 shadow-[0_0_24px_rgba(16,185,129,0.18)]"
-            : "border-emerald-800/70 bg-[#0b1510] hover:border-emerald-500/70 hover:bg-[#101e17]"
+            ? "border-[#2D6A4F] bg-[#E9F2EC] shadow-sm"
+            : "border-[#C4D6C8] bg-[#FAF9F6] hover:border-[#2D6A4F] hover:bg-[#EEF4EF]"
         }`}
       >
         <input
@@ -62,15 +62,15 @@ export function FileUploadDropzone({
           }}
           className="hidden"
         />
-        <div className="mx-auto mb-2.5 flex size-10 items-center justify-center rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-700/50">
+        <div className="mx-auto mb-2 flex size-10 items-center justify-center rounded-full bg-[#E9F2EC] text-[#1B4332] border border-[#C4D6C8]">
           <CloudUpload className="size-5" />
         </div>
-        <p className="text-sm font-semibold text-white">{title}</p>
-        <p className="mt-1 text-xs text-slate-400">{description}</p>
+        <p className="text-sm font-semibold text-[#1B4332]">{title}</p>
+        <p className="mt-1 text-xs text-[#59645C]">{description}</p>
       </motion.div>
 
       {files.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {files.map((file, idx) => {
             const isCode = /\.(kml|json|geojson)$/i.test(file.name);
             return (
@@ -78,19 +78,19 @@ export function FileUploadDropzone({
                 key={`${file.name}-${idx}`}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between gap-3 rounded-lg border border-emerald-800/60 bg-[#101c16] px-3.5 py-2.5 text-xs"
+                className="flex items-center justify-between gap-3 rounded-lg border border-[#D8E8DD] bg-[#FFFFFF] px-3.5 py-2.5 text-xs shadow-xs"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   {isCode ? (
-                    <FileCode2 className="size-4 shrink-0 text-emerald-400" />
+                    <FileCode2 className="size-4 shrink-0 text-[#2D6A4F]" />
                   ) : (
-                    <FileText className="size-4 shrink-0 text-amber-400" />
+                    <FileText className="size-4 shrink-0 text-[#B45309]" />
                   )}
-                  <span className="truncate font-medium text-slate-100">{file.name}</span>
-                  <span className="shrink-0 font-mono text-[10px] text-slate-400">{formatBytes(file.size)}</span>
+                  <span className="truncate font-medium text-[#1C2420]">{file.name}</span>
+                  <span className="shrink-0 font-mono text-[10px] text-[#68736B]">{formatBytes(file.size)}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <CheckCircle2 className="size-3.5 text-emerald-400" />
+                  <CheckCircle2 className="size-3.5 text-[#2D6A4F]" />
                   {onFileRemove && (
                     <button
                       type="button"
@@ -98,7 +98,7 @@ export function FileUploadDropzone({
                         e.stopPropagation();
                         onFileRemove(idx);
                       }}
-                      className="rounded p-1 text-slate-400 hover:bg-rose-950/60 hover:text-rose-300 transition-colors"
+                      className="rounded border-0 bg-transparent p-1 text-[#68736B] hover:bg-rose-50 hover:text-rose-700 transition-colors"
                       aria-label={`Remove ${file.name}`}
                     >
                       <Trash2 className="size-3.5" />

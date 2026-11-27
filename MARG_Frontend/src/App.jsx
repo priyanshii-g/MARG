@@ -14,7 +14,7 @@ import EngineeringDossier from "./components/EngineeringDossier";
 import Hero21 from "./components/Hero21.jsx";
 import Mode2Workspace from "./Mode2Workspace.jsx";
 import { motion } from "motion/react";
-import { ArrowRight, Compass, FileCheck2, ShieldCheck } from "lucide-react";
+import { ArrowRight, Compass, FileCheck2, Layers, Scale, ShieldAlert, ShieldCheck, Trees } from "lucide-react";
 import Mode1EiaWorkspace from "./Mode1EiaWorkspace.jsx";
 
 // -------------------------------------------------------------
@@ -118,11 +118,34 @@ function HomePage({ onMode1, onMode2, onEia }) {
     },
   ];
 
+  const aboutCapabilities = [
+    {
+      icon: Layers,
+      title: "13-Layer Geospatial Routing",
+      detail: "Evaluates Reserve Forests, Kaziranga-style wildlife buffers, floodplains, slopes >15%, water crossings, and settlements using deterministic GIS cost surfaces.",
+    },
+    {
+      icon: ShieldAlert,
+      title: "Statutory Red-Flag & CAMPA Audit",
+      detail: "Cross-examines DPR claims against GIS ground truth to compute a 0–100% Clearance Readiness Score, Eco-Class NPV, 1:2 CA land, and WII wildlife underpass specs.",
+    },
+    {
+      icon: Scale,
+      title: "Evidence-Grounded EIA Reports",
+      detail: "Drafts structured, natural-language EIA chapters with live CAMS/Open-Meteo air & Bhuvan LULC baselines, citing exact document page numbers and GIS IDs.",
+    },
+    {
+      icon: Trees,
+      title: "Multi-Objective Corridor Alternatives",
+      detail: "Generates Eco-Shield, Balanced, and Social Safeguard route candidates with adjusted weight matrices so planners can weigh forest vs. livelihood trade-offs.",
+    },
+  ];
+
   return (
-    <main className="min-h-screen bg-[#f4f3ed] text-[#1c2420]">
+    <main className="min-h-screen bg-[#F7F5F0] text-[#1C2420]">
       <Hero21 onMode1={onMode1} onMode2={onMode2} onEia={onEia} />
-      <section id="modes" className="relative z-30 mx-auto -mt-20 max-w-6xl px-6 pb-16 sm:px-10">
-        <div className="grid gap-5 md:grid-cols-3">
+      <section id="modes" className="relative z-30 mx-auto -mt-32 max-w-6xl px-6 pb-16 sm:px-10">
+        <div className="grid gap-6 md:grid-cols-3">
           {modes.map((mode, idx) => {
             const Icon = mode.icon;
             return (
@@ -130,24 +153,24 @@ function HomePage({ onMode1, onMode2, onEia }) {
                 key={mode.number}
                 initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.15 }}
                 transition={{ type: "spring", stiffness: 240, damping: 24, delay: idx * 0.08 }}
                 whileHover={{ y: -8 }}
                 onClick={mode.onClick}
-                className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-emerald-900/15 bg-[#fbfbf8]/95 p-2 shadow-[0_20px_50px_rgba(27,67,50,0.12)] backdrop-blur-md transition-shadow duration-300 hover:border-emerald-700/40 hover:shadow-[0_28px_64px_rgba(27,67,50,0.2)]"
+                className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF]/95 p-2.5 shadow-[0_20px_50px_rgba(27,67,50,0.10)] backdrop-blur-md transition-shadow duration-300 hover:border-[#2D6A4F]/50 hover:shadow-[0_28px_64px_rgba(27,67,50,0.18)]"
               >
                 <div className="space-y-1.5 px-4 pt-3 pb-3">
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/5 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-emerald-900">
-                      <Icon className="size-3.5 text-emerald-700" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF4EF] px-2.5 py-0.5 font-mono text-[11px] font-semibold text-[#1B4332]">
+                      <Icon className="size-3.5 text-[#2D6A4F]" />
                       {mode.number} · {mode.tag}
                     </span>
-                    <span className="h-2 w-2 rounded-full bg-emerald-600/70 transition-transform group-hover:scale-125" />
+                    <span className="h-2 w-2 rounded-full bg-[#40916C] transition-transform group-hover:scale-125" />
                   </div>
-                  <h2 className="pt-2 text-lg font-semibold tracking-tight text-emerald-950">
+                  <h2 className="pt-2 text-lg font-semibold tracking-tight text-[#1B4332]">
                     {mode.title}
                   </h2>
-                  <p className="text-xs leading-5 text-emerald-950/70">
+                  <p className="text-xs leading-5 text-[#59645C]">
                     {mode.detail}
                   </p>
                 </div>
@@ -158,8 +181,8 @@ function HomePage({ onMode1, onMode2, onEia }) {
                     alt={mode.title}
                     className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-emerald-950/15 to-transparent" />
-                  <div className="absolute inset-x-3 bottom-3 flex items-center justify-between text-xs font-semibold text-white">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1B4332]/85 via-[#1B4332]/15 to-transparent" />
+                  <div className="absolute inset-x-3.5 bottom-3 flex items-center justify-between text-xs font-semibold text-[#F7F5F0]">
                     <span>{mode.action}</span>
                     <span className="flex size-7 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform group-hover:translate-x-1">
                       <ArrowRight className="size-3.5" />
@@ -170,7 +193,55 @@ function HomePage({ onMode1, onMode2, onEia }) {
             );
           })}
         </div>
-        <footer className="mt-12 flex flex-col gap-2 border-t border-[#d9ddd3] pt-5 text-xs leading-5 text-[#5c6b60] sm:flex-row sm:justify-between">
+
+        {/* Animated About Us Section */}
+        <motion.section
+          id="about"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.6 }}
+          className="mt-20 rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-8 shadow-sm sm:p-10"
+        >
+          <div className="grid gap-8 border-b border-[#E5ECE6] pb-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#EEF4EF] px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-[#1B4332]">
+                About MARG
+              </span>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#1B4332] sm:text-3xl">
+                Transparent highway planning grounded in spatial truth &amp; Indian environmental law.
+              </h2>
+            </div>
+            <p className="text-sm leading-6 text-[#59645C]">
+              MARG (Multi-objective Alignment &amp; Regulatory Governance) is an open decision-support platform built for planners, MoEFCC appraisal committees, NHAI, and citizens. It bridges the gap between raw GIS terrain layers, lengthy DPR PDFs, and statutory clearance compliance.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {aboutCapabilities.map((cap, idx) => {
+              const CapIcon = cap.icon;
+              return (
+                <motion.div
+                  key={cap.title}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ type: "spring", stiffness: 250, damping: 24, delay: idx * 0.07 }}
+                  whileHover={{ y: -4 }}
+                  className="rounded-2xl border border-[#E2EAE3] bg-[#F7F5F0]/70 p-5 transition-colors hover:border-[#2D6A4F]/40 hover:bg-[#EEF4EF]/60"
+                >
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#1B4332] text-[#F7F5F0] shadow-sm">
+                    <CapIcon className="size-5" />
+                  </div>
+                  <h3 className="mt-4 text-sm font-semibold text-[#1B4332]">{cap.title}</h3>
+                  <p className="mt-2 text-xs leading-5 text-[#59645C]">{cap.detail}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
+
+        <footer className="mt-12 flex flex-col gap-2 border-t border-[#D9DDD3] pt-6 text-xs leading-5 text-[#5c6b60] sm:flex-row sm:justify-between">
           <span>Public planning preview — final routes require on-ground surveys and official approvals.</span>
           <span>MARG · Smarter, greener roads for India</span>
         </footer>

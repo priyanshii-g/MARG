@@ -4038,24 +4038,24 @@ body:has(.marg-home) {
 }
 
 .eia-tab-btn.active {
-  border-bottom: 2px solid #10b981 !important;
-  color: #ffffff !important;
-  background: rgba(38, 54, 45, 0.45) !important;
-  font-weight: 600 !important;
+  border-bottom: 2px solid #1B4332 !important;
+  color: #1B4332 !important;
+  background: #EEF4EF !important;
+  font-weight: 700 !important;
 }
 
 .eia-spec-card {
-  background-color: #1a251f !important;
-  border: 1px solid #334438 !important;
-  border-radius: 6px !important;
+  background-color: #FAF9F6 !important;
+  border: 1px solid #D8E8DD !important;
+  border-radius: 10px !important;
 }
 
 .eia-input {
-  background-color: #131b17 !important;
-  border: 1px solid #384b3e !important;
-  border-radius: 5px !important;
-  color: #f1f5f9 !important;
-  padding: 8px 12px !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #CBD2C8 !important;
+  border-radius: 8px !important;
+  color: #1C2420 !important;
+  padding: 9px 12px !important;
   font-size: 13px !important;
   line-height: 1.4 !important;
   width: 100% !important;
@@ -4064,8 +4064,8 @@ body:has(.marg-home) {
 }
 
 .eia-input:focus {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 1px #10b981 !important;
+  border-color: #1B4332 !important;
+  box-shadow: 0 0 0 2px rgba(27, 67, 50, 0.14) !important;
   outline: none !important;
 }
 
@@ -4077,7 +4077,7 @@ body:has(.marg-home) {
   font-weight: 600 !important;
   letter-spacing: 0.04em !important;
   text-transform: uppercase !important;
-  color: #9cb5a3 !important;
+  color: #2D6A4F !important;
   margin-bottom: 6px !important;
 }
 
@@ -4085,7 +4085,7 @@ body:has(.marg-home) {
   font-size: 10px !important;
   font-weight: 400 !important;
   text-transform: none !important;
-  color: #6d8574 !important;
+  color: #59645C !important;
   letter-spacing: normal !important;
 }
 

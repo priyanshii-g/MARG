@@ -27,7 +27,7 @@ export function OnboardingSetupCard({
   step = 1,
   totalSteps = 3,
   onContinue,
-  continueLabel = "Apply & Proceed to Specs",
+  continueLabel = "Apply Appraisal Profile",
   imageUrl = "https://assets.watermelon.sh/hero-20-bg.avif",
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -48,26 +48,26 @@ export function OnboardingSetupCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring}
-      className="overflow-hidden rounded-2xl border border-emerald-700/60 bg-[#0e1a14] shadow-2xl"
+      className="overflow-hidden rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] shadow-sm"
     >
       <div className="grid md:grid-cols-[1.35fr_0.65fr]">
         <div className="p-6 sm:p-7 space-y-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="rounded-full bg-emerald-950/90 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-300 border border-emerald-600/50">
+            <span className="rounded-full bg-[#EEF4EF] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#1B4332] border border-[#D8E8DD]">
               Step {step} of {totalSteps} · EIA Setup
             </span>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold tracking-tight text-white">{title}</h3>
-            <p className="mt-1 text-xs leading-relaxed text-slate-300">{subtitle}</p>
+            <h3 className="text-xl font-semibold tracking-tight text-[#1B4332]">{title}</h3>
+            <p className="mt-1 text-xs leading-relaxed text-[#59645C]">{subtitle}</p>
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-300 mb-2">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#2D6A4F] mb-2">
               Primary Regulatory Focus
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {focusOptions.map((opt) => {
                 const active = selectedFocus === opt.id;
                 return (
@@ -75,13 +75,13 @@ export function OnboardingSetupCard({
                     key={opt.id}
                     type="button"
                     onClick={() => onFocusChange?.(opt.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-all border ${
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all border ${
                       active
-                        ? "bg-emerald-700 text-white border-emerald-400 shadow-md"
-                        : "bg-[#14231b] text-slate-300 border-slate-700 hover:border-emerald-600/60"
+                        ? "bg-[#1B4332] text-[#F7F5F0] border-[#1B4332] shadow-sm"
+                        : "bg-[#FAF9F6] text-[#1C2420] border-[#D9DDD3] hover:border-[#2D6A4F]"
                     }`}
                   >
-                    {active && <CheckCircle2 className="size-3.5 text-emerald-200" />}
+                    {active && <CheckCircle2 className="size-3.5 text-emerald-300" />}
                     {opt.label}
                   </button>
                 );
@@ -91,19 +91,19 @@ export function OnboardingSetupCard({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div ref={dropdownRef} className="relative">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-300 mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#2D6A4F] mb-1.5">
                 Corridor Package Scale
               </label>
               <button
                 type="button"
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-[#14231b] px-3 py-2.5 text-xs font-medium text-white hover:border-emerald-500/70"
+                className="flex w-full items-center justify-between rounded-lg border border-[#CBD2C8] bg-[#FAF9F6] px-3.5 py-2.5 text-xs font-medium text-[#1C2420] hover:border-[#2D6A4F]"
               >
                 <span>{selectedScale || scaleOptions[0]}</span>
-                <ChevronDown className={`size-4 text-slate-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`size-4 text-[#59645C] transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {dropdownOpen && (
-                <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-lg border border-emerald-700/70 bg-[#101e17] py-1 shadow-xl">
+                <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-lg border border-[#D8E8DD] bg-[#FFFFFF] py-1 shadow-lg">
                   {scaleOptions.map((opt) => (
                     <button
                       key={opt}
@@ -112,10 +112,10 @@ export function OnboardingSetupCard({
                         onScaleChange?.(opt);
                         setDropdownOpen(false);
                       }}
-                      className="flex w-full items-center justify-between px-3 py-2 text-left text-xs text-slate-200 hover:bg-emerald-900/50"
+                      className="flex w-full items-center justify-between border-0 bg-transparent px-3.5 py-2 text-left text-xs text-[#1C2420] hover:bg-[#EEF4EF]"
                     >
                       <span>{opt}</span>
-                      {selectedScale === opt && <Check className="size-3.5 text-emerald-400" />}
+                      {selectedScale === opt && <Check className="size-3.5 text-[#1B4332]" />}
                     </button>
                   ))}
                 </div>
@@ -123,7 +123,7 @@ export function OnboardingSetupCard({
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-300 mb-1.5">
+              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#2D6A4F] mb-1.5">
                 Preparing Agency / Role
               </label>
               <input
@@ -131,7 +131,7 @@ export function OnboardingSetupCard({
                 value={role}
                 onChange={(e) => onRoleChange?.(e.target.value)}
                 placeholder="e.g., NHAI PIU / NABET EIA Consultant"
-                className="w-full rounded-lg border border-slate-700 bg-[#14231b] px-3 py-2.5 text-xs text-white placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-lg border border-[#CBD2C8] bg-[#FAF9F6] px-3.5 py-2.5 text-xs text-[#1C2420] placeholder:text-[#8A968D] focus:border-[#1B4332] focus:outline-none"
               />
             </div>
           </div>
@@ -141,7 +141,7 @@ export function OnboardingSetupCard({
               <button
                 type="button"
                 onClick={onContinue}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500 transition-colors shadow-sm"
+                className="rounded-lg bg-[#1B4332] px-5 py-2.5 text-xs font-semibold text-[#F7F5F0] hover:bg-[#24523E] transition-colors shadow-sm border-0"
               >
                 {continueLabel}
               </button>
@@ -149,13 +149,13 @@ export function OnboardingSetupCard({
           )}
         </div>
 
-        <div className="relative hidden md:block min-h-[240px] border-l border-emerald-800/50">
-          <img src={imageUrl} alt="Botanical corridor preview" className="h-full w-full object-cover opacity-85" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09120d] via-[#09120d]/40 to-transparent p-5 flex flex-col justify-end">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+        <div className="relative hidden md:block min-h-[240px] border-l border-[#D8E8DD]">
+          <img src={imageUrl} alt="Botanical corridor preview" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1B4332]/90 via-[#1B4332]/30 to-transparent p-5 flex flex-col justify-end">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-200">
               Evidence-First Drafting
             </span>
-            <p className="mt-1 text-xs leading-relaxed text-slate-200">
+            <p className="mt-1 text-xs leading-relaxed text-[#F7F5F0]">
               Every factual claim is bound to deterministic GIS layers, page-indexed DPR excerpts, and MoEFCC standards.
             </p>
           </div>

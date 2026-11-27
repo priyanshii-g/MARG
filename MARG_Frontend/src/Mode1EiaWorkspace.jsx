@@ -304,31 +304,31 @@ export default function Mode1EiaWorkspace({ onHome }) {
   const gisCoverage = getGisCoverage(findings);
   const activeTabMeta = SPEC_TABS.find((t) => t.id === activeSpecTab) || SPEC_TABS[0];
 
-  return <main className="marg-home min-h-screen bg-[#17211d] text-[#e7ece7]">
-    <header className="flex items-center justify-between border-b border-[#34443a] bg-[#19241f] px-6 py-4 sm:px-10">
+  return <main className="min-h-screen bg-[#F7F5F0] text-[#1C2420] antialiased">
+    <header className="flex items-center justify-between border-b border-[#D9DDD3] bg-[#FFFFFF]/95 px-6 py-4 backdrop-blur-sm sm:px-10">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded bg-[#294b3b] text-sm font-bold text-white shadow-sm">M</div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#1B4332] text-sm font-bold text-[#F7F5F0] shadow-sm">M</div>
         <div>
-          <p className="text-sm font-semibold tracking-[0.14em] text-[#edf1ed]">MARG · STATUTORY EIA</p>
-          <p className="text-xs text-[#8ca091]">Environmental Impact Assessment report workspace</p>
+          <p className="text-sm font-semibold tracking-[0.14em] text-[#1B4332]">MARG · STATUTORY EIA</p>
+          <p className="text-xs text-[#59645C]">Environmental Impact Assessment report workspace</p>
         </div>
       </div>
-      <button type="button" onClick={onHome} className="rounded border border-[#3a4b40] bg-[#223328] px-3.5 py-1.5 text-xs font-medium text-[#c0d4c6] hover:bg-[#2b4234] hover:text-white transition-colors">
+      <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#1B4332] hover:bg-[#EEF4EF] transition-colors">
         ← All workflows
       </button>
     </header>
 
     <div className="mx-auto max-w-[1600px] w-full px-4 py-8 sm:px-6 lg:px-8">
-      <div className="border-b border-[#34443a] pb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6cb580]">Statutory Decision Support</p>
-        <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-[#f1f5f9] sm:text-3xl">Generate Environmental EIA Report</h1>
-        <p className="mt-2 max-w-3xl text-xs leading-5 text-[#9ab0a1]">
+      <div className="border-b border-[#D8E8DD] pb-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D6A4F]">Statutory Decision Support</p>
+        <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-[#1B4332] sm:text-3xl">Generate Environmental EIA Report</h1>
+        <p className="mt-2 max-w-3xl text-xs leading-5 text-[#59645C]">
           Integrates Mode 1 GIS spatial screening, verified statutory acts (FCA 1980, EPA 1986, CPCB standards), and operator DPR specifications to draft an evidence-grounded EIA report.
         </p>
       </div>
 
       {(message || error) && (
-        <div className={`mt-5 border px-4 py-3 text-xs rounded ${error ? "border-[#6b352b] bg-[#321c19] text-[#fca5a5]" : "border-[#356143] bg-[#1b2f23] text-[#86efac]"}`} role={error ? "alert" : "status"}>
+        <div className={`mt-5 border px-4 py-3 text-xs rounded ${error ? "border-rose-300 bg-rose-50 text-rose-800" : "border-[#B8D0BF] bg-[#E9F2EC] text-[#1B4332]"}`} role={error ? "alert" : "status"}>
           {error || message}
         </div>
       )}
@@ -354,12 +354,12 @@ export default function Mode1EiaWorkspace({ onHome }) {
       </div>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]">
-        <div className="space-y-6 rounded-lg border border-[#34443a] bg-[#1e2a24] p-5 sm:p-6 shadow-sm">
+        <div className="space-y-6 rounded-lg border border-[#D8E8DD] bg-[#FFFFFF] p-5 sm:p-6 shadow-sm">
           {/* Section 1: Route Selection */}
           <div>
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-[#edf1ed]">1. Select Saved Alignment</h2>
-              <button type="button" onClick={refreshRoutes} className="text-xs font-medium text-[#7cc892] hover:underline">Refresh routes</button>
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-[#1B4332]">1. Select Saved Alignment</h2>
+              <button type="button" onClick={refreshRoutes} className="text-xs font-medium text-[#1B4332] rounded-lg border border-[#D8E8DD] bg-[#FAF9F6] px-3.5 py-1.5 hover:bg-[#EEF4EF] transition-colors">Refresh routes</button>
             </div>
             <label className="mt-2 block">
               <select
@@ -377,24 +377,24 @@ export default function Mode1EiaWorkspace({ onHome }) {
             </label>
 
             {selectedRoute ? (
-              <div className="mt-3 grid gap-3 border-t border-[#2e3e34] pt-3 sm:grid-cols-2 text-xs">
+              <div className="mt-3 grid gap-3 border-t border-[#E5ECE6] pt-3 sm:grid-cols-2 text-xs">
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#799080]">Route ID</p>
-                  <p className="mt-0.5 break-all font-mono text-[11px] text-[#cbd5e1]">{selectedRoute.routeId}</p>
+                  <p className="mt-0.5 break-all font-mono text-[11px] text-[#2A352E]">{selectedRoute.routeId}</p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#799080]">Corridor Metrics</p>
-                  <p className="mt-0.5 text-xs text-[#cbd5e1]">{summary.routeLengthKm ?? "—"} km · {selectedRoute.facilityMode || "Road"} · {selectedRoute.regionId || "Region unspecified"}</p>
+                  <p className="mt-0.5 text-xs text-[#2A352E]">{summary.routeLengthKm ?? "—"} km · {selectedRoute.facilityMode || "Road"} · {selectedRoute.regionId || "Region unspecified"}</p>
                 </div>
                 <div className="sm:col-span-2">
                   <p className="text-[10px] uppercase tracking-wider text-[#799080]">Stored GIS Evidence</p>
-                  <p className="mt-0.5 text-xs text-[#cbd5e1]">{findings.length} structured observations saved · {selectedRoute.coordinates?.length || 0} route vertices</p>
+                  <p className="mt-0.5 text-xs text-[#2A352E]">{findings.length} structured observations saved · {selectedRoute.coordinates?.length || 0} route vertices</p>
                 </div>
-                <div className="sm:col-span-2 border-t border-[#2e3e34] pt-2">
+                <div className="sm:col-span-2 border-t border-[#E5ECE6] pt-2">
                   <p className="text-[10px] uppercase tracking-wider text-[#799080]">Environmental Receptor Coverage</p>
                   <ul className="mt-1.5 grid gap-1 text-[11px] sm:grid-cols-2">
                     {gisCoverage.topics.map((topic) => (
-                      <li key={topic.label} className={topic.present ? "text-[#86efac]" : "text-[#f87171]"}>
+                      <li key={topic.label} className={topic.present ? "text-[#1B4332]" : "text-[#f87171]"}>
                         {topic.present ? "✓ Included" : "⚠ Not observed"} · {topic.label}
                       </li>
                     ))}
@@ -402,15 +402,15 @@ export default function Mode1EiaWorkspace({ onHome }) {
                 </div>
               </div>
             ) : (
-              <p className="mt-3 border border-dashed border-[#34443a] p-4 text-xs leading-5 text-[#799080]">
+              <p className="mt-3 border border-dashed border-[#D8E8DD] p-4 text-xs leading-5 text-[#799080]">
                 No saved routes found. Generate an alignment in Mode 1, then choose <strong>Save generated route for EIA</strong>.
               </p>
             )}
           </div>
 
           {/* Section 2: Project Identity */}
-          <div className="border-t border-[#2e3e34] pt-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#edf1ed]">2. Project Identity & Administrative Details</h2>
+          <div className="border-t border-[#E5ECE6] pt-5">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-[#1B4332]">2. Project Identity & Administrative Details</h2>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="eia-label">
@@ -447,17 +447,17 @@ export default function Mode1EiaWorkspace({ onHome }) {
           </div>
 
           {/* Section 3: Guided DPR Specifications */}
-          <div className="border-t border-[#2e3e34] pt-5">
+          <div className="border-t border-[#E5ECE6] pt-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#edf1ed]">3. Guided DPR & Engineering Parameters</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#1B4332]">3. Guided DPR & Engineering Parameters</h2>
                 <p className="mt-0.5 text-[11px] text-[#8fa394]">Populate project specifications from the Feasibility Study or Detailed Project Report.</p>
               </div>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setSpecs(DEFAULT_SPECS)}
-                  className="rounded border border-[#405649] bg-[#223529] px-3 py-1.5 text-xs font-medium text-[#a7d7b5] hover:bg-[#2b4234] hover:text-white transition-all shadow-sm"
+                  className="rounded border border-[#405649] bg-[#223529] px-3 py-1.5 text-xs font-medium text-[#a7d7b5] hover:bg-[#2b4234] hover:text-[#1B4332] transition-all shadow-sm"
                   title="Populates realistic 4-lane NH-29 Sildharampur RF sample DPR data"
                 >
                   Load Sample DPR Preset
@@ -465,7 +465,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
                 <button
                   type="button"
                   onClick={() => setSpecs(BLANK_SPECS)}
-                  className="rounded border border-[#3b4e41] bg-transparent px-3 py-1.5 text-xs font-medium text-[#94a3b8] hover:bg-[#202c26] hover:text-white transition-all"
+                  className="rounded border border-[#3b4e41] bg-transparent px-3 py-1.5 text-xs font-medium text-[#94a3b8] hover:bg-[#EEF4EF] hover:text-[#1B4332] transition-all"
                 >
                   Clear Fields
                 </button>
@@ -488,7 +488,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
 
             {/* Tab Body */}
             <div className="eia-spec-card mt-3 p-4">
-              <p className="mb-3.5 border-b border-[#2d3d33] pb-2 text-[11px] text-[#8fa394]">
+              <p className="mb-3.5 border-b border-[#D8E8DD] pb-2 text-[11px] text-[#8fa394]">
                 {activeTabMeta.subtitle}
               </p>
 
@@ -959,7 +959,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
             </div>
 
             {/* Optional Free-form Remarks */}
-            <div className="mt-4 pt-3 border-t border-[#2e3e34]">
+            <div className="mt-4 pt-3 border-t border-[#E5ECE6]">
               <label className="eia-label">
                 <span>Additional Project / Geological Remarks (Optional)</span>
                 <span className="eia-hint">Appended to report synthesis</span>
@@ -990,78 +990,78 @@ export default function Mode1EiaWorkspace({ onHome }) {
 
         {/* Aside */}
         <aside className="space-y-4">
-          <section className="rounded-lg border border-[#34443a] bg-[#1e2a24] p-5 shadow-sm">
+          <section className="rounded-lg border border-[#D8E8DD] bg-[#FFFFFF] p-5 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-[#edf1ed]">Evidence Register</h2>
-              <span className="font-mono text-[10px] text-[#86efac] bg-[#162e20] px-2 py-0.5 rounded border border-[#2b5939]">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-[#1B4332]">Evidence Register</h2>
+              <span className="font-mono text-[10px] text-[#1B4332] bg-[#EEF4EF] px-2 py-0.5 rounded border border-[#D8E8DD]">
                 {findings.length} GIS Records
               </span>
             </div>
 
             {selectedRoute && (
-              <div className="mt-3 rounded border border-[#2d3f33] bg-[#15201b] p-3 text-xs space-y-1.5">
+              <div className="mt-3 rounded border border-[#D8E8DD] bg-[#FAF9F6] p-3 text-xs space-y-1.5">
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-[#889d8e]">Screened Alignment:</span>
-                  <span className="font-semibold text-[#e2e8f0] truncate max-w-[200px]" title={selectedRoute.projectName}>{selectedRoute.projectName}</span>
+                  <span className="text-[#59645C]">Screened Alignment:</span>
+                  <span className="font-semibold text-[#1C2420] truncate max-w-[200px]" title={selectedRoute.projectName}>{selectedRoute.projectName}</span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-[#889d8e]">Corridor Length:</span>
-                  <span className="font-mono font-bold text-[#86efac]">{summary.routeLengthKm ?? "—"} km</span>
+                  <span className="text-[#59645C]">Corridor Length:</span>
+                  <span className="font-mono font-bold text-[#1B4332]">{summary.routeLengthKm ?? "—"} km</span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-[#889d8e]">Forest Exposure:</span>
-                  <span className="font-mono text-[#fde047]">{summary.forestKm ? `${summary.forestKm} km` : "2.68 km screened"}</span>
+                  <span className="text-[#59645C]">Forest Exposure:</span>
+                  <span className="font-mono text-[#B45309]">{summary.forestKm ? `${summary.forestKm} km` : "2.68 km screened"}</span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-[#889d8e]">Cross-Drainage:</span>
-                  <span className="font-mono text-[#cbd5e1]">{specs.crossDrainageCulverts || "14 culverts / 2 bridges"}</span>
+                  <span className="text-[#59645C]">Cross-Drainage:</span>
+                  <span className="font-mono text-[#2A352E]">{specs.crossDrainageCulverts || "14 culverts / 2 bridges"}</span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-[#889d8e]">Protected Area / ESZ:</span>
-                  <span className="font-mono text-[#86efac]">0 km Core Encroachment</span>
+                  <span className="text-[#59645C]">Protected Area / ESZ:</span>
+                  <span className="font-mono text-[#1B4332]">0 km Core Encroachment</span>
                 </div>
               </div>
             )}
 
-            <ul className="mt-3.5 space-y-2 text-xs leading-5 text-[#9ab0a1]">
+            <ul className="mt-3.5 space-y-2 text-xs leading-5 text-[#59645C]">
               <li className="flex items-start gap-2">
-                <span className="text-[#86efac] font-bold">✓</span>
+                <span className="text-[#1B4332] font-bold">✓</span>
                 <span>Saved Mode 1 GIS observations & spatial metric limits</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#86efac] font-bold">✓</span>
+                <span className="text-[#1B4332] font-bold">✓</span>
                 <span>Operator-supplied DPR engineering and ecological metrics</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#86efac] font-bold">✓</span>
+                <span className="text-[#1B4332] font-bold">✓</span>
                 <span>Environmental documents from indexed knowledge repository</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#86efac] font-bold">✓</span>
+                <span className="text-[#1B4332] font-bold">✓</span>
                 <span>Statutory applicability matrices (EIA 2006, FCA 1980, EPA 1986)</span>
               </li>
             </ul>
             {library && (
-              <p className="mt-4 border-t border-[#2e3e34] pt-3 text-[11px] text-[#788e80]">
+              <p className="mt-4 border-t border-[#E5ECE6] pt-3 text-[11px] text-[#59645C]">
                 Knowledge library: {library.documentCount} documents · {library.chunkCount} searchable passages
               </p>
             )}
           </section>
 
           {job && (
-            <section className="rounded-lg border border-[#34443a] bg-[#1e2a24] p-5 shadow-sm">
+            <section className="rounded-lg border border-[#D8E8DD] bg-[#FFFFFF] p-5 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#edf1ed]">Report Job</h2>
-                <span className={`rounded px-2 py-0.5 font-mono text-[10px] font-bold ${job.state === "COMPLETED" ? "bg-emerald-950 text-emerald-300 border border-emerald-500" : job.state === "REJECTED" || job.state === "FAILED" ? "bg-rose-950 text-rose-300 border border-rose-500" : "bg-amber-950 text-amber-300 border border-amber-500"}`}>{job.state}</span>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#1B4332]">Report Job</h2>
+                <span className={`rounded px-2 py-0.5 font-mono text-[10px] font-bold ${job.state === "COMPLETED" ? "bg-[#E9F2EC] text-[#1B4332] border border-[#B8D0BF]" : job.state === "REJECTED" || job.state === "FAILED" ? "bg-rose-50 text-rose-800 border border-rose-300" : "bg-amber-50 text-amber-800 border border-amber-300"}`}>{job.state}</span>
               </div>
-              <p className="mt-2.5 break-all font-mono text-xs text-[#9ab0a1]">{job.jobId}</p>
-              {job.pageCount != null && <p className="mt-1.5 text-xs text-[#cbd5e1] font-semibold">{job.pageCount} pages generated</p>}
+              <p className="mt-2.5 break-all font-mono text-xs text-[#59645C]">{job.jobId}</p>
+              {job.pageCount != null && <p className="mt-1.5 text-xs text-[#2A352E] font-semibold">{job.pageCount} pages generated</p>}
               {job.state === "COMPLETED" && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   <ShimmerButton type="button" onClick={() => download("pdf")} className="px-4 py-2 text-xs">
                     Download PDF
                   </ShimmerButton>
-                  <button type="button" onClick={() => download("document")} className="rounded-lg border border-[#3a4b40] bg-transparent px-4 py-2 text-xs font-medium text-[#c0d4c6] hover:bg-[#202c26] hover:text-white transition-colors">
+                  <button type="button" onClick={() => download("document")} className="rounded-lg border border-[#CBD2C8] bg-transparent px-4 py-2 text-xs font-medium text-[#1B4332] hover:bg-[#EEF4EF] hover:text-[#1B4332] transition-colors">
                     Download DOCX
                   </button>
                 </div>
@@ -1069,8 +1069,8 @@ export default function Mode1EiaWorkspace({ onHome }) {
             </section>
           )}
 
-          <div className="rounded-lg border border-[#2d3d33] bg-[#19241f] p-4 text-[11px] leading-relaxed text-[#7c9484]">
-            <p className="font-semibold uppercase tracking-wider text-[#8da595] mb-1">Desktop Decision Support Disclaimer</p>
+          <div className="rounded-lg border border-[#D8E8DD] bg-[#FAF9F6] p-4 text-[11px] leading-relaxed text-[#59645C]">
+            <p className="font-semibold uppercase tracking-wider text-[#1B4332] mb-1">Desktop Decision Support Disclaimer</p>
             This system provides preliminary desktop screening and statutory evidence synthesis. It does not substitute for mandatory statutory EIA clearance, on-ground seasonal biodiversity fieldwork, or competent regulatory authority decisions.
           </div>
         </aside>

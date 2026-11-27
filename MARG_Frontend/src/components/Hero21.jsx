@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Globe2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 
 function LogoIcon({ className = "size-8" }) {
@@ -10,21 +10,20 @@ function LogoIcon({ className = "size-8" }) {
       className={className}
       aria-hidden="true"
     >
-      <rect width="36" height="36" rx="6" fill="currentColor" fillOpacity="0.14" />
+      <rect width="36" height="36" rx="8" fill="#1B4332" />
       <path
         d="M9 26C12.5 21 15.5 14 18 10C20.5 14 23.5 21 27 26"
-        stroke="currentColor"
+        stroke="#F7F5F0"
         strokeWidth="2.4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M14 26L18 18.5L22 26"
-        stroke="currentColor"
+        stroke="#A7F3D0"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeOpacity="0.7"
       />
     </svg>
   );
@@ -33,107 +32,84 @@ function LogoIcon({ className = "size-8" }) {
 const sectionVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.13, delayChildren: 0.08 },
+    transition: { staggerChildren: 0.1, delayChildren: 0.05 },
   },
 };
 
 const navWrapVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07 } },
+  visible: { transition: { staggerChildren: 0.06 } },
 };
 
 const navItemVariants = {
-  hidden: { opacity: 0, y: -16, filter: "blur(6px)" },
+  hidden: { opacity: 0, y: -12, filter: "blur(4px)" },
   visible: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { type: "spring", duration: 0.55, bounce: 0.2 },
+    transition: { type: "spring", duration: 0.5, bounce: 0.2 },
   },
 };
 
 const bgVariants = {
-  hidden: { opacity: 0, scale: 1.1, filter: "blur(24px)" },
+  hidden: { opacity: 0, scale: 1.06, filter: "blur(16px)" },
   visible: {
     opacity: 1,
     scale: 1,
     filter: "blur(0px)",
-    transition: { duration: 1.6, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-const glowVariants = {
-  hidden: { opacity: 0, scale: 0.4 },
-  visible: {
-    opacity: [0, 0.55, 0.35],
-    scale: [0.4, 1.15, 1],
-    transition: { duration: 1.8, ease: "easeOut", times: [0, 0.6, 1] },
+    transition: { duration: 1.4, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const descVariants = {
-  hidden: { opacity: 0, y: 22, filter: "blur(10px)" },
+  hidden: { opacity: 0, y: 18, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { type: "spring", duration: 0.8, bounce: 0 },
+    transition: { type: "spring", duration: 0.75, bounce: 0 },
   },
 };
 
 const ctaVariants = {
-  hidden: { opacity: 0, scale: 0.82, filter: "blur(8px)" },
+  hidden: { opacity: 0, scale: 0.9, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     scale: 1,
     filter: "blur(0px)",
-    transition: { type: "spring", duration: 0.7, bounce: 0.3 },
+    transition: { type: "spring", duration: 0.65, bounce: 0.25 },
   },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, x: -40, rotate: -6, filter: "blur(14px)" },
+  hidden: { opacity: 0, x: -30, filter: "blur(10px)" },
   visible: {
     opacity: 1,
     x: 0,
-    rotate: 0,
     filter: "blur(0px)",
-    transition: { type: "spring", duration: 1.1, bounce: 0.22 },
-  },
-};
-
-const trustVariants = {
-  hidden: { opacity: 0, rotateX: 90, y: 20 },
-  visible: {
-    opacity: 1,
-    rotateX: 0,
-    y: 0,
-    transition: { type: "spring", duration: 0.8, bounce: 0.15, delay: 0.2 },
+    transition: { type: "spring", duration: 0.9, bounce: 0.2 },
   },
 };
 
 const charContainerVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.03, delayChildren: 0 } },
+  visible: { transition: { staggerChildren: 0.025, delayChildren: 0 } },
 };
 
 const charVariants = {
-  hidden: { opacity: 0, y: 40, rotateZ: -8, filter: "blur(8px)" },
+  hidden: { opacity: 0, y: 30, rotateZ: -5, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     y: 0,
     rotateZ: 0,
     filter: "blur(0px)",
-    transition: { type: "spring", duration: 0.55, bounce: 0.25 },
+    transition: { type: "spring", duration: 0.5, bounce: 0.22 },
   },
 };
 
 function DropCharsLine({ text, className = "" }) {
   return (
-    <motion.span
-      className={`block overflow-visible ${className}`}
-      variants={charContainerVariants}
-    >
+    <motion.span className={`block overflow-visible ${className}`} variants={charContainerVariants}>
       {text.split("").map((ch, i) => (
         <motion.span
           key={i}
@@ -148,183 +124,119 @@ function DropCharsLine({ text, className = "" }) {
   );
 }
 
-function FloatingCard({ previewImage, previewLabel, onClick, variants }) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      variants={variants}
-      animate={{ y: [0, -10, 0] }}
-      transition={{ duration: 4, ease: "easeInOut", repeat: Infinity, repeatType: "loop" }}
-      className="group absolute bottom-24 left-7 z-20 hidden w-[230px] cursor-pointer rounded-md bg-emerald-950/30 p-1.5 text-left shadow-[0_20px_50px_rgba(6,78,59,0.22),inset_0_0_0_1px_rgba(255,255,255,0.22)] backdrop-blur-md transition-[background-color,box-shadow] duration-300 ease-out hover:bg-emerald-950/40 hover:shadow-[0_28px_60px_rgba(6,78,59,0.32),inset_0_0_0_1px_rgba(255,255,255,0.3)] active:scale-[0.96] sm:left-11 md:block lg:left-14"
-    >
-      <img
-        src={previewImage}
-        alt=""
-        className="h-[6.2rem] w-full rounded-sm object-cover object-center shadow-[0_0_0_1px_rgba(255,255,255,0.1)]"
-      />
-      <span className="mt-2 flex min-h-7 items-center justify-between gap-3 px-1 text-sm font-normal text-white">
-        {previewLabel}
-        <ArrowRight className="size-4 -rotate-45 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-      </span>
-    </motion.button>
-  );
-}
-
 export default function Hero21({
   brandName = "MARG",
   headingLine1 = "Plan Safer Roads.",
   headingLine2 = "Protect Nature.",
   description = "MARG turns multi-layer GIS data, DPR documents, and statutory Indian environmental law into clear, evidence-backed highway intelligence.",
-  primaryCtaLabel = "Explore Workflows",
-  primaryCtaHref = "#modes",
-  languageLabel = "IN · EN",
-  actionLabel = "Launch Project Review",
-  previewLabel = "MARG Mode 2 Studio",
-  trustLabelLine1 = "Built for MoEFCC, NHAI",
-  trustLabelLine2 = "& Public Appraisal",
   backgroundImage = "https://assets.watermelon.sh/hero-20-bg.avif",
-  previewImage = "https://assets.watermelon.sh/hero-20-bg.avif",
   onMode1,
   onMode2,
   onEia,
 }) {
-  const navLinks = [
+  const navButtons = [
     { label: "Route Planner", onClick: onMode1 },
     { label: "Project Review", onClick: onMode2 },
     { label: "EIA Reports", onClick: onEia },
-    { label: "Workflows", href: "#modes" },
   ];
 
   return (
-    <section className="relative isolate min-h-screen overflow-hidden bg-stone-100 font-sans text-emerald-950 antialiased">
+    <section className="relative isolate min-h-[76vh] overflow-hidden bg-[#F7F5F0] font-sans text-[#1B4332] antialiased">
       <motion.div
-        className="relative flex min-h-screen w-full flex-col overflow-hidden px-7 py-4 sm:px-11 lg:px-14"
+        className="relative flex min-h-[76vh] w-full flex-col overflow-hidden px-6 pt-5 pb-36 sm:px-10 lg:px-14"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.25 }}
+        viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
       >
         <motion.img
           variants={bgVariants}
           src={backgroundImage}
           alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-90"
         />
 
-        <motion.div
-          variants={glowVariants}
+        {/* Seamless creamish-beige blend at bottom so dashboard shares one unified background */}
+        <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[70vmin] w-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/30 blur-[80px]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-transparent via-[#F7F5F0]/75 to-[#F7F5F0]"
         />
 
+        {/* Clean Top Navigation Bar — strictly the 3 core workflow buttons */}
         <motion.nav
           variants={navWrapVariants}
-          className="relative z-20 flex min-h-10 w-full items-center justify-between"
+          className="relative z-20 mx-auto flex w-full max-w-6xl items-center justify-between"
         >
           <motion.a
             variants={navItemVariants}
             href="#modes"
-            className="inline-flex min-h-10 items-center gap-2.5 text-lg leading-none font-semibold tracking-[-0.035em] text-emerald-950 transition-[opacity,transform] duration-200 ease-out hover:opacity-80 active:scale-[0.96]"
+            className="inline-flex items-center gap-2.5 text-lg font-bold tracking-[-0.03em] text-[#1B4332] no-underline transition-opacity hover:opacity-80"
           >
-            <LogoIcon className="size-8 text-emerald-900" />
+            <LogoIcon className="size-9" />
             <span>{brandName}</span>
           </motion.a>
 
-          <div className="hidden items-center gap-[3.1rem] lg:flex">
-            {navLinks.map((link) =>
-              link.onClick ? (
-                <motion.button
-                  key={link.label}
-                  type="button"
-                  variants={navItemVariants}
-                  onClick={link.onClick}
-                  className="inline-flex min-h-10 items-center text-sm font-medium text-emerald-950/90 transition-[opacity,transform] duration-200 ease-out hover:opacity-75 active:scale-[0.96]"
-                >
-                  {link.label}
-                </motion.button>
-              ) : (
-                <motion.a
-                  key={link.label}
-                  variants={navItemVariants}
-                  href={link.href}
-                  className="inline-flex min-h-10 items-center text-sm font-medium text-emerald-950/90 transition-[opacity,transform] duration-200 ease-out hover:opacity-75 active:scale-[0.96]"
-                >
-                  {link.label}
-                </motion.a>
-              )
-            )}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <motion.button
-              variants={navItemVariants}
-              type="button"
-              className="hidden min-h-10 items-center gap-1.5 text-sm font-medium text-emerald-950 transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.96] sm:inline-flex"
-            >
-              <Globe2 className="size-4" aria-hidden="true" />
-              {languageLabel}
-              <ChevronDown className="size-4" aria-hidden="true" />
-            </motion.button>
-            <motion.button
-              variants={navItemVariants}
-              type="button"
-              onClick={onMode2}
-              className="group relative inline-flex min-h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-emerald-900 px-5 text-sm font-medium text-amber-50 shadow-[inset_0_1px_4px_2px_rgba(255,255,255,0.2),inset_0_-1px_4px_2px_rgba(0,0,0,0.2)] transition-[background-color,transform,box-shadow] duration-200 ease-out hover:bg-emerald-950 active:scale-[0.96]"
-            >
-              <span className="relative z-10 inline-flex items-center gap-2">
-                {actionLabel}
-                <ArrowRight className="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
-              </span>
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
-              />
-            </motion.button>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {navButtons.map((btn, idx) => (
+              <motion.button
+                key={btn.label}
+                type="button"
+                variants={navItemVariants}
+                onClick={btn.onClick}
+                className={`cursor-pointer rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 border ${
+                  idx === 1
+                    ? "bg-[#1B4332] text-[#F7F5F0] border-[#1B4332] shadow-sm hover:bg-[#24523E]"
+                    : "bg-[#FFFFFF]/80 text-[#1B4332] border-[#1B4332]/20 backdrop-blur-sm hover:bg-[#FFFFFF] hover:border-[#1B4332]/45"
+                }`}
+              >
+                {btn.label}
+              </motion.button>
+            ))}
           </div>
         </motion.nav>
 
-        <div className="relative z-10 flex flex-1 flex-col justify-center pt-14 pb-44 sm:pt-16 md:pb-52 lg:pt-8">
-          <div className="max-w-5xl">
-            <h1 className="max-w-5xl text-[clamp(3.25rem,5.4vw,5.15rem)] leading-[0.94] font-normal tracking-[-0.065em] text-emerald-900">
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center pt-12 pb-16 sm:pt-14">
+          <div className="max-w-3xl">
+            <h1 className="text-[clamp(2.9rem,5vw,4.75rem)] leading-[0.96] font-semibold tracking-[-0.055em] text-[#1B4332]">
               <DropCharsLine text={headingLine1} />
               <DropCharsLine text={headingLine2} />
             </h1>
 
             <motion.p
               variants={descVariants}
-              className="mt-5 max-w-lg text-sm leading-[1.35] font-medium text-pretty text-emerald-950"
+              className="mt-5 max-w-xl text-sm sm:text-base leading-relaxed font-medium text-[#1C2420]/85"
             >
               {description}
             </motion.p>
 
-            <motion.a
-              variants={ctaVariants}
-              href={primaryCtaHref}
-              className="group mt-5 inline-flex min-h-10 items-center border-b border-emerald-950 pb-1 text-base font-medium tracking-[-0.035em] text-emerald-950 transition-[opacity,transform] duration-200 ease-out hover:opacity-75 active:scale-[0.96]"
-            >
-              {primaryCtaLabel}
-              <ArrowRight className="ml-1 size-4 -rotate-45 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </motion.a>
+            <div className="mt-6 flex flex-wrap items-center gap-5">
+              <motion.a
+                variants={ctaVariants}
+                href="#modes"
+                className="group inline-flex items-center gap-2 rounded-full bg-[#1B4332] px-6 py-2.5 text-sm font-semibold text-[#F7F5F0] no-underline shadow-md transition-all hover:bg-[#24523E] hover:shadow-lg"
+              >
+                Explore Workflows
+                <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </motion.a>
+              <motion.a
+                variants={ctaVariants}
+                href="#about"
+                className="group inline-flex items-center gap-1.5 border-b border-[#1B4332]/50 pb-0.5 text-sm font-semibold text-[#1B4332] no-underline transition-opacity hover:opacity-75"
+              >
+                About MARG
+                <ArrowRight className="size-3.5 -rotate-45 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </motion.a>
+            </div>
           </div>
         </div>
 
-        <FloatingCard
-          previewImage={previewImage}
-          previewLabel={previewLabel}
-          onClick={onMode2}
+        <motion.div
           variants={cardVariants}
-        />
-
-        <motion.p
-          variants={trustVariants}
-          style={{ perspective: 600 }}
-          className="absolute right-7 bottom-24 z-20 hidden max-w-[12rem] text-left text-sm leading-snug font-normal text-white drop-shadow-[0_2px_12px_rgba(6,78,59,0.45)] sm:block sm:right-11 md:text-right lg:right-14"
+          className="relative z-10 mx-auto hidden w-full max-w-6xl items-center justify-between text-xs font-medium text-[#1B4332]/75 sm:flex"
         >
-          {trustLabelLine1}
-          <br />
-          {trustLabelLine2}
-        </motion.p>
+          <span>13 GIS Spatial Layers · MoEFCC &amp; NHAI Statutory Standards</span>
+          <span>Preliminary Desktop Decision Support</span>
+        </motion.div>
       </motion.div>
     </section>
   );
