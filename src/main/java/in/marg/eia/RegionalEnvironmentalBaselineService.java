@@ -54,9 +54,13 @@ public class RegionalEnvironmentalBaselineService {
             int count = 0;
             for (Object point : coords) {
                 if (point instanceof List<?> pt && pt.size() >= 2) {
-                    if (pt.get(0) instanceof Number lon && pt.get(1) instanceof Number lat) {
-                        sumLon += lon.doubleValue();
-                        sumLat += lat.doubleValue();
+                    if (pt.get(0) instanceof Number n0 && pt.get(1) instanceof Number n1) {
+                        double val0 = n0.doubleValue();
+                        double val1 = n1.doubleValue();
+                        double actualLon = val0 > 60.0 ? val0 : val1;
+                        double actualLat = val0 <= 60.0 ? val0 : val1;
+                        sumLon += actualLon;
+                        sumLat += actualLat;
                         count++;
                     }
                 }
