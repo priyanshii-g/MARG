@@ -5,7 +5,7 @@
 /* ============================================================================
    MARG — BOTANICAL ATELIER DESIGN SYSTEM
    Warm Alabaster Cream (#F7F5F0) · Porcelain White (#FFFFFF)
-   Deep Botanical Green (#1B4332) · Forest Sage (#1D4635)
+   Deep Botanical Green (#1B4332) · Forest Sage (#143627)
    Typography: Fraunces · Plus Jakarta Sans · IBM Plex Mono
    ============================================================================ */
 
@@ -14,15 +14,15 @@
   --bg-cream: #F7F5F0;
   --bg-linen: #F2EFE8;
   --bg-card: #FFFFFF;
-  --bg-sage-wash: #DCEAE0;
+  --bg-sage-wash: #D1E3D6;
   --bg-sage-tint: #F4F8F5;
   --bg-input: #FAF9F6;
 
   /* Brand Greens */
   --green-deep: #1B4332;
-  --green-forest: #1D4635;
-  --green-sage: #1D4635;
-  --green-leaf: #265B45;
+  --green-forest: #143627;
+  --green-sage: #143627;
+  --green-leaf: #1C4A36;
   --green-soft: #D8E8DD;
   --green-pale: #E9F2EC;
 
@@ -52,7 +52,7 @@
 
   /* Legacy alias tokens for any inline references */
   --primary: #1B4332;
-  --emerald: #1D4635;
+  --emerald: #143627;
   --amber: #A97723;
   --rose: #9E2A2B;
   --cyan: #2F5D7C;
@@ -4034,13 +4034,13 @@ body:has(.marg-home) {
 }
 
 .eia-tab-btn:hover {
-  color: #1D4635 !important;
-  background: #DCEAE0 !important;
+  color: #143627 !important;
+  background: #D1E3D6 !important;
 }
 
 .eia-tab-btn.active {
-  border-bottom: 2px solid #1D4635 !important;
-  color: #1D4635 !important;
+  border-bottom: 2px solid #143627 !important;
+  color: #143627 !important;
   background: #E9F2EC !important;
   font-weight: 700 !important;
   border-radius: 12px 12px 0 0 !important;
@@ -4072,7 +4072,7 @@ body:has(.marg-home) {
 .marg-modern select:focus,
 .marg-modern textarea:focus {
   background-color: #FFFFFF;
-  border-color: #1D4635;
+  border-color: #143627;
   box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
   outline: none;
 }
@@ -4097,7 +4097,7 @@ body:has(.marg-home) {
 }
 
 .eia-input:focus {
-  border-color: #1D4635 !important;
+  border-color: #143627 !important;
   box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.14) !important;
   outline: none !important;
 }
@@ -4110,7 +4110,7 @@ body:has(.marg-home) {
   font-weight: 600 !important;
   letter-spacing: 0.04em !important;
   text-transform: uppercase !important;
-  color: #1D4635 !important;
+  color: #143627 !important;
   margin-bottom: 6px !important;
 }
 

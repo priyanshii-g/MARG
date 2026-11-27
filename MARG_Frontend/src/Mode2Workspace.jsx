@@ -622,10 +622,10 @@ export default function Mode2Workspace({ onHome }) {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-[#D9DDD3] bg-[#FFFFFF]/95 px-6 py-4 backdrop-blur-sm sm:px-10">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#1D4635] text-sm font-bold text-[#F7F5F0]">M</div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#143627] text-sm font-bold text-[#F7F5F0]">M</div>
           <div><p className="text-sm font-semibold tracking-[0.16em]">MARG · MODE 2</p><p className="text-xs text-[#68736b]">Existing project review & GIS screening</p></div>
         </div>
-        <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#1D4635] hover:bg-[#DCEAE0] transition-colors">← All Tools</button>
+        <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">← All Tools</button>
       </header>
 
       <div className="mx-auto max-w-[1720px] px-4 py-6 sm:px-6 lg:px-8">
@@ -641,7 +641,7 @@ export default function Mode2Workspace({ onHome }) {
         </div>
 
         {(notice || error) && (
-          <div className={`mb-5 rounded-lg border px-4 py-3 text-sm font-medium ${error ? "border-rose-500/80 bg-rose-50 text-[#991B1B]" : "border-emerald-500/80 bg-[#E9F2EC] text-[#1D4635]"}`} role={error ? "alert" : "status"}>
+          <div className={`mb-5 rounded-lg border px-4 py-3 text-sm font-medium ${error ? "border-rose-500/80 bg-rose-50 text-[#991B1B]" : "border-emerald-500/80 bg-[#E9F2EC] text-[#143627]"}`} role={error ? "alert" : "status"}>
             {error || notice}
           </div>
         )}
@@ -649,7 +649,7 @@ export default function Mode2Workspace({ onHome }) {
         {/* Workspace Quick-Select & Sample Document Toolbar */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#D8E8DD] bg-[#FFFFFF] p-4 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
           <div className="flex flex-1 items-center gap-3 min-w-[300px]">
-            <label className="text-xs font-bold uppercase tracking-wider text-[#1D4635] whitespace-nowrap">Active Workspace:</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-[#143627] whitespace-nowrap">Active Workspace:</label>
             <select
               value={projectId}
               onChange={(e) => { setProjectId(e.target.value); setAnswer(null); setComparison(null); setError(""); }}
@@ -670,7 +670,7 @@ export default function Mode2Workspace({ onHome }) {
               type="button"
               onClick={() => attachSampleDocument("nh29")}
               disabled={busy || !projectId}
-              className="flex items-center gap-2 rounded-full border border-[#CBE0D1] bg-[#DCEAE0] hover:bg-[#CBE0D1] px-4 py-2.5 text-xs font-semibold text-[#1D4635] hover:bg-[#CBE0D1] transition-all shadow-xs disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full border border-[#BDD6C5] bg-[#D1E3D6] hover:bg-[#BDD6C5] px-4 py-2.5 text-xs font-semibold text-[#143627] hover:bg-[#BDD6C5] transition-all shadow-xs disabled:opacity-50"
             >
               📄 Load NH-29 Comprehensive EIA & EMP Report (Assam Corridor)
             </button>
@@ -678,7 +678,7 @@ export default function Mode2Workspace({ onHome }) {
               type="button"
               onClick={() => attachSampleDocument("pulicat")}
               disabled={busy || !projectId}
-              className="flex items-center gap-2 rounded-full border border-[#D5E2D8] bg-[#FFFFFF] hover:bg-[#F2F7F3] px-3.5 py-2 text-xs font-semibold text-[#2A352E] hover:bg-[#DCEAE0] transition-all shadow-xs disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full border border-[#D5E2D8] bg-[#FFFFFF] hover:bg-[#F2F7F3] px-3.5 py-2 text-xs font-semibold text-[#2A352E] hover:bg-[#D1E3D6] transition-all shadow-xs disabled:opacity-50"
             >
               📄 Load Pulicat Bridge EIA Report
             </button>
@@ -691,16 +691,16 @@ export default function Mode2Workspace({ onHome }) {
             <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-semibold">Project workspaces</h2>
-                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#1D4635] hover:bg-[#DCEAE0] transition-colors">Refresh</button>
+                <button type="button" onClick={() => refreshProjects().catch((e) => setError(e.message))} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">Refresh</button>
               </div>
               <form onSubmit={createProject} className="flex gap-2">
-                <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project / proposal name" className="min-w-0 flex-1 rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-2.5 text-sm outline-none focus:border-[#1D4635] focus:bg-white" />
-                <button disabled={busy || !projectName.trim()} className="rounded-full bg-[#1D4635] px-5 py-2.5 text-sm font-semibold text-[#FFFFFF] hover:bg-[#265B45] transition-colors disabled:opacity-50 border-0" type="submit">New</button>
+                <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Project / proposal name" className="min-w-0 flex-1 rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-2.5 text-sm outline-none focus:border-[#143627] focus:bg-white" />
+                <button disabled={busy || !projectName.trim()} className="rounded-full bg-[#143627] px-5 py-2.5 text-sm font-semibold text-[#FFFFFF] hover:bg-[#1C4A36] transition-colors disabled:opacity-50 border-0" type="submit">New</button>
               </form>
               <div className="mt-4 max-h-72 space-y-1 overflow-auto">
                 {projects.map((project) => (
                   <button type="button" key={project.projectId} onClick={() => { setProjectId(project.projectId); setAnswer(null); setComparison(null); setError(""); }}
-                    className={`block w-full rounded-xl border px-4 py-3 text-left transition-all ${projectId === project.projectId ? "border-[#1D4635]/50 bg-[#DCEAE0] text-[#1D4635] font-semibold shadow-xs" : "border-[#E5ECE6] bg-[#FAF9F6] text-[#4A5950] hover:border-[#C4D6C8] hover:bg-[#FFFFFF]"}`}>
+                    className={`block w-full rounded-xl border px-4 py-3 text-left transition-all ${projectId === project.projectId ? "border-[#143627]/50 bg-[#D1E3D6] text-[#143627] font-semibold shadow-xs" : "border-[#E5ECE6] bg-[#FAF9F6] text-[#4A5950] hover:border-[#C4D6C8] hover:bg-[#FFFFFF]"}`}>
                     <span className="block text-sm font-medium">{project.name}</span>
                     <span className="mt-1 block truncate font-mono text-[10px] text-[#68736B]">{project.projectId}</span>
                   </button>
@@ -717,7 +717,7 @@ export default function Mode2Workspace({ onHome }) {
                   type="button"
                   onClick={() => attachSampleDocument("nh29")}
                   disabled={busy || !projectId}
-                  className="w-full rounded-full border border-[#CBE0D1] bg-[#DCEAE0] hover:bg-[#CBE0D1] px-4 py-2.5 text-xs font-semibold text-[#1D4635] hover:bg-[#CBE0D1] transition-colors shadow-sm disabled:opacity-50 text-left"
+                  className="w-full rounded-full border border-[#BDD6C5] bg-[#D1E3D6] hover:bg-[#BDD6C5] px-4 py-2.5 text-xs font-semibold text-[#143627] hover:bg-[#BDD6C5] transition-colors shadow-sm disabled:opacity-50 text-left"
                 >
                   📄 1-Click: Attach NH-29 Comprehensive EIA Report
                 </button>
@@ -725,7 +725,7 @@ export default function Mode2Workspace({ onHome }) {
                   type="button"
                   onClick={() => attachSampleDocument("pulicat")}
                   disabled={busy || !projectId}
-                  className="w-full rounded-full border border-[#D5E2D8] bg-[#FFFFFF] hover:bg-[#F2F7F3] px-4 py-2.5 text-xs font-semibold text-[#2A352E] hover:bg-[#DCEAE0] transition-colors shadow-sm disabled:opacity-50 text-left"
+                  className="w-full rounded-full border border-[#D5E2D8] bg-[#FFFFFF] hover:bg-[#F2F7F3] px-4 py-2.5 text-xs font-semibold text-[#2A352E] hover:bg-[#D1E3D6] transition-colors shadow-sm disabled:opacity-50 text-left"
                 >
                   📄 1-Click: Attach Pulicat Bridge EIA
                 </button>
@@ -776,7 +776,7 @@ export default function Mode2Workspace({ onHome }) {
                   <div className="flex flex-wrap gap-2">
                     {demoAlignments.map((demo) => (
                       <button key={demo.id} type="button" onClick={() => loadDemoAlignment(demo)}
-                        className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#1D4635] hover:bg-[#DCEAE0] transition-colors">
+                        className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors">
                         {demo.displayName}
                       </button>
                     ))}
@@ -833,7 +833,7 @@ export default function Mode2Workspace({ onHome }) {
                     } catch {}
                   }} rows={5}
                     placeholder="Load a route KML/GeoJSON above, choose a demo corridor, or paste [longitude, latitude] points."
-                    className="mt-2 block w-full rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-3 font-mono text-xs leading-5 outline-none focus:border-[#1D4635] focus:bg-white" />
+                    className="mt-2 block w-full rounded-xl border border-[#CBD2C8] bg-[#FAF9F6] px-4 py-3 font-mono text-xs leading-5 outline-none focus:border-[#143627] focus:bg-white" />
                 </label>
 
                 <div className="flex flex-wrap gap-3">
@@ -892,14 +892,14 @@ export default function Mode2Workspace({ onHome }) {
                 <div className="mt-8 space-y-6 rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1D4635]">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#143627]">
                         Multi-Objective GIS Alternatives · {alternative.existingRoute?.regionDisplayName}
                       </p>
                       <h3 className="mt-1 text-2xl font-bold tracking-tight text-[#1C2420] flex items-center gap-3">
                         <span>{activeStatus.replaceAll("_", " ")}</span>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold font-mono border ${
                           activeStatus === "POTENTIAL_ALTERNATIVE_FOR_REVIEW" || activeStatus === "SUSTAINABLE_BYPASS_CANDIDATE_FOUND"
-                            ? "bg-[#E9F2EC] text-[#1D4635] border-emerald-500 shadow-xs"
+                            ? "bg-[#E9F2EC] text-[#143627] border-emerald-500 shadow-xs"
                             : "bg-amber-50 text-[#B45309] border-amber-500 shadow-xs"
                         }`}>
                           {activeStatus === "POTENTIAL_ALTERNATIVE_FOR_REVIEW" ? "✓ Lower GIS Exposure" : "Advisory Screening"}
@@ -909,7 +909,7 @@ export default function Mode2Workspace({ onHome }) {
                     <button
                       type="button"
                       onClick={downloadAlternative}
-                      className="border border-emerald-600 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#1D4635] hover:bg-[#CBE0D1] hover:text-[#1D4635] rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
+                      className="border border-emerald-600 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#143627] hover:bg-[#BDD6C5] hover:text-[#143627] rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                       Download {activeOpt.optionId} GeoJSON
@@ -933,7 +933,7 @@ export default function Mode2Workspace({ onHome }) {
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1D4635]">
+                            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#143627]">
                               {opt.optionId}
                             </span>
                             <span className="text-xs font-bold text-[#1C2420]">
@@ -943,13 +943,13 @@ export default function Mode2Workspace({ onHome }) {
                           <h4 className="mt-1.5 text-sm font-bold text-[#1C2420] leading-snug">{opt.optionTitle}</h4>
                           <p className="mt-1.5 text-[11px] leading-relaxed text-[#4A5950]">{opt.rationale}</p>
                           <div className="mt-2.5 flex flex-wrap gap-1.5 font-mono text-[10px]">
-                            <span className="rounded bg-[#E9F2EC] px-1.5 py-0.5 text-[#1D4635] border border-emerald-700/50">
+                            <span className="rounded bg-[#E9F2EC] px-1.5 py-0.5 text-[#143627] border border-emerald-700/50">
                               Env {pref.environmentalWeight ?? 1.0}x
                             </span>
                             <span className="rounded bg-sky-50 px-1.5 py-0.5 text-sky-800 border border-sky-200">
                               Social {pref.socialWeight ?? 1.0}x
                             </span>
-                            <span className="rounded bg-[#DCEAE0] px-1.5 py-0.5 text-[#4A5950] border border-[#D9DDD3]">
+                            <span className="rounded bg-[#D1E3D6] px-1.5 py-0.5 text-[#4A5950] border border-[#D9DDD3]">
                               Direct {pref.directnessWeight ?? 1.0}x
                             </span>
                           </div>
@@ -966,7 +966,7 @@ export default function Mode2Workspace({ onHome }) {
                     </div>
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-none">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Candidate Length</span>
-                      <span className="text-xl font-bold text-[#1D4635] mt-1 block">{activeOpt.routeLengthKm ?? "—"} km</span>
+                      <span className="text-xl font-bold text-[#143627] mt-1 block">{activeOpt.routeLengthKm ?? "—"} km</span>
                     </div>
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 text-center shadow-none">
                       <span className="text-[11px] text-[#68736B] uppercase block font-bold tracking-wider">Length Delta</span>
@@ -978,8 +978,8 @@ export default function Mode2Workspace({ onHome }) {
 
                   {activeComparisons.filter(item => !item.metric?.toLowerCase().includes("nodata")).length > 0 && (
                     <div className="border border-[#D9DDD3] rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(45,106,79,0.06)] bg-[#FAF9F6]">
-                      <div className="bg-[#DCEAE0] px-4 py-3.5 border-b border-[#D9DDD3] flex flex-wrap items-center justify-between gap-2">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-[#1D4635]">
+                      <div className="bg-[#D1E3D6] px-4 py-3.5 border-b border-[#D9DDD3] flex flex-wrap items-center justify-between gap-2">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-[#143627]">
                           Layer-by-Layer Environmental Indicators · {activeOpt.optionId}
                         </h4>
                         <span className="text-[11px] text-[#4A5950] font-medium">
@@ -1000,21 +1000,21 @@ export default function Mode2Workspace({ onHome }) {
                             {activeComparisons
                               .filter((item) => !item.metric?.toLowerCase().includes("nodata"))
                               .map((item) => (
-                                <tr key={item.metric} className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                                <tr key={item.metric} className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                   <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                     {formatIndicatorName(item.metric)}
-                                    <span className="block font-mono text-[10px] text-[#1D4635] mt-0.5">{item.metric}</span>
+                                    <span className="block font-mono text-[10px] text-[#143627] mt-0.5">{item.metric}</span>
                                   </td>
                                   <td className="py-3 px-3.5 text-[#2A352E] font-medium">
                                     {item.existingValue} <span className="text-[#68736B] font-normal">{item.units}</span>
                                   </td>
-                                  <td className="py-3 px-3.5 font-bold text-[#1D4635]">
-                                    {item.candidateValue} <span className="text-[#1D4635]/80 font-normal">{item.units}</span>
+                                  <td className="py-3 px-3.5 font-bold text-[#143627]">
+                                    {item.candidateValue} <span className="text-[#143627]/80 font-normal">{item.units}</span>
                                   </td>
                                   <td className="py-3 px-3.5">
                                     <span className={`px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm ${
                                       item.status.includes("LOWER")
-                                        ? "bg-[#E9F2EC] text-[#1D4635] border border-emerald-500"
+                                        ? "bg-[#E9F2EC] text-[#143627] border border-emerald-500"
                                         : item.status.includes("HIGHER")
                                         ? "bg-amber-50 text-[#B45309] border border-amber-500"
                                         : "bg-[#F2EFE8] text-[#4A5950] border border-[#D9DDD3]"
@@ -1044,28 +1044,28 @@ export default function Mode2Workspace({ onHome }) {
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1D4635]">Screening complete · {comparison.gisScreening?.regionDisplayName}</p>
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#143627]">Screening complete · {comparison.gisScreening?.regionDisplayName}</p>
                         <h3 className="mt-1 text-2xl font-bold tracking-tight text-[#1C2420]">Layer-by-Layer GIS Analysis & Claim Verification</h3>
                       </div>
-                      <span className="rounded-full bg-[#E9F2EC] px-4 py-1.5 text-xs font-bold text-[#1D4635] border border-emerald-500 shadow-xs">
+                      <span className="rounded-full bg-[#E9F2EC] px-4 py-1.5 text-xs font-bold text-[#143627] border border-emerald-500 shadow-xs">
                         ✓ {comparison.gisScreening?.assessedLayers?.length || 13} GIS Layers Consumed
                       </span>
                     </div>
                     <p className="mt-1.5 text-sm font-medium text-[#4A5950]">
-                      {comparison.gisScreening?.alignmentName || "Submitted route"} · {comparison.gisScreening?.vertexCount} vertices · <span className="text-[#1D4635] font-mono">{comparison.gisScreening?.facilityMode}</span>
+                      {comparison.gisScreening?.alignmentName || "Submitted route"} · {comparison.gisScreening?.vertexCount} vertices · <span className="text-[#143627] font-mono">{comparison.gisScreening?.facilityMode}</span>
                     </p>
                   </div>
 
                   {/* Consumed GIS Layers breakdown badge list */}
                   <div className="rounded-xl border border-[#D8E8DD] bg-[#FAF9F6] p-4 shadow-none">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#1D4635] mb-2.5">GIS Spatial Layers Consumed for this Alignment:</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#143627] mb-2.5">GIS Spatial Layers Consumed for this Alignment:</p>
                     <div className="flex flex-wrap gap-2">
                       {(comparison.gisScreening?.assessedLayers?.length ? comparison.gisScreening.assessedLayers : [
                         "ROUTE_GEOMETRY", "LAND_COVER", "FLOOD_HAZARD", "SLOPE", "PROTECTED_AREAS",
                         "SETTLEMENT_EXPOSURE", "WATER_BODIES", "WILDLIFE_CORRIDORS_AND_ESZ", "GEOTECH_HAZARDS",
                         "DRAINAGE_AND_WETLANDS", "UTILITY_CORRIDORS", "BUILDING_DENSITY", "POPULATION_DENSITY"
                       ]).map((layer) => (
-                        <span key={layer} className="rounded-md border border-emerald-700/60 bg-[#16231c] px-2.5 py-1 font-mono text-[11px] font-semibold text-[#1D4635] shadow-sm">
+                        <span key={layer} className="rounded-md border border-emerald-700/60 bg-[#16231c] px-2.5 py-1 font-mono text-[11px] font-semibold text-[#143627] shadow-sm">
                           ✓ {layer}
                         </span>
                       ))}
@@ -1076,7 +1076,7 @@ export default function Mode2Workspace({ onHome }) {
                   <div className="rounded-xl border border-emerald-500/60 bg-gradient-to-br from-[#0c1c14] to-[#07130d] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8E8DD] pb-3">
                       <div>
-                        <span className="inline-block rounded-full bg-emerald-500/20 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#1D4635] border border-[#D8E8DD]">
+                        <span className="inline-block rounded-full bg-emerald-500/20 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#143627] border border-[#D8E8DD]">
                           MARG Statutory Screening Verdict &amp; Decision Support
                         </span>
                         <h4 className="mt-2 text-base font-bold text-[#1C2420]">
@@ -1084,7 +1084,7 @@ export default function Mode2Workspace({ onHome }) {
                         </h4>
                       </div>
                       <div className="text-right">
-                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#1D4635] border border-emerald-600/80 shadow-none">
+                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#143627] border border-emerald-600/80 shadow-none">
                           RECOMMENDED FOR STAGE-I APPRAISAL WITH EMP CONDITIONS
                         </span>
                       </div>
@@ -1093,7 +1093,7 @@ export default function Mode2Workspace({ onHome }) {
                     <div className="mt-4 grid gap-4 sm:grid-cols-3">
                       <div className="rounded-lg border border-[#E5ECE6] bg-[#FFFFFF] p-3.5">
                         <span className="text-[11px] font-bold uppercase text-[#68736B]">1. Geometry &amp; Alignment Length</span>
-                        <p className="mt-1 text-sm font-semibold text-[#1D4635]">5.43 km Verified Fit</p>
+                        <p className="mt-1 text-sm font-semibold text-[#143627]">5.43 km Verified Fit</p>
                         <p className="mt-1 text-xs leading-relaxed text-[#4A5950]">
                           Submitted centerline geometry precisely matches the 5.43 km statutory section length (Chainage km 18+200 to 23+630) disclosed in Chapter 1.
                         </p>
@@ -1109,7 +1109,7 @@ export default function Mode2Workspace({ onHome }) {
 
                       <div className="rounded-lg border border-[#E5ECE6] bg-[#FFFFFF] p-3.5">
                         <span className="text-[11px] font-bold uppercase text-[#68736B]">3. Hydrology &amp; Slope Stability</span>
-                        <p className="mt-1 text-sm font-semibold text-[#1D4635]">Low Disaster Vulnerability</p>
+                        <p className="mt-1 text-sm font-semibold text-[#143627]">Low Disaster Vulnerability</p>
                         <p className="mt-1 text-xs leading-relaxed text-[#4A5950]">
                           Zero flood inundation zones and rolling terrain (&lt;15% slope). 14 culverts and 2 minor river bridges adequately preserve natural drainage flow.
                         </p>
@@ -1117,15 +1117,15 @@ export default function Mode2Workspace({ onHome }) {
                     </div>
 
                     <div className="mt-4 rounded-lg border border-emerald-900/70 bg-[#07130e] p-3.5 text-xs leading-relaxed text-[#2A352E]">
-                      <strong className="text-[#1D4635] font-bold uppercase">Executive Recommendation for Non-Technical Appraisal: </strong>
+                      <strong className="text-[#143627] font-bold uppercase">Executive Recommendation for Non-Technical Appraisal: </strong>
                       The existing alignment represents the most practical engineering option. While an alternative bypass could circumvent forest canopy, it lengthens the corridor by +0.76 km and intersects inhabited homesteads/farmland. Proceeding with the existing alignment is optimal provided wildlife corridors are safeguarded with structural eco-ducts and acoustic barriers.
                     </div>
                   </div>
 
                   {/* Comprehensive Layer-by-Layer Verification Table */}
                   <div className="border border-[#D9DDD3] rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(45,106,79,0.06)] bg-[#FAF9F6]">
-                    <div className="bg-[#DCEAE0] px-4 py-3.5 border-b border-[#D9DDD3] flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#1D4635]">
+                    <div className="bg-[#D1E3D6] px-4 py-3.5 border-b border-[#D9DDD3] flex flex-wrap items-center justify-between gap-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#143627]">
                         Layer-by-Layer Results: Consumed Data vs. Report Claims
                       </h4>
                       <span className="text-[11px] text-[#4A5950] font-medium">
@@ -1152,10 +1152,10 @@ export default function Mode2Workspace({ onHome }) {
                             const isSection = status === "VERIFIED_SECTION_ALIGNMENT";
                             const isConsistent = status === "CONSISTENT" || status === "NO_NUMERIC_DIFFERENCE_DETECTED" || isSection;
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Route Length & Geometry
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1D4635]">ROUTE_GEOMETRY</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#143627]">ROUTE_GEOMETRY</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">PARIVESH KML Centerline / OSM</td>
                                 <td className="py-3 px-3.5">
@@ -1164,18 +1164,18 @@ export default function Mode2Workspace({ onHome }) {
                                       <span className="font-bold text-[#B45309] text-sm">{match.projectClaim} {match.projectUnits || "km"}</span>
                                       <span className="block text-[10px] text-[#68736B] font-medium">Overall Corridor Package</span>
                                       {match.projectSources?.[0] && (
-                                        <span className="block text-[11px] text-[#1D4635] font-mono mt-0.5">📄 Doc p.{match.projectSources[0].pageNumber}</span>
+                                        <span className="block text-[11px] text-[#143627] font-mono mt-0.5">📄 Doc p.{match.projectSources[0].pageNumber}</span>
                                       )}
                                     </div>
                                   ) : <span className="italic text-[#68736B]">Not explicitly asserted</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className="font-bold text-[#1D4635] text-sm">{ev?.value ?? "5.43"} {ev?.units ?? "km"}</span>
-                                  <span className="block font-mono text-[9px] text-[#1D4635]/90 font-semibold">Forest Section (km 18+200 - 23+630)</span>
+                                  <span className="font-bold text-[#143627] text-sm">{ev?.value ?? "5.43"} {ev?.units ?? "km"}</span>
+                                  <span className="block font-mono text-[9px] text-[#143627]/90 font-semibold">Forest Section (km 18+200 - 23+630)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[9px] text-[#7C887E]">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className={`px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm ${isConsistent ? "bg-[#E9F2EC] text-[#1D4635] border border-emerald-500" : "bg-amber-50 text-[#B45309] border border-amber-500"}`}>
+                                  <span className={`px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm ${isConsistent ? "bg-[#E9F2EC] text-[#143627] border border-emerald-500" : "bg-amber-50 text-[#B45309] border border-amber-500"}`}>
                                     {isSection ? "VERIFIED SECTION ALIGNMENT" : status.replaceAll("_", " ")}
                                   </span>
                                 </td>
@@ -1189,10 +1189,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric === "lulcExposureKm" || e.metric?.includes("FOREST"));
                             const val = Number(ev?.value || (match?.gisValue ? Number(match.gisValue) : 2.68));
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Land Use & Forest Diversion
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1D4635]">LAND_COVER (LULC)</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#143627]">LAND_COVER (LULC)</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">Bhuvan LULC 1:50,000 (NRSC/ISRO)</td>
                                 <td className="py-3 px-3.5">
@@ -1201,18 +1201,18 @@ export default function Mode2Workspace({ onHome }) {
                                       <span className="font-bold text-[#B45309] text-sm">{match.projectClaim} {match.projectUnits || "ha"}</span>
                                       <span className="block text-[10px] text-[#68736B] font-medium">Statutory forest diversion area</span>
                                       {match.projectSources?.[0] && (
-                                        <span className="block text-[11px] text-[#1D4635] font-mono mt-0.5">📄 Doc p.{match.projectSources[0].pageNumber}</span>
+                                        <span className="block text-[11px] text-[#143627] font-mono mt-0.5">📄 Doc p.{match.projectSources[0].pageNumber}</span>
                                       )}
                                     </div>
                                   ) : <span className="italic text-[#68736B]">No diversion claim in doc</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className="font-bold text-[#1D4635] text-sm">{val > 0 ? `${val} km` : (ev?.value ?? "2.68 km")}</span>
+                                  <span className="font-bold text-[#143627] text-sm">{val > 0 ? `${val} km` : (ev?.value ?? "2.68 km")}</span>
                                   <span className="block font-mono text-[9px] text-[#B45309] font-semibold">Reserve forest linear intersection</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[9px] text-[#68736B]">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className={`px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm ${val > 0 ? "bg-amber-50 text-[#B45309] border border-amber-500" : "bg-[#E9F2EC] text-[#1D4635] border border-emerald-500"}`}>
+                                  <span className={`px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm ${val > 0 ? "bg-amber-50 text-[#B45309] border border-amber-500" : "bg-[#E9F2EC] text-[#143627] border border-emerald-500"}`}>
                                     {val > 0 ? `${val} km FOREST INTERSECTED` : "CANOPY INTERSECTION CONFIRMED"}
                                   </span>
                                 </td>
@@ -1226,10 +1226,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric?.includes("riverBridges") || e.metric?.includes("Count") || e.metric?.includes("WaterCrossings"));
                             const val = ev?.value || (match?.gisValue && match.gisValue !== "not available" ? match.gisValue : "14");
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Water Bodies & Cross-Drainage
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1D4635]">WATER_BODIES & DRAINAGE</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#143627]">WATER_BODIES & DRAINAGE</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">CWC National River Basin / Hydro</td>
                                 <td className="py-3 px-3.5">
@@ -1238,18 +1238,18 @@ export default function Mode2Workspace({ onHome }) {
                                       <span className="font-bold text-[#B45309] text-sm">{match.projectClaim} {match.projectUnits || ""}</span>
                                       <span className="block text-[10px] text-[#68736B] font-medium">14 culverts + 2 minor bridges scheduled</span>
                                       {match.projectSources?.[0] && (
-                                        <span className="block text-[11px] text-[#1D4635] font-mono mt-0.5">📄 Doc p.{match.projectSources[0].pageNumber}</span>
+                                        <span className="block text-[11px] text-[#143627] font-mono mt-0.5">📄 Doc p.{match.projectSources[0].pageNumber}</span>
                                       )}
                                     </div>
                                   ) : <span className="italic text-[#68736B]">Not inventoried in report</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className="font-bold text-[#1D4635] text-sm">14 structures</span>
-                                  <span className="block font-mono text-[9px] text-[#1D4635]/90 font-semibold">0 major river severance (all swales bridged)</span>
+                                  <span className="font-bold text-[#143627] text-sm">14 structures</span>
+                                  <span className="block font-mono text-[9px] text-[#143627]/90 font-semibold">0 major river severance (all swales bridged)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[9px] text-[#68736B]">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className="px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm bg-[#E9F2EC] text-[#1D4635] border border-emerald-500">
+                                  <span className="px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm bg-[#E9F2EC] text-[#143627] border border-emerald-500">
                                     DRAINAGE CONTINUITY MAINTAINED
                                   </span>
                                 </td>
@@ -1263,10 +1263,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric === "protectedAreaExposureKm");
                             const val = Number(ev?.value || 0);
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Protected Areas & ESZ
-                                  <span className="block font-mono text-xs font-semibold text-[#1D4635] mt-0.5">PROTECTED_AREAS</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#143627] mt-0.5">PROTECTED_AREAS</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">MoEFCC / WII Protected Area Mask</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1278,12 +1278,12 @@ export default function Mode2Workspace({ onHome }) {
                                   ) : <span className="italic text-[#68736B]">No PA claim in report</span>}
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
-                                  <span className="font-bold text-[#1D4635] text-sm">0.00 km Core Encroachment</span>
-                                  <span className="block font-mono text-xs text-[#1D4635]/90 font-semibold mt-0.5">2.45 km in Notified Transition Buffer Zone</span>
+                                  <span className="font-bold text-[#143627] text-sm">0.00 km Core Encroachment</span>
+                                  <span className="block font-mono text-xs text-[#143627]/90 font-semibold mt-0.5">2.45 km in Notified Transition Buffer Zone</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <span className={`px-3 py-1 rounded font-mono text-xs font-bold shadow-sm ${val === 0 ? "bg-[#E9F2EC] text-[#1D4635] border border-emerald-500" : "bg-rose-950 text-[#B91C1C] border border-rose-500"}`}>
+                                  <span className={`px-3 py-1 rounded font-mono text-xs font-bold shadow-sm ${val === 0 ? "bg-[#E9F2EC] text-[#143627] border border-emerald-500" : "bg-rose-950 text-[#B91C1C] border border-rose-500"}`}>
                                     {val === 0 ? "0 km CORE (CLEAR)" : "ENCROACHMENT DETECTED"}
                                   </span>
                                 </td>
@@ -1297,10 +1297,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric?.includes("wildlifeZoneExposureKm"));
                             const val = ev?.value ? Number(ev.value) : (match?.gisValue ? Number(match.gisValue) : 2.45);
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Wildlife & Elephant Corridors
-                                  <span className="block font-mono text-xs font-semibold text-[#1D4635] mt-0.5">WILDLIFE_CORRIDORS_AND_ESZ</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#143627] mt-0.5">WILDLIFE_CORRIDORS_AND_ESZ</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">WII Right of Passage Elephant Corridors</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1312,12 +1312,12 @@ export default function Mode2Workspace({ onHome }) {
                                   ) : <span className="italic text-[#68736B]">No corridor claim in report</span>}
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
-                                  <span className="font-bold text-[#1D4635] text-sm">{val > 0 ? `${val} km Buffer Zone Traversal` : "2.45 km Buffer Zone Traversal"}</span>
-                                  <span className="block font-mono text-xs text-[#1D4635]/90 font-semibold mt-0.5">0 km Core Reserve Severance (3 WUPs Mandated)</span>
+                                  <span className="font-bold text-[#143627] text-sm">{val > 0 ? `${val} km Buffer Zone Traversal` : "2.45 km Buffer Zone Traversal"}</span>
+                                  <span className="block font-mono text-xs text-[#143627]/90 font-semibold mt-0.5">0 km Core Reserve Severance (3 WUPs Mandated)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#1D4635] border border-emerald-500">
+                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#143627] border border-emerald-500">
                                     3 WUPs MANDATED (WII)
                                   </span>
                                 </td>
@@ -1330,10 +1330,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric === "floodExposureKm");
                             const val = Number(ev?.value || 0);
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Flood Hazard & Inundation
-                                  <span className="block font-mono text-xs font-semibold text-[#1D4635] mt-0.5">FLOOD_HAZARD</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#143627] mt-0.5">FLOOD_HAZARD</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">Bhuvan Multi-Year Flood Inundation Mosaic</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1341,12 +1341,12 @@ export default function Mode2Workspace({ onHome }) {
                                   <span className="block text-xs text-[#68736B] mt-0.5">No flood prone zones asserted</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
-                                  <span className="font-bold text-[#1D4635] text-sm">0.00 km Active Inundation</span>
-                                  <span className="block font-mono text-xs text-[#1D4635]/90 font-semibold mt-0.5">100% Flood-Free (Elevated Piedmont Plain)</span>
+                                  <span className="font-bold text-[#143627] text-sm">0.00 km Active Inundation</span>
+                                  <span className="block font-mono text-xs text-[#143627]/90 font-semibold mt-0.5">100% Flood-Free (Elevated Piedmont Plain)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#1D4635] border border-emerald-500">
+                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#143627] border border-emerald-500">
                                     {val > 0 ? `${val} km INUNDATION ZONE` : "NO DIRECT FLOOD RISK"}
                                   </span>
                                 </td>
@@ -1359,10 +1359,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric?.includes("slopeExposureKm"));
                             const val = Number(ev?.value || 0);
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Terrain & Steep Slopes (&gt;15%)
-                                  <span className="block font-mono text-xs font-semibold text-[#1D4635] mt-0.5">SLOPE (DEM)</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#143627] mt-0.5">SLOPE (DEM)</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">SRTM / CartoDEM 30m Grid</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1370,12 +1370,12 @@ export default function Mode2Workspace({ onHome }) {
                                   <span className="block text-xs text-[#68736B] mt-0.5">Rolling / plain relief standard</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
-                                  <span className="font-bold text-[#1D4635] text-sm">5.43 km Plain to Rolling</span>
-                                  <span className="block font-mono text-xs text-[#1D4635]/90 font-semibold mt-0.5">&lt;15% grade (3.85 km flat, 1.58 km rolling)</span>
+                                  <span className="font-bold text-[#143627] text-sm">5.43 km Plain to Rolling</span>
+                                  <span className="block font-mono text-xs text-[#143627]/90 font-semibold mt-0.5">&lt;15% grade (3.85 km flat, 1.58 km rolling)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#1D4635] border border-emerald-500">
+                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#143627] border border-emerald-500">
                                     {val > 0 && !ev?.metric?.includes("LOW") ? `${val} km STEEP SLOPES` : "ROLLING / PLAIN TERRAIN"}
                                   </span>
                                 </td>
@@ -1388,10 +1388,10 @@ export default function Mode2Workspace({ onHome }) {
                             const ev = (comparison.gisScreening?.evidence || []).find((e) => e.metric?.includes("settlementExposureKm"));
                             const val = Number(ev?.value || 0);
                             return (
-                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="border-b border-[#E5ECE6] bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3.5 px-4 font-bold text-[#1C2420] text-sm">
                                   Settlements & Built-up Exposure
-                                  <span className="block font-mono text-xs font-semibold text-[#1D4635] mt-0.5">SETTLEMENT_EXPOSURE</span>
+                                  <span className="block font-mono text-xs font-semibold text-[#143627] mt-0.5">SETTLEMENT_EXPOSURE</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-[#4A5950] font-medium text-sm">Survey of India Settlements Catalog</td>
                                 <td className="py-3.5 px-4 text-sm">
@@ -1399,12 +1399,12 @@ export default function Mode2Workspace({ onHome }) {
                                   <span className="block text-xs text-[#68736B] mt-0.5">Zero residential displacement claimed</span>
                                 </td>
                                 <td className="py-3.5 px-4 text-sm">
-                                  <span className="font-bold text-[#1D4635] text-sm">0 Homes Displaced</span>
-                                  <span className="block font-mono text-xs text-[#1D4635]/90 font-semibold mt-0.5">0.18 km Ribbon Edge (RoW Confined)</span>
+                                  <span className="font-bold text-[#143627] text-sm">0 Homes Displaced</span>
+                                  <span className="block font-mono text-xs text-[#143627]/90 font-semibold mt-0.5">0.18 km Ribbon Edge (RoW Confined)</span>
                                   {ev?.evidenceId && <span className="block font-mono text-[11px] text-[#68736B] mt-0.5">{ev.evidenceId}</span>}
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#1D4635] border border-emerald-500">
+                                  <span className="px-3 py-1 rounded font-mono text-xs font-bold shadow-sm bg-[#E9F2EC] text-[#143627] border border-emerald-500">
                                     ZERO RESETTLEMENT
                                   </span>
                                 </td>
@@ -1420,10 +1420,10 @@ export default function Mode2Workspace({ onHome }) {
                             const claimVal = fact.value || fact.projectClaim;
                             const src = fact.sources?.[0] || fact.projectSources?.[0];
                             return (
-                              <tr className="bg-[#FFFFFF] hover:bg-[#DCEAE0]/70 transition-colors">
+                              <tr className="bg-[#FFFFFF] hover:bg-[#D1E3D6]/70 transition-colors">
                                 <td className="py-3 px-3.5 font-bold text-[#1C2420]">
                                   Tree Felling & Canopy Removal
-                                  <span className="block font-mono text-[10px] font-semibold text-[#1D4635]">FOREST_CANOPY / EMP</span>
+                                  <span className="block font-mono text-[10px] font-semibold text-[#143627]">FOREST_CANOPY / EMP</span>
                                 </td>
                                 <td className="py-3 px-3.5 text-[#4A5950] font-medium">Statutory EIA / ESIA Report Record</td>
                                 <td className="py-3 px-3.5">
@@ -1431,16 +1431,16 @@ export default function Mode2Workspace({ onHome }) {
                                     <span className="font-bold text-[#B45309] text-sm">{claimVal} {fact.units || fact.projectUnits || "trees"}</span>
                                     <span className="block text-[10px] text-[#68736B] font-medium">1:10 Compensatory Afforestation</span>
                                     {src && (
-                                      <span className="block text-[11px] text-[#1D4635] font-mono mt-0.5">📄 Doc p.{src.pageNumber}</span>
+                                      <span className="block text-[11px] text-[#143627] font-mono mt-0.5">📄 Doc p.{src.pageNumber}</span>
                                     )}
                                   </div>
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className="font-bold text-[#1D4635] text-sm">{claimVal} {fact.units || fact.projectUnits || "trees"}</span>
+                                  <span className="font-bold text-[#143627] text-sm">{claimVal} {fact.units || fact.projectUnits || "trees"}</span>
                                   <span className="block font-mono text-[9px] text-[#68736B] font-semibold">22,830 saplings mandated in EMP</span>
                                 </td>
                                 <td className="py-3 px-3.5">
-                                  <span className="px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm bg-[#E9F2EC] text-[#1D4635] border border-emerald-500">
+                                  <span className="px-2.5 py-1 rounded font-mono text-[11px] font-bold shadow-sm bg-[#E9F2EC] text-[#143627] border border-emerald-500">
                                     EIA DISCLOSED
                                   </span>
                                 </td>
@@ -1461,7 +1461,7 @@ export default function Mode2Workspace({ onHome }) {
                         || item.status === "STATUTORY_DISCLOSURE";
                       const isWarning = item.status === "POTENTIAL_INCONSISTENCY_FOR_REVIEW";
                       const badgeColor = isVerified
-                        ? "bg-[#E9F2EC] text-[#1D4635] border border-emerald-500"
+                        ? "bg-[#E9F2EC] text-[#143627] border border-emerald-500"
                         : isWarning
                           ? "bg-amber-50 text-[#B45309] border border-amber-500"
                           : "bg-[#F2EFE8] text-[#4A5950] border border-[#D9DDD3]";
@@ -1490,9 +1490,9 @@ export default function Mode2Workspace({ onHome }) {
                               </span>
                             </div>
                             <p className="text-sm leading-6 text-[#4A5950] font-medium">Document claim: <b className="text-[#B45309] font-bold">{item.projectClaim ?? "—"} {item.projectUnits || ""}</b></p>
-                            <p className="text-sm leading-6 text-[#4A5950] font-medium">GIS observation: <b className="text-[#1D4635] font-bold">{gisObsDisplay}</b></p>
-                            <div className="mt-3 rounded bg-[#DCEAE0] p-3 border border-[#E5ECE6] text-xs leading-relaxed text-[#1D4635]">
-                              <strong className="font-bold text-[#1D4635]">Executive Takeaway: </strong>
+                            <p className="text-sm leading-6 text-[#4A5950] font-medium">GIS observation: <b className="text-[#143627] font-bold">{gisObsDisplay}</b></p>
+                            <div className="mt-3 rounded bg-[#D1E3D6] p-3 border border-[#E5ECE6] text-xs leading-relaxed text-[#143627]">
+                              <strong className="font-bold text-[#143627]">Executive Takeaway: </strong>
                               {item.projectField === "project_length" && "Centerline geometry precisely corresponds to the 5.43 km forest stretch under review (Chainage km 18+200 to 23+630). Sub-section verified."}
                               {item.projectField === "forest_diversion" && "Corridor requires 14.56 ha statutory reserve forest diversion under FCA 1980. Mapped alignment traverses 2.68 km canopy."}
                               {item.projectField === "bridges_or_culverts" && "14 cross-drainage culverts and 2 minor bridges maintain natural drainage connectivity across piedmont swales."}
@@ -1504,8 +1504,8 @@ export default function Mode2Workspace({ onHome }) {
                             {item.limitation && <p className="mt-2.5 text-xs leading-5 text-[#68736B] italic">{item.limitation}</p>}
                           </div>
                           <div className="mt-3.5 pt-2.5 border-t border-[#E5ECE6]">
-                            {item.projectEvidenceIds?.length > 0 && <p className="font-mono text-xs text-[#1D4635] truncate">Project evidence: {item.projectEvidenceIds.join(", ")}</p>}
-                            {item.gisEvidenceId && <p className="font-mono text-xs text-[#1D4635] truncate">GIS evidence: {item.gisEvidenceId}</p>}
+                            {item.projectEvidenceIds?.length > 0 && <p className="font-mono text-xs text-[#143627] truncate">Project evidence: {item.projectEvidenceIds.join(", ")}</p>}
+                            {item.gisEvidenceId && <p className="font-mono text-xs text-[#143627] truncate">GIS evidence: {item.gisEvidenceId}</p>}
                           </div>
                         </article>
                       );
@@ -1514,14 +1514,14 @@ export default function Mode2Workspace({ onHome }) {
 
                   {(comparison.gisScreening?.evidence || []).length > 0 && (
                     <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-[0_1px_4px_rgba(45,106,79,0.05)]">
-                      <summary className="cursor-pointer text-sm font-bold text-[#1D4635] hover:text-[#1D4635]">
+                      <summary className="cursor-pointer text-sm font-bold text-[#143627] hover:text-[#143627]">
                         Detailed GIS Evidence Register ({comparison.gisScreening.evidence.length} Layer Records)
                       </summary>
                       <div className="mt-3 space-y-2">
                         {comparison.gisScreening.evidence.map((item) => (
                           <div key={item.evidenceId} className="border-t border-[#E5ECE6] py-2.5 text-xs">
-                            <strong className="font-mono text-[#1D4635]">{item.evidenceId}</strong>
-                            <p className="mt-1 font-semibold text-[#2A352E]">{item.layer} · {item.operation} · {item.metric}: <span className="font-bold text-[#1D4635]">{item.value} {item.units}</span></p>
+                            <strong className="font-mono text-[#143627]">{item.evidenceId}</strong>
+                            <p className="mt-1 font-semibold text-[#2A352E]">{item.layer} · {item.operation} · {item.metric}: <span className="font-bold text-[#143627]">{item.value} {item.units}</span></p>
                             <p className="text-[#68736B] mt-0.5">{item.limitation}</p>
                           </div>
                         ))}
@@ -1530,14 +1530,14 @@ export default function Mode2Workspace({ onHome }) {
                   )}
 
                   <details className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] p-4 shadow-[0_1px_4px_rgba(45,106,79,0.05)]">
-                    <summary className="cursor-pointer text-sm font-bold text-[#1D4635] hover:text-[#1D4635]">Extracted Project Claims ({comparison.projectFacts?.facts?.length || 0})</summary>
+                    <summary className="cursor-pointer text-sm font-bold text-[#143627] hover:text-[#143627]">Extracted Project Claims ({comparison.projectFacts?.facts?.length || 0})</summary>
                     <div className="mt-3 space-y-3">
                       {comparison.projectFacts?.facts?.map((fact, i) => (
                         <div key={`${fact.field}-${i}`} className="border-t border-[#E5ECE6] pt-3">
                           <p className="text-sm font-bold text-[#1C2420]">{fact.field}: <span className="text-[#B45309] font-bold">{fact.value} {fact.units || ""}</span></p>
                           <p className="mt-1.5 text-xs leading-5 text-[#2A352E] bg-[#FFFFFF] p-3 rounded-lg border border-[#E5ECE6] italic">"{fact.supportingExcerpt}"</p>
                           {fact.sources?.map((source) => (
-                            <div key={source.evidenceId} className="mt-1.5 font-mono text-[10px] text-[#1D4635]">{source.evidenceId} · {source.fileName} · page {source.pageNumber}</div>
+                            <div key={source.evidenceId} className="mt-1.5 font-mono text-[10px] text-[#143627]">{source.evidenceId} · {source.fileName} · page {source.pageNumber}</div>
                           ))}
                         </div>
                       ))}
@@ -1548,9 +1548,9 @@ export default function Mode2Workspace({ onHome }) {
                   </details>
 
                   {/* 2-Page Executive Decision-Support Summary Bar */}
-                  <div className="rounded-xl border border-[#D8E8DD] bg-gradient-to-r from-[#DCEAE0] to-[#F7F5F0] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] flex flex-wrap items-center justify-between gap-4">
+                  <div className="rounded-xl border border-[#D8E8DD] bg-gradient-to-r from-[#D1E3D6] to-[#F7F5F0] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] flex flex-wrap items-center justify-between gap-4">
                     <div>
-                      <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1D4635]">
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#143627]">
                         Decision-Support Deliverable · NHAI / MoEFCC / Multilateral Lenders
                       </span>
                       <h4 className="mt-1 text-base font-bold text-[#1C2420]">
@@ -1564,14 +1564,14 @@ export default function Mode2Workspace({ onHome }) {
                       <a
                         href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/pdf`}
                         download={`marg-executive-brief-${projectId}.pdf`}
-                        className="rounded-lg bg-[#1D4635] px-4 py-2.5 text-xs font-bold text-[#F7F5F0] hover:bg-[#265B45] transition-colors shadow-sm"
+                        className="rounded-lg bg-[#143627] px-4 py-2.5 text-xs font-bold text-[#F7F5F0] hover:bg-[#1C4A36] transition-colors shadow-sm"
                       >
                         ⬇ Download 2-Page Brief (PDF)
                       </a>
                       <a
                         href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/docx`}
                         download={`marg-executive-brief-${projectId}.docx`}
-                        className="rounded-lg border border-[#1D4635]/40 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#1D4635] hover:bg-[#CBE0D1] transition-colors"
+                        className="rounded-lg border border-[#143627]/40 bg-[#E9F2EC] px-4 py-2 text-xs font-bold text-[#143627] hover:bg-[#BDD6C5] transition-colors"
                       >
                         ⬇ Download Brief (DOCX)
                       </a>
@@ -1583,12 +1583,12 @@ export default function Mode2Workspace({ onHome }) {
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] space-y-5">
                       <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#E5ECE6] pb-4">
                         <div>
-                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1D4635]">
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#143627]">
                             Statutory Risk &amp; Clearance Delay Scorer (Red-Flag Engine)
                           </span>
                           <h4 className="mt-1 text-lg font-bold text-[#1C2420] flex flex-wrap items-center gap-2.5">
                             <span>{statutoryRisk.tierLabel}</span>
-                            <span className="rounded-full bg-[#DCEAE0] px-3 py-0.5 font-mono text-xs text-[#2A352E] border border-[#D9DDD3]">
+                            <span className="rounded-full bg-[#D1E3D6] px-3 py-0.5 font-mono text-xs text-[#2A352E] border border-[#D9DDD3]">
                               Timeline: {statutoryRisk.estimatedClearanceTimeline}
                             </span>
                           </h4>
@@ -1599,7 +1599,7 @@ export default function Mode2Workspace({ onHome }) {
                         <div className="rounded-xl border border-[#D9DDD3] bg-[#FAF9F6] px-5 py-3 text-center min-w-[140px]">
                           <span className="block text-[10px] font-bold uppercase tracking-wider text-[#68736B]">Readiness Score</span>
                           <span className={`text-3xl font-extrabold font-mono mt-0.5 block ${
-                            statutoryRisk.score >= 80 ? "text-[#1D4635]" : statutoryRisk.score >= 50 ? "text-[#B45309]" : "text-[#B91C1C]"
+                            statutoryRisk.score >= 80 ? "text-[#143627]" : statutoryRisk.score >= 50 ? "text-[#B45309]" : "text-[#B91C1C]"
                           }`}>
                             {statutoryRisk.score}<span className="text-sm text-[#68736B]">/100</span>
                           </span>
@@ -1616,7 +1616,7 @@ export default function Mode2Workspace({ onHome }) {
                             </div>
                             <h5 className="text-sm font-bold text-[#1C2420]">{item.headline}</h5>
                             <p className="text-xs text-[#4A5950]"><strong className="text-[#B45309]">Claim:</strong> {item.disclosedClaim}</p>
-                            <p className="text-xs text-[#4A5950]"><strong className="text-[#1D4635]">GIS:</strong> {item.gisGroundTruth}</p>
+                            <p className="text-xs text-[#4A5950]"><strong className="text-[#143627]">GIS:</strong> {item.gisGroundTruth}</p>
                             <p className="text-[11px] text-[#991B1B] pt-1 border-t border-rose-900/40">{item.requiredAction}</p>
                           </div>
                         ))}
@@ -1628,13 +1628,13 @@ export default function Mode2Workspace({ onHome }) {
                             </div>
                             <h5 className="text-sm font-bold text-[#1C2420]">{item.headline}</h5>
                             <p className="text-xs text-[#4A5950]"><strong className="text-[#B45309]">Claim:</strong> {item.disclosedClaim}</p>
-                            <p className="text-xs text-[#4A5950]"><strong className="text-[#1D4635]">GIS:</strong> {item.gisGroundTruth}</p>
+                            <p className="text-xs text-[#4A5950]"><strong className="text-[#143627]">GIS:</strong> {item.gisGroundTruth}</p>
                             <p className="text-[11px] text-[#78350F] pt-1 border-t border-amber-900/30">{item.requiredAction}</p>
                           </div>
                         ))}
                         {(statutoryRisk.concordantItems || []).map((item) => (
                           <div key={item.id} className="rounded-lg border border-[#D8E8DD] bg-[#F4F8F5] p-4 space-y-1">
-                            <span className="font-mono text-[10px] font-bold text-[#1D4635]">🟢 {item.id} · CONCORDANT</span>
+                            <span className="font-mono text-[10px] font-bold text-[#143627]">🟢 {item.id} · CONCORDANT</span>
                             <h5 className="text-sm font-bold text-[#1C2420]">{item.headline}</h5>
                             <p className="text-xs text-[#4A5950]">{item.gisGroundTruth}</p>
                           </div>
@@ -1644,7 +1644,7 @@ export default function Mode2Workspace({ onHome }) {
                       {/* Statutory Clearances Checklist */}
                       {(statutoryRisk.statutoryChecklist || []).length > 0 && (
                         <div className="border border-[#E5ECE6] rounded-lg overflow-hidden bg-[#FFFFFF]">
-                          <div className="bg-[#DCEAE0] px-4 py-2.5 border-b border-[#E5ECE6] text-xs font-bold uppercase tracking-wider text-[#1D4635]">
+                          <div className="bg-[#D1E3D6] px-4 py-2.5 border-b border-[#E5ECE6] text-xs font-bold uppercase tracking-wider text-[#143627]">
                             Statutory Clearances Checklist
                           </div>
                           <div className="overflow-x-auto">
@@ -1677,15 +1677,15 @@ export default function Mode2Workspace({ onHome }) {
                     <div className="rounded-xl border border-[#D9DDD3] bg-[#FFFFFF] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)] space-y-5">
                       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5ECE6] pb-3">
                         <div>
-                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1D4635]">
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#143627]">
                             Automated Mitigation &amp; CAMPA Cost Calculator
                           </span>
                           <h4 className="mt-1 text-lg font-bold text-[#1C2420]">
                             MoEFCC NPV, 1:2 Compensatory Afforestation &amp; WII Wildlife Underpass Budget
                           </h4>
                         </div>
-                        <div className="rounded-lg border border-[#D8E8DD] bg-[#DCEAE0] px-4 py-2 text-right">
-                          <span className="block text-[10px] uppercase tracking-wider text-[#1D4635] font-bold">Total Statutory Liability</span>
+                        <div className="rounded-lg border border-[#D8E8DD] bg-[#D1E3D6] px-4 py-2 text-right">
+                          <span className="block text-[10px] uppercase tracking-wider text-[#143627] font-bold">Total Statutory Liability</span>
                           <span className="text-xl font-extrabold text-[#1C2420] font-mono">
                             ₹{mitigationCalc.totalStatutoryLiabilityCrores} Cr
                           </span>
@@ -1699,7 +1699,7 @@ export default function Mode2Workspace({ onHome }) {
                         </div>
                         <div className="rounded-lg border border-[#E5ECE6] bg-[#FAF9F6] p-3">
                           <span className="text-[10px] uppercase text-[#68736B] font-bold block">1:2 CA Land Required</span>
-                          <span className="text-lg font-bold text-[#1D4635]">{mitigationCalc.compensatoryAfforestationHectares} ha</span>
+                          <span className="text-lg font-bold text-[#143627]">{mitigationCalc.compensatoryAfforestationHectares} ha</span>
                         </div>
                         <div className="rounded-lg border border-[#E5ECE6] bg-[#FAF9F6] p-3">
                           <span className="text-[10px] uppercase text-[#68736B] font-bold block">CAMPA NPV Deposit</span>
@@ -1707,14 +1707,14 @@ export default function Mode2Workspace({ onHome }) {
                         </div>
                         <div className="rounded-lg border border-[#E5ECE6] bg-[#FAF9F6] p-3">
                           <span className="text-[10px] uppercase text-[#68736B] font-bold block">Wildlife Underpasses</span>
-                          <span className="text-lg font-bold text-[#1D4635]">{mitigationCalc.wildlifeUnderpassesCount} (₹{mitigationCalc.totalWildlifeUnderpassCrores} Cr)</span>
+                          <span className="text-lg font-bold text-[#143627]">{mitigationCalc.wildlifeUnderpassesCount} (₹{mitigationCalc.totalWildlifeUnderpassCrores} Cr)</span>
                         </div>
                       </div>
 
                       {/* NPV Breakdown Table */}
                       {(mitigationCalc.npvBreakdown || []).length > 0 && (
                         <div className="border border-[#E5ECE6] rounded-lg overflow-hidden bg-[#FFFFFF]">
-                          <div className="bg-[#DCEAE0] px-4 py-2 border-b border-[#E5ECE6] text-xs font-bold uppercase tracking-wider text-[#1D4635]">
+                          <div className="bg-[#D1E3D6] px-4 py-2 border-b border-[#E5ECE6] text-xs font-bold uppercase tracking-wider text-[#143627]">
                             MoEFCC Eco-Class NPV Calculation Breakdown
                           </div>
                           <div className="overflow-x-auto">
@@ -1735,7 +1735,7 @@ export default function Mode2Workspace({ onHome }) {
                                     <td className="py-2 px-3 text-[#4A5950]">{row.canopyDensity}</td>
                                     <td className="py-2 px-3 text-[#B45309] font-mono">{row.areaHectares}</td>
                                     <td className="py-2 px-3 text-[#4A5950] font-mono">₹{Number(row.ratePerHectare).toLocaleString("en-IN")}</td>
-                                    <td className="py-2 px-3 text-[#1D4635] font-bold font-mono">₹{row.totalNpvCrores} Cr</td>
+                                    <td className="py-2 px-3 text-[#143627] font-bold font-mono">₹{row.totalNpvCrores} Cr</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1747,7 +1747,7 @@ export default function Mode2Workspace({ onHome }) {
                       {/* Wildlife Underpass Specs */}
                       {(mitigationCalc.wupSpecifications || []).length > 0 && (
                         <div className="border border-[#E5ECE6] rounded-lg overflow-hidden bg-[#FFFFFF]">
-                          <div className="bg-[#DCEAE0] px-4 py-2 border-b border-[#E5ECE6] text-xs font-bold uppercase tracking-wider text-[#1D4635]">
+                          <div className="bg-[#D1E3D6] px-4 py-2 border-b border-[#E5ECE6] text-xs font-bold uppercase tracking-wider text-[#143627]">
                             WII / IRC:SP:118 Wildlife Underpass (WUP) Engineering Specifications
                           </div>
                           <div className="overflow-x-auto">
@@ -1764,10 +1764,10 @@ export default function Mode2Workspace({ onHome }) {
                               <tbody>
                                 {mitigationCalc.wupSpecifications.map((wup, idx) => (
                                   <tr key={idx} className="border-b border-[#E5ECE6]">
-                                    <td className="py-2 px-3 font-mono font-bold text-[#1D4635]">{wup.structureId}</td>
+                                    <td className="py-2 px-3 font-mono font-bold text-[#143627]">{wup.structureId}</td>
                                     <td className="py-2 px-3 text-[#1C2420]">{wup.targetSpecies}</td>
                                     <td className="py-2 px-3 text-[#2A352E] font-mono">{wup.verticalClearanceMeters}m × {wup.horizontalSpanMeters}m</td>
-                                    <td className="py-2 px-3 text-[#1D4635] font-mono">{wup.opennessRatio} (&gt; 0.75)</td>
+                                    <td className="py-2 px-3 text-[#143627] font-mono">{wup.opennessRatio} (&gt; 0.75)</td>
                                     <td className="py-2 px-3 text-[#4A5950]">{wup.guideFencingLengthMeters}m vegetative barrier</td>
                                   </tr>
                                 ))}
@@ -1787,14 +1787,14 @@ export default function Mode2Workspace({ onHome }) {
               <section className="rounded-3xl border border-[#D9DDD3] bg-[#FFFFFF] p-6 text-[#4A5950]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="rounded bg-[#DCEAE0] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#68736B] border border-[#D9DDD3]">
+                    <span className="rounded bg-[#D1E3D6] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#68736B] border border-[#D9DDD3]">
                       🔒 Gated Feature
                     </span>
                     <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#68736B]">02 · Cross-Verified Question Answering</p>
                   </div>
                 </div>
                 <div className="mt-4 rounded-xl border border-dashed border-[#D9DDD3] bg-[#FAF9F6] p-6 text-center">
-                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#DCEAE0] text-[#68736B] mb-3">
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#D1E3D6] text-[#68736B] mb-3">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                   </div>
                   <h4 className="text-base font-semibold text-[#2A352E]">GIS Screening &amp; Verification Required</h4>
@@ -1804,13 +1804,13 @@ export default function Mode2Workspace({ onHome }) {
                 </div>
               </section>
             ) : (
-              <section className="rounded-3xl border border-[#1D4635]/40 bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
+              <section className="rounded-3xl border border-[#143627]/40 bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="rounded bg-emerald-500/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#1D4635] border border-[#D8E8DD]">
+                    <span className="rounded bg-emerald-500/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#143627] border border-[#D8E8DD]">
                       ✓ GIS Screened &amp; Cross-Verified Active
                     </span>
-                    <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#1D4635]">02 · Cross-Verified Question Answering</p>
+                    <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#143627]">02 · Cross-Verified Question Answering</p>
                   </div>
                   <span className="text-sm font-semibold text-[#4A5950]">
                     Verified against {comparison.gisScreening?.assessedLayers?.length || 13} GIS Layers
@@ -1833,7 +1833,7 @@ export default function Mode2Workspace({ onHome }) {
                       key={q}
                       type="button"
                       onClick={() => setQuestion(q)}
-                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#1D4635] hover:bg-[#CBE0D1]/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
+                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#143627] hover:bg-[#BDD6C5]/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
                     >
                       💬 {q}
                     </button>
@@ -1860,7 +1860,7 @@ export default function Mode2Workspace({ onHome }) {
                   <div className="mt-6 border-t border-[#E5ECE6] pt-5">
                     <div className="flex flex-wrap items-center gap-2">
                       <strong className="text-base font-bold text-[#1C2420]">Cross-Verified Answer</strong>
-                      <span className="rounded bg-[#E9F2EC] px-3 py-1 font-mono text-xs font-bold text-[#1D4635] border border-emerald-800">
+                      <span className="rounded bg-[#E9F2EC] px-3 py-1 font-mono text-xs font-bold text-[#143627] border border-emerald-800">
                         {answer.status}
                       </span>
                     </div>
