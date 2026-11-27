@@ -178,24 +178,24 @@ def overpass_query(cache_key: str, query: str, refresh: bool = False):
         "Accept": "application/json",
     }
     last_err = None
-    for attempt in range(2):
+    for attempt in range(1):
         for mirror in OVERPASS_MIRRORS:
             try:
                 print(f"  [overpass] {cache_key} -> {mirror} (attempt {attempt + 1})...", flush=True)
                 req = urllib.request.Request(mirror, data=payload, headers=headers)
-                with urllib.request.urlopen(req, timeout=75) as resp:
+                with urllib.request.urlopen(req, timeout=4) as resp:
                     raw = resp.read().decode("utf-8")
                     parsed = json.loads(raw)
                 elements = parsed.get("elements", [])
                 with open(cache_path, "w", encoding="utf-8") as f:
                     json.dump({"elements": elements}, f)
                 print(f"  [ok] {cache_key}: {len(elements)} elements", flush=True)
-                time.sleep(1.0)
+                time.sleep(0.5)
                 return elements
             except Exception as e:
                 last_err = e
                 print(f"    mirror failed ({mirror}): {e}", flush=True)
-                time.sleep(1.5)
+                time.sleep(0.5)
     print(f"  [WARN] All Overpass mirrors failed for {cache_key}: {last_err}", flush=True)
     return []
 

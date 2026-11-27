@@ -40,13 +40,67 @@ public class Mode2AlternativeRouteService {
         List<Double> last = coordinates.getLast();
         String facilityMode = existing.facilityMode();
 
-        Map<String, Object> generated = corridors.route(existing.regionId(), "TIER_2_PRECACHED_BENCHMARK",
+        // 1. GENERATE MULTI-OBJECTIVE ALTERNATIVES BY ADJUSTING WEIGHT MATRIX
+        // Option 1: Maximum Environmental Preservation (Eco-Shield: Env 2.5, Social 1.0, Directness 0.8)
+        in.marg.routing.AlignmentPreference ecoPref = in.marg.routing.AlignmentPreference.ECO_SHIELD;
+        Map<String, Object> ecoGenerated = corridors.route(existing.regionId(), "TIER_2_PRECACHED_BENCHMARK",
                 first.get(1), first.get(0), last.get(1), last.get(0), ROUTING_RESOLUTION_METERS,
                 CORRIDOR_BUFFER_DEGREES, MAX_LULC_SAMPLES, null, facilityMode, null, null, null,
-                false, null);
+                false, null, ecoPref);
+        AlternativeOption optEco = buildOption("OPT-ECO-01",
+                "Option 1: Maximum Environmental Preservation (Eco-Shield)",
+                "Heavily penalizes forest canopy (2.5x), wildlife migratory corridors (2.5x), and river crossings to minimize forest diversion and habitat fragmentation.",
+                ecoPref, projectId, existing, facilityMode, ecoGenerated);
+
+        // Option 2: Balanced Engineering & Economic Viability (Balanced: Env 1.0, Social 1.0, Directness 1.0)
+        in.marg.routing.AlignmentPreference balPref = in.marg.routing.AlignmentPreference.BALANCED;
+        Map<String, Object> balGenerated = corridors.route(existing.regionId(), "TIER_2_PRECACHED_BENCHMARK",
+                first.get(1), first.get(0), last.get(1), last.get(0), ROUTING_RESOLUTION_METERS,
+                CORRIDOR_BUFFER_DEGREES, MAX_LULC_SAMPLES, null, facilityMode, null, null, null,
+                false, null, balPref);
+        AlternativeOption optBal = buildOption("OPT-BAL-02",
+                "Option 2: Balanced Engineering & Economic Viability",
+                "Applies standard equal multi-objective weights across straight geometric alignment, earthworks cut/fill economy, and environmental baseline protection.",
+                balPref, projectId, existing, facilityMode, balGenerated);
+
+        // Option 3: Settlement & Livelihood Protection (Social Safeguard: Env 1.0, Social 2.5, Directness 0.8)
+        in.marg.routing.AlignmentPreference socPref = in.marg.routing.AlignmentPreference.COMMUNITY_SAFEGUARD;
+        Map<String, Object> socGenerated = corridors.route(existing.regionId(), "TIER_2_PRECACHED_BENCHMARK",
+                first.get(1), first.get(0), last.get(1), last.get(0), ROUTING_RESOLUTION_METERS,
+                CORRIDOR_BUFFER_DEGREES, MAX_LULC_SAMPLES, null, facilityMode, null, null, null,
+                false, null, socPref);
+        AlternativeOption optSoc = buildOption("OPT-SOC-03",
+                "Option 3: Settlement & Livelihood Protection (Social Safeguard)",
+                "Heavily penalizes village settlement boundaries, homestead displacement, and demographic clusters (2.5x weight) to prevent land acquisition disputes and minimize R&R liabilities under RFCTLARR 2013.",
+                socPref, projectId, existing, facilityMode, socGenerated);
+
+        List<AlternativeOption> allOptions = List.of(optEco, optBal, optSoc);
+
+        // Default primary candidate is Option 1 (Maximum Environmental Preservation)
+        AlternativeOption primary = optEco;
+
+        return new AlternativeRecommendation(
+                projectId,
+                primary.recommendationStatus(),
+                existing,
+                primary.screeningResult(),
+                primary.coordinates(),
+                metricValue(existing.evidence(), "routeLengthKm"),
+                primary.routeLengthKm(),
+                primary.lengthDeltaVsExistingKm(),
+                primary.environmentalComparisons(),
+                primary.features(),
+                allOptions,
+                "The candidates use MARG's multi-objective GIS routing engine with adjusted weight matrices. A lower mapped exposure is only a screening advantage; assess endpoint snapping, land ownership, engineering feasibility, legal constraints, authoritative datasets and field conditions before considering any change.");
+    }
+
+    private AlternativeOption buildOption(String optionId, String optionTitle, String rationale,
+                                          in.marg.routing.AlignmentPreference preference,
+                                          String projectId, AlignmentScreeningResult existing,
+                                          String facilityMode, Map<String, Object> generated) throws IOException {
         List<List<Double>> alternativeCoordinates = extractMainline(generated);
         AlignmentScreeningRequest alternativeRequest = new AlignmentScreeningRequest(
-                "MARG GIS-engine candidate", existing.regionId(), facilityMode, alternativeCoordinates);
+                optionTitle, existing.regionId(), facilityMode, alternativeCoordinates);
         AlignmentScreeningResult alternative = screening.screen(projectId, alternativeRequest);
 
         List<IndicatorComparison> comparisons = compareEnvironmentalIndicators(existing.evidence(), alternative.evidence());
@@ -57,15 +111,26 @@ public class Mode2AlternativeRouteService {
                 : improved > 0 && worsened == 0 && !incomplete ? "POTENTIAL_ALTERNATIVE_FOR_REVIEW"
                 : improved > 0 ? "TRADE_OFF_REQUIRES_REVIEW" : "NO_CLEAR_GIS_ADVANTAGE";
         if (incomplete && improved == 0 && worsened == 0) status = "INSUFFICIENT_COMPARABLE_METRICS";
+
         BigDecimal existingLength = metricValue(existing.evidence(), "routeLengthKm");
         BigDecimal candidateLength = metricValue(alternative.evidence(), "routeLengthKm");
         BigDecimal lengthDelta = existingLength == null || candidateLength == null
                 ? null : candidateLength.subtract(existingLength);
         Object candidateGeoJsonFeatures = generated == null ? List.of() : generated.getOrDefault("features", List.of());
-        return new AlternativeRecommendation(projectId, status, existing, alternative,
-                alternativeCoordinates, existingLength, candidateLength, lengthDelta, comparisons,
-                candidateGeoJsonFeatures,
-                "The candidate uses MARG's existing composite GIS routing engine with the submitted route's endpoints and facility class. A lower mapped exposure is only a screening advantage; assess endpoint snapping, land ownership, engineering feasibility, legal constraints, authoritative datasets and field conditions before considering any change.");
+
+        return new AlternativeOption(
+                optionId,
+                optionTitle,
+                rationale,
+                preference,
+                status,
+                alternative,
+                alternativeCoordinates,
+                candidateLength,
+                lengthDelta,
+                comparisons,
+                candidateGeoJsonFeatures
+        );
     }
 
     private List<List<Double>> extractMainline(Map<String, Object> route) {
@@ -168,6 +233,25 @@ public class Mode2AlternativeRouteService {
                                       BigDecimal candidateValue, BigDecimal candidateMinusExisting,
                                       String status, String existingEvidenceId, String candidateEvidenceId) {}
 
+    public record AlternativeOption(
+            String optionId,
+            String optionTitle,
+            String rationale,
+            in.marg.routing.AlignmentPreference preference,
+            String recommendationStatus,
+            AlignmentScreeningResult screeningResult,
+            List<List<Double>> coordinates,
+            BigDecimal routeLengthKm,
+            BigDecimal lengthDeltaVsExistingKm,
+            List<IndicatorComparison> environmentalComparisons,
+            Object features
+    ) {
+        public AlternativeOption {
+            coordinates = coordinates == null ? List.of() : List.copyOf(coordinates);
+            environmentalComparisons = environmentalComparisons == null ? List.of() : List.copyOf(environmentalComparisons);
+        }
+    }
+
     public record AlternativeRecommendation(String projectId, String recommendationStatus,
                                              AlignmentScreeningResult existingRoute,
                                              AlignmentScreeningResult candidateRoute,
@@ -177,10 +261,27 @@ public class Mode2AlternativeRouteService {
                                              BigDecimal candidateLengthMinusExistingKm,
                                              List<IndicatorComparison> environmentalComparisons,
                                              Object candidateFeatures,
+                                             List<AlternativeOption> options,
                                              String interpretationLimit) {
         public AlternativeRecommendation {
-            candidateCoordinates = List.copyOf(candidateCoordinates);
-            environmentalComparisons = List.copyOf(environmentalComparisons);
+            candidateCoordinates = candidateCoordinates == null ? List.of() : List.copyOf(candidateCoordinates);
+            environmentalComparisons = environmentalComparisons == null ? List.of() : List.copyOf(environmentalComparisons);
+            options = options == null ? List.of() : List.copyOf(options);
+        }
+
+        public AlternativeRecommendation(String projectId, String recommendationStatus,
+                                         AlignmentScreeningResult existingRoute,
+                                         AlignmentScreeningResult candidateRoute,
+                                         List<List<Double>> candidateCoordinates,
+                                         BigDecimal existingRouteLengthKm,
+                                         BigDecimal candidateRouteLengthKm,
+                                         BigDecimal candidateLengthMinusExistingKm,
+                                         List<IndicatorComparison> environmentalComparisons,
+                                         Object candidateFeatures,
+                                         String interpretationLimit) {
+            this(projectId, recommendationStatus, existingRoute, candidateRoute, candidateCoordinates,
+                    existingRouteLengthKm, candidateRouteLengthKm, candidateLengthMinusExistingKm,
+                    environmentalComparisons, candidateFeatures, List.of(), interpretationLimit);
         }
     }
 }

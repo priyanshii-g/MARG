@@ -50,6 +50,7 @@ public class Mode2AlignmentScreeningService {
     private final Mode2GisMetricsProvider gisMetrics;
     private final Mode2GisEvidenceAssembler evidenceAssembler;
     private final java.util.concurrent.ConcurrentHashMap<String, AlignmentScreeningResult> latestScreenings = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<String, AlignmentScreeningRequest> latestRequests = new java.util.concurrent.ConcurrentHashMap<>();
 
     public Mode2AlignmentScreeningService(Mode2ProjectDocumentService projects,
                                           RegionalCorridorRegistry corridors,
@@ -64,6 +65,11 @@ public class Mode2AlignmentScreeningService {
     public AlignmentScreeningResult getLatestScreening(String projectId) {
         if (projectId == null) return null;
         return latestScreenings.get(projectId);
+    }
+
+    public AlignmentScreeningRequest getLatestRequest(String projectId) {
+        if (projectId == null) return null;
+        return latestRequests.get(projectId);
     }
 
     public boolean hasScreening(String projectId) {
@@ -109,6 +115,7 @@ public class Mode2AlignmentScreeningService {
                 preset.displayName(), facilityMode.name(), route.size(), fingerprint, metadata, method,
                 diagnostics, evidence, availableLayerNames(availableKeys), notAssessed, limitations);
         latestScreenings.put(projectId, result);
+        latestRequests.put(projectId, request);
         return result;
     }
 

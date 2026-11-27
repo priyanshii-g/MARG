@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -184,12 +185,23 @@ public class CorridorIngestionService {
         );
     }
 
+    private static String resolvePythonCommand() {
+        for (String cmd : List.of("python3", "python")) {
+            try {
+                if (new ProcessBuilder(cmd, "--version").start().waitFor() == 0) {
+                    return cmd;
+                }
+            } catch (Exception ignored) {}
+        }
+        return "python3";
+    }
+
     private void runPythonIngestion(
             String id, String name, double minLat, double minLon, double maxLat, double maxLon,
             double startLat, double startLon, double endLat, double endLon, String state, String physioZone) {
 
         ProcessBuilder pb = new ProcessBuilder(
-                "python",
+                resolvePythonCommand(),
                 "scripts/ingest_corridor.py",
                 "--id", id,
                 "--name", name,
@@ -215,10 +227,10 @@ public class CorridorIngestionService {
                     output.append(line).append("\n");
                 }
             }
-            boolean finished = process.waitFor(90, TimeUnit.SECONDS);
+            boolean finished = process.waitFor(180, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
-                throw new IllegalStateException("Corridor ingestion script timed out after 90s");
+                throw new IllegalStateException("Corridor ingestion script timed out after 180s");
             }
             if (process.exitValue() != 0) {
                 throw new IllegalStateException("Corridor ingestion script failed (code "

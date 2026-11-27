@@ -29,10 +29,13 @@ import argparse
 import hashlib
 import json
 import math
+import socket
 import sys
 from pathlib import Path
 import numpy as np
 from PIL import Image, TiffImagePlugin
+
+socket.setdefaulttimeout(8)
 
 WGS84_A = 6378137.0
 WGS84_E2 = 0.0066943799901413165

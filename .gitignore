@@ -103,3 +103,6 @@ application-local.properties
 cp.txt
 data/generated-reports/
 data/mode2/projects/
+__pycache__/
+**/__pycache__/
+scripts/cache/
