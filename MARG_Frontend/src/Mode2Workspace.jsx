@@ -388,6 +388,7 @@ export default function Mode2Workspace({ onHome }) {
   const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
   const [statutoryRisk, setStatutoryRisk] = useState(null);
   const [mitigationCalc, setMitigationCalc] = useState(null);
+  const [showDocsSidebar, setShowDocsSidebar] = useState(true);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -540,6 +541,7 @@ export default function Mode2Workspace({ onHome }) {
         }),
       });
       setComparison(result);
+      setShowDocsSidebar(false);
       const [riskRes, campaRes] = await Promise.allSettled([
         api(`/api/mode2/projects/${encodeURIComponent(activePid)}/statutory-risk`),
         api(`/api/mode2/projects/${encodeURIComponent(activePid)}/mitigation-calculator`),
@@ -568,6 +570,7 @@ export default function Mode2Workspace({ onHome }) {
       });
       setAlternative(result);
       setSelectedOptionIdx(0);
+      setShowDocsSidebar(false);
       setNotice(`MARG generated ${result.options?.length || 1} multi-objective GIS alternative option(s) between the alignment endpoints.`);
     } catch (e) { setError(e.message); setNotice(""); }
     finally { setBusy(false); }
@@ -682,11 +685,23 @@ export default function Mode2Workspace({ onHome }) {
             >
               📄 Load Pulicat Bridge EIA Report
             </button>
+            <button
+              type="button"
+              onClick={() => setShowDocsSidebar((v) => !v)}
+              className="flex items-center gap-1.5 rounded-full border border-[#8CB396] bg-[#C9DFCF] px-4 py-2 text-xs font-semibold text-[#143627] hover:bg-[#B4D2BC] transition-colors"
+            >
+              {showDocsSidebar ? "Hide Workspaces & PDFs" : `📁 Workspaces & PDFs (${documents.length})`}
+            </button>
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[290px_1fr] xl:grid-cols-[290px_1fr_380px] items-start">
-          {/* Sidebar */}
+        <div className={`grid gap-6 items-start ${
+          showDocsSidebar
+            ? "lg:grid-cols-[290px_1fr] xl:grid-cols-[290px_1fr_360px]"
+            : "lg:grid-cols-[1fr_380px]"
+        }`}>
+          {/* Sidebar (hidden automatically after Mode 2 results are computed, toggleable from top bar) */}
+          {showDocsSidebar && (
           <aside className="space-y-5">
             <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
@@ -755,6 +770,7 @@ export default function Mode2Workspace({ onHome }) {
               {selectedProject && !documents.length && <p className="mt-3 text-xs text-[#7c887e]">No PDFs uploaded for this project yet.</p>}
             </section>
           </aside>
+          )}
 
           {/* Main workspace sections */}
           <div className="min-w-0 space-y-6">
