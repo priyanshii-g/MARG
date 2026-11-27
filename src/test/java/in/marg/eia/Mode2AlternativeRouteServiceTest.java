@@ -32,20 +32,21 @@ class Mode2AlternativeRouteServiceTest {
                 "geometry", Map.of("type", "LineString", "coordinates", candidate))));
         when(corridors.route(eq("assam"), eq("TIER_2_PRECACHED_BENCHMARK"), eq(26.20), eq(93.30),
                 eq(26.30), eq(93.40), eq(250.0), eq(0.08), eq(4000), eq(null), eq("NATIONAL_HIGHWAY"),
-                eq(null), eq(null), eq(null), eq(false), eq(null))).thenReturn(route);
+                eq(null), eq(null), eq(null), eq(false), eq(null), any(in.marg.routing.AlignmentPreference.class))).thenReturn(route);
         AlignmentScreeningResult existingScreen = result(projectId, "existing-route", "10.0", "8.0");
         AlignmentScreeningResult candidateScreen = result(projectId, "candidate-route", "11.0", "3.0");
         when(screening.screen(eq(projectId), any(AlignmentScreeningRequest.class)))
-                .thenReturn(existingScreen, candidateScreen);
+                .thenReturn(existingScreen, candidateScreen, candidateScreen, candidateScreen);
 
         var recommendation = new Mode2AlternativeRouteService(corridors, screening).recommend(projectId,
                 new AlignmentScreeningRequest("Submitted route", "assam", "NATIONAL_HIGHWAY", submitted));
 
         assertEquals("POTENTIAL_ALTERNATIVE_FOR_REVIEW", recommendation.recommendationStatus());
         assertEquals(candidate, recommendation.candidateCoordinates());
+        assertEquals(3, recommendation.options().size());
         assertEquals(1, recommendation.environmentalComparisons().size());
         assertEquals(new BigDecimal("-5.0"), recommendation.environmentalComparisons().getFirst().candidateMinusExisting());
-        verify(screening, org.mockito.Mockito.times(2)).screen(eq(projectId), any(AlignmentScreeningRequest.class));
+        verify(screening, org.mockito.Mockito.times(4)).screen(eq(projectId), any(AlignmentScreeningRequest.class));
     }
 
     private AlignmentScreeningResult result(String projectId, String fingerprint, String length, String protectedArea) {

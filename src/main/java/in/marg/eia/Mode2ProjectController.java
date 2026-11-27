@@ -29,17 +29,32 @@ public class Mode2ProjectController {
     private final Mode2ProjectEvidenceComparisonService evidenceComparison;
     private final Mode2AlternativeRouteService alternatives;
     private final Mode2ProjectRagService rag;
+    private final StatutoryRiskAndClearanceScorerService statutoryScorer;
+    private final CampaMitigationCalculatorService campaCalculator;
+    private final ExecutiveDecisionBriefService executiveBriefService;
+    private final ExecutiveDecisionBriefDocxWriter briefDocxWriter;
+    private final EnvironmentalReportPdfRenderer pdfRenderer;
 
     public Mode2ProjectController(Mode2ProjectDocumentService projects,
                                   Mode2AlignmentScreeningService alignmentScreening,
                                   Mode2ProjectEvidenceComparisonService evidenceComparison,
                                   Mode2AlternativeRouteService alternatives,
-                                  Mode2ProjectRagService rag) {
+                                  Mode2ProjectRagService rag,
+                                  StatutoryRiskAndClearanceScorerService statutoryScorer,
+                                  CampaMitigationCalculatorService campaCalculator,
+                                  ExecutiveDecisionBriefService executiveBriefService,
+                                  ExecutiveDecisionBriefDocxWriter briefDocxWriter,
+                                  EnvironmentalReportPdfRenderer pdfRenderer) {
         this.projects = projects;
         this.alignmentScreening = alignmentScreening;
         this.evidenceComparison = evidenceComparison;
         this.alternatives = alternatives;
         this.rag = rag;
+        this.statutoryScorer = statutoryScorer;
+        this.campaCalculator = campaCalculator;
+        this.executiveBriefService = executiveBriefService;
+        this.briefDocxWriter = briefDocxWriter;
+        this.pdfRenderer = pdfRenderer;
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(ResponseStatusException.class)
@@ -228,6 +243,82 @@ public class Mode2ProjectController {
             HttpStatus status = exception.getMessage() != null && exception.getMessage().contains("project was not found")
                     ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
             throw new ResponseStatusException(status, exception.getMessage(), exception);
+        }
+    }
+
+    @GetMapping("/projects/{projectId}/statutory-risk")
+    public StatutoryRiskAndClearanceScorerService.RegulatoryReadinessReport getStatutoryRisk(
+            @PathVariable("projectId") String projectId) throws IOException {
+        var req = alignmentScreening.getLatestRequest(projectId);
+        var comparison = evidenceComparison.compare(projectId, null, 20, req);
+        return statutoryScorer.scoreProject(comparison);
+    }
+
+    @PostMapping("/projects/{projectId}/statutory-risk")
+    public StatutoryRiskAndClearanceScorerService.RegulatoryReadinessReport scoreStatutoryRisk(
+            @PathVariable("projectId") String projectId,
+            @RequestBody(required = false) CompareAlignmentRequest request) throws IOException {
+        var req = request != null ? new Mode2AlignmentScreeningService.AlignmentScreeningRequest(
+                request.alignmentName(), request.regionId(), request.facilityMode(), request.coordinates()) : alignmentScreening.getLatestRequest(projectId);
+        var comparison = evidenceComparison.compare(projectId, request != null ? request.factQuery() : null,
+                request != null ? request.factLimit() : 20, req);
+        return statutoryScorer.scoreProject(comparison);
+    }
+
+    @GetMapping("/projects/{projectId}/mitigation-calculator")
+    public CampaMitigationCalculatorService.MitigationBudgetSummary getMitigationBudget(
+            @PathVariable("projectId") String projectId) {
+        var screening = alignmentScreening.getLatestScreening(projectId);
+        return campaCalculator.calculateFromScreening(projectId, screening);
+    }
+
+    @PostMapping("/projects/{projectId}/mitigation-calculator")
+    public CampaMitigationCalculatorService.MitigationBudgetSummary calculateMitigationBudget(
+            @PathVariable("projectId") String projectId,
+            @RequestBody(required = false) Mode2AlignmentScreeningService.AlignmentScreeningRequest request) throws IOException {
+        var screening = request != null ? alignmentScreening.screen(projectId, request) : alignmentScreening.getLatestScreening(projectId);
+        return campaCalculator.calculateFromScreening(projectId, screening);
+    }
+
+    @GetMapping("/projects/{projectId}/executive-brief")
+    public ExecutiveDecisionBriefService.ExecutiveBrief getExecutiveBrief(
+            @PathVariable("projectId") String projectId) throws IOException {
+        var req = alignmentScreening.getLatestRequest(projectId);
+        return executiveBriefService.generateBrief(projectId, req);
+    }
+
+    @PostMapping("/projects/{projectId}/executive-brief")
+    public ExecutiveDecisionBriefService.ExecutiveBrief generateExecutiveBrief(
+            @PathVariable("projectId") String projectId,
+            @RequestBody(required = false) Mode2AlignmentScreeningService.AlignmentScreeningRequest request) throws IOException {
+        var req = request != null ? request : alignmentScreening.getLatestRequest(projectId);
+        return executiveBriefService.generateBrief(projectId, req);
+    }
+
+    @GetMapping(value = "/projects/{projectId}/executive-brief/docx", produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    public ResponseEntity<byte[]> downloadExecutiveBriefDocx(@PathVariable("projectId") String projectId) throws IOException {
+        var brief = getExecutiveBrief(projectId);
+        byte[] docx = briefDocxWriter.writeBrief(brief);
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"marg-executive-brief-" + projectId + ".docx\"")
+                .body(docx);
+    }
+
+    @GetMapping(value = "/projects/{projectId}/executive-brief/pdf", produces = "application/pdf")
+    public ResponseEntity<byte[]> downloadExecutiveBriefPdf(@PathVariable("projectId") String projectId) throws Exception {
+        var brief = getExecutiveBrief(projectId);
+        byte[] docx = briefDocxWriter.writeBrief(brief);
+        java.nio.file.Path tempDocx = java.nio.file.Files.createTempFile("brief-" + projectId, ".docx");
+        java.nio.file.Files.write(tempDocx, docx);
+        try {
+            var pdfArtifact = pdfRenderer.renderForContents(tempDocx, List.of());
+            byte[] pdfBytes = java.nio.file.Files.readAllBytes(pdfArtifact.path());
+            java.nio.file.Files.deleteIfExists(pdfArtifact.path());
+            return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"marg-executive-brief-" + projectId + ".pdf\"")
+                    .body(pdfBytes);
+        } finally {
+            java.nio.file.Files.deleteIfExists(tempDocx);
         }
     }
 

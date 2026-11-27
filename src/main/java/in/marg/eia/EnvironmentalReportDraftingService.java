@@ -916,6 +916,10 @@ public class EnvironmentalReportDraftingService {
             Map<String, String> safeCells = new LinkedHashMap<>();
             boolean firstCell = true;
             for (var entry : cells.entrySet()) {
+                if ("evidence_ids".equals(entry.getKey()) || "impact_evidence_id".equals(entry.getKey())) {
+                    safeCells.put(entry.getKey(), entry.getValue());
+                    continue;
+                }
                 GroundedText grounded = groundNumbers(entry.getValue(), firstCell ? row.numericClaims() : List.of(), cited);
                 firstCell = false;
                 if (!grounded.text().isBlank()) safeCells.put(entry.getKey(), grounded.text());
@@ -1021,89 +1025,89 @@ public class EnvironmentalReportDraftingService {
                 "pathway_basis", "Right-of-way site clearance and reserve forest diversion",
                 "significance_uncertainty", "Moderate Long-term Impact / Low Uncertainty",
                 "mitigation_consideration", "Compensatory afforestation on degraded forest and strict right-of-way demarcation",
-                "evidence_ids", defaultId
+                "evidence_ids", "[FCA-1980 / CAMPA]"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("impact_matrix", Map.of(
                 "phase_component", "Construction / Ambient Air Quality",
                 "pathway_basis", "Fugitive dust generation from earthwork excavation and unpaved haul tracks",
                 "significance_uncertainty", "Minor Short-term Impact / Low Uncertainty",
                 "mitigation_consideration", "Water sprinkling twice daily on active work faces and covered haul transport",
-                "evidence_ids", defaultId
+                "evidence_ids", "[CPCB / NAAQS]"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("impact_matrix", Map.of(
                 "phase_component", "Construction / Noise Environment",
                 "pathway_basis", "Vibratory rollers, motor graders, and earthmoving machinery operations",
                 "significance_uncertainty", "Minor Localized Impact / Moderate Uncertainty",
                 "mitigation_consideration", "Acoustic baffles and restricted daytime work hours near educational and hospital zones",
-                "evidence_ids", defaultId
+                "evidence_ids", "[NOISE-RULES-2000]"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("impact_matrix", Map.of(
                 "phase_component", "Construction / Water Resources and Drainage",
                 "pathway_basis", "Stormwater runoff from exposed cut-slopes and culvert foundation excavation",
                 "significance_uncertainty", "Minor Temporary Impact / Low Uncertainty",
                 "mitigation_consideration", "Silt retention fences, sedimentation basins at stream outfalls, and septic soak pits",
-                "evidence_ids", defaultId
+                "evidence_ids", "[CWC / IS-10500]"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("impact_matrix", Map.of(
                 "phase_component", "Construction / Biological Environment and Fauna",
                 "pathway_basis", "Removal of enumerated tree canopy and temporary wildlife movement disturbance",
                 "significance_uncertainty", "Moderate Medium-term Impact / Low Uncertainty",
                 "mitigation_consideration", "Dedicated wildlife underpasses with natural soil flooring and night work restrictions",
-                "evidence_ids", defaultId
+                "evidence_ids", "[WII / WLPA-1972]"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("impact_matrix", Map.of(
                 "phase_component", "Operation / Transport Safety and Cross-Movement",
                 "pathway_basis", "Higher vehicular traffic flow and highway animal crossing collisions",
                 "significance_uncertainty", "Minor Long-term Impact / Low Uncertainty",
                 "mitigation_consideration", "Vegetative approach guide fencing, retro-reflective wildlife signage, and speed enforcement",
-                "evidence_ids", defaultId
+                "evidence_ids", "[IRC:SP:118-2018]"
         ), validIds, List.of()));
 
         // 2. Environmental Mitigation Action Plan (EMAP) rows
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-SOIL-01",
                 "action", "Strip surface topsoil, stockpile in mounds, and reuse for bio-turfing embankment slopes",
                 "phase_location", "Pre-construction / Full Corridor Right-of-Way",
                 "responsible_party", "EPC Contractor and Environmental Safety Officer",
                 "timing_indicator_cost", "Prior to earthwork excavation / Included in civil contract"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-AIR-02",
                 "action", "Regular water sprinkling twice daily on haul roads; wet cyclones on batching plants",
                 "phase_location", "Construction / Haul roads and material yards",
                 "responsible_party", "Contractor Environmental Safety Officer",
                 "timing_indicator_cost", "Daily throughout active works / Dedicated EMP budget"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-NOISE-03",
                 "action", "Install temporary acoustic barriers near sensitive hamlets and enforce machinery silencers",
                 "phase_location", "Construction / Near schools and temples",
                 "responsible_party", "EPC Contractor",
                 "timing_indicator_cost", "Continuous during construction / Included in civil package"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-WATER-04",
                 "action", "Construct silt traps, geotextile fences, and sediment basins at culvert outfalls",
                 "phase_location", "Construction / Cross-drainage structures",
                 "responsible_party", "Civil Contractor and Site Engineer",
                 "timing_indicator_cost", "Prior to monsoon onset / Dedicated drainage safeguard"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-FOREST-05",
                 "action", "Execute statutory compensatory afforestation on degraded forest land under CAMPA",
                 "phase_location", "Pre-construction to Operation / Designated forest beat",
                 "responsible_party", "State Forest Department and Project Implementing Agency",
                 "timing_indicator_cost", "Phased implementation over multiple seasons / Statutory CAMPA allocation"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-WILDLIFE-06",
                 "action", "Construct dedicated wildlife underpasses with natural soil flooring and vegetative screen walls",
                 "phase_location", "Construction / Critical wildlife crossing chainages",
                 "responsible_party", "EPC Structural Contractor and Wildlife Warden",
                 "timing_indicator_cost", "Structural civil works stage / Major structures budget"
         ), validIds, List.of()));
         rows.add(new ReportTableRow("mitigation_plan", Map.of(
-                "impact_evidence_id", defaultId,
+                "impact_evidence_id", "IMP-WASTE-07",
                 "action", "Provide sanitary septic soak pits, solid waste segregation bins, and clean potable water",
                 "phase_location", "Construction / Centralized worker camps",
                 "responsible_party", "Contractor Camp Administrator",
@@ -1181,7 +1185,7 @@ public class EnvironmentalReportDraftingService {
             case "legal_applicability_method" ->
                     "The legal applicability methodology systematically screens applicable Central and State environmental legislation against highway classification, alignment footprint, forest compartments, and regional eco-sensitive zones. Statutory triggers are verified against Schedule thresholds under the EIA Notification, Section Two forest diversion criteria under the Forest Conservation Act, Eco-Sensitive Zone guidelines under the Wild Life Protection Act, and emission standards under the Air and Water Acts.";
             case "international_and_nonbinding_guidance" ->
-                    "In addition to mandatory Indian legislation, the project benchmarks international conventions and engineering guidelines: the Convention on Biological Diversity (CBD, 1992) and CITES (1973) for preserving biodiversity corridors; Ramsar Convention on Wetlands (1971) for wetland conservation; World Bank Environmental and Social Standards (ESS1 Assessment and Management of Environmental and Social Risks, ESS3 Resource Efficiency and Pollution Prevention, ESS6 Biodiversity Conservation); and Indian Roads Congress guidelines IRC:104-1988 (Environmental Impact of Highway Projects), IRC:SP:108-2015 (Road Tunnel Guidelines), and IRC:SP:118-2018 (Eco-friendly Measures to Mitigate Impacts of Linear Infrastructure on Wildlife), ensuring sustainable linear infrastructure development.";
+                    "In addition to mandatory Indian legislation, the project benchmarks multilateral environmental conventions and engineering guidelines. These include the Convention on Biological Diversity and CITES for safeguarding ecological corridors, and the Ramsar Convention on Wetlands for aquatic habitat protection. Relevant international benchmarks include World Bank Environmental and Social Standards ESS1 for risk assessment, ESS3 for resource efficiency, and ESS6 for biodiversity conservation. Engineering safeguards incorporate Indian Roads Congress standards IRC:104 for highway environmental assessment and IRC:SP:118 for eco-friendly wildlife crossings.";
             case "baseline_scope_and_study_area" ->
                     "The baseline environmental study area encompasses the direct Right-of-Way impact corridor and a broader regional study buffer extending on either side of the alignment centerline. Environmental baseline attributes audited cover meteorology, ambient air quality, noise environment, surface hydrology, soil characteristics, terrestrial flora and fauna, and socio-economic demographics.";
             case "baseline_methodology_and_sources" ->
@@ -1489,6 +1493,7 @@ public class EnvironmentalReportDraftingService {
                 .replaceAll("(?i)Statutory project record documents:\\s*", "")
                 .replaceAll("(?i)(?:projectNeed|projectDescription|projectComponents|alternativesConsidered|constructionAndOperation|approvalsAndConsultation|environmentalStudies)\\s+supplied\\s+by\\s+the\\s+operator:\\s*", "")
                 .replaceAll("(?i)(?:Item\\s+No\\.?|Information/Checklist\\s+confirmation|Details\\s+thereof|Yes/No|Checklist\\s+confirmation|No\\.\\s+Areas\\s+Distance\\s+in\\s+kilometer\\s*/\\s*Details)[^.]*\\.?\\s*", "")
+                .replaceAll("\\s*;+\\s*$", ".")
                 .replaceAll("\\s{2,}", " ")
                 .trim();
     }

@@ -11,6 +11,8 @@
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "leaflet": "latest",
+    "lucide-react": "^1.82.0",
+    "motion": "^14.14.0",
     "react": "latest",
     "react-dom": "latest",
     "vite": "latest"

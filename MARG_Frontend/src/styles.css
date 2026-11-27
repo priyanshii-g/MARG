@@ -4011,8 +4011,8 @@ body:has(.marg-home) {
 /* Professional EIA engineering form & tab styling */
 .eia-tab-bar {
   display: flex;
-  border-bottom: 1px solid #34443a;
-  gap: 2px;
+  border-bottom: 1px solid #D8E8DD;
+  gap: 6px;
   background: transparent;
   overflow-x: auto;
 }
@@ -4020,52 +4020,85 @@ body:has(.marg-home) {
 .eia-tab-btn {
   border: none !important;
   border-bottom: 2px solid transparent !important;
-  border-radius: 0 !important;
+  border-radius: 12px 12px 0 0 !important;
   background: transparent !important;
-  color: #8fa394 !important;
-  padding: 9px 15px !important;
+  color: #59645C !important;
+  padding: 10px 16px !important;
   font-size: 12px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.02em !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 150ms ease !important;
+  box-shadow: none !important;
+  transition: all 160ms ease !important;
 }
 
 .eia-tab-btn:hover {
-  color: #e2ece4 !important;
-  background: rgba(45, 65, 53, 0.3) !important;
+  color: #143627 !important;
+  background: #D1E3D6 !important;
 }
 
 .eia-tab-btn.active {
-  border-bottom: 2px solid #10b981 !important;
-  color: #ffffff !important;
-  background: rgba(38, 54, 45, 0.45) !important;
-  font-weight: 600 !important;
+  border-bottom: 2px solid #143627 !important;
+  color: #143627 !important;
+  background: #E9F2EC !important;
+  font-weight: 700 !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Modern Material Design 3 base reset for Mode 2 & EIA workspaces */
+.marg-modern button {
+  -webkit-appearance: none;
+  appearance: none;
+  border-style: solid;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 160ms ease, box-shadow 180ms ease;
+}
+
+.marg-modern input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+.marg-modern select,
+.marg-modern textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 14px;
+  border: 1px solid #D5E2D8;
+  background-color: #FAF9F6;
+  color: #1C2420;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.marg-modern input:not([type="file"]):focus,
+.marg-modern select:focus,
+.marg-modern textarea:focus {
+  background-color: #FFFFFF;
+  border-color: #143627;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+  outline: none;
 }
 
 .eia-spec-card {
-  background-color: #1a251f !important;
-  border: 1px solid #334438 !important;
-  border-radius: 6px !important;
+  background-color: #FAF9F6 !important;
+  border: 1px solid #D8E8DD !important;
+  border-radius: 14px !important;
 }
 
 .eia-input {
-  background-color: #131b17 !important;
-  border: 1px solid #384b3e !important;
-  border-radius: 5px !important;
-  color: #f1f5f9 !important;
-  padding: 8px 12px !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #CBD2C8 !important;
+  border-radius: 12px !important;
+  color: #1C2420 !important;
+  padding: 11px 14px !important;
   font-size: 13px !important;
-  line-height: 1.4 !important;
+  line-height: 1.45 !important;
   width: 100% !important;
   box-sizing: border-box !important;
   transition: border-color 150ms ease, box-shadow 150ms ease !important;
 }
 
 .eia-input:focus {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 1px #10b981 !important;
+  border-color: #143627 !important;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.14) !important;
   outline: none !important;
 }
 
@@ -4077,7 +4110,7 @@ body:has(.marg-home) {
   font-weight: 600 !important;
   letter-spacing: 0.04em !important;
   text-transform: uppercase !important;
-  color: #9cb5a3 !important;
+  color: #143627 !important;
   margin-bottom: 6px !important;
 }
 
@@ -4085,7 +4118,7 @@ body:has(.marg-home) {
   font-size: 10px !important;
   font-weight: 400 !important;
   text-transform: none !important;
-  color: #6d8574 !important;
+  color: #59645C !important;
   letter-spacing: normal !important;
 }
 
