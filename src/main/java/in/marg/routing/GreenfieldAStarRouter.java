@@ -57,13 +57,15 @@ public class GreenfieldAStarRouter {
                                                CostSurface surface, double resolutionMeters,
                                                StudyRegion searchWindow) {
         Grid grid = buildGrid(searchWindow, resolutionMeters);
-        Node startNode = nearestNode(start, grid);
-        Node goalNode = nearestNode(goal, grid);
+        Node startNode = nearestNavigableNode(start, grid, surface);
+        Node goalNode = nearestNavigableNode(goal, grid, surface);
 
         PriorityQueue<OpenEntry> open = new PriorityQueue<>(Comparator.comparingDouble(OpenEntry::f));
         Map<Node, Double> gScore = new HashMap<>();
         Map<Node, Node> cameFrom = new HashMap<>();
         Map<Node, CostAssessment> costCache = new HashMap<>();
+        Map<Long, CostAssessment> edgeCostCache = new HashMap<>();
+        boolean hasEdgeCost = surface.hasEdgeCost();
 
         ensureEndpointAccessible(surface, start, goal);
         gScore.put(startNode, 0.0);
@@ -85,9 +87,20 @@ public class GreenfieldAStarRouter {
                     continue;
                 }
                 CostAssessment assessment = costCache.computeIfAbsent(next, n -> surface.assess(nextPoint));
-                if (assessment.blocked()) continue;
-                CostAssessment edgeAssessment = surface.assessEdge(currentPoint, nextPoint);
-                if (edgeAssessment.blocked()) continue;
+                if (assessment.blocked()) {
+                    continue;
+                }
+                CostAssessment edgeAssessment;
+                if (!hasEdgeCost) {
+                    edgeAssessment = CostAssessment.free("grid-edge");
+                } else {
+                    long eKey = edgeKey(current, next, grid.cols());
+                    edgeAssessment = edgeCostCache.computeIfAbsent(eKey,
+                            k -> surface.assessEdge(currentPoint, nextPoint));
+                }
+                if (edgeAssessment.blocked()) {
+                    continue;
+                }
 
                 double stepKm = projection.distanceMeters(currentPoint, nextPoint) / 1000.0;
                 double multiplier = 1.0
@@ -118,41 +131,70 @@ public class GreenfieldAStarRouter {
                                                        CostSurface surface, double resolutionMeters,
                                                        StudyRegion searchWindow, double maxRouteLengthKm) {
         Grid grid = buildGrid(searchWindow, resolutionMeters);
-        Node startNode = nearestNode(start, grid);
-        Node goalNode = nearestNode(goal, grid);
+        Node startNode = nearestNavigableNode(start, grid, surface);
+        Node goalNode = nearestNavigableNode(goal, grid, surface);
+        System.out.println("DEBUG_NODES: startNode=" + startNode + " sBlocked=" + surface.assess(point(startNode, grid)).blocked()
+                + " goalNode=" + goalNode + " gBlocked=" + surface.assess(point(goalNode, grid)).blocked()
+                + " goalPt=" + point(goalNode, grid) + " gClass=" + surface.assess(point(goalNode, grid)).className());
+        for (Node nbr : neighbors(goalNode, grid.rows(), grid.cols())) {
+            GeoPoint nPt = point(nbr, grid);
+            CostAssessment na = surface.assess(nPt);
+            CostAssessment ea = surface.assessEdge(nPt, point(goalNode, grid));
+            System.out.println("  GOAL_NBR: " + nbr + " nBlocked=" + na.blocked() + "(" + na.className() + ") eBlocked=" + ea.blocked() + "(" + ea.className() + ")");
+        }
         ensureEndpointAccessible(surface, start, goal);
 
         Map<Node, CostAssessment> costCache = new HashMap<>();
+        Map<Long, CostAssessment> edgeCostCache = new HashMap<>();
 
         List<GeoPoint> unconstrained = weightedAStar(start, goal, surface, grid,
-                startNode, goalNode, 0.0, costCache, searchWindow);
+                startNode, goalNode, 0.0, costCache, edgeCostCache, searchWindow);
         if (routeLengthKm(unconstrained) <= maxRouteLengthKm + 1e-7) {
             return unconstrained;
         }
 
         double low = 0.0;
         double high = 0.25;
+        double previousDist = Double.POSITIVE_INFINITY;
         WeightedPath bestFeasible = null;
-        final int maxBracketRuns = 12;
+        WeightedPath shortestHardFeasible = evaluatePath(unconstrained, surface);
+        final int maxBracketRuns = 6;
         for (int i = 0; i < maxBracketRuns; i++) {
             List<GeoPoint> path = weightedAStar(start, goal, surface, grid,
-                    startNode, goalNode, high, costCache, searchWindow);
+                    startNode, goalNode, high, costCache, edgeCostCache, searchWindow);
             WeightedPath candidate = evaluatePath(path, surface);
+            if (Double.isFinite(candidate.originalCostKm())
+                    && (shortestHardFeasible == null
+                    || candidate.physicalDistanceKm() < shortestHardFeasible.physicalDistanceKm() - EPS)) {
+                shortestHardFeasible = candidate;
+            }
             if (candidate.physicalDistanceKm() <= maxRouteLengthKm + 1e-7) {
                 bestFeasible = candidate;
                 break;
             }
+            if (i >= 2 && Math.abs(candidate.physicalDistanceKm() - previousDist) < 0.05) {
+                // Converged to the shortest hard-constraint compliant bypass; further lambda scaling cannot shorten it
+                break;
+            }
+            previousDist = candidate.physicalDistanceKm();
             low = high;
             high *= 2.0;
-            if (high > 4096.0) break;
+            if (high > 64.0) break;
         }
 
         if (bestFeasible == null) {
             List<GeoPoint> distanceBaseline = weightedAStar(start, goal,
                     new DistanceOnlyCostSurface(), grid,
-                    startNode, goalNode, 0.0, new HashMap<>(), searchWindow);
+                    startNode, goalNode, 0.0, new HashMap<>(), new HashMap<>(), searchWindow);
             if (routeLengthKm(distanceBaseline) <= maxRouteLengthKm + 1e-7) {
-                return distanceBaseline;
+                WeightedPath evaluatedDistanceBaseline = evaluatePath(distanceBaseline, surface);
+                if (Double.isFinite(evaluatedDistanceBaseline.originalCostKm())
+                        && evaluatedDistanceBaseline.originalCostKm() < ProtectedAreaCostLayer.ESZ_10KM_LAST_RESORT_PENALTY * 0.1) {
+                    return distanceBaseline;
+                }
+                if (shortestHardFeasible != null && Double.isFinite(shortestHardFeasible.originalCostKm())) {
+                    return shortestHardFeasible.points();
+                }
             }
             throw new IllegalStateException("No route satisfies the requested maximum route length of "
                     + round(maxRouteLengthKm) + " km inside the configured study corridor");
@@ -162,7 +204,7 @@ public class GreenfieldAStarRouter {
         for (int i = 0; i < binaryIterations; i++) {
             double mid = (low + high) / 2.0;
             List<GeoPoint> path = weightedAStar(start, goal, surface, grid,
-                    startNode, goalNode, mid, costCache, searchWindow);
+                    startNode, goalNode, mid, costCache, edgeCostCache, searchWindow);
             WeightedPath candidate = evaluatePath(path, surface);
             if (candidate.physicalDistanceKm() <= maxRouteLengthKm + 1e-7) {
                 if (bestFeasible == null
@@ -180,12 +222,22 @@ public class GreenfieldAStarRouter {
         return bestFeasible.points();
     }
 
+    private static long edgeKey(Node u, Node v, int cols) {
+        long idU = (long) u.r() * cols + u.c();
+        long idV = (long) v.r() * cols + v.c();
+        long min = Math.min(idU, idV);
+        long max = Math.max(idU, idV);
+        return (min << 32) | (max & 0xFFFFFFFFL);
+    }
+
     private List<GeoPoint> weightedAStar(GeoPoint start, GeoPoint goal,
         CostSurface surface, Grid grid, Node startNode, Node goalNode, 
-        double lambda, Map<Node, CostAssessment> sharedCostCache, StudyRegion searchWindow) {
+        double lambda, Map<Node, CostAssessment> sharedCostCache,
+        Map<Long, CostAssessment> sharedEdgeCostCache, StudyRegion searchWindow) {
         PriorityQueue<OpenEntry> open = new PriorityQueue<>(Comparator.comparingDouble(OpenEntry::f));
         Map<Node, Double> gScore = new HashMap<>();
         Map<Node, Node> cameFrom = new HashMap<>();
+        boolean hasEdgeCost = surface.hasEdgeCost();
 
         double startHeuristic = heuristicKm(startNode, goalNode, grid) * (1.0 + lambda);
         gScore.put(startNode, 0.0);
@@ -209,7 +261,14 @@ public class GreenfieldAStarRouter {
                 CostAssessment assessment = sharedCostCache.computeIfAbsent(next,
                         n -> surface.assess(nextPoint));
                 if (assessment.blocked()) continue;
-                CostAssessment edgeAssessment = surface.assessEdge(currentPoint, nextPoint);
+                CostAssessment edgeAssessment;
+                if (!hasEdgeCost) {
+                    edgeAssessment = CostAssessment.free("grid-edge");
+                } else {
+                    long eKey = edgeKey(current, next, grid.cols());
+                    edgeAssessment = sharedEdgeCostCache.computeIfAbsent(eKey,
+                            k -> surface.assessEdge(currentPoint, nextPoint));
+                }
                 if (edgeAssessment.blocked()) continue;
 
                 double stepKm = projection.distanceMeters(currentPoint, nextPoint) / 1000.0;
@@ -332,6 +391,55 @@ public class GreenfieldAStarRouter {
         r = Math.max(0, Math.min(grid.rows() - 1, r));
         c = Math.max(0, Math.min(grid.cols() - 1, c));
         return new Node(r, c);
+    }
+
+    private boolean isNavigableNode(Node node, Grid grid, CostSurface surface) {
+        GeoPoint pt = point(node, grid);
+        if (surface.assess(pt).blocked()) {
+            return false;
+        }
+        if (!surface.hasEdgeCost()) {
+            return true;
+        }
+        for (Node nbr : neighbors(node, grid.rows(), grid.cols())) {
+            GeoPoint nPt = point(nbr, grid);
+            if (!surface.assess(nPt).blocked() && !surface.assessEdge(nPt, pt).blocked()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Node nearestNavigableNode(GeoPoint point, Grid grid, CostSurface surface) {
+        Node base = nearestNode(point, grid);
+        if (isNavigableNode(base, grid, surface)) {
+            return base;
+        }
+        for (int radius = 1; radius <= 4; radius++) {
+            Node best = null;
+            double bestDist = Double.POSITIVE_INFINITY;
+            for (int dr = -radius; dr <= radius; dr++) {
+                for (int dc = -radius; dc <= radius; dc++) {
+                    if (Math.abs(dr) != radius && Math.abs(dc) != radius) continue;
+                    int nr = base.r() + dr;
+                    int nc = base.c() + dc;
+                    if (nr >= 0 && nr < grid.rows() && nc >= 0 && nc < grid.cols()) {
+                        Node candidate = new Node(nr, nc);
+                        if (isNavigableNode(candidate, grid, surface)) {
+                            double dist = Math.hypot(dr, dc);
+                            if (dist < bestDist) {
+                                bestDist = dist;
+                                best = candidate;
+                            }
+                        }
+                    }
+                }
+            }
+            if (best != null) {
+                return best;
+            }
+        }
+        return base;
     }
 
     private double heuristicKm(Node a, Node b, Grid grid) {

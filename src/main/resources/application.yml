@@ -1,6 +1,8 @@
 spring:
   application:
     name: marg-routing-prototype
+  config:
+      import: optional:file:.env[.properties]
   ai:
     mcp:
       server:
@@ -46,7 +48,7 @@ marg:
       api-key: ${MARG_EIA_LLM_API_KEY:}
       model: ${MARG_EIA_LLM_MODEL:gemini-3.5-flash-lite}
       timeout-seconds: ${MARG_EIA_LLM_TIMEOUT_SECONDS:120}
-      fallback-models: ${MARG_EIA_LLM_FALLBACK_MODELS:gemini-flash-lite-latest,gemini-3.8-flash,gemini-flash-latest}
+      fallback-models: ${MARG_EIA_LLM_FALLBACK_MODELS:gemini-flash-lite-latest,gemini-2.5-flash,gemini-3.8-flash,gemini-flash-latest}
       retry-delay-millis: ${MARG_EIA_LLM_RETRY_DELAY_MILLIS:1500}
   mode2:
     projects-directory: ${MARG_MODE2_PROJECTS_DIRECTORY:data/mode2/projects}
@@ -95,14 +97,14 @@ marg:
         UNKNOWN: 2.00
 
     settlement:
-      block-urban-core: false
+      block-urban-core: true
       block-no-data: false
       penalties:
         NONE: 0.0
-        OUTER_BUFFER: 0.30
-        INNER_BUFFER: 0.80
-        RURAL_CORE: 1.60
-        URBAN_CORE: 2.50
+        OUTER_BUFFER: 1.50
+        INNER_BUFFER: 6.00
+        RURAL_CORE: 35.00
+        URBAN_CORE: 1000.00
         NODATA: 0.0
 
     transport:
@@ -235,31 +237,33 @@ marg:
       geo-json-simplify-tolerance-meters: 8.0
 
     building:
-      block-institutional-and-religious-compounds: false
-      block-high-density-built-up: false
+      block-institutional-and-religious-compounds: true
+      block-high-density-built-up: true
       block-no-data: false
+      institutional-safety-buffer-meters: 75.0
+      dense-colony-last-resort-penalty: 1000.0
       row-evaluation-half-width-meters: 30.0
       structure-proximity-buffer-meters: 60.0
       proximity-surcharge-factor: 0.35
       node-penalties:
         NONE: 0.0
-        SPARSE_HOMESTEAD_FRINGE: 0.25
-        LOW_DENSITY_RURAL_RIBBON: 0.70
-        MEDIUM_DENSITY_VILLAGE_CLUSTER: 1.55
-        HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP: 2.85
-        INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT: 4.40
+        SPARSE_HOMESTEAD_FRINGE: 5.0
+        LOW_DENSITY_RURAL_RIBBON: 18.0
+        MEDIUM_DENSITY_VILLAGE_CLUSTER: 65.0
+        HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP: 1000.0
+        INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT: 2500.0
         NODATA: 0.0
       structure-demolition-cost-km-eq:
-        RESIDENTIAL: 0.28
-        COMMERCIAL: 0.42
-        INSTITUTIONAL: 0.85
-        RELIGIOUS: 0.95
-        INDUSTRIAL: 0.55
-        VILLAGE_INFRASTRUCTURE: 0.35
+        RESIDENTIAL: 15.0
+        COMMERCIAL: 25.0
+        INSTITUTIONAL: 60.0
+        RELIGIOUS: 60.0
+        INDUSTRIAL: 35.0
+        VILLAGE_INFRASTRUCTURE: 20.0
       settlement-severance-penalty:
-        RURAL: 0.45
-        URBAN: 1.15
-        INDUSTRIAL: 0.80
+        RURAL: 25.0
+        URBAN: 1000.0
+        INDUSTRIAL: 150.0
 
     demographic:
       block-very-high-urban-density-core: false

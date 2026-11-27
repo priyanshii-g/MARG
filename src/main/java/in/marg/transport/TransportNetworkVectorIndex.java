@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -111,10 +112,19 @@ public class TransportNetworkVectorIndex {
                 JsonNode props = feat.get("properties");
                 String id = props.get("id").asString();
                 String ref = props.get("ref").asString();
-                String name = props.get("name").asString();
-                TransportCategory category =
-                        TransportCategory.valueOf(props.get("category").asString());
-                int tier = props.get("hierarchyTier").asInt(1);
+                String name = props.get("name") != null ? props.get("name").asString() : "";
+                String catStr = props.get("category") != null ? props.get("category").asString() : "";
+                TransportCategory category;
+                if ("EXPRESSWAY".equalsIgnoreCase(catStr) || "MOTORWAY".equalsIgnoreCase(catStr)) {
+                    category = TransportCategory.NATIONAL_HIGHWAY;
+                } else {
+                    try {
+                        category = TransportCategory.valueOf(catStr);
+                    } catch (Exception ex) {
+                        continue;
+                    }
+                }
+                int tier = props.get("hierarchyTier") != null ? props.get("hierarchyTier").asInt(1) : 1;
 
                 String geomType = feat.get("geometry") != null && feat.get("geometry").get("type") != null
                         ? feat.get("geometry").get("type").asString()
@@ -313,7 +323,11 @@ public class TransportNetworkVectorIndex {
     );
 
     public RegionalHub synthesizeDynamicHub(String hubName, GeoPoint center) {
-        NearestRoadTieIn tieIn = findNearestRoadTieIn(center, pt -> true);
+        return synthesizeDynamicHub(hubName, center, FacilityMode.NATIONAL_HIGHWAY);
+    }
+
+    public RegionalHub synthesizeDynamicHub(String hubName, GeoPoint center, FacilityMode facilityMode) {
+        NearestRoadTieIn tieIn = findNearestRoadTieIn(center, pt -> true, facilityMode);
         GeoPoint bypassPt = tieIn != null ? tieIn.tieInPoint() : center;
         String roadRef = tieIn != null && tieIn.corridorRef() != null ? tieIn.corridorRef() : "Existing Road";
         String roadName = tieIn != null && tieIn.corridorName() != null ? tieIn.corridorName() : "Road Network";
@@ -492,10 +506,21 @@ public class TransportNetworkVectorIndex {
                         if (byCorridor == null) {
                             byCorridor = new LinkedHashMap<>(2);
                         }
-                        SegmentCrossing existing = byCorridor.get(seg.corridorId());
-                        if (existing == null || clampedT < existing.stepFraction()) {
+                        String refKey = normalizeRoadRef(seg.corridorRef(), seg.corridorId());
+                        SegmentCrossing existing = byCorridor.get(refKey);
+                        boolean closeToExisting = false;
+                        if (existing == null) {
+                            for (SegmentCrossing other : byCorridor.values()) {
+                                if (other.category() == seg.category()
+                                        && Math.hypot(ix - other.metricPoint().x(), iy - other.metricPoint().y()) < 50.0) {
+                                    closeToExisting = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!closeToExisting && (existing == null || categoryPriority(seg.category()) < categoryPriority(existing.category()))) {
                             byCorridor.put(
-                                    seg.corridorId(),
+                                    refKey,
                                     new SegmentCrossing(
                                             seg.corridorId(),
                                             seg.corridorRef(),
@@ -609,10 +634,40 @@ public class TransportNetworkVectorIndex {
             if (last != null && Math.abs(rc.chainageKm() - last) < 0.40) {
                 continue;
             }
+            // Spatial merging for dual-carriageway / close parallel ways within 100 m
+            if (!deduped.isEmpty()) {
+                RouteCrossing prev = deduped.get(deduped.size() - 1);
+                if (Math.abs(rc.chainageKm() - prev.chainageKm()) < 0.10) {
+                    if (categoryPriority(rc.category()) < categoryPriority(prev.category())) {
+                        deduped.set(deduped.size() - 1, rc);
+                        lastChainageByCorridor.put(rc.corridorId(), rc.chainageKm());
+                    }
+                    continue;
+                }
+            }
             deduped.add(rc);
             lastChainageByCorridor.put(rc.corridorId(), rc.chainageKm());
         }
         return List.copyOf(deduped);
+    }
+
+    private static int categoryPriority(TransportCategory c) {
+        if (c == null) return 99;
+        return switch (c) {
+            case RAILWAY -> 0;
+            case NATIONAL_HIGHWAY -> 1;
+            case STATE_HIGHWAY -> 2;
+            case MAJOR_DISTRICT_ROAD -> 3;
+            case LOCAL_ROAD -> 4;
+        };
+    }
+
+    private static String normalizeRoadRef(String ref, String corridorId) {
+        if (ref == null || ref.isBlank()) {
+            return corridorId != null ? corridorId : "";
+        }
+        String norm = ref.trim().toUpperCase(Locale.ROOT).replaceAll("[\\s_-]+", "");
+        return norm.isEmpty() ? corridorId : norm;
     }
 
     /**
@@ -622,18 +677,60 @@ public class TransportNetworkVectorIndex {
     public NearestRoadTieIn findNearestRoadTieIn(
             GeoPoint target,
             Predicate<GeoPoint> navigablePredicate) {
+        return findNearestRoadTieIn(target, navigablePredicate, null, null);
+    }
+
+    /**
+     * Finds the nearest existing road tie-in point, prioritizing candidates whose local connector
+     * segment passes {@code connectorSafePredicate} (no intersection with hospitals, dense colonies,
+     * or building footprints), while rejecting unnavigable tie-in points.
+     */
+    public NearestRoadTieIn findNearestRoadTieIn(
+            GeoPoint target,
+            Predicate<GeoPoint> navigablePredicate,
+            BiPredicate<GeoPoint, GeoPoint> connectorSafePredicate) {
+        return findNearestRoadTieIn(target, navigablePredicate, connectorSafePredicate, null);
+    }
+
+    /**
+     * Facility-mode-aware road tie-in lookup enforcing IRC:SP:99-2013 (Expressways strictly
+     * exclude {@link TransportCategory#LOCAL_ROAD} and prioritize NH/SH) and IRC:SP:84-2019
+     * (National Highways prefer NH &gt; SH &gt; MDR while penalizing local streets as fallback).
+     */
+    public NearestRoadTieIn findNearestRoadTieIn(
+            GeoPoint target,
+            Predicate<GeoPoint> navigablePredicate,
+            FacilityMode facilityMode) {
+        return findNearestRoadTieIn(target, navigablePredicate, null, facilityMode);
+    }
+
+    /**
+     * Full facility-mode-aware &amp; connector-safety-aware road tie-in lookup.
+     *
+     * <p>For {@link FacilityMode#EXPRESSWAY}, {@link TransportCategory#LOCAL_ROAD} segments are
+     * strictly excluded and high-capacity arterial highways ({@code NH} / {@code SH}) are always
+     * preferred over {@code MDR}. For {@link FacilityMode#NATIONAL_HIGHWAY}, candidates are ranked
+     * by {@link TerminalAccessPolicy#weightedTieInDistanceMeters} (NH &gt; SH &gt; MDR &gt;&gt; LOCAL_ROAD).
+     */
+    public NearestRoadTieIn findNearestRoadTieIn(
+            GeoPoint target,
+            Predicate<GeoPoint> navigablePredicate,
+            BiPredicate<GeoPoint, GeoPoint> connectorSafePredicate,
+            FacilityMode facilityMode) {
         ensureInitialized();
         if (target == null || allSegments.isEmpty()) {
             return null;
         }
         MetricPoint m = projection.forward(target);
+        NearestRoadTieIn bestCleanConnector = null;
+        double bestCleanScore = Double.POSITIVE_INFINITY;
         NearestRoadTieIn bestNavigable = null;
-        double bestNavDist = Double.POSITIVE_INFINITY;
+        double bestNavScore = Double.POSITIVE_INFINITY;
         NearestRoadTieIn bestAny = null;
-        double bestAnyDist = Double.POSITIVE_INFINITY;
+        double bestAnyScore = Double.POSITIVE_INFINITY;
 
         for (IndexedSegment seg : allSegments) {
-            if (seg.category() == TransportCategory.RAILWAY) {
+            if (!TerminalAccessPolicy.isCategoryAllowedForTieIn(seg.category(), facilityMode)) {
                 continue;
             }
             double dx = seg.bx() - seg.ax();
@@ -646,33 +743,46 @@ public class TransportNetworkVectorIndex {
             double px = seg.ax() + t * dx;
             double py = seg.ay() + t * dy;
             double dist = Math.hypot(m.x() - px, m.y() - py);
+            double score = TerminalAccessPolicy.weightedTieInDistanceMeters(dist, seg.category(), facilityMode);
 
-            if (dist < bestNavDist || dist < bestAnyDist) {
+            if (score < bestCleanScore || score < bestNavScore || score < bestAnyScore) {
                 MetricPoint tieMetric = new MetricPoint(px, py);
                 GeoPoint tieGeo = projection.inverse(tieMetric);
                 boolean navigable = navigablePredicate == null || navigablePredicate.test(tieGeo);
                 if (!navigable && navigablePredicate != null) {
-                    // Check segment endpoints as fallback tie-in nodes if midpoint fell in a single blocked pixel
+                    // Check segment endpoints as fallback tie-in nodes if midpoint fell in a blocked cell
                     for (double[] ep : new double[][]{{seg.ax(), seg.ay()}, {seg.bx(), seg.by()}}) {
                         MetricPoint epM = new MetricPoint(ep[0], ep[1]);
                         GeoPoint epGeo = projection.inverse(epM);
                         double epDist = Math.hypot(m.x() - ep[0], m.y() - ep[1]);
-                        if (navigablePredicate.test(epGeo) && epDist < bestNavDist) {
-                            bestNavDist = epDist;
-                            bestNavigable = new NearestRoadTieIn(
-                                    seg.corridorId(),
-                                    seg.corridorRef(),
-                                    seg.corridorName(),
-                                    seg.category(),
-                                    epGeo,
-                                    epM,
-                                    round(epDist));
+                        double epScore = TerminalAccessPolicy.weightedTieInDistanceMeters(
+                                epDist, seg.category(), facilityMode);
+                        if (epScore < bestCleanScore || epScore < bestNavScore) {
+                            if (navigablePredicate.test(epGeo)) {
+                                NearestRoadTieIn epTie = new NearestRoadTieIn(
+                                        seg.corridorId(),
+                                        seg.corridorRef(),
+                                        seg.corridorName(),
+                                        seg.category(),
+                                        epGeo,
+                                        epM,
+                                        round(epDist));
+                                if (epScore < bestNavScore) {
+                                    bestNavScore = epScore;
+                                    bestNavigable = epTie;
+                                }
+                                if (connectorSafePredicate != null
+                                        && epScore < bestCleanScore
+                                        && connectorSafePredicate.test(target, epGeo)) {
+                                    bestCleanScore = epScore;
+                                    bestCleanConnector = epTie;
+                                }
+                            }
                         }
                     }
                 }
-                if (navigable && dist < bestNavDist) {
-                    bestNavDist = dist;
-                    bestNavigable = new NearestRoadTieIn(
+                if (navigable) {
+                    NearestRoadTieIn cand = new NearestRoadTieIn(
                             seg.corridorId(),
                             seg.corridorRef(),
                             seg.corridorName(),
@@ -680,9 +790,19 @@ public class TransportNetworkVectorIndex {
                             tieGeo,
                             tieMetric,
                             round(dist));
+                    if (score < bestNavScore) {
+                        bestNavScore = score;
+                        bestNavigable = cand;
+                    }
+                    if (connectorSafePredicate != null
+                            && score < bestCleanScore
+                            && connectorSafePredicate.test(target, tieGeo)) {
+                        bestCleanScore = score;
+                        bestCleanConnector = cand;
+                    }
                 }
-                if (dist < bestAnyDist) {
-                    bestAnyDist = dist;
+                if (score < bestAnyScore) {
+                    bestAnyScore = score;
                     bestAny = new NearestRoadTieIn(
                             seg.corridorId(),
                             seg.corridorRef(),
@@ -694,9 +814,88 @@ public class TransportNetworkVectorIndex {
                 }
             }
         }
+        if (bestCleanConnector != null) {
+            return bestCleanConnector;
+        }
+        if (bestNavigable != null) {
+            return bestNavigable;
+        }
         // When a feasibility predicate is supplied, never return a road that failed it.
         // In particular, callers may only have raster coverage for a bounded analysis window.
-        return navigablePredicate == null ? bestAny : bestNavigable;
+        return (navigablePredicate == null && connectorSafePredicate == null) ? bestAny : null;
+    }
+
+    /**
+     * Fast O(1) spatial-bucket check determining whether {@code point} lands directly on top of a
+     * local residential/village street (within {@code localStreetRadiusMeters}) while NOT situated
+     * at a major arterial highway ({@code NH}/{@code SH} within {@code majorHighwayExemptionRadiusMeters}).
+     *
+     * <p>Used by {@code EndpointSnapService} in {@link FacilityMode#EXPRESSWAY} mode to enforce
+     * IRC:SP:99-2013 Cl. 2.12 (expressways never start or terminate directly on local streets).
+     */
+    public NearestRoadTieIn findImmediateLocalStreetConflict(
+            GeoPoint point,
+            double localStreetRadiusMeters,
+            double majorHighwayExemptionRadiusMeters) {
+        ensureInitialized();
+        if (point == null || spatialBuckets.isEmpty()) {
+            return null;
+        }
+        MetricPoint m = projection.forward(point);
+        int cx = bucketCoord(m.x());
+        int cy = bucketCoord(m.y());
+
+        IndexedSegment nearestLocal = null;
+        double nearestLocalDist = localStreetRadiusMeters;
+        double nearestLocalPx = m.x();
+        double nearestLocalPy = m.y();
+
+        for (int bx = cx - 1; bx <= cx + 1; bx++) {
+            for (int by = cy - 1; by <= cy + 1; by++) {
+                List<IndexedSegment> bucket = spatialBuckets.get(bucketKey(bx, by));
+                if (bucket == null) {
+                    continue;
+                }
+                for (IndexedSegment seg : bucket) {
+                    TransportCategory cat = seg.category();
+                    if (cat == TransportCategory.NATIONAL_HIGHWAY || cat == TransportCategory.STATE_HIGHWAY) {
+                        double d = pointToSegmentDistance(m.x(), m.y(), seg.ax(), seg.ay(), seg.bx(), seg.by());
+                        if (d <= majorHighwayExemptionRadiusMeters) {
+                            return null;
+                        }
+                    } else if (cat == TransportCategory.LOCAL_ROAD) {
+                        double dx = seg.bx() - seg.ax();
+                        double dy = seg.by() - seg.ay();
+                        double len2 = dx * dx + dy * dy;
+                        double t = len2 <= EPS
+                                ? 0.0
+                                : ((m.x() - seg.ax()) * dx + (m.y() - seg.ay()) * dy) / len2;
+                        t = Math.max(0.0, Math.min(1.0, t));
+                        double px = seg.ax() + t * dx;
+                        double py = seg.ay() + t * dy;
+                        double d = Math.hypot(m.x() - px, m.y() - py);
+                        if (d <= nearestLocalDist) {
+                            nearestLocalDist = d;
+                            nearestLocal = seg;
+                            nearestLocalPx = px;
+                            nearestLocalPy = py;
+                        }
+                    }
+                }
+            }
+        }
+        if (nearestLocal == null) {
+            return null;
+        }
+        MetricPoint tieM = new MetricPoint(nearestLocalPx, nearestLocalPy);
+        return new NearestRoadTieIn(
+                nearestLocal.corridorId(),
+                nearestLocal.corridorRef(),
+                nearestLocal.corridorName(),
+                nearestLocal.category(),
+                projection.inverse(tieM),
+                tieM,
+                round(nearestLocalDist));
     }
 
     private static double round(double value) {

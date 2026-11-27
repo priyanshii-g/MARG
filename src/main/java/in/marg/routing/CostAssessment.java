@@ -16,6 +16,10 @@ public record CostAssessment(
         return new CostAssessment(false, 0.0, source, null);
     }
 
+    public static CostAssessment penalized(double penaltyMultiplier, String source, String className) {
+        return new CostAssessment(false, penaltyMultiplier, source, className);
+    }
+
     public static CostAssessment blocked(String source, String className) {
         return new CostAssessment(true, 0.0, source, className);
     }

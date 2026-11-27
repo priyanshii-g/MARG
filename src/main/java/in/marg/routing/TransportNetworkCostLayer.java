@@ -3,6 +3,7 @@ package in.marg.routing;
 import in.marg.model.GeoPoint;
 import in.marg.spatial.CoordinateProjection;
 import in.marg.spatial.MetricPoint;
+import in.marg.transport.FacilityMode;
 import in.marg.transport.RegionalHub;
 import in.marg.transport.TransportCategory;
 import in.marg.transport.TransportCorridorClass;
@@ -31,6 +32,7 @@ public class TransportNetworkCostLayer implements CostLayer {
     private final TransportNetworkVectorIndex vectorIndex;
     private final CoordinateProjection projection;
     private final TransportCostPolicy policy;
+    private final FacilityMode facilityMode;
 
     // Mode-dependent collector pull settings (0.0 for EXPRESSWAY; >0.0 for NATIONAL_HIGHWAY)
     private final double accessibilityPull;
@@ -59,7 +61,8 @@ public class TransportNetworkCostLayer implements CostLayer {
                 null,
                 null,
                 5.0,
-                10.0);
+                10.0,
+                FacilityMode.EXPRESSWAY);
     }
 
     public TransportNetworkCostLayer(
@@ -73,6 +76,32 @@ public class TransportNetworkCostLayer implements CostLayer {
             GeoPoint corridorGoal,
             double sweetSpotMaxKm,
             double longitudinalBandKm) {
+        this(
+                rasterProvider,
+                vectorIndex,
+                projection,
+                policy,
+                accessibilityPull,
+                approvedHubs,
+                corridorStart,
+                corridorGoal,
+                sweetSpotMaxKm,
+                longitudinalBandKm,
+                accessibilityPull > 0.0 ? FacilityMode.NATIONAL_HIGHWAY : FacilityMode.EXPRESSWAY);
+    }
+
+    public TransportNetworkCostLayer(
+            TransportNetworkRasterProvider rasterProvider,
+            TransportNetworkVectorIndex vectorIndex,
+            CoordinateProjection projection,
+            TransportCostPolicy policy,
+            double accessibilityPull,
+            List<RegionalHub> approvedHubs,
+            GeoPoint corridorStart,
+            GeoPoint corridorGoal,
+            double sweetSpotMaxKm,
+            double longitudinalBandKm,
+            FacilityMode facilityMode) {
         this.rasterProvider = rasterProvider;
         this.vectorIndex = vectorIndex;
         this.projection = projection;
@@ -80,6 +109,7 @@ public class TransportNetworkCostLayer implements CostLayer {
         this.accessibilityPull = Math.max(0.0, accessibilityPull);
         this.sweetSpotMaxMeters = Math.max(1000.0, sweetSpotMaxKm * 1000.0);
         this.longitudinalBandMeters = Math.max(2000.0, longitudinalBandKm * 1000.0);
+        this.facilityMode = facilityMode != null ? facilityMode : FacilityMode.EXPRESSWAY;
 
         if (this.accessibilityPull > 0.0
                 && approvedHubs != null
@@ -152,6 +182,12 @@ public class TransportNetworkCostLayer implements CostLayer {
 
         if (!crossings.isEmpty()) {
             for (TransportNetworkVectorIndex.SegmentCrossing sc : crossings) {
+                // In NATIONAL_HIGHWAY mode, road crossings are at-grade intersections (no elevated bridge structure cost).
+                // Only RAILWAY crossings require mandatory grade-separated ROB bridge structures.
+                // In EXPRESSWAY mode, ALL crossings (railways + highways + district + local roads) require elevated bridges.
+                if (facilityMode == FacilityMode.NATIONAL_HIGHWAY && sc.category() != TransportCategory.RAILWAY) {
+                    continue;
+                }
                 totalCrossingCostKmEq +=
                         policy.crossingStructureCostKmEq(sc.category(), sc.sinAngle());
                 if (primaryCrossingClass == null) {
@@ -173,6 +209,7 @@ public class TransportNetworkCostLayer implements CostLayer {
                     case NATIONAL_HIGHWAY -> 1.15;
                     case STATE_HIGHWAY -> 0.85;
                     case MAJOR_DISTRICT_ROAD -> 0.60;
+                    case LOCAL_ROAD -> 0.40;
                 };
                 parallelMultiplierPenalty =
                         policy.parallelAcutePenalty() * acuteRatio * acuteRatio * catFactor;

@@ -314,7 +314,7 @@ class WildlifeLayerValidationTest {
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
-                            settlementLayer, modeTransportLayer, waterLayer)),
+                            settlementLayer, modeTransportLayer, waterLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag7 = metricsService.summarize(route7);
@@ -328,7 +328,7 @@ class WildlifeLayerValidationTest {
                     fullRegion, fullRegion.origin(), fullRegion.destination(),
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
-                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer)),
+                            settlementLayer, modeTransportLayer, waterLayer, wildlifeLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag8 = metricsService.summarize(route8);

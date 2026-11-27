@@ -14,12 +14,14 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "marg.routing.building")
 public class BuildingRoutingProperties {
 
-    private boolean blockInstitutionalAndReligiousCompounds = false;
-    private boolean blockHighDensityBuiltUp = false;
+    private boolean blockInstitutionalAndReligiousCompounds = true;
+    private boolean blockHighDensityBuiltUp = true;
     private boolean blockNoData = false;
     private double rowEvaluationHalfWidthMeters = 30.0;
     private double structureProximityBufferMeters = 60.0;
     private double proximitySurchargeFactor = 0.35;
+    private double institutionalSafetyBufferMeters = BuildingCostPolicy.DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS;
+    private double denseColonyLastResortPenalty = BuildingCostPolicy.DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY;
 
     private Map<BuildingDensityClass, Double> nodePenalties =
             new EnumMap<>(BuildingCostPolicy.defaultPolicy().nodePenalties());
@@ -52,7 +54,25 @@ public class BuildingRoutingProperties {
                 proximitySurchargeFactor,
                 blockInstitutionalAndReligiousCompounds,
                 blockHighDensityBuiltUp,
-                blockNoData);
+                blockNoData,
+                institutionalSafetyBufferMeters,
+                denseColonyLastResortPenalty);
+    }
+
+    public double getInstitutionalSafetyBufferMeters() {
+        return institutionalSafetyBufferMeters;
+    }
+
+    public void setInstitutionalSafetyBufferMeters(double institutionalSafetyBufferMeters) {
+        this.institutionalSafetyBufferMeters = institutionalSafetyBufferMeters;
+    }
+
+    public double getDenseColonyLastResortPenalty() {
+        return denseColonyLastResortPenalty;
+    }
+
+    public void setDenseColonyLastResortPenalty(double denseColonyLastResortPenalty) {
+        this.denseColonyLastResortPenalty = denseColonyLastResortPenalty;
     }
 
     public boolean isBlockInstitutionalAndReligiousCompounds() {

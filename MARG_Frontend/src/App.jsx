@@ -1,11 +1,21 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getBasemapConfig } from "./layers/basemaps";
+import {
+  LAYER_BY_ID,
+  OVERVIEW_FEATURE_ROLES,
+  getSegmentColor,
+} from "./layers/layerCatalog";
+import { humanizeClassLabel, humanizeText } from "./utils/plainLanguage";
+import LayerAuditPanel from "./components/LayerAuditPanel";
+import MapLensHud from "./components/MapLensHud";
+import EngineeringDossier from "./components/EngineeringDossier";
 import Mode2Workspace from "./Mode2Workspace.jsx";
 import Mode1EiaWorkspace from "./Mode1EiaWorkspace.jsx";
 
 // -------------------------------------------------------------
-// India & Benchmark Region Constants
+// India & Sample Region Constants
 // -------------------------------------------------------------
 const PAN_INDIA_BOUNDS = [
   [6.5, 68.0],
@@ -16,8 +26,8 @@ const PRESET_CORRIDORS = [
   {
     id: "assam",
     tier: "TIER_2_PRECACHED_BENCHMARK",
-    name: "Corridor 1: Kaziranga–Karbi Anglong (Assam)",
-    tag: "Eco-Sensitive & Flood",
+    name: "Region 1: Kaziranga–Karbi Anglong (Assam)",
+    tag: "Wildlife & Floodplains",
     start: { lat: 26.5897, lng: 93.40035 },
     end: { lat: 25.84573, lng: 93.43781 },
     center: [26.25, 93.42],
@@ -27,10 +37,10 @@ const PRESET_CORRIDORS = [
   {
     id: "western_ghats",
     tier: "TIER_2_PRECACHED_BENCHMARK",
-    name: "Corridor 2: Pune–Satara (Western Ghats, MH)",
-    tag: "Steep Slope & Landslide",
-    start: { lat: 18.365, lng: 73.855 },
-    end: { lat: 17.695, lng: 74.015 },
+    name: "Region 2: Pune–Satara (Western Ghats, MH)",
+    tag: "Hills & Landslide Risk",
+    start: { lat: 18.36002, lng: 73.85352 },
+    end: { lat: 17.71704, lng: 74.02648 },
     center: [18.03, 73.93],
     zoom: 9,
     suggestedHubs: ["Wai", "Shirwal", "Satara", "Bhor", "Khandala"],
@@ -38,8 +48,8 @@ const PRESET_CORRIDORS = [
   {
     id: "gangetic_plains",
     tier: "TIER_2_PRECACHED_BENCHMARK",
-    name: "Corridor 3: Barabanki–Ayodhya (Gangetic Plains, UP)",
-    tag: "Floodplain & Prime Agri",
+    name: "Region 3: Barabanki–Ayodhya (Uttar Pradesh)",
+    tag: "Rivers & Farmland",
     start: { lat: 26.915, lng: 81.245 },
     end: { lat: 26.765, lng: 82.125 },
     center: [26.84, 81.68],
@@ -49,7 +59,7 @@ const PRESET_CORRIDORS = [
   {
     id: "interstate_pan_india",
     tier: "TIER_1_DYNAMIC_PAN_INDIA",
-    name: "Tier 1 Mega-Corridor: Akola (MH) to Bhopal (MP)",
+    name: "Long Highway: Akola (MH) to Bhopal (MP)",
     tag: "411 km Interstate",
     start: { lat: 20.15, lng: 76.85 },
     end: { lat: 23.85, lng: 77.40 },
@@ -71,41 +81,11 @@ function extractMainlineCoordinates(features) {
   return [];
 }
 
-function humanizeSnapReason(reason) {
-  if (!reason) return "Terrain or environmental exclusion constraint";
-  const r = reason.toUpperCase();
-  if (r.includes("SACRED") || r.includes("HERITAGE") || r.includes("RELIGIOUS")) {
-    return "Sacred Temple / Heritage Precinct Exclusion Zone (Zero-tolerance buffer)";
-  }
-  if (r.includes("PROTECTED_AREA") || r.includes("WILDLIFE_SANCTUARY")) {
-    return "Protected Wildlife Sanctuary / National Park Core (Zero-tolerance exclusion)";
-  }
-  if (r.includes("SLOPE")) {
-    return "Excessive Mountain Slope (> 30° / Infeasible IRC gradient)";
-  }
-  if (r.includes("WATER_BODIES") || r.includes("PERENNIAL_RIVER") || r.includes("RESERVOIR")) {
-    return "Deep Water Body / Perennial River Channel";
-  }
-  if (r.includes("LANDSLIDE") || r.includes("FAULT") || r.includes("GEOTECH")) {
-    return "Active Geotechnical Fault / Landslide Zone";
-  }
-  if (r.includes("SETTLEMENT") || r.includes("BUILDING")) {
-    return "Dense Urban Habitation Core";
-  }
-  if (r.includes("ISOLATED_GRID_NODE")) {
-    return "Isolated terrain pocket with no contiguous 250m grid egress";
-  }
-  return reason
-    .replace(/^SNAPPED_FROM_/, "")
-    .replace(/_TO_NEAREST_FEASIBLE_GRID_CELL$/, "")
-    .replace(/_/g, " ");
-}
-
 function HomePage({ onMode1, onMode2, onEia }) {
   const modes = [
-    { number: "01", title: "Greenfield route planning", detail: "Compare a new corridor against terrain, settlements and environmental constraints.", action: "Open route planner", onClick: onMode1 },
-    { number: "02", title: "Existing project review", detail: "Bring project documents and a route into MARG for evidence-led review.", action: "Open project review", onClick: onMode2 },
-    { number: "03", title: "Environmental EIA report", detail: "Choose a saved Mode 1 route and prepare its evidence-linked environmental report.", action: "Open EIA reports", onClick: onEia },
+    { number: "01", title: "Plan a new highway route", detail: "See how a new highway can safely navigate around forests, floods, steep hills, and local homes.", action: "Open route planner", onClick: onMode1 },
+    { number: "02", title: "Review an existing project", detail: "Upload a proposed route and project reports to check its real-world impact on land and people.", action: "Open project review", onClick: onMode2 },
+    { number: "03", title: "Prepare environmental report", detail: "Pick a saved route and generate a structured, evidence-backed environmental impact summary.", action: "Open environmental reports", onClick: onEia },
   ];
 
   return (
@@ -113,19 +93,19 @@ function HomePage({ onMode1, onMode2, onEia }) {
       <header className="flex items-center justify-between border-b border-[#d9ddd3] px-6 py-5 sm:px-10">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#294b3b] text-sm font-bold tracking-wide text-white">M</div>
-          <div><p className="text-sm font-semibold tracking-[0.18em]">MARG</p><p className="text-xs text-[#68736b]">Responsible infrastructure planning</p></div>
+          <div><p className="text-sm font-semibold tracking-[0.18em]">MARG</p><p className="text-xs text-[#68736b]">Public guide to responsible highway planning</p></div>
         </div>
-        <span className="hidden text-xs uppercase tracking-[0.16em] text-[#68736b] sm:block">Geospatial decision support</span>
+        <span className="hidden text-xs uppercase tracking-[0.16em] text-[#68736b] sm:block">Public information &amp; planning tool</span>
       </header>
       <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 sm:px-10 sm:pt-20">
         <div className="grid gap-10 border-b border-[#d9ddd3] pb-12 md:grid-cols-[1.15fr_0.85fr] md:items-end">
           <div>
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#557260]">Planning workspace</p>
-            <h1 className="max-w-2xl text-4xl font-medium leading-[1.12] tracking-tight sm:text-6xl">Plan routes.<br />Review projects.<br /><span className="text-[#557260]">Prepare assessments.</span></h1>
+            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#557260]">Public planning portal</p>
+            <h1 className="max-w-2xl text-4xl font-medium leading-[1.12] tracking-tight sm:text-6xl">Plan safer roads.<br />Protect nature.<br /><span className="text-[#557260]">Inform the public.</span></h1>
           </div>
           <div className="max-w-md md:justify-self-end">
-            <p className="text-base leading-7 text-[#59645c]">Choose a workflow to get started. MARG combines spatial analysis with project evidence to support early infrastructure decisions.</p>
-            <div className="mt-7 flex items-center gap-3 text-xs text-[#68736b]"><span className="h-px w-10 bg-[#8c9b8d]" /> India infrastructure planning prototype</div>
+            <p className="text-base leading-7 text-[#59645c]">Choose how you want to explore. MARG turns complex maps and environmental data into clear, transparent information for planners and citizens alike.</p>
+            <div className="mt-7 flex items-center gap-3 text-xs text-[#68736b]"><span className="h-px w-10 bg-[#8c9b8d]" /> Open public highway planning prototype</div>
           </div>
         </div>
         <div className="grid gap-4 pt-7 md:grid-cols-3">
@@ -138,10 +118,53 @@ function HomePage({ onMode1, onMode2, onEia }) {
             </button>
           </article>)}
         </div>
-        <footer className="mt-10 flex flex-col gap-2 border-t border-[#d9ddd3] pt-5 text-xs leading-5 text-[#7c887e] sm:flex-row sm:justify-between"><span>Preliminary decision support; findings require project-specific verification.</span><span>MARG · Environmental and corridor planning</span></footer>
+        <footer className="mt-10 flex flex-col gap-2 border-t border-[#d9ddd3] pt-5 text-xs leading-5 text-[#7c887e] sm:flex-row sm:justify-between"><span>Public planning preview — final routes require on-ground surveys and official approvals.</span><span>MARG · Smarter, greener roads for India</span></footer>
       </section>
     </main>
   );
+}
+
+function humanizeSnapReason(reason) {
+  if (!reason) return "Nearby safety or protected area boundary";
+  const r = reason.toUpperCase();
+  if (r.includes("HOSPITAL") || r.includes("MEDICAL") || r.includes("CLINIC")) {
+    return "Hospital or medical center safety zone (kept at least 100 m clear)";
+  }
+  if (r.includes("INSTITUTIONAL") || r.includes("SCHOOL") || r.includes("COLLEGE") || r.includes("UNIVERSITY")) {
+    return "School or college safety zone (kept at least 100 m clear)";
+  }
+  if (r.includes("SACRED") || r.includes("HERITAGE") || r.includes("RELIGIOUS")) {
+    return "Temple, religious site, or heritage area (strictly protected)";
+  }
+  if (r.includes("COLONY") || r.includes("RESIDENTIAL_SETTLEMENT")) {
+    return "Crowded residential neighborhood boundary";
+  }
+  if (r.includes("BUILDING_FOOTPRINT")) {
+    return "Existing building or home in the way";
+  }
+  if (r.includes("PROTECTED_AREA") || r.includes("WILDLIFE_SANCTUARY")) {
+    return "Protected National Park or Wildlife Sanctuary (strictly off-limits)";
+  }
+  if (r.includes("SLOPE")) {
+    return "Mountain cliff too steep for a safe road (steeper than 30°)";
+  }
+  if (r.includes("WATER_BODIES") || r.includes("PERENNIAL_RIVER") || r.includes("RESERVOIR")) {
+    return "Deep river channel or water body";
+  }
+  if (r.includes("LANDSLIDE") || r.includes("FAULT") || r.includes("GEOTECH")) {
+    return "Active landslide or unstable ground zone";
+  }
+  if (r.includes("SETTLEMENT") || r.includes("BUILDING")) {
+    return "Crowded town or village center";
+  }
+  if (r.includes("ISOLATED_GRID_NODE")) {
+    return "Isolated patch of terrain with no safe road exit";
+  }
+  return reason
+    .replace(/^SNAPPED_FROM_/, "")
+    .replace(/_TO_NEAREST_FEASIBLE_GRID_CELL$/, "")
+    .replace(/_/g, " ")
+    .toLowerCase();
 }
 
 export default function App() {
@@ -151,6 +174,7 @@ export default function App() {
 
   // Base Map Layer & Type (No API keys required)
   const [baseMapType, setBaseMapType] = useState("osm");
+  const [lockBasemap, setLockBasemap] = useState(false);
   const baseTileLayerRef = useRef(null);
 
   // Markers and Vector Layers
@@ -158,7 +182,9 @@ export default function App() {
   const endMarkerRef = useRef(null);
   const snapVectorGroupRef = useRef(null);
   const routeLayersGroupRef = useRef(null);
-  const routeGeoJsonRef = useRef(null);
+  const colorizedRouteGroupRef = useRef(null);
+  const focusHighlightGroupRef = useRef(null);
+  const comparativeRoutesGroupRef = useRef(null);
 
   // Application State
   const [selectedPresetId, setSelectedPresetId] = useState("assam");
@@ -187,9 +213,17 @@ export default function App() {
 
   // Routing Execution State
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState("Select endpoints or a benchmark corridor, then generate alignment.");
+  const [status, setStatus] = useState("Pick a sample region or start & end places, then click Find Best Route.");
   const [routingError, setRoutingError] = useState(null);
   const [routeInfo, setRouteInfo] = useState(null);
+  const [networkSummary, setNetworkSummary] = useState(null);
+  const [connectedHubs, setConnectedHubs] = useState([]);
+  const [trafficCapacity, setTrafficCapacity] = useState(null);
+  const [hubDecisions, setHubDecisions] = useState([]);
+  const [showAllDecisions, setShowAllDecisions] = useState(false);
+
+  // Unified Workspace Navigation & Mode 1 EIA / MongoDB Route Persistence State
+  const [activeWorkspace, setActiveWorkspace] = useState("home");
   const [mode1GisScreening, setMode1GisScreening] = useState(null);
   const [mode1RouteSignature, setMode1RouteSignature] = useState(null);
   const [eiaProjectName, setEiaProjectName] = useState("");
@@ -208,29 +242,123 @@ export default function App() {
   const [routeSaveBusy, setRouteSaveBusy] = useState(false);
   const [routeSaveMessage, setRouteSaveMessage] = useState("");
   const pendingRouteRef = useRef(null);
-  const [networkSummary, setNetworkSummary] = useState(null);
-  const [connectedHubs, setConnectedHubs] = useState([]);
-  const [trafficCapacity, setTrafficCapacity] = useState(null);
-  const [hubDecisions, setHubDecisions] = useState([]);
-  const [showAllDecisions, setShowAllDecisions] = useState(false);
-  const [activeWorkspace, setActiveWorkspace] = useState("home");
+
+  // Multi-Objective Trade-Off & Request-Scoped User Alignment Tuning State
+  const [tradeOffProfile, setTradeOffProfile] = useState(null);
+  const [tradeOffPreset, setTradeOffPreset] = useState("BALANCED");
+  const [envWeight, setEnvWeight] = useState(1.0);
+  const [socialWeight, setSocialWeight] = useState(1.0);
+  const [directnessWeight, setDirectnessWeight] = useState(1.0);
+  const [alternativeRoutes, setAlternativeRoutes] = useState([]);
+  const [activeAlternativeId, setActiveAlternativeId] = useState(null);
+  const [isRealigning, setIsRealigning] = useState(false);
+  const [statutoryClearanceReport, setStatutoryClearanceReport] = useState(null);
+
+  // Multi-Objective Archetype Route Memory & Live Comparative Caching
+  const [cachedArchetypes, setCachedArchetypes] = useState({});
+  const lastCoordsKeyRef = useRef(null);
 
   // Endpoint Auto-Shift Notification State
   const [snapNotice, setSnapNotice] = useState(null);
 
-  // Layer Visibility Filters
-  const [visibleLayers, setVisibleLayers] = useState({
-    mainline: true,
-    baseline: true,
-    spurs: true,
-    interchanges: true,
-    bridges: true,
-    drainage: true,
-    rivers: false,
-    wildlife: true,
-    crossings: true,
-    row: true,
-  });
+  // 13-Layer Verification Audit & Interactive Map Lens State
+  const [currentFeatures, setCurrentFeatures] = useState([]);
+  const [layerAudit, setLayerAudit] = useState([]);
+  const [routeLayerProfile, setRouteLayerProfile] = useState([]);
+  const [spurLayerProfiles, setSpurLayerProfiles] = useState([]);
+  const [routeDiagnostics, setRouteDiagnostics] = useState(null);
+  const [terminalRoadConnections, setTerminalRoadConnections] = useState(null);
+  const [spurEngineeringSummary, setSpurEngineeringSummary] = useState(null);
+  const [activeLayerId, setActiveLayerId] = useState(null);
+  const [pinnedLayerIds, setPinnedLayerIds] = useState(() => new Set());
+  const [showMultiArchetypes, setShowMultiArchetypes] = useState(true);
+
+  // Botanical Atelier Collapsible Drawers & Viewport Refs
+  const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(true);
+  const mapStudioRef = useRef(null);
+  const dossierRef = useRef(null);
+
+  // Always reset viewport scroll to the very top when switching workspaces (Home ↔ Planner ↔ Mode 2 ↔ EIA)
+  useLayoutEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    scrollToTop();
+    const rafId = requestAnimationFrame(scrollToTop);
+    return () => cancelAnimationFrame(rafId);
+  }, [activeWorkspace]);
+
+  // Re-measure Leaflet map smoothly whenever Left or Right drawer collapses/expands
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize({ animate: true });
+      }
+    }, 280);
+    return () => clearTimeout(timer);
+  }, [leftDrawerOpen, rightDrawerOpen]);
+
+  // Coords Key Tracker: Automatically clear cached routes if endpoints change
+  const currentCoordsKey = start && end ? `${start.lat.toFixed(4)},${start.lng.toFixed(4)}->${end.lat.toFixed(4)},${end.lng.toFixed(4)}` : null;
+
+  useEffect(() => {
+    if (currentCoordsKey && lastCoordsKeyRef.current && currentCoordsKey !== lastCoordsKeyRef.current) {
+      setCachedArchetypes({});
+      setAlternativeRoutes([]);
+      setActiveAlternativeId(null);
+      setStatutoryClearanceReport(null);
+      setCurrentFeatures([]);
+      setLayerAudit([]);
+      setRouteLayerProfile([]);
+      setSpurLayerProfiles([]);
+      setRouteDiagnostics(null);
+      setTerminalRoadConnections(null);
+      setSpurEngineeringSummary(null);
+      setActiveLayerId(null);
+      setPinnedLayerIds(new Set());
+      setMode1GisScreening(null);
+      setMode1RouteSignature(null);
+      pendingRouteRef.current = null;
+      setHasPendingRoute(false);
+      setSavedRouteId("");
+      setRouteSaveMessage("");
+    }
+    lastCoordsKeyRef.current = currentCoordsKey;
+  }, [currentCoordsKey]);
+
+  // Live Comparative Deltas vs Balanced Alignment
+  const comparativeDeltasVsBalanced = useMemo(() => {
+    if (!cachedArchetypes["BALANCED"] || tradeOffPreset === "BALANCED" || !routeInfo) {
+      return null;
+    }
+    const bal = cachedArchetypes["BALANCED"];
+    const currKm = parseFloat(routeInfo.routeLengthKm || 0);
+    const balKm = parseFloat(bal.routeInfo?.routeLengthKm || 0);
+    if (!currKm || !balKm) return null;
+
+    const deltaKm = Number((currKm - balKm).toFixed(2));
+    const deltaMins = Number(((deltaKm / 85.0) * 60.0).toFixed(1));
+    const deltaVocLakh = Number((-deltaKm * 28.74).toFixed(1));
+
+    const currForest = tradeOffProfile?.environmentalSummary?.forestHectaresDirectRow ?? 0;
+    const balForest = bal.tradeOffProfile?.environmentalSummary?.forestHectaresDirectRow ?? 0;
+    const deltaForestHa = Number((currForest - balForest).toFixed(1));
+
+    const currDisplaced = tradeOffProfile?.socialSummary?.estimatedDirectlyDisplacedPopulation ?? 0;
+    const balDisplaced = bal.tradeOffProfile?.socialSummary?.estimatedDirectlyDisplacedPopulation ?? 0;
+    const deltaDisplaced = currDisplaced - balDisplaced;
+
+    return {
+      deltaKm,
+      deltaMins,
+      deltaVocLakh,
+      deltaForestHa,
+      deltaDisplaced,
+    };
+  }, [cachedArchetypes, tradeOffPreset, routeInfo, tradeOffProfile]);
 
   // -----------------------------------------------------------
   // Initialize Leaflet Map
@@ -255,6 +383,9 @@ export default function App() {
     // Vector Groups
     snapVectorGroupRef.current = L.layerGroup().addTo(map);
     routeLayersGroupRef.current = L.layerGroup().addTo(map);
+    colorizedRouteGroupRef.current = L.layerGroup().addTo(map);
+    focusHighlightGroupRef.current = L.layerGroup().addTo(map);
+    comparativeRoutesGroupRef.current = L.layerGroup().addTo(map);
 
     // Map Click Handler for Interactive Endpoint Picking
     map.on("click", (e) => {
@@ -265,7 +396,7 @@ export default function App() {
       const lng = Number(e.latlng.lng.toFixed(5));
 
       if (!isInsideIndia(lat, lng)) {
-        setStatus("⚠️ Clicked point is outside the Pan-India planning boundary.");
+        setStatus("Please click a location inside India.");
         return;
       }
 
@@ -277,11 +408,10 @@ export default function App() {
         pendingRouteRef.current = null;
         setHasPendingRoute(false);
         setSavedRouteId("");
-        routeGeoJsonRef.current = null;
         setSelectedPresetId("custom");
         mapSelectionModeRef.current = null;
         setMapSelectionMode(null);
-        setStatus(`📍 Origin selected: ${lat}, ${lng}`);
+        setStatus(`📍 Starting point set: ${lat}, ${lng}`);
       } else if (mode === "end") {
         setEnd({ lat, lng });
         setMode1GisScreening(null);
@@ -290,7 +420,6 @@ export default function App() {
         pendingRouteRef.current = null;
         setHasPendingRoute(false);
         setSavedRouteId("");
-        routeGeoJsonRef.current = null;
         setSelectedPresetId("custom");
         mapSelectionModeRef.current = null;
         setMapSelectionMode(null);
@@ -300,12 +429,14 @@ export default function App() {
         setTargetHubs((prev) => (prev.includes(hubToken) ? prev : [...prev, hubToken]));
         mapSelectionModeRef.current = null;
         setMapSelectionMode(null);
-        setStatus(`🏙️ Added Intermediate Hub: ${hubToken}`);
+        setStatus(`🏙️ Added town along the route: ${hubToken}`);
       }
     });
 
     mapRef.current = map;
-    if (routeGeoJsonRef.current) renderGeoJsonFeatures(routeGeoJsonRef.current);
+    if (currentFeatures.length > 0) {
+      renderGeoJsonFeatures(currentFeatures, tradeOffPreset, activeLayerId, pinnedLayerIds, routeLayerProfile, spurLayerProfiles, true);
+    }
 
     return () => {
       map.remove();
@@ -315,34 +446,43 @@ export default function App() {
       endMarkerRef.current = null;
       snapVectorGroupRef.current = null;
       routeLayersGroupRef.current = null;
+      colorizedRouteGroupRef.current = null;
+      focusHighlightGroupRef.current = null;
+      comparativeRoutesGroupRef.current = null;
     };
   }, [activeWorkspace]);
 
   // -----------------------------------------------------------
-  // Basemap Switcher (OpenStreetMap vs Esri Satellite - No Keys Required)
+  // Multi-Basemap Switcher (OSM, OpenTopoMap, Esri Satellite/Topo/Light Gray/Street - 100% Free, No API Keys)
   // -----------------------------------------------------------
   useEffect(() => {
     if (!mapRef.current) return;
     if (baseTileLayerRef.current) {
       mapRef.current.removeLayer(baseTileLayerRef.current);
     }
-    let newLayer;
-    if (baseMapType === "satellite") {
-      newLayer = L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-        {
-          attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
-          maxZoom: 19,
-        }
-      );
-    } else {
-      newLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
+    const cfg = getBasemapConfig(baseMapType);
+    let tileErrors = 0;
+    const baseTiles = L.tileLayer(cfg.url, cfg.options);
+    baseTiles.on("tileerror", () => {
+      tileErrors += 1;
+      if (tileErrors === 4 && cfg.fallbackId && cfg.fallbackId !== baseMapType) {
+        setBaseMapType(cfg.fallbackId);
+      }
+    });
+
+    if (cfg.overlayUrl) {
+      const refTiles = L.tileLayer(cfg.overlayUrl, {
+        ...cfg.options,
+        attribution: "",
       });
+      const group = L.layerGroup([baseTiles, refTiles]).addTo(mapRef.current);
+      if (typeof baseTiles.bringToBack === "function") baseTiles.bringToBack();
+      baseTileLayerRef.current = group;
+    } else {
+      baseTiles.addTo(mapRef.current);
+      if (typeof baseTiles.bringToBack === "function") baseTiles.bringToBack();
+      baseTileLayerRef.current = baseTiles;
     }
-    newLayer.addTo(mapRef.current);
-    baseTileLayerRef.current = newLayer;
   }, [baseMapType, activeWorkspace]);
 
   // -----------------------------------------------------------
@@ -450,6 +590,189 @@ export default function App() {
   }, [endDistrictQuery]);
 
   // -----------------------------------------------------------
+  // Alignment Trade-Off Archetype Preset Definitions
+  // -----------------------------------------------------------
+  const PRESET_DEFINITIONS = {
+    BALANCED: {
+      id: "BALANCED",
+      label: "⚖️ Balanced Route",
+      shortLabel: "Balanced",
+      env: 1.0,
+      social: 1.0,
+      direct: 1.0,
+      color: "#1B4332",
+      description: "Weighs nature protection, avoiding homes, and travel time equally for a well-rounded route",
+    },
+    ECO_SHIELD: {
+      id: "ECO_SHIELD",
+      label: "🌿 Protect Nature & Rivers",
+      shortLabel: "Nature First",
+      env: 2.5,
+      social: 1.0,
+      direct: 0.8,
+      color: "#10b981",
+      description: "Takes extra detours to stay well away from dense forests, wildlife paths, and flood-prone riverbanks",
+    },
+    COMMUNITY_SAFEGUARD: {
+      id: "COMMUNITY_SAFEGUARD",
+      label: "🏡 Protect Homes & Villages",
+      shortLabel: "Community First",
+      env: 1.0,
+      social: 2.5,
+      direct: 0.8,
+      color: "#8b5cf6",
+      description: "Focuses on avoiding rural homes, village boundaries, schools, and local neighborhoods",
+    },
+    SHORTEST_PATH: {
+      id: "SHORTEST_PATH",
+      label: "⚡ Fastest Direct Route",
+      shortLabel: "Fastest Direct",
+      env: 0.8,
+      social: 0.8,
+      direct: 2.5,
+      color: "#06b6d4",
+      description: "Keeps the road as straight and short as safely possible to cut travel time and fuel costs",
+    },
+  };
+
+  // -----------------------------------------------------------
+  // Switch to Archetype (Instantly from memory if cached, else evaluate)
+  // -----------------------------------------------------------
+  function switchToArchetype(targetKey) {
+    const p = PRESET_DEFINITIONS[targetKey];
+    if (!p) return;
+
+    // 1. If already generated & cached for current endpoints: INSTANT SWITCH!
+    if (cachedArchetypes[targetKey]) {
+      const cached = cachedArchetypes[targetKey];
+      setTradeOffPreset(targetKey);
+      setEnvWeight(p.env);
+      setSocialWeight(p.social);
+      setDirectnessWeight(p.direct);
+
+      // Re-render GIS symbology & update state directly from memory (0 ms delay)
+      setCurrentFeatures(cached.features || []);
+      setLayerAudit(cached.layerAudit || []);
+      setRouteLayerProfile(cached.routeLayerProfile || []);
+      setSpurLayerProfiles(cached.spurLayerProfiles || []);
+      setRouteDiagnostics(cached.routeDiagnostics || null);
+      setTerminalRoadConnections(cached.terminalRoadConnections || null);
+      setSpurEngineeringSummary(cached.spurEngineeringSummary || null);
+      renderGeoJsonFeatures(cached.features || [], targetKey, activeLayerId, pinnedLayerIds, cached.routeLayerProfile || [], cached.spurLayerProfiles || [], false);
+      setRouteInfo(cached.routeInfo);
+      setNetworkSummary(cached.networkSummary);
+      setTradeOffProfile(cached.tradeOffProfile);
+      setConnectedHubs(cached.connectedHubs);
+      setTrafficCapacity(cached.trafficCapacity);
+      setHubDecisions(cached.hubDecisions);
+      setStatutoryClearanceReport(cached.statutoryClearanceReport || cached.tradeOffProfile?.statutoryClearanceReport || null);
+
+      const cachedData = cached.data || null;
+      const cachedCoords = extractMainlineCoordinates(cached.features || []);
+      pendingRouteRef.current = cachedData && cachedCoords.length >= 2 ? cachedData : null;
+      setHasPendingRoute(Boolean(pendingRouteRef.current));
+      setMode1GisScreening(cachedData?.metadata?.environmentalSectionInput ?? null);
+      const cachedStart = cachedData?.metadata?.endpointResolution?.resolvedStart;
+      const cachedGoal = cachedData?.metadata?.endpointResolution?.resolvedGoal;
+      setMode1RouteSignature(routeSignature(
+        cachedStart ? { lat: cachedStart.lat, lng: cachedStart.lon ?? cachedStart.lng } : start,
+        cachedGoal ? { lat: cachedGoal.lat, lng: cachedGoal.lon ?? cachedGoal.lng } : end,
+      ));
+      setSavedRouteId("");
+      setRouteSaveMessage("");
+
+      setActiveAlternativeId("alt-" + targetKey);
+      setStatus(`Switched to the ${p.shortLabel} route (${cached.routeInfo.routeLengthKm} km).`);
+      return;
+    }
+
+    // 2. If not yet in cache, fetch & evaluate corridor for this archetype
+    realignAlignment(targetKey);
+  }
+
+  function handleSelectPreset(key) {
+    const p = PRESET_DEFINITIONS[key];
+    if (!p) return;
+    setTradeOffPreset(p.id);
+    setEnvWeight(p.env);
+    setSocialWeight(p.social);
+    setDirectnessWeight(p.direct);
+
+    // If an alignment is already loaded on the map, switch to it immediately!
+    if (routeInfo) {
+      switchToArchetype(key);
+    }
+  }
+
+  function handleSliderChange(type, val) {
+    setTradeOffPreset("CUSTOM");
+    const num = parseFloat(val);
+    if (type === "env") setEnvWeight(num);
+    if (type === "social") setSocialWeight(num);
+    if (type === "direct") setDirectnessWeight(num);
+  }
+
+  // -----------------------------------------------------------
+  // Multi-Archetype Comparison Overlay on Map
+  // -----------------------------------------------------------
+  useEffect(() => {
+    if (!mapRef.current || !comparativeRoutesGroupRef.current) return;
+    comparativeRoutesGroupRef.current.clearLayers();
+
+    if (!showMultiArchetypes) return;
+
+    Object.entries(cachedArchetypes).forEach(([presetKey, snapshot]) => {
+      if (presetKey === tradeOffPreset) return;
+
+      const pDef = PRESET_DEFINITIONS[presetKey] || {
+        shortLabel: presetKey,
+        label: presetKey,
+        color: "#94a3b8",
+      };
+
+      const features = snapshot.features || snapshot.data?.features || [];
+      const mainlineFeat = features.find(
+        (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
+      );
+
+      if (mainlineFeat) {
+        const altLength = snapshot.routeInfo?.routeLengthKm || mainlineFeat.properties?.routeLengthKm || "—";
+        const altDev = snapshot.routeInfo?.deviationPercent || mainlineFeat.properties?.deviationPercent || "—";
+        const layer = L.geoJSON(mainlineFeat, {
+          style: {
+            color: pDef.color,
+            weight: 4,
+            dashArray: "8, 6",
+            opacity: 0.8,
+          },
+        });
+
+        layer.bindTooltip(
+          `<div style="font-size:11px;">
+            <strong style="color:${pDef.color};">${pDef.label || pDef.shortLabel}</strong><br/>
+            <span>Route Length: <b>${altLength} km</b> (+${altDev}% longer than straight line)</span><br/>
+            <span style="font-size:10px; color:#2D6A4F; font-weight:700;">Click this line to view this route option</span>
+          </div>`,
+          { sticky: true }
+        );
+
+        layer.on("click", () => {
+          switchToArchetype(presetKey);
+        });
+
+        layer.on("mouseover", function () {
+          this.setStyle({ weight: 6, opacity: 1.0 });
+        });
+        layer.on("mouseout", function () {
+          this.setStyle({ weight: 4, opacity: 0.8 });
+        });
+
+        comparativeRoutesGroupRef.current.addLayer(layer);
+      }
+    });
+  }, [cachedArchetypes, tradeOffPreset, showMultiArchetypes, activeWorkspace]);
+
+  // -----------------------------------------------------------
   // Preset Selection Handler
   // -----------------------------------------------------------
   function applyPreset(preset) {
@@ -459,10 +782,21 @@ export default function App() {
     setTargetHubs([]);
     setSnapNotice(null);
     setRoutingError(null);
+    setCachedArchetypes({});
+    setAlternativeRoutes([]);
+    setActiveAlternativeId(null);
+    setCurrentFeatures([]);
+    setLayerAudit([]);
+    setRouteLayerProfile([]);
+    setSpurLayerProfiles([]);
+    setRouteDiagnostics(null);
+    setTerminalRoadConnections(null);
+    setSpurEngineeringSummary(null);
+    setActiveLayerId(null);
+    setPinnedLayerIds(new Set());
     setMode1GisScreening(null);
     setMode1RouteSignature(null);
     setRouteInfo(null);
-    routeGeoJsonRef.current = null;
     pendingRouteRef.current = null;
     setHasPendingRoute(false);
     setSavedRouteId("");
@@ -474,7 +808,10 @@ export default function App() {
       : preset.id === "gangetic_plains" ? "Uttar Pradesh"
       : preset.id === "interstate_pan_india" ? "Maharashtra; Madhya Pradesh"
       : "Assam");
-    setStatus(`Loaded ${preset.name}. Click 'Generate MARG Alignment' to evaluate.`);
+    if (!lockBasemap) {
+      setBaseMapType("osm");
+    }
+    setStatus(`Loaded ${preset.name}. Click 'Find Best Route' to begin.`);
 
     if (mapRef.current) {
       mapRef.current.flyTo(preset.center, preset.zoom, { duration: 1.2 });
@@ -494,7 +831,6 @@ export default function App() {
     }
 
     setIsLoading(true);
-    routeGeoJsonRef.current = null;
     pendingRouteRef.current = null;
     setHasPendingRoute(false);
     setSavedRouteId("");
@@ -509,7 +845,7 @@ export default function App() {
     setTrafficCapacity(null);
     setHubDecisions([]);
     setShowAllDecisions(false);
-    setStatus("Synthesizing 13-layer spatial constraints & computing greenfield alignment...");
+    setStatus("Checking forests, floods, hills, and homes to find the best route...");
 
     // Clear previous vectors
     if (snapVectorGroupRef.current) snapVectorGroupRef.current.clearLayers();
@@ -549,6 +885,12 @@ export default function App() {
         params.append("regionId", selectedPresetId);
       }
 
+      // Multi-Objective Alignment Preference Tuning (Request-Scoped)
+      params.append("envWeight", envWeight.toString());
+      params.append("socialWeight", socialWeight.toString());
+      params.append("directnessWeight", directnessWeight.toString());
+      params.append("tradeOffPreset", tradeOffPreset);
+
       const response = await fetch(`/api/routes/composite?${params.toString()}`);
       if (!response.ok) {
         const errorText = await response.text();
@@ -559,19 +901,6 @@ export default function App() {
       if (!data.features || data.features.length === 0) {
         throw new Error("No route features returned by the routing engine.");
       }
-      setMode1GisScreening(data.metadata?.environmentalSectionInput ?? null);
-      const resolvedStart = data.metadata?.endpointResolution?.resolvedStart;
-      const resolvedGoal = data.metadata?.endpointResolution?.resolvedGoal;
-      setMode1RouteSignature(routeSignature(
-        resolvedStart ? { lat: resolvedStart.lat, lng: resolvedStart.lon ?? resolvedStart.lng } : start,
-        resolvedGoal ? { lat: resolvedGoal.lat, lng: resolvedGoal.lon ?? resolvedGoal.lng } : end,
-      ));
-
-      const routeCoordinates = extractMainlineCoordinates(data.features);
-      pendingRouteRef.current = routeCoordinates.length >= 2 ? data : null;
-      setHasPendingRoute(routeCoordinates.length >= 2);
-      setRouteSaveMessage("");
-      setSavedRouteId("");
 
       // ---------------------------------------------------------
       // 1. SMART ENDPOINT SNAPPING NOTIFICATION & VISUALIZATION
@@ -579,6 +908,11 @@ export default function App() {
       const endpointRes = data.metadata?.endpointResolution;
       let snapTriggered = false;
       const snapDetails = { start: null, end: null };
+
+      let resolvedStartLat = start.lat;
+      let resolvedStartLng = start.lng;
+      let resolvedEndLat = end.lat;
+      let resolvedEndLng = end.lng;
 
       if (endpointRes) {
         // Start Point Snapped?
@@ -597,7 +931,9 @@ export default function App() {
           };
 
           // Update local start state to the resolved feasible coordinate!
-          setStart({ lat: res.lat, lng: res.lon ?? res.lng });
+          resolvedStartLat = res.lat;
+          resolvedStartLng = res.lon ?? res.lng;
+          setStart({ lat: resolvedStartLat, lng: resolvedStartLng });
 
           // Plot ghost marker at the original requested click
           if (snapVectorGroupRef.current) {
@@ -646,7 +982,9 @@ export default function App() {
           };
 
           // Update local end state to the resolved feasible coordinate!
-          setEnd({ lat: res.lat, lng: res.lon ?? res.lng });
+          resolvedEndLat = res.lat;
+          resolvedEndLng = res.lon ?? res.lng;
+          setEnd({ lat: resolvedEndLat, lng: resolvedEndLng });
 
           if (snapVectorGroupRef.current) {
             const origIcon = L.divIcon({
@@ -679,202 +1017,550 @@ export default function App() {
       }
 
       if (snapTriggered) {
+        // Synchronize lastCoordsKeyRef to the backend-snapped coordinates BEFORE React runs
+        // the currentCoordsKey reset effect so it never wipes the route we just generated!
+        lastCoordsKeyRef.current = `${Number(resolvedStartLat).toFixed(4)},${Number(resolvedStartLng).toFixed(4)}->${Number(resolvedEndLat).toFixed(4)},${Number(resolvedEndLng).toFixed(4)}`;
         setSnapNotice(snapDetails);
       }
 
       // ---------------------------------------------------------
-      // 2. RENDER MULTI-FEATURE GEOJSON LAYERS
+      // 2. RENDER MULTI-FEATURE GEOJSON LAYERS & CACHE RESULT
       // ---------------------------------------------------------
-      routeGeoJsonRef.current = data.features;
-      renderGeoJsonFeatures(data.features);
+      const targetPreset = tradeOffPreset || "BALANCED";
+      applyRouteResult(data, targetPreset);
 
-      // ---------------------------------------------------------
-      // 3. EXTRACT METRICS & ENGINEERING SUMMARY
-      // ---------------------------------------------------------
-      const meta = data.metadata || {};
-      const diag = meta.routeDiagnostics || {};
-      const net = meta.transportNetworkAndCapacitySummary || meta.networkAndCapacitySummary || {};
-      const termConn = meta.terminalRoadConnections || {};
-
-      const mainlineFeat = data.features.find(
-        (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
-      );
-      const mainProps = mainlineFeat?.properties || {};
-
-      const routeKm = Number(diag.routeLengthKm ?? meta.routeLengthKm ?? mainProps.routeLengthKm ?? 0);
-      const baseKm = Number(diag.directDistanceBaselineKm ?? meta.directDistanceBaselineKm ?? mainProps.distanceBaselineKm ?? 0);
-      const devPct = Number(diag.alignmentDeviationPercent ?? meta.alignmentDeviationPercent ?? mainProps.deviationPercent ?? 0);
-
-      const spurFeatures = (data.features || []).filter(
-        (f) => f.properties?.featureRole === "DEDICATED_FEEDER_SPUR"
-      );
-      const hubList = spurFeatures.map((f) => ({
-        name: f.properties?.servedHubName || "Regional Hub",
-        spurKm: Number(f.properties?.spurLengthKm || 0).toFixed(1),
-        population: f.properties?.catchmentPopulationServed || 0,
-        isUserOverride: Boolean(f.properties?.immutableUserOverride),
-        traffic: Math.round(f.properties?.inducedPeakTrafficPcuHr || 0),
-        tieInRoadRef: f.properties?.tieInRoadRef || "Connecting Road",
-        decisionReason: f.properties?.decisionReason || "",
-        sixLaneRecommended: Boolean(f.properties?.sixLaneExpansionRecommended),
-      }));
-      setConnectedHubs(hubList);
-
-      const trafficAnalysis = net.trafficCapacityAnalysis || {};
-      setTrafficCapacity(trafficAnalysis);
-
-      const pipelineMeta = meta.hubEvaluationPipeline || {};
-      const allDecisions = pipelineMeta.hubDecisions || [];
-      setHubDecisions(allDecisions);
-
-      setRouteInfo({
-        routeLengthKm: routeKm.toFixed(2),
-        baselineLengthKm: baseKm.toFixed(2),
-        deviationPercent: devPct.toFixed(2),
-        tierMode: data.corridorTierMode || meta.corridorTierMode || "TIER_1_DYNAMIC_PAN_INDIA",
-        crs: meta.coordinateReferenceSystem || "EPSG:32643",
-        utmZone: meta.utmZone || 43,
-      });
-
-      setNetworkSummary({
-        interchanges: net.plannedInterchangesCount ?? 0,
-        feederSpurs: net.dedicatedFeederSpursCount ?? 0,
-        feederSpurKm: Number(net.totalDedicatedFeederSpurLengthKm ?? 0).toFixed(1),
-        terminalAccessKm: Number(
-          net.totalTerminalAccessRoadLengthKm ?? termConn.totalTerminalAccessRoadLengthKm ?? 0
-        ).toFixed(2),
-        startRoadRef:
-          termConn.startRoadConnection?.existingRoadRef ||
-          termConn.startRoadConnection?.existingRoadName ||
-          "Existing Road",
-        goalRoadRef:
-          termConn.goalRoadConnection?.existingRoadRef ||
-          termConn.goalRoadConnection?.existingRoadName ||
-          "Existing Road",
-        riverBridges: net.riverBridgesCount ?? 0,
-        riverBridgeSpanM: net.totalEstimatedRiverBridgeSpanMeters ?? 0,
-        drainageStructures: net.drainageStructuresCount ?? (data.features ? data.features.filter(f => f.properties?.featureRole === "DRAINAGE_CROSSING_STRUCTURE").length : 0),
-        wildlifePassages: net.wildlifePassagesCount ?? 0,
-        wildlifeSpanM: net.totalRecommendedWildlifePassageSpanMeters ?? 0,
-        railwayRobs: net.railwayRobCount ?? 0,
-        roadFlyovers: net.highwayFlyoverUnderpassCount ?? 0,
-        rowHectares: net.rightOfWayAcquisitionFootprint?.totalDirectRowAcquisitionHectares ?? "—",
-        rowWidthM: net.rightOfWayAcquisitionFootprint?.mainlineRowWidthMeters ?? 90,
-        displacedPop: net.estimatedDirectlyDisplacedPopulation ?? 0,
-      });
-
-      setStatus("✅ MARG composite highway alignment & network plan computed successfully.");
+      setStatus("✅ Route ready! Explore it on the map or scroll down for the Public Impact Report.");
     } catch (err) {
       console.error("Routing execution error:", err);
       setRoutingError({
-        title: "Routing Computation Failed",
-        message: err.message || "An unexpected error occurred during corridor generation.",
+        title: "Could Not Find a Route",
+        message: err.message || "Something went wrong while planning this route.",
       });
-      setStatus("❌ Routing failed.");
+      setStatus("Could not find a route between these points.");
     } finally {
       setIsLoading(false);
     }
   }
 
   // -----------------------------------------------------------
-  // Render FeatureCollection with Custom GIS Symbology
+  // Helper: Extract & Apply Route Metadata & GIS Layers
   // -----------------------------------------------------------
-  function renderGeoJsonFeatures(features) {
+  function applyRouteResult(data, presetKeyOverride) {
+    const targetKey = presetKeyOverride || tradeOffPreset || "BALANCED";
+    const meta = data.metadata || {};
+    const diag = meta.routeDiagnostics || {};
+    const net = meta.transportNetworkAndCapacitySummary || meta.networkAndCapacitySummary || {};
+    const termConn = meta.terminalRoadConnections || {};
+    const auditList = Array.isArray(meta.layerAudit) ? meta.layerAudit : [];
+    const layerProfile = Array.isArray(meta.routeLayerProfile) ? meta.routeLayerProfile : [];
+    const spurProfiles = Array.isArray(meta.spurLayerProfiles) ? meta.spurLayerProfiles : [];
+    const spurSummary = meta.spurEngineeringSummary || null;
+    const feats = Array.isArray(data.features) ? data.features : [];
+
+    setCurrentFeatures(feats);
+    setLayerAudit(auditList);
+    setRouteLayerProfile(layerProfile);
+    setSpurLayerProfiles(spurProfiles);
+    setRouteDiagnostics(diag);
+    setTerminalRoadConnections(termConn);
+    setSpurEngineeringSummary(spurSummary);
+    renderGeoJsonFeatures(feats, targetKey, activeLayerId, pinnedLayerIds, layerProfile, spurProfiles, true);
+
+    const mainlineFeat = data.features.find(
+      (f) => f.properties?.featureRole === "GREENFIELD_MAINLINE" || f.properties?.featureRole === "MAINLINE"
+    );
+    const mainProps = mainlineFeat?.properties || {};
+
+    const routeKm = Number(diag.routeLengthKm ?? meta.routeLengthKm ?? mainProps.routeLengthKm ?? 0);
+    const baseKm = Number(diag.directDistanceBaselineKm ?? meta.directDistanceBaselineKm ?? mainProps.distanceBaselineKm ?? 0);
+    const devPct = Number(diag.alignmentDeviationPercent ?? meta.alignmentDeviationPercent ?? mainProps.deviationPercent ?? 0);
+
+    const spurFeatures = (data.features || []).filter(
+      (f) => f.properties?.featureRole === "DEDICATED_FEEDER_SPUR" || f.properties?.featureRole === "FEEDER_SPUR_HIGHWAY"
+    );
+    const hubList = spurFeatures.map((f) => ({
+      name: f.properties?.servedHubName || f.properties?.connectingHub || "Regional Hub",
+      spurKm: Number(f.properties?.spurLengthKm ?? f.properties?.lengthKm ?? 0).toFixed(1),
+      population: f.properties?.catchmentPopulationServed || 0,
+      isUserOverride: Boolean(f.properties?.immutableUserOverride),
+      traffic: Math.round(f.properties?.inducedPeakTrafficPcuHr || 0),
+      tieInRoadRef: f.properties?.tieInRoadRef || "Connecting Road",
+      decisionReason: f.properties?.decisionReason || "",
+      sixLaneRecommended: Boolean(f.properties?.sixLaneExpansionRecommended),
+    }));
+    setConnectedHubs(hubList);
+
+    const trafficAnalysis = net.trafficCapacityAnalysis || {};
+    setTrafficCapacity(trafficAnalysis);
+
+    const pipelineMeta = meta.hubEvaluationPipeline || {};
+    const allDecisions = pipelineMeta.hubDecisions || [];
+    setHubDecisions(allDecisions);
+
+    const newRouteInfo = {
+      routeLengthKm: routeKm.toFixed(2),
+      baselineLengthKm: baseKm.toFixed(2),
+      deviationPercent: devPct.toFixed(2),
+      tierMode: data.corridorTierMode || meta.corridorTierMode || "TIER_1_DYNAMIC_PAN_INDIA",
+      crs: meta.coordinateReferenceSystem || "EPSG:32643",
+      utmZone: meta.utmZone || 43,
+    };
+    setRouteInfo(newRouteInfo);
+
+    const newNetSummary = {
+      interchanges: net.plannedInterchangesCount ?? 0,
+      feederSpurs: net.dedicatedFeederSpursCount ?? 0,
+      feederSpurKm: Number(net.totalDedicatedFeederSpurLengthKm ?? 0).toFixed(1),
+      terminalAccessKm: Number(
+        net.totalTerminalAccessRoadLengthKm ?? termConn.totalTerminalAccessRoadLengthKm ?? 0
+      ).toFixed(2),
+      startRoadRef:
+        termConn.startRoadConnection?.existingRoadRef ||
+        termConn.startRoadConnection?.existingRoadName ||
+        "Existing Road",
+      goalRoadRef:
+        termConn.goalRoadConnection?.existingRoadRef ||
+        termConn.goalRoadConnection?.existingRoadName ||
+        "Existing Road",
+      riverBridges: net.riverBridgesCount ?? 0,
+      riverBridgeSpanM: net.totalEstimatedRiverBridgeSpanMeters ?? 0,
+      drainageStructures: net.drainageStructuresCount ?? (data.features ? data.features.filter(f => f.properties?.featureRole === "DRAINAGE_CROSSING_STRUCTURE").length : 0),
+      wildlifePassages: net.wildlifePassagesCount ?? 0,
+      wildlifeSpanM: net.totalRecommendedWildlifePassageSpanMeters ?? 0,
+      railwayRobs: net.railwayRobCount ?? 0,
+      roadFlyovers: net.highwayFlyoverUnderpassCount ?? 0,
+      rowHectares: net.rightOfWayAcquisitionFootprint?.totalDirectRowAcquisitionHectares ?? "—",
+      rowWidthM: net.rightOfWayAcquisitionFootprint?.mainlineRowWidthMeters ?? 90,
+      buildingsInRow: net.buildingsInDirectRowCount ?? 0,
+      buildingsByType: net.buildingsInDirectRowByType ?? null,
+      settlementConflicts: net.settlementConflictZonesCount ?? 0,
+      displacedHouseholds: net.estimatedDirectlyDisplacedHouseholds ?? 0,
+      displacedPop: net.estimatedDirectlyDisplacedPopulation ?? 0,
+    };
+    setNetworkSummary(newNetSummary);
+
+    const profile = meta.tradeOffProfile || null;
+    setTradeOffProfile(profile);
+
+    const clearanceReport = data.statutoryClearanceReport || meta.statutoryClearanceReport || profile?.statutoryClearanceReport || null;
+    setStatutoryClearanceReport(clearanceReport);
+
+    // Sync Mode 1 Environmental EIA screening & MongoDB persistence payload
+    setMode1GisScreening(meta.environmentalSectionInput ?? null);
+    const resolvedStartPt = meta.endpointResolution?.resolvedStart;
+    const resolvedGoalPt = meta.endpointResolution?.resolvedGoal;
+    setMode1RouteSignature(routeSignature(
+      resolvedStartPt ? { lat: resolvedStartPt.lat, lng: resolvedStartPt.lon ?? resolvedStartPt.lng } : start,
+      resolvedGoalPt ? { lat: resolvedGoalPt.lat, lng: resolvedGoalPt.lon ?? resolvedGoalPt.lng } : end,
+    ));
+    const mainlineCoords = extractMainlineCoordinates(feats);
+    pendingRouteRef.current = mainlineCoords.length >= 2 ? data : null;
+    setHasPendingRoute(mainlineCoords.length >= 2);
+    setRouteSaveMessage("");
+    setSavedRouteId("");
+
+    // Save full snapshot in Archetype Cache
+    const snapshot = {
+      data,
+      features: feats,
+      layerAudit: auditList,
+      routeLayerProfile: layerProfile,
+      spurLayerProfiles: spurProfiles,
+      routeDiagnostics: diag,
+      terminalRoadConnections: termConn,
+      spurEngineeringSummary: spurSummary,
+      routeInfo: newRouteInfo,
+      networkSummary: newNetSummary,
+      tradeOffProfile: profile,
+      statutoryClearanceReport: clearanceReport,
+      connectedHubs: hubList,
+      trafficCapacity: trafficAnalysis,
+      hubDecisions: allDecisions,
+      presetKey: targetKey,
+    };
+
+    setCachedArchetypes((prev) => ({
+      ...prev,
+      [targetKey]: snapshot,
+    }));
+
+    // Synchronize alternativeRoutes list
+    const pDef = PRESET_DEFINITIONS[targetKey];
+    const altColor = pDef?.color || "#1B4332";
+    const altLabel = pDef?.label || (targetKey + " Route");
+
+    setAlternativeRoutes((prev) => {
+      const existing = prev.filter((a) => a.preset !== targetKey);
+      return [
+        ...existing,
+        {
+          id: "alt-" + targetKey,
+          label: altLabel,
+          preset: targetKey,
+          routeLengthKm: newRouteInfo.routeLengthKm,
+          deviationPercent: newRouteInfo.deviationPercent,
+          forestHa: profile?.environmentalSummary?.forestHectaresDirectRow ?? 0,
+          displacedPop: profile?.socialSummary?.estimatedDirectlyDisplacedPopulation ?? 0,
+          compositeIndex: profile?.compositeAlignmentIndex ?? 85,
+          color: altColor,
+        },
+      ];
+    });
+
+    setActiveAlternativeId("alt-" + targetKey);
+
+    return { routeKm, profile, meta, net, devPct, snapshot };
+  }
+
+  // -----------------------------------------------------------
+  // Re-Align Route Based on Request-Scoped User Preferences
+  // -----------------------------------------------------------
+  async function realignAlignment(presetKeyOverride) {
+    if (!start || !end) return;
+    setIsRealigning(true);
+    setStatus("Recalculating a new route option based on your chosen priorities...");
+
+    const p = presetKeyOverride ? PRESET_DEFINITIONS[presetKeyOverride] : null;
+    const targetEnv = p ? p.env : envWeight;
+    const targetSocial = p ? p.social : socialWeight;
+    const targetDirect = p ? p.direct : directnessWeight;
+    const targetPreset = p ? p.id : tradeOffPreset;
+
+    if (p) {
+      setTradeOffPreset(p.id);
+      setEnvWeight(p.env);
+      setSocialWeight(p.social);
+      setDirectnessWeight(p.direct);
+    }
+
+    try {
+      const params = new URLSearchParams({
+        startLat: start.lat,
+        startLon: start.lng,
+        endLat: end.lat,
+        endLon: end.lng,
+        facilityMode: facilityMode,
+        autoConnectHubs: autoConnectHubs.toString(),
+        envWeight: targetEnv.toString(),
+        socialWeight: targetSocial.toString(),
+        directnessWeight: targetDirect.toString(),
+        tradeOffPreset: targetPreset,
+      });
+
+      if (deepIngestion) params.append("deep", "true");
+      if (autoConnectHubs && maxAutoHubs != null) params.append("maxAutoHubs", maxAutoHubs.toString());
+      if (targetHubs.length > 0) params.append("targetHubs", targetHubs.join(","));
+      if (maxVcRatio != null) params.append("maxVcRatio", maxVcRatio.toString());
+      if (maxDeviationPercent != null) params.append("maxDeviationPercent", maxDeviationPercent.toString());
+      if (selectedPresetId && selectedPresetId !== "custom" && selectedPresetId !== "interstate_pan_india") {
+        params.append("region", selectedPresetId);
+        params.append("regionId", selectedPresetId);
+      }
+
+      const res = await fetch(`/api/routes/composite?${params.toString()}`);
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      const resSummary = applyRouteResult(data, targetPreset);
+      const altLabel = PRESET_DEFINITIONS[targetPreset]?.shortLabel || targetPreset;
+      setStatus(`Ready! Showing the ${altLabel} route option (${resSummary.routeKm.toFixed(1)} km).`);
+    } catch (err) {
+      console.error("Re-alignment error:", err);
+      setRoutingError({
+        title: "Could Not Update Route",
+        message: err.message || "Something went wrong while recalculating this route option.",
+      });
+      setStatus("Could not update the route.");
+    } finally {
+      setIsRealigning(false);
+    }
+  }
+
+  // -----------------------------------------------------------
+  // Compute Allowed GeoJSON Roles for Overview vs. Active Lens + Pinned Layers
+  // -----------------------------------------------------------
+  function computeAllowedFeatureRoles(lensId, pinnedSet) {
+    const isLensMode = Boolean(lensId) || (pinnedSet && pinnedSet.size > 0);
+    if (!isLensMode) {
+      return OVERVIEW_FEATURE_ROLES;
+    }
+    const allowed = new Set([
+      "MAINLINE",
+      "GREENFIELD_MAINLINE",
+      "DISTANCE_BASELINE",
+      "BASELINE",
+      "DEDICATED_FEEDER_SPUR",
+      "FEEDER_SPUR_HIGHWAY",
+      "TERMINAL_ACCESS_ROAD",
+      "ROAD_TIE_IN",
+    ]);
+    const activeIds = new Set(pinnedSet ? Array.from(pinnedSet) : []);
+    if (lensId) activeIds.add(lensId);
+    activeIds.forEach((id) => {
+      const cfg = LAYER_BY_ID[id];
+      if (cfg && Array.isArray(cfg.vectorFeatureRoles)) {
+        cfg.vectorFeatureRoles.forEach((r) => allowed.add(r));
+      }
+    });
+    return allowed;
+  }
+
+  // -----------------------------------------------------------
+  // Paint Color-Coded Route Segments for Raster Layers (Mainline + All Feeder/Terminal Spurs)
+  // -----------------------------------------------------------
+  function renderColorizedRouteRibbon(profile, spurProfiles, lensId) {
+    if (!colorizedRouteGroupRef.current) return;
+    colorizedRouteGroupRef.current.clearLayers();
+
+    const cfg = lensId ? LAYER_BY_ID[lensId] : null;
+    if (!cfg || !cfg.profileField) {
+      return;
+    }
+
+    const group = colorizedRouteGroupRef.current;
+    const field = cfg.profileField;
+
+    const paintSamples = (samples, segmentTitle, isSpur) => {
+      if (!Array.isArray(samples) || samples.length < 2) return;
+      let runCoords = [];
+      let runVal = null;
+      let runStartCh = 0;
+      let runMaxSlope = 0;
+
+      const flushRun = (endCh) => {
+        if (runCoords.length < 2) return;
+        const color = getSegmentColor(cfg, runVal);
+        const casing = L.polyline(runCoords, {
+          color: "#0f172a",
+          weight: isSpur ? 7.2 : 9,
+          opacity: 0.72,
+          lineCap: "round",
+          lineJoin: "round",
+        });
+        const ribbon = L.polyline(runCoords, {
+          color,
+          weight: isSpur ? 4.2 : 5.5,
+          opacity: 0.98,
+          lineCap: "round",
+          lineJoin: "round",
+        });
+        const slopeExtra =
+          cfg.id === "L3_SLOPE"
+            ? `<br/>Steepest Point Here: <b>${runMaxSlope.toFixed(1)}°</b>`
+            : "";
+        ribbon.bindTooltip(
+          `<div style="font-size:11px;line-height:1.4;">` +
+            `<b>${cfg.icon} #${cfg.number}: ${cfg.shortName}</b><br/>` +
+            `<span style="color:#56665E;">${segmentTitle}</span><br/>` +
+            `Ground Type: <b style="color:${color};">${humanizeClassLabel(runVal)}</b>${slopeExtra}<br/>` +
+            `Distance from Start: ${runStartCh.toFixed(1)} – ${endCh.toFixed(1)} km` +
+            `</div>`,
+          { sticky: true }
+        );
+        group.addLayer(casing);
+        group.addLayer(ribbon);
+      };
+
+      for (let i = 0; i < samples.length; i++) {
+        const pt = samples[i];
+        if (typeof pt.lat !== "number" || typeof pt.lon !== "number") continue;
+        const val = pt[field] ?? "UNKNOWN";
+        const slopeVal = typeof pt.slopeDeg === "number" ? pt.slopeDeg : 0;
+
+        if (runCoords.length === 0) {
+          runCoords = [[pt.lat, pt.lon]];
+          runVal = val;
+          runStartCh = Number(pt.chKm || 0);
+          runMaxSlope = slopeVal;
+        } else if (val === runVal) {
+          runCoords.push([pt.lat, pt.lon]);
+          if (slopeVal > runMaxSlope) runMaxSlope = slopeVal;
+        } else {
+          runCoords.push([pt.lat, pt.lon]);
+          flushRun(Number(pt.chKm || runStartCh));
+          runCoords = [[pt.lat, pt.lon]];
+          runVal = val;
+          runStartCh = Number(pt.chKm || 0);
+          runMaxSlope = slopeVal;
+        }
+      }
+      if (runCoords.length >= 2) {
+        const lastCh = Number(samples[samples.length - 1]?.chKm || runStartCh);
+        flushRun(lastCh);
+      }
+    };
+
+    // Paint Main Highway
+    paintSamples(profile, "Main Highway Route", false);
+
+    // Paint Every Connecting Side Road with identical 13-topic color coding
+    if (Array.isArray(spurProfiles)) {
+      spurProfiles.forEach((sp) => {
+        const label = sp?.servedHubName ? `Connecting Road — ${sp.servedHubName}` : "Connecting Side Road";
+        paintSamples(sp?.samples, label, true);
+      });
+    }
+  }
+
+  // -----------------------------------------------------------
+  // Render FeatureCollection with Custom GIS Symbology (Overview vs. 13-Layer Lens)
+  // -----------------------------------------------------------
+  function renderGeoJsonFeatures(
+    features,
+    activePresetKey,
+    lensIdOverride,
+    pinnedOverride,
+    profileOverride,
+    spurProfilesOverride,
+    shouldFitBounds = false
+  ) {
     if (!mapRef.current || !routeLayersGroupRef.current) return;
     routeLayersGroupRef.current.clearLayers();
 
+    const effectiveLens = lensIdOverride !== undefined ? lensIdOverride : activeLayerId;
+    const effectivePinned = pinnedOverride !== undefined ? pinnedOverride : pinnedLayerIds;
+    const effectiveProfile = profileOverride !== undefined ? profileOverride : routeLayerProfile;
+    const effectiveSpurProfiles = spurProfilesOverride !== undefined ? spurProfilesOverride : spurLayerProfiles;
+
+    const allowedRoles = computeAllowedFeatureRoles(effectiveLens, effectivePinned);
+    const activeLensCfg = effectiveLens ? LAYER_BY_ID[effectiveLens] : null;
+    const hasColorizedRibbon = Boolean(
+      activeLensCfg?.profileField && Array.isArray(effectiveProfile) && effectiveProfile.length >= 2
+    );
+    const hasColorizedSpurs = Boolean(
+      activeLensCfg?.profileField && Array.isArray(effectiveSpurProfiles) && effectiveSpurProfiles.length > 0
+    );
+
     const group = routeLayersGroupRef.current;
     let boundsToFit = null;
+    const currentPreset = activePresetKey || tradeOffPreset || "BALANCED";
+    const mainlineColor = PRESET_DEFINITIONS[currentPreset]?.color || "#10b981";
 
-    features.forEach((feature) => {
+    const spurTagHtml = (props) =>
+      props?.segmentRole === "FEEDER_SPUR"
+        ? `<div style="margin-bottom:4px;font-size:10px;font-weight:700;color:#7e22ce;">🟣 Connecting Road — ${props.servedHubName || props.parentSpurId || "Town"}</div>`
+        : "";
+
+    (features || []).forEach((feature) => {
       const role = feature.properties?.featureRole || "";
       const geomType = feature.geometry?.type;
+      const props = feature.properties || {};
 
-      // 1. Straight-Line Baseline
-      if (role.includes("BASELINE") && visibleLayers.baseline) {
+      // Gate visibility strictly by Overview Mode vs. Active Lens + Pinned Layers
+      const isAllowed =
+        allowedRoles.has(role) ||
+        (role.includes("BASELINE") && allowedRoles.has("BASELINE")) ||
+        (role.includes("ROW_CORRIDOR") && allowedRoles.has("MAINLINE_ROW_CORRIDOR"));
+      if (!isAllowed) return;
+
+      // 1. Straight-Line Comparison Path
+      if (role.includes("BASELINE")) {
         const layer = L.geoJSON(feature, {
           style: {
             color: "#94a3b8",
-            weight: 3,
+            weight: 2.8,
             dashArray: "6, 8",
-            opacity: 0.8,
+            opacity: 0.78,
           },
-        }).bindPopup("<b>Straight-Line Baseline</b><br/>Euclidean metric distance comparison.");
+        }).bindPopup("<b>Straight-Line Comparison Path</b><br/>Used to show how much forest, flood risk, and home disruption the smart route avoids.");
         group.addLayer(layer);
       }
 
-      // 2. Right-of-Way Footprint Polygons
-      else if (role.includes("ROW_CORRIDOR") && visibleLayers.row && geomType === "Polygon") {
+      // 2. Road Land-Width Strip (L11 & Main Route)
+      else if (role.includes("ROW_CORRIDOR") && (geomType === "Polygon" || geomType === "MultiPolygon")) {
         const layer = L.geoJSON(feature, {
           style: {
-            color: "#10b981",
-            weight: 1,
-            fillColor: "#10b981",
-            fillOpacity: 0.12,
+            color: effectiveLens === "L11_BUILDINGS_ROW" ? "#ec4899" : "#10b981",
+            weight: effectiveLens === "L11_BUILDINGS_ROW" ? 2 : 1,
+            fillColor: effectiveLens === "L11_BUILDINGS_ROW" ? "#ec4899" : "#10b981",
+            fillOpacity: effectiveLens === "L11_BUILDINGS_ROW" ? 0.22 : 0.12,
             dashArray: "4, 4",
           },
         }).bindPopup(
-          `<b>RoW Acquisition Footprint</b><br/>Standard: ${feature.properties.ircStandard || "IRC:SP:99-2023"}<br/>Width: ${feature.properties.designRowWidthMeters || 90}m`
+          `<div class="popup-title">Land Strip Needed for Road</div><div class="popup-meta">Total Width: <b>${props.designRowWidthMeters || 60} meters</b><br/>Includes lanes, shoulders, drainage, and safety buffer.</div>`
         );
         group.addLayer(layer);
       }
 
-      // 3. Feeder Spurs
-      else if (role === "DEDICATED_FEEDER_SPUR" && visibleLayers.spurs) {
-        const p = feature.properties || {};
-        const reasonHtml = p.decisionReason
-          ? `<br/><div style="margin-top:4px; font-size:11px; color:${p.sixLaneExpansionRecommended ? '#d97706' : '#6b7280'}; line-height:1.3"><b>Design Rule:</b> ${p.decisionReason}</div>`
+      // 3. Connecting Side Roads to Nearby Towns
+      else if (role === "DEDICATED_FEEDER_SPUR" || role === "FEEDER_SPUR_HIGHWAY") {
+        const reasonHtml = props.decisionReason
+          ? `<br/><div style="margin-top:4px; font-size:11px; color:${props.sixLaneExpansionRecommended ? '#b45309' : '#56665E'}; line-height:1.35"><b>Why connected:</b> ${humanizeText(props.decisionReason)}</div>`
           : "";
         const layer = L.geoJSON(feature, {
           style: {
-            color: p.sixLaneExpansionRecommended ? "#f59e0b" : "#a855f7",
-            weight: 5,
-            opacity: 0.95,
+            color: props.sixLaneExpansionRecommended ? "#f59e0b" : "#a855f7",
+            weight: hasColorizedSpurs ? 2.5 : 5,
+            opacity: hasColorizedSpurs ? 0.35 : 0.95,
           },
         }).bindPopup(
-          `<b>Dedicated Feeder Spur</b><br/>Connecting to: <b>${p.servedHubName || "Regional Hub"}</b><br/>Length: ${p.spurLengthKm || "—"} km<br/>Tie-In: ${p.tieInRoadRef || "Existing Road"}${reasonHtml}`
+          `<div class="popup-title">Connecting Road to Nearby City</div><div class="popup-meta">Connects to: <b>${props.servedHubName || props.connectingHub || "Local Town"}</b><br/>Length: ${props.spurLengthKm || props.lengthKm || "—"} km<br/>Meets Local Road: ${props.tieInRoadRef || "Existing Highway"}${reasonHtml}</div>`
         );
         group.addLayer(layer);
       }
 
-      // 4. Greenfield Mainline
-      else if ((role === "GREENFIELD_MAINLINE" || role === "MAINLINE") && visibleLayers.mainline) {
+      // 4. Main Planned Highway
+      else if (role === "GREENFIELD_MAINLINE" || role === "MAINLINE") {
         const layer = L.geoJSON(feature, {
           style: {
-            color: "#10b981",
-            weight: 6,
-            opacity: 0.95,
+            color: mainlineColor,
+            weight: hasColorizedRibbon ? 3 : 6,
+            opacity: hasColorizedRibbon ? 0.35 : 0.95,
           },
         }).bindPopup(
-          `<b>13-Layer Greenfield Mainline</b><br/>Length: ${feature.properties.routeLengthKm || "—"} km<br/>Deviation: ${feature.properties.deviationPercent || "—"}%`
+          `<div class="popup-title">${PRESET_DEFINITIONS[currentPreset]?.label || "Planned Smart Highway"}</div><div class="popup-meta">Total Length: <b>${props.routeLengthKm || "—"} km</b><br/>Extra Detour to Avoid Obstacles: +${props.deviationPercent || "—"}%</div>`
         );
         group.addLayer(layer);
         boundsToFit = layer.getBounds();
       }
 
-      // 5. Interchanges (Filter out any spurious terminal origin/destination duplicate markers)
+      // 5. Highway Exits & Interchanges
       else if (
-        role.includes("INTERCHANGE") &&
-        visibleLayers.interchanges &&
-        geomType === "Point" &&
-        !feature.properties?.interchangeId?.includes("ORIGIN") &&
-        !feature.properties?.interchangeId?.includes("DESTINATION")
+        (role === "INTERCHANGE" || role === "TERMINAL_INTERCHANGE" || role === "INTERCHANGE_JUNCTION") &&
+        geomType === "Point"
       ) {
         const coords = feature.geometry.coordinates;
+        const isTerminal = role === "TERMINAL_INTERCHANGE";
         const icon = L.divIcon({
-          className: "struct-marker interchange",
-          html: "<span>✦</span>",
-          iconSize: [26, 26],
-          iconAnchor: [13, 13],
+          className: `struct-marker interchange ${isTerminal ? "terminal" : ""}`,
+          html: isTerminal
+            ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#d97706;border:2.5px solid #fff;color:#fff;font-size:13px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,0.5);">✦</span>`
+            : "<span>✦</span>",
+          iconSize: isTerminal ? [28, 28] : [26, 26],
+          iconAnchor: isTerminal ? [14, 14] : [13, 13],
         });
+        const title = isTerminal
+          ? `${props.terminalRole === "ORIGIN_TERMINAL_INTERCHANGE" ? "Start" : "End"} Highway Interchange`
+          : "Planned Highway Exit";
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Planned Interchange</div><div class="popup-meta">ID: ${feature.properties.interchangeId}<br/>Type: ${feature.properties.interchangeType || "Trumpet"}<br/>Chainage: ${feature.properties.chainageKm} km</div>`
+          `<div class="popup-title">${title}</div><div class="popup-meta">` +
+            `<b>Design:</b> ${humanizeClassLabel(props.interchangeType || props.type || "Trumpet")}<br/>` +
+            (props.existingRoadRef ? `<b>Connects to:</b> ${props.existingRoadRef} (${humanizeClassLabel(props.roadCategory || "")})<br/>` : "") +
+            (props.tollPlazaConfiguration ? `<b>Toll Gate:</b> ${humanizeClassLabel(props.tollPlazaConfiguration)}<br/>` : "") +
+            (props.connectingHub ? `<b>Serves City:</b> ${props.connectingHub}<br/>` : "") +
+            (props.chainageKm != null ? `<b>Location:</b> ${props.chainageKm} km from start` : "") +
+            `</div>`
         );
         group.addLayer(marker);
       }
 
-      // 6. River Bridges
-      else if (role === "RIVER_BRIDGE" && visibleLayers.bridges && geomType === "Point") {
+      // 5b. Connected Cities & Towns
+      else if (role === "REGIONAL_SERVICE_HUB" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const marker = L.circleMarker([coords[1], coords[0]], {
+          radius: 7,
+          color: "#ffffff",
+          weight: 2,
+          fillColor: "#a855f7",
+          fillOpacity: 0.9,
+        }).bindPopup(
+          `<div class="popup-title">🏙️ ${props.name || "Connected City"}</div><div class="popup-meta">Connecting Road: ${props.spurDistanceKm ?? "—"} km · Joins: ${props.tieInRoadRef || "Local Highway"}</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 6. River Bridges (L7 & Overview)
+      else if (role === "RIVER_BRIDGE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
         const icon = L.divIcon({
           className: "struct-marker bridge",
@@ -883,13 +1569,13 @@ export default function App() {
           iconAnchor: [13, 13],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Perennial River Bridge</div><div class="popup-meta">River: ${feature.properties.riverName || "Major River"}<br/>Skew Span: ${feature.properties.estimatedSkewSpanMeters || feature.properties.effectiveSkewSpanMeters || "—"} m<br/>Crossing Angle: ${feature.properties.crossingAngleDegrees || "—"}°</div>`
+          `<div class="popup-title">Planned River Bridge</div>${spurTagHtml(props)}<div class="popup-meta"><b>River:</b> ${props.riverName || "Major River"}<br/><b>Bridge Length:</b> ${props.estimatedSkewSpanMeters || props.effectiveSkewSpanMeters || "—"} meters<br/><b>Crossing Angle:</b> ${props.crossingAngleDegrees || "—"}° (closer to 90° is safer &amp; shorter)</div>`
         );
         group.addLayer(marker);
       }
 
-      // 7. Wildlife Passages
-      else if (role === "WILDLIFE_PASSAGE" && visibleLayers.wildlife && geomType === "Point") {
+      // 7. Wildlife Passages (L8)
+      else if (role === "WILDLIFE_PASSAGE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
         const icon = L.divIcon({
           className: "struct-marker wildlife",
@@ -898,42 +1584,89 @@ export default function App() {
           iconAnchor: [13, 13],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Wildlife Migration Viaduct</div><div class="popup-meta">Passage Span: ${feature.properties.recommendedPassageSpanMeters || "—"} m<br/>Mitigation: Elevated Viaduct Structure</div>`
+          `<div class="popup-title">Safe Wildlife Crossing Bridge</div>${spurTagHtml(props)}<div class="popup-meta"><b>Wildlife Path:</b> ${props.corridorName || "Animal Movement Zone"}<br/><b>Bridge Length:</b> ${props.recommendedPassageSpanMeters || "—"} meters<br/><b>Design:</b> ${humanizeClassLabel(props.mitigationStructure || "Elevated Wildlife Bridge")}</div>`
         );
         group.addLayer(marker);
       }
 
-      // 8. Grade-Separated Crossings (Railway ROBs & Flyovers)
-      else if (role === "GRADE_SEPARATED_CROSSING" && visibleLayers.crossings && geomType === "Point") {
-        const coords = feature.geometry.coordinates;
-        const icon = L.divIcon({
-          className: "struct-marker crossing",
-          html: "<span>🚊</span>",
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        });
-        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Grade-Separated Structure</div><div class="popup-meta">Type: ${feature.properties.structureType || "ROB"}<br/>Chainage: ${feature.properties.chainageKm} km</div>`
-        );
-        group.addLayer(marker);
-      }
-
-      // 9. Corridor River Channels (Backend Hydrographic Model)
-      else if (role === "CORRIDOR_RIVER_CHANNEL" && visibleLayers.rivers) {
+      // 7b. Protected National Parks & Sanctuaries (L4 — Hidden in Overview!)
+      else if (role === "WILDLIFE_SANCTUARY_BOUNDARY" && (geomType === "Polygon" || geomType === "MultiPolygon")) {
         const layer = L.geoJSON(feature, {
           style: {
-            color: "#0284c7",
-            weight: 3,
-            opacity: 0.85,
+            color: "#dc2626",
+            weight: 2.5,
+            dashArray: "6, 4",
+            fillColor: "#ef4444",
+            fillOpacity: 0.22,
           },
         }).bindPopup(
-          `<b>Backend Waterway Model</b><br/>River: ${feature.properties.riverName || "River"}<br/>Class: ${feature.properties.riverClass || "PERENNIAL"}<br/>Design Width: ${feature.properties.designChannelWidthMeters || "—"}m`
+          `<div class="popup-title" style="color:#b91c1c; font-weight:700;">🛡️ ${props.name || "Wildlife Sanctuary"}</div>` +
+            `<div class="popup-meta" style="font-size:11px; line-height:1.45;">` +
+            `<b>Location:</b> ${props.state || "—"} (${props.district || "—"})<br/>` +
+            `<b>Protected Area Size:</b> ${props.areaKm2 ? props.areaKm2 + " sq km" : "—"}<br/>` +
+            `<b>Key Wildlife:</b> ${props.keySpecies || "Protected Species"}<br/>` +
+            `<div style="margin-top:6px; padding:4px 8px; background:#fef2f2; border:1px solid #f87171; color:#991b1b; border-radius:4px; font-weight:700; font-size:10.5px;">` +
+            `🛡️ Strictly Protected Area — Highways Must Go Around` +
+            `</div></div>`
         );
         group.addLayer(layer);
       }
 
-      // 10. Drainage & Canal Crossing Structures (Layer 12)
-      else if (role === "DRAINAGE_CROSSING_STRUCTURE" && visibleLayers.drainage && geomType === "Point") {
+      // 7c. 10 km Eco-Sensitive Zone Boundaries (L8)
+      else if (role === "ECO_SENSITIVE_ZONE_BOUNDARY" && (geomType === "Polygon" || geomType === "MultiPolygon")) {
+        const layer = L.geoJSON(feature, {
+          style: {
+            color: "#f59e0b",
+            weight: 2,
+            dashArray: "8, 6",
+            fillColor: "#fbbf24",
+            fillOpacity: 0.14,
+          },
+        }).bindPopup(
+          `<div class="popup-title" style="color:#b45309;">🌿 ${props.name || "Eco-Sensitive Buffer Zone"}</div>` +
+            `<div class="popup-meta"><b>Protected Buffer:</b> ${props.eszBufferKm || 10} km around park boundary<br/>Requires wildlife-friendly road design and animal crossings.</div>`
+        );
+        group.addLayer(layer);
+      }
+
+      // 8. Railway Bridges & Road Flyovers (L6 & Overview)
+      else if (role === "GRADE_SEPARATED_CROSSING" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const isRail = props.crossedCategory === "RAILWAY";
+        const icon = L.divIcon({
+          className: `struct-marker ${isRail ? "rail-rob" : "road-overpass"}`,
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${isRail ? "#1e293b" : "#2563eb"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">${isRail ? "🚊" : "🌉"}</span>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">${isRail ? "Railway Overbridge" : "Road Flyover / Overpass"}</div>` +
+            spurTagHtml(props) +
+            `<div class="popup-meta">` +
+            `<b>Crosses Over:</b> ${props.crossedCorridorRef || props.crossedCorridorName || "Existing Road"}<br/>` +
+            `<b>Type:</b> ${humanizeClassLabel(props.structureType || "OVERPASS")}<br/>` +
+            `<b>Location:</b> ${props.chainageKm ?? "—"} km from start` +
+            `</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 9. Major River Channels (L7 & L2)
+      else if (role === "CORRIDOR_RIVER_CHANNEL") {
+        const layer = L.geoJSON(feature, {
+          style: {
+            color: "#0284c7",
+            weight: 3.2,
+            opacity: 0.85,
+          },
+        }).bindPopup(
+          `<div class="popup-title">Major River Channel</div><div class="popup-meta"><b>River:</b> ${props.riverName || "River"}<br/><b>Flow Type:</b> ${humanizeClassLabel(props.riverClass || "PERENNIAL")}<br/><b>Estimated Width:</b> ${props.designChannelWidthMeters || "—"} meters</div>`
+        );
+        group.addLayer(layer);
+      }
+
+      // 10. Water Drainage Culverts & Canals (L13)
+      else if (role === "DRAINAGE_CROSSING_STRUCTURE" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
         const icon = L.divIcon({
           className: "struct-marker drainage",
@@ -942,14 +1675,37 @@ export default function App() {
           iconAnchor: [12, 12],
         });
         const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
-          `<div class="popup-title">Canal Aqueduct / Drainage Crossing</div><div class="popup-meta">Target: ${feature.properties.targetFeatureName || "Canal"}<br/>Type: ${feature.properties.structureType || "Aqueduct"}<br/>Span: ${feature.properties.recommendedClearSpanOrWidthMeters || "—"} m<br/>Discharge: ${feature.properties.designDischargeM3PerSec || "—"} m³/s</div>`
+          `<div class="popup-title">Rainwater &amp; Stream Drainage Tunnel</div>${spurTagHtml(props)}<div class="popup-meta"><b>Waterway:</b> ${props.targetFeatureName || "Local Stream or Canal"}<br/><b>Structure:</b> ${humanizeClassLabel(props.structureType || "BOX_CULVERT")}<br/><b>Opening Width:</b> ${props.recommendedClearSpanOrWidthMeters || "—"} meters</div>`
         );
         group.addLayer(marker);
       }
 
-      // 11. Terminal Access Road Connectors (Joining User Terminals to Existing Roads)
-      else if (role === "TERMINAL_ACCESS_ROAD" && visibleLayers.mainline && geomType === "LineString") {
-        const props = feature.properties || {};
+      // 10b. Wetland Protection Zones (L13)
+      else if (role === "WETLAND_HYDROLOGIC_MITIGATION_ZONE") {
+        if (geomType === "Point") {
+          const coords = feature.geometry.coordinates;
+          const marker = L.circleMarker([coords[1], coords[0]], {
+            radius: 10,
+            color: "#0d9488",
+            weight: 2.5,
+            fillColor: "#14b8a6",
+            fillOpacity: 0.35,
+          }).bindPopup(
+            `<div class="popup-title">💧 Protected Wetland Crossing</div><div class="popup-meta"><b>Wetland:</b> ${props.wetlandName || props.name || "Natural Wetland"}<br/><b>Protection Plan:</b> ${humanizeClassLabel(props.recommendedEngineeringMitigation || "Water Flow Protection Culvert")}</div>`
+          );
+          group.addLayer(marker);
+        } else {
+          const layer = L.geoJSON(feature, {
+            style: { color: "#0d9488", weight: 2, fillColor: "#14b8a6", fillOpacity: 0.28 },
+          }).bindPopup(
+            `<div class="popup-title">💧 Protected Wetland Zone</div><div class="popup-meta">${props.wetlandName || props.name || "Wetland Buffer"}</div>`
+          );
+          group.addLayer(layer);
+        }
+      }
+
+      // 11. Start & End Connecting Roads (L6 & Overview)
+      else if (role === "TERMINAL_ACCESS_ROAD" && geomType === "LineString") {
         const isOrigin = props.connectorRole === "ORIGIN_ROAD_CONNECTOR";
         const layer = L.geoJSON(feature, {
           style: {
@@ -959,15 +1715,14 @@ export default function App() {
             dashArray: "8, 6",
           },
         }).bindPopup(
-          `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Terminal Access Connector</div><div class="popup-meta">Tie-In Road: ${props.existingRoadRef || "Existing Road"} (${props.existingRoadName || "—"})<br/>Connector Length: ${props.connectorLengthKm ?? "—"} km<br/>Included in Mainline & Statistics: Yes</div>`
+          `<div class="popup-title">${isOrigin ? "Start" : "End"} Connecting Access Road</div><div class="popup-meta"><b>Joins Highway:</b> ${props.existingRoadRef || "Existing Road"} (${props.existingRoadName || "—"})<br/><b>Road Type:</b> ${humanizeClassLabel(props.roadCategory || "ARTERIAL")}<br/><b>Connector Length:</b> ${props.connectorLengthKm ?? "—"} km</div>`
         );
         group.addLayer(layer);
       }
 
-      // 12. Existing Road Tie-In Junction Markers
-      else if (role === "ROAD_TIE_IN" && visibleLayers.mainline && geomType === "Point") {
+      // 12. Existing Highway Connection Points (L6 & Overview)
+      else if (role === "ROAD_TIE_IN" && geomType === "Point") {
         const coords = feature.geometry.coordinates;
-        const props = feature.properties || {};
         const isOrigin = props.tieInRole === "ORIGIN_EXISTING_ROAD_TIE_IN";
         const marker = L.circleMarker([coords[1], coords[0]], {
           radius: 7,
@@ -976,25 +1731,193 @@ export default function App() {
           fillColor: "#06b6d4",
           fillOpacity: 0.95,
         }).bindPopup(
-          `<div class="popup-title">${isOrigin ? "Origin" : "Destination"} Existing Road Tie-In</div><div class="popup-meta">Existing Road: ${props.existingRoadRef || "NH/SH/MDR"}<br/>Corridor: ${props.tieInJunctionName || "Existing Road Network"}<br/>Access Connector: ${props.connectorLengthKm ?? "—"} km</div>`
+          `<div class="popup-title">${isOrigin ? "Start" : "End"} Highway Connection</div><div class="popup-meta"><b>Joins:</b> ${props.existingRoadRef || "Existing Highway"}<br/><b>Road Type:</b> ${humanizeClassLabel(props.roadCategory || "NATIONAL_HIGHWAY")}</div>`
         );
         group.addLayer(marker);
       }
+
+      // 13. Nearby Buildings & Homes Check (L5 & L11)
+      else if (role === "SETTLEMENT_BUILDING_CONFLICT_ZONE" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const directBlds = props.buildingsInDirectRowCount ?? 0;
+        const byType = props.buildingsInDirectRowByType || {};
+        const breakdownStr =
+          Object.entries(byType)
+            .filter(([, cnt]) => cnt > 0)
+            .map(([t, cnt]) => `${humanizeClassLabel(t)}: ${cnt}`)
+            .join(", ") || "Edge of town only (no buildings hit)";
+        const hasDemolition = directBlds > 0;
+        const icon = L.divIcon({
+          className: "struct-marker conflict",
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:${hasDemolition ? "#dc2626" : "#ec4899"};border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.45);">${hasDemolition ? "🏚️" : "🏘️"}</span>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">${hasDemolition ? "Buildings Inside Road Path" : "Nearby Village (0 Buildings Affected)"}</div>` +
+            `<div class="popup-meta">` +
+            `<b>Area:</b> ${props.settlementName || "Local Settlement"}<br/>` +
+            `<b>Buildings Affected:</b> ${directBlds}<br/>` +
+            `<b>Details:</b> ${breakdownStr}<br/>` +
+            `<b>Support Plan:</b> ${humanizeClassLabel(props.recommendedEngineeringMitigation || "Fair Compensation & Relocation Support")}` +
+            `</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 14. Hillside & Landslide Protection Zones (L9)
+      else if (role === "GEOTECH_MITIGATION_ZONE" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const icon = L.divIcon({
+          className: "struct-marker geotech",
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:#d97706;border:2px solid #fff;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">🪨</span>`,
+          iconSize: [25, 25],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">🪨 Hillside &amp; Soil Safety Support</div>${spurTagHtml(props)}<div class="popup-meta">` +
+            `<b>Ground Risk:</b> ${props.name || props.featureName || "Steep Slope or Soft Soil"}<br/>` +
+            `<b>Safety Fix:</b> ${humanizeClassLabel(props.mitigationStructure || props.recommendedEngineeringMitigation || "ANCHORED_RETAINING_WALL")}<br/>` +
+            `<b>Reinforced Length:</b> ${props.recommendedStabilizationLengthMeters ?? "—"} meters<br/>` +
+            `<b>Location:</b> ${props.chainageKm ?? "—"} km from start</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 15. High-Voltage Power Line Safety Crossings (L10)
+      else if (role === "UTILITY_CROSSING_PROTECTION" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const icon = L.divIcon({
+          className: "struct-marker utility",
+          html: `<span style="display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:#ca8a04;border:2px solid #fff;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">⚡</span>`,
+          iconSize: [25, 25],
+          iconAnchor: [12, 12],
+        });
+        const marker = L.marker([coords[1], coords[0]], { icon }).bindPopup(
+          `<div class="popup-title">⚡ High-Voltage Power Line Crossing</div>${spurTagHtml(props)}<div class="popup-meta">` +
+            `<b>Power Line:</b> ${props.lineName || props.name || "High-Voltage Line"}<br/>` +
+            `<b>Safety Guard:</b> ${humanizeClassLabel(props.protectionType || props.recommendedProtection || "GUARD_CRADLE")}<br/>` +
+            `<b>Protected Span:</b> ${props.recommendedProtectiveSpanMeters ?? "—"} meters</div>`
+        );
+        group.addLayer(marker);
+      }
+
+      // 16. Nearby Community Protection Zones (L12)
+      else if (role === "DEMOGRAPHIC_EXPOSURE_MITIGATION_ZONE" && geomType === "Point") {
+        const coords = feature.geometry.coordinates;
+        const halo = L.circle([coords[1], coords[0]], {
+          radius: 300,
+          color: "#8b5cf6",
+          weight: 2,
+          fillColor: "#8b5cf6",
+          fillOpacity: 0.22,
+        }).bindPopup(
+          `<div class="popup-title">👥 Nearby Community Protection Zone</div><div class="popup-meta">` +
+            `<b>Community:</b> ${props.settlementName || props.tractName || props.name || "Local Neighborhood"}<br/>` +
+            `<b>People Within 250 m:</b> ${props.populationWithin250m ?? props.totalPopulation ?? "—"} residents<br/>` +
+            `<b>Safety Measure:</b> ${humanizeClassLabel(props.recommendedEngineeringMitigation || "Noise Barrier & Safe Pedestrian Crossing")}</div>`
+        );
+        group.addLayer(halo);
+      }
     });
 
-    if (boundsToFit && boundsToFit.isValid()) {
+    // Paint Colorized Route Ribbon on top (Mainline + Feeder/Terminal Spurs) when a raster lens is active
+    renderColorizedRouteRibbon(effectiveProfile, effectiveSpurProfiles, effectiveLens);
+
+    if (shouldFitBounds && boundsToFit && boundsToFit.isValid()) {
       mapRef.current.fitBounds(boundsToFit, { padding: [40, 40], maxZoom: 14 });
     }
   }
 
+  // Re-render GIS overlays & colorized route ribbon instantaneously when Lens/Pins change
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (currentFeatures.length === 0) {
+      routeLayersGroupRef.current?.clearLayers();
+      colorizedRouteGroupRef.current?.clearLayers();
+      return;
+    }
+    renderGeoJsonFeatures(currentFeatures, tradeOffPreset, activeLayerId, pinnedLayerIds, routeLayerProfile, spurLayerProfiles, false);
+  }, [currentFeatures, routeLayerProfile, spurLayerProfiles, activeLayerId, pinnedLayerIds, tradeOffPreset]);
+
   // -----------------------------------------------------------
-  // Layer Toggle Handler
+  // 13-Layer Lens, Pin, Basemap Reset & Fly-To Handlers
   // -----------------------------------------------------------
-  function toggleLayer(key) {
-    setVisibleLayers((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  function handleSelectLayer(layerId) {
+    focusHighlightGroupRef.current?.clearLayers();
+    setActiveLayerId(layerId);
+    if (!lockBasemap) {
+      if (layerId && LAYER_BY_ID[layerId]) {
+        setBaseMapType(LAYER_BY_ID[layerId].preferredBasemap || "osm");
+      } else {
+        setBaseMapType("osm");
+      }
+    }
+  }
+
+  function handleTogglePinLayer(layerId) {
+    setPinnedLayerIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(layerId)) next.delete(layerId);
+      else next.add(layerId);
+      return next;
+    });
+  }
+
+  function handleClearToOverview() {
+    focusHighlightGroupRef.current?.clearLayers();
+    setActiveLayerId(null);
+    setPinnedLayerIds(new Set());
+    if (!lockBasemap) {
+      setBaseMapType("osm");
+    }
+  }
+
+  // Keeps active layer lens & verification card open over basic OSM map;
+  // leaves auto-switch enabled so the NEXT layer clicked switches basemaps again.
+  function handleResetBasicMap() {
+    setBaseMapType("osm");
+  }
+
+  function handleFocusFeature(lat, lng, label) {
+    if (!mapRef.current || typeof lat !== "number" || typeof lng !== "number") return;
+    mapRef.current.flyTo([lat, lng], 14, { duration: 0.9 });
+    if (focusHighlightGroupRef.current) {
+      focusHighlightGroupRef.current.clearLayers();
+      const pulse = L.circleMarker([lat, lng], {
+        radius: 16,
+        color: "#ffffff",
+        weight: 3,
+        fillColor: "#38bdf8",
+        fillOpacity: 0.25,
+      })
+        .bindPopup(`<b>📍 ${label || "Inspected Feature"}</b><br/>${lat.toFixed(5)}, ${lng.toFixed(5)}`)
+        .addTo(focusHighlightGroupRef.current);
+      pulse.openPopup();
+    }
+  }
+
+  function handleInspectLayerFromDossier(layerId) {
+    setRightDrawerOpen(true);
+    handleSelectLayer(layerId);
+    if (mapStudioRef.current) {
+      mapStudioRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function handleLocateFromDossier(lat, lng, label) {
+    if (mapStudioRef.current) {
+      mapStudioRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setTimeout(() => {
+      handleFocusFeature(lat, lng, label);
+    }, 320);
+  }
+
+  function scrollToDossier() {
+    if (dossierRef.current) {
+      dossierRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
   function routeSignature(startPoint = start, endPoint = end) {
@@ -1025,7 +1948,7 @@ export default function App() {
       return;
     }
     const metadata = data.metadata || {};
-    const routeDiagnostics = metadata.routeDiagnostics || {};
+    const diagnostics = metadata.routeDiagnostics || {};
     const fallbackName = PRESET_CORRIDORS.find((preset) => preset.id === selectedPresetId)?.name;
     const projectName = eiaProjectName.trim() || fallbackName || "MARG Greenfield Highway Route";
     setRouteSaveBusy(true);
@@ -1044,14 +1967,14 @@ export default function App() {
           regionId: metadata.regionId || (selectedPresetId !== "custom" ? selectedPresetId : null),
           coordinates,
           routeSummary: {
-            routeLengthKm: routeInfo?.routeLengthKm ?? routeDiagnostics.routeLengthKm ?? metadata.routeLengthKm ?? null,
-            baselineLengthKm: routeInfo?.baselineLengthKm ?? routeDiagnostics.directDistanceBaselineKm ?? metadata.directDistanceBaselineKm ?? null,
-            deviationPercent: routeInfo?.deviationPercent ?? routeDiagnostics.alignmentDeviationPercent ?? metadata.deviationPercent ?? null,
+            routeLengthKm: routeInfo?.routeLengthKm ?? diagnostics.routeLengthKm ?? metadata.routeLengthKm ?? null,
+            baselineLengthKm: routeInfo?.baselineLengthKm ?? diagnostics.directDistanceBaselineKm ?? metadata.directDistanceBaselineKm ?? null,
+            deviationPercent: routeInfo?.deviationPercent ?? diagnostics.alignmentDeviationPercent ?? metadata.deviationPercent ?? null,
             facilityMode: metadata.facilityMode || facilityMode,
             tierMode: data.corridorTierMode || metadata.corridorTierMode || "TIER_1_DYNAMIC_PAN_INDIA",
           },
           routeMetadata: {
-            routeDiagnostics,
+            routeDiagnostics: diagnostics,
             endpointResolution: metadata.endpointResolution || {},
             transportNetworkAndCapacitySummary: metadata.transportNetworkAndCapacitySummary || {},
             coordinateReferenceSystem: metadata.coordinateReferenceSystem || "EPSG:4326",
@@ -1081,7 +2004,8 @@ export default function App() {
       const rawBody = await response.text();
       try {
         const body = JSON.parse(rawBody);
-        message = body.error || body.message || message;
+        const primary = body.error || body.message || message;
+        message = body.detail ? `${primary} (${body.detail})` : primary;
       } catch {
         if (rawBody) message = rawBody;
       }
@@ -1195,11 +2119,13 @@ export default function App() {
   }
 
   if (activeWorkspace === "home") {
-    return <HomePage
-      onMode1={() => setActiveWorkspace("mode1")}
-      onMode2={() => setActiveWorkspace("mode2")}
-      onEia={() => setActiveWorkspace("eia")}
-    />;
+    return (
+      <HomePage
+        onMode1={() => setActiveWorkspace("mode1")}
+        onMode2={() => setActiveWorkspace("mode2")}
+        onEia={() => setActiveWorkspace("eia")}
+      />
+    );
   }
 
   if (activeWorkspace === "eia") {
@@ -1210,22 +2136,32 @@ export default function App() {
     return <Mode2Workspace onHome={() => setActiveWorkspace("home")} />;
   }
 
+  const activeLayerCfg = activeLayerId ? LAYER_BY_ID[activeLayerId] : null;
+
   return (
-    <div className="app-container">
+    <div className="app-shell">
       {/* =======================================================
-          TOP NAVBAR
+          SLIM LUXURY PORCELAIN HEADER
           ======================================================= */}
       <header className="navbar">
         <div className="nav-brand">
           <div className="brand-badge">MARG</div>
           <div className="nav-title">
-            <h1>Multi-Objective AI for Responsible Geospatial Highway Planning</h1>
-            <span>Ministry of Road Transport & Highways (MoRTH) / IRC Engineering Prototype</span>
+            <h1>MARG Route Planner</h1>
+            <span>Public Guide to Smarter, Safer &amp; Greener Highways</span>
           </div>
         </div>
 
         <div className="nav-actions">
-          <button type="button" className="home-nav-btn" onClick={() => setActiveWorkspace("home")}>All workflows</button>
+          <button
+            type="button"
+            className="home-nav-btn"
+            onClick={() => setActiveWorkspace("home")}
+            title="Switch between Route Planner, Project Review, and Environmental Reports"
+          >
+            ← All Tools
+          </button>
+
           <select
             className="corridor-quick-select"
             value={selectedPresetId}
@@ -1233,8 +2169,9 @@ export default function App() {
               const p = PRESET_CORRIDORS.find((x) => x.id === e.target.value);
               if (p) applyPreset(p);
             }}
+            aria-label="Quick Select Sample Region"
           >
-            <option value="custom">Custom Pan-India Coordinates</option>
+            <option value="custom">Custom Places Anywhere in India</option>
             {PRESET_CORRIDORS.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -1242,1062 +2179,175 @@ export default function App() {
             ))}
           </select>
 
-          <div className="badge-pill" style={{ background: "rgba(147, 51, 234, 0.15)", borderColor: "rgba(147, 51, 234, 0.4)" }}>
-            <span style={{ color: "#c084fc", fontWeight: "600" }}>900+ Administrative Entities Indexed</span>
+          <div className="badge-pill badge-pill-subtle">
+            <span>900+ Towns &amp; Districts</span>
           </div>
 
-          <div className="badge-pill">
-            <div className="status-dot" />
-            <span>2-Tier Engine Ready</span>
+          <div className="badge-pill badge-pill-ready">
+            <span className="status-dot" />
+            <span>Map Data Ready</span>
           </div>
+
+          {routeInfo && (
+            <button
+              type="button"
+              className="nav-dossier-btn"
+              onClick={scrollToDossier}
+              title="Jump down to the 6-Section Public Impact Report"
+            >
+              <span>Full Impact Report</span>
+              <span aria-hidden="true">↓</span>
+            </button>
+          )}
         </div>
       </header>
 
       {/* =======================================================
-          MAIN WORKSPACE
+          ABOVE-THE-FOLD HERO MAP STUDIO (LEFT DRAWER · MAP · RIGHT DRAWER)
           ======================================================= */}
-      <div className="main-layout">
-        {/* SIDEBAR CONTROLS */}
-        <aside className="sidebar">
-          {/* Section 1: Presets & Benchmark Corridors */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Benchmark Corridors & Modes</span>
-            </div>
-
-            <div className="presets-grid">
-              {PRESET_CORRIDORS.map((preset) => (
-                <button
-                  key={preset.id}
-                  className={`preset-chip ${selectedPresetId === preset.id ? "active" : ""}`}
-                  onClick={() => applyPreset(preset)}
-                >
-                  <strong>{preset.name.split(":")[0]}</strong>
-                  <br />
-                  <span>{preset.tag}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Facility Mode Buttons */}
-            <div className="facility-selector">
-              {["EXPRESSWAY", "NATIONAL_HIGHWAY", "STATE_HIGHWAY"].map((mode) => (
-                <button
-                  key={mode}
-                  className={`facility-btn ${facilityMode === mode ? "active" : ""}`}
-                  onClick={() => setFacilityMode(mode)}
-                >
-                  {mode === "EXPRESSWAY" ? "Expressway" : mode === "NATIONAL_HIGHWAY" ? "NH Trunk" : "State Hwy"}
-                </button>
-              ))}
-            </div>
-
-            {/* Deep 13-Layer On-Demand Toggle */}
-            <div className="toggle-row">
-              <div className="toggle-label">
-                <strong>Deep 13-Layer On-Demand Ingestion</strong>
-                <span>Synthesize rasters for arbitrary coordinates (deep=true)</span>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={deepIngestion}
-                  onChange={(e) => setDeepIngestion(e.target.checked)}
-                />
-                <span className="slider" />
-              </label>
-            </div>
-          </div>
-
-          {/* Section 2: Highway Design & Connectivity Controls */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Design Requirements & Controls</span>
-            </div>
-
-            {/* Auto-Connect Intermediate Hubs Feature Toggle */}
-            <div className="toggle-row" style={{ marginBottom: "10px" }}>
-              <div className="toggle-label">
-                <strong>🤖 Auto-Connect Intermediate Hubs</strong>
-                <span>Autonomously connect prominent cities along corridor</span>
-              </div>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={autoConnectHubs}
-                  onChange={(e) => setAutoConnectHubs(e.target.checked)}
-                />
-                <span className="slider" />
-              </label>
-            </div>
-
-            {/* City Count Number Selector (when Auto-Connect is ON) */}
-            {autoConnectHubs ? (
-              <div className="auto-hubs-count-card" style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "8px",
-                padding: "10px 14px",
-                marginBottom: "12px"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                  <div style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-main)" }}>
-                    Number of Cities to Connect:
-                  </div>
-                  <span style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    color: "var(--primary)",
-                    background: "rgba(59, 130, 246, 0.15)",
-                    padding: "2px 8px",
-                    borderRadius: "12px"
-                  }}>
-                    {maxAutoHubs} {maxAutoHubs === 1 ? "City" : "Cities"}
-                  </span>
-                </div>
-                
-                {/* Number Buttons: 1, 2, 3, 4, 5 */}
-                <div style={{ display: "flex", gap: "6px" }}>
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <button
-                      key={num}
-                      type="button"
-                      className={`num-hub-btn ${maxAutoHubs === num ? "active" : ""}`}
-                      onClick={() => setMaxAutoHubs(num)}
-                      style={{
-                        flex: 1,
-                        padding: "7px 0",
-                        fontSize: "12px",
-                        fontWeight: maxAutoHubs === num ? "700" : "500",
-                        borderRadius: "6px",
-                        border: maxAutoHubs === num ? "1px solid var(--primary)" : "1px solid var(--border)",
-                        background: maxAutoHubs === num ? "var(--primary)" : "var(--bg-input)",
-                        color: maxAutoHubs === num ? "#fff" : "var(--text-main)",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease"
-                      }}
-                      title={`Connect up to ${num} cities autonomously`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "6px" }}>
-                  Auto-selects up to {maxAutoHubs} cities via Highway Value Index (HVI) & IRC:SP:84 spacing.
-                </div>
-              </div>
-            ) : (
-              <div style={{
-                background: "rgba(100, 116, 139, 0.08)",
-                border: "1px dashed var(--border)",
-                borderRadius: "8px",
-                padding: "8px 12px",
-                marginBottom: "12px",
-                fontSize: "11px",
-                color: "var(--text-muted)"
-              }}>
-                ℹ️ Auto-connect is turned off. The alignment will only connect to user-specified cities below.
-              </div>
-            )}
-
-            {/* 1. Intermediate Cities & Feeder Spurs (targetHubs) */}
-            <div className="hubs-box">
-              <div className="hubs-header">
-                <div>
-                  <span className="hubs-title">🏙️ User-Specified Cities & Tehsils</span>
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
-                    Explicitly specify cities or mandis to connect (always prioritized)
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className={`pick-map-btn ${mapSelectionMode === "hub" ? "active" : ""}`}
-                  onClick={() => {
-                    const next = mapSelectionMode === "hub" ? null : "hub";
-                    mapSelectionModeRef.current = next;
-                    setMapSelectionMode(next);
-                    if (next) setStatus("Click anywhere on the map to add an intermediate city/hub.");
-                  }}
-                >
-                  {mapSelectionMode === "hub" ? "Cancel Pick" : "Pick on Map"}
-                </button>
-              </div>
-
-              {/* Input Row with All-India District Autocomplete */}
-              <div className="district-autocomplete-container">
-                <div className="hubs-input-row">
-                  <input
-                    type="text"
-                    placeholder="Search any Indian district or town (e.g. Satara, Barabanki)..."
-                    value={customHubInput}
-                    onChange={(e) => setCustomHubInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && customHubInput.trim()) {
-                        e.preventDefault();
-                        const val = customHubInput.trim();
-                        if (!targetHubs.includes(val)) {
-                          setTargetHubs([...targetHubs, val]);
-                        }
-                        setCustomHubInput("");
-                        setDistrictSuggestions([]);
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="hubs-add-btn"
-                    onClick={() => {
-                      if (customHubInput.trim()) {
-                        const val = customHubInput.trim();
-                        if (!targetHubs.includes(val)) {
-                          setTargetHubs([...targetHubs, val]);
-                        }
-                        setCustomHubInput("");
-                        setDistrictSuggestions([]);
-                      }
-                    }}
-                  >
-                    + Add
-                  </button>
-                </div>
-
-                {districtSuggestions.length > 0 && (
-                  <div className="district-autocomplete-dropdown">
-                    {districtSuggestions.map((d) => {
-                      const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION" || d.adminLevel === "TALUK" || d.adminLevel === "MANDAL";
-                      const badgeClass = (d.adminLevel || "district").toLowerCase();
-                      const val = isSub
-                        ? `${d.name} (${d.parentDistrict} - ${d.stateCode})`
-                        : `${d.name} (${d.stateCode})`;
-                      return (
-                        <div
-                          key={d.id}
-                          className="district-autocomplete-item"
-                          onClick={() => {
-                            if (!targetHubs.includes(val)) {
-                              setTargetHubs([...targetHubs, val]);
-                            }
-                            setCustomHubInput("");
-                            setDistrictSuggestions([]);
-                            if (mapRef.current) {
-                              mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
-                            }
-                          }}
-                        >
-                          <div className="district-item-main">
-                            <strong>{d.name}</strong>
-                            <span className={`admin-level-badge ${badgeClass}`}>
-                              {d.adminLevel || "DISTRICT"}
-                            </span>
-                            <span className="district-state-badge">{d.stateCode}</span>
-                          </div>
-                          <div className="district-item-sub">
-                            {isSub
-                              ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District • ${d.state}`
-                              : `District HQ: ${d.headquarters || d.name} • ${d.state}`}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Selected Hubs Tags */}
-              {targetHubs.length > 0 && (
-                <div className="hubs-selected-list">
-                  {targetHubs.map((hub) => (
-                    <span key={hub} className="hub-selected-tag">
-                      <span>{hub}</span>
-                      <button
-                        type="button"
-                        className="hub-remove-btn"
-                        onClick={() => setTargetHubs(targetHubs.filter((h) => h !== hub))}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Preset Suggested Hubs Chips */}
-              {(() => {
-                const activePreset = PRESET_CORRIDORS.find((p) => p.id === selectedPresetId);
-                const suggestions = activePreset?.suggestedHubs || [];
-                if (suggestions.length === 0) return null;
-                return (
-                  <div>
-                    <div className="hubs-suggestions-label">Suggested Regional Hubs:</div>
-                    <div className="hubs-suggestions">
-                      {suggestions.map((hubName) => {
-                        const isSelected = targetHubs.includes(hubName);
-                        return (
-                          <button
-                            key={hubName}
-                            type="button"
-                            className={`hub-suggest-chip ${isSelected ? "active" : ""}`}
-                            onClick={() => {
-                              if (isSelected) {
-                                setTargetHubs(targetHubs.filter((h) => h !== hubName));
-                              } else {
-                                setTargetHubs([...targetHubs, hubName]);
-                              }
-                            }}
-                          >
-                            {isSelected ? `✓ ${hubName}` : `+ ${hubName}`}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* 2. Level of Service (Target V/C Ratio Toggle) */}
-            <div style={{ marginBottom: "12px" }}>
-              <div style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-main)", marginBottom: "6px" }}>
-                Traffic Level of Service (Target V/C Ratio)
-              </div>
-              <div className="los-selector">
-                <button
-                  type="button"
-                  className={`los-btn ${maxVcRatio === 0.70 ? "active" : ""}`}
-                  onClick={() => setMaxVcRatio(0.70)}
-                >
-                  <strong>Free-Flow (V/C ≤ 0.70)</strong>
-                  <span>High capacity & speed buffer (LOS B)</span>
-                </button>
-                <button
-                  type="button"
-                  className={`los-btn ${maxVcRatio === 0.85 ? "active" : ""}`}
-                  onClick={() => setMaxVcRatio(0.85)}
-                >
-                  <strong>Economical (V/C ≤ 0.85)</strong>
-                  <span>Max hub intake before bottleneck (LOS C)</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 3. Max Alignment Deviation Slider */}
-            <div className="deviation-box">
-              <div className="deviation-header">
-                <span className="deviation-title">Max Alignment Deviation</span>
-                <span className="deviation-badge">{maxDeviationPercent}%</span>
-              </div>
-              <input
-                type="range"
-                className="deviation-slider"
-                min="10"
-                max="30"
-                step="1"
-                value={maxDeviationPercent}
-                onChange={(e) => setMaxDeviationPercent(Number(e.target.value))}
-              />
-              <div className="deviation-scale">
-                <span>10% (Direct/Tight)</span>
-                <span>20% (Standard)</span>
-                <span>30% (Wide Terrain Search)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Endpoint Coordinates */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Corridor Endpoints</span>
-            </div>
-
-            {/* Origin (Start) */}
-            <div className="coord-box">
-              <div className="coord-header">
-                <span className="coord-title start">📍 Origin Point (A)</span>
-                <button
-                  className={`pick-map-btn ${mapSelectionMode === "start" ? "active" : ""}`}
-                  onClick={() => {
-                    const next = mapSelectionMode === "start" ? null : "start";
-                    mapSelectionModeRef.current = next;
-                    setMapSelectionMode(next);
-                    if (next) setStatus("Click anywhere on the map to set Origin.");
-                  }}
-                >
-                  {mapSelectionMode === "start" ? "Cancel Click" : "Pick on Map"}
-                </button>
-              </div>
-
-              {/* District Quick Search for Origin */}
-              <div className="district-autocomplete-container" style={{ marginBottom: "6px" }}>
-                <input
-                  type="text"
-                  className="district-quick-input"
-                  placeholder="🔍 Quick Find Origin District (e.g. Pune, Lucknow)..."
-                  value={startDistrictQuery}
-                  onChange={(e) => setStartDistrictQuery(e.target.value)}
-                />
-                {startDistrictSuggestions.length > 0 && (
-                  <div className="district-autocomplete-dropdown">
-                    {startDistrictSuggestions.map((d) => {
-                      const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
-                      const badgeClass = (d.adminLevel || "district").toLowerCase();
-                      return (
-                        <div
-                          key={d.id}
-                          className="district-autocomplete-item"
-                          onClick={() => {
-                            setStart({ lat: d.lat, lng: d.lon });
-                            setSelectedPresetId("custom");
-                            setStartDistrictQuery("");
-                            setStartDistrictSuggestions([]);
-                            if (mapRef.current) {
-                              mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
-                            }
-                          }}
-                        >
-                          <div className="district-item-main">
-                            <strong>{d.name}</strong>
-                            <span className={`admin-level-badge ${badgeClass}`}>
-                              {d.adminLevel || "DISTRICT"}
-                            </span>
-                            <span className="district-state-badge">{d.stateCode}</span>
-                          </div>
-                          <div className="district-item-sub">
-                            {isSub
-                              ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District • ${d.state}`
-                              : `District HQ: ${d.headquarters || d.name} • ${d.state}`}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className="coord-grid">
-                <div className="input-group">
-                  <label>Latitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={start.lat}
-                    onChange={(e) => {
-                      setStart((s) => ({ ...s, lat: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Longitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={start.lng}
-                    onChange={(e) => {
-                      setStart((s) => ({ ...s, lng: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Destination (End) */}
-            <div className="coord-box">
-              <div className="coord-header">
-                <span className="coord-title end">🏁 Destination Point (B)</span>
-                <button
-                  className={`pick-map-btn ${mapSelectionMode === "end" ? "active" : ""}`}
-                  onClick={() => {
-                    const next = mapSelectionMode === "end" ? null : "end";
-                    mapSelectionModeRef.current = next;
-                    setMapSelectionMode(next);
-                    if (next) setStatus("Click anywhere on the map to set Destination.");
-                  }}
-                >
-                  {mapSelectionMode === "end" ? "Cancel Click" : "Pick on Map"}
-                </button>
-              </div>
-
-              {/* District Quick Search for Destination */}
-              <div className="district-autocomplete-container" style={{ marginBottom: "6px" }}>
-                <input
-                  type="text"
-                  className="district-quick-input"
-                  placeholder="🔍 Quick Find Goal District (e.g. Satara, Varanasi)..."
-                  value={endDistrictQuery}
-                  onChange={(e) => setEndDistrictQuery(e.target.value)}
-                />
-                {endDistrictSuggestions.length > 0 && (
-                  <div className="district-autocomplete-dropdown">
-                    {endDistrictSuggestions.map((d) => {
-                      const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
-                      const badgeClass = (d.adminLevel || "district").toLowerCase();
-                      return (
-                        <div
-                          key={d.id}
-                          className="district-autocomplete-item"
-                          onClick={() => {
-                            setEnd({ lat: d.lat, lng: d.lon });
-                            setSelectedPresetId("custom");
-                            setEndDistrictQuery("");
-                            setEndDistrictSuggestions([]);
-                            if (mapRef.current) {
-                              mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
-                            }
-                          }}
-                        >
-                          <div className="district-item-main">
-                            <strong>{d.name}</strong>
-                            <span className={`admin-level-badge ${badgeClass}`}>
-                              {d.adminLevel || "DISTRICT"}
-                            </span>
-                            <span className="district-state-badge">{d.stateCode}</span>
-                          </div>
-                          <div className="district-item-sub">
-                            {isSub
-                              ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District • ${d.state}`
-                              : `District HQ: ${d.headquarters || d.name} • ${d.state}`}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className="coord-grid">
-                <div className="input-group">
-                  <label>Latitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={end.lat}
-                    onChange={(e) => {
-                      setEnd((s) => ({ ...s, lat: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-                <div className="input-group">
-                  <label>Longitude</label>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={end.lng}
-                    onChange={(e) => {
-                      setEnd((s) => ({ ...s, lng: Number(e.target.value) }));
-                      setSelectedPresetId("custom");
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Run Button */}
-            <button className="generate-btn" onClick={generateRoute} disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <div className="spinner" />
-                  <span>Computing Multi-Objective Alignment...</span>
-                </>
-              ) : (
-                <>
-                  <span>🚀</span>
-                  <span>Generate MARG Alignment</span>
-                </>
-              )}
+      <section ref={mapStudioRef} className="map-studio-stage" aria-label="Interactive Route Map">
+        {/* LEFT COLLAPSIBLE DRAWER: ROUTE PLANNER (INPUTS ONLY) */}
+        <aside className={`studio-drawer left-drawer ${leftDrawerOpen ? "open" : "collapsed"}`}>
+          {!leftDrawerOpen ? (
+            <button
+              type="button"
+              className="drawer-collapsed-rail"
+              onClick={() => setLeftDrawerOpen(true)}
+              title="Open Route Planner"
+            >
+              <span className="rail-chevron">»</span>
+              <span className="rail-label">Route Planner</span>
             </button>
-
-            {/* Status Text */}
-            <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "8px", textAlign: "center" }}>
-              {status}
-            </div>
-
-            {routeInfo && <div style={{ marginTop: "10px" }}>
-              <button className="eia-secondary-btn" type="button"
-                onClick={saveCurrentRoute}
-                disabled={!hasPendingRoute || routeSaveBusy || mode1RouteSignature !== routeSignature()}>
-                {routeSaveBusy ? "Saving route to MongoDB…" : savedRouteId && mode1RouteSignature === routeSignature() ? "Route saved to MongoDB" : "Save generated route for EIA"}
-              </button>
-              {(routeSaveMessage || mongoStatus) && <p className="eia-help" role="status">{routeSaveMessage || mongoStatus}</p>}
-            </div>}
-
-            {/* Routing Error Alert */}
-            {routingError && (
-              <div className="error-card">
-                <div className="error-card-title">⚠️ {routingError.title}</div>
-                <div className="error-card-message">{routingError.message}</div>
-              </div>
-            )}
-
-            {/* SMART ENDPOINT AUTO-SHIFT ALERT NOTIFICATION */}
-            {snapNotice && (
-              <div className="snap-alert-card">
-                <div className="snap-alert-header">
-                  <span>⚠️</span>
-                  <span>Endpoint Auto-Adjustment Applied</span>
+          ) : (
+            <div className="drawer-inner">
+              <div className="drawer-topbar">
+                <div>
+                  <span className="drawer-eyebrow">PLAN YOUR ROUTE</span>
+                  <h2 className="drawer-title">Route Planner</h2>
                 </div>
-
-                {snapNotice.start && (
-                  <div className="snap-item">
-                    <div className="snap-item-title">
-                      <span style={{ color: "var(--emerald)" }}>Origin Point Auto-Shifted</span>
-                      <span className="snap-badge">+{snapNotice.start.distanceMeters}m</span>
-                    </div>
-                    <div className="snap-reason">
-                      <strong>Obstacle:</strong> {snapNotice.start.reason}
-                    </div>
-                    <div className="snap-coords-compare">
-                      <div>Requested: <del>{snapNotice.start.requested.lat}, {snapNotice.start.requested.lng}</del></div>
-                      <div>Feasible: <ins>{snapNotice.start.resolved.lat}, {snapNotice.start.resolved.lng}</ins></div>
-                    </div>
-                  </div>
-                )}
-
-                {snapNotice.end && (
-                  <div className="snap-item">
-                    <div className="snap-item-title">
-                      <span style={{ color: "var(--rose)" }}>Destination Point Auto-Shifted</span>
-                      <span className="snap-badge">+{snapNotice.end.distanceMeters}m</span>
-                    </div>
-                    <div className="snap-reason">
-                      <strong>Obstacle:</strong> {snapNotice.end.reason}
-                    </div>
-                    <div className="snap-coords-compare">
-                      <div>Requested: <del>{snapNotice.end.requested.lat}, {snapNotice.end.requested.lng}</del></div>
-                      <div>Feasible: <ins>{snapNotice.end.resolved.lat}, {snapNotice.end.resolved.lng}</ins></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Section 3: Layer Toggles */}
-          <div className="sidebar-section">
-            <div className="section-header">
-              <span className="section-title">Visualized Infrastructure Layers</span>
-            </div>
-
-            <div className="layer-toggles-grid">
-              <div
-                className={`layer-toggle-btn ${visibleLayers.mainline ? "on" : ""}`}
-                onClick={() => toggleLayer("mainline")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#10b981" }} />
-                <span>13-L Mainline</span>
+                <button
+                  type="button"
+                  className="drawer-toggle-btn"
+                  onClick={() => setLeftDrawerOpen(false)}
+                  title="Hide Route Planner to widen the map"
+                  aria-label="Hide Route Planner"
+                >
+                  «
+                </button>
               </div>
 
-              <div
-                className={`layer-toggle-btn ${visibleLayers.baseline ? "on" : ""}`}
-                onClick={() => toggleLayer("baseline")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#94a3b8" }} />
-                <span>Direct Baseline</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.spurs ? "on" : ""}`}
-                onClick={() => toggleLayer("spurs")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#a855f7" }} />
-                <span>Feeder Spurs</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.interchanges ? "on" : ""}`}
-                onClick={() => toggleLayer("interchanges")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#f59e0b" }} />
-                <span>Interchanges</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.bridges ? "on" : ""}`}
-                onClick={() => toggleLayer("bridges")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#06b6d4" }} />
-                <span>River Bridges</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.drainage ? "on" : ""}`}
-                onClick={() => toggleLayer("drainage")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#0891b2" }} />
-                <span>Canals & Culverts</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.rivers ? "on" : ""}`}
-                onClick={() => toggleLayer("rivers")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#0284c7" }} />
-                <span>Waterways Model</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.wildlife ? "on" : ""}`}
-                onClick={() => toggleLayer("wildlife")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#15803d" }} />
-                <span>Wildlife Passages</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.crossings ? "on" : ""}`}
-                onClick={() => toggleLayer("crossings")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#64748b" }} />
-                <span>Rail ROBs & Flyovers</span>
-              </div>
-
-              <div
-                className={`layer-toggle-btn ${visibleLayers.row ? "on" : ""}`}
-                onClick={() => toggleLayer("row")}
-              >
-                <div className="layer-legend-dot" style={{ background: "#10b98155" }} />
-                <span>RoW Footprint</span>
-              </div>
-            </div>
-
-            {/* Marker Symbology & Legend */}
-            <div className="section-header" style={{ marginTop: "12px" }}>
-              <span className="section-title">Marker Symbology & Meaning</span>
-            </div>
-            <div className="marker-legend-grid">
-              <div className="legend-item"><span className="legend-icon start">A</span> Highway Origin</div>
-              <div className="legend-item"><span className="legend-icon end">B</span> Destination</div>
-              <div className="legend-item"><span className="legend-icon orig">✕</span> Snapped Obstacle</div>
-              <div className="legend-item"><span className="legend-icon interchange">✦</span> Interchange</div>
-              <div className="legend-item"><span className="legend-icon bridge">🌉</span> River Bridge</div>
-              <div className="legend-item"><span className="legend-icon drainage">🌊</span> Canal Aqueduct</div>
-              <div className="legend-item"><span className="legend-icon wildlife">🐾</span> Wildlife Viaduct</div>
-              <div className="legend-item"><span className="legend-icon crossing">🚊</span> Rail ROB / Flyover</div>
-            </div>
-          </div>
-
-          {/* Section 4: Route Metrics & Engineering Plan */}
-          {routeInfo && (
-            <div className="sidebar-section">
-              <div className="section-header">
-                <span className="section-title">Geometric & Feasibility Metrics</span>
-              </div>
-
-              <div className="metrics-summary-grid">
-                <div className="metric-stat-box">
-                  <div className="stat-label">Mainline</div>
-                  <div className="stat-value highlight">{routeInfo.routeLengthKm} km</div>
-                </div>
-                <div className="metric-stat-box">
-                  <div className="stat-label">Baseline</div>
-                  <div className="stat-value">{routeInfo.baselineLengthKm} km</div>
-                </div>
-                <div className="metric-stat-box">
-                  <div className="stat-label">Deviation</div>
-                  <div className="stat-value good">+{routeInfo.deviationPercent}%</div>
-                </div>
-              </div>
-
-              {networkSummary && (
-                <>
-                  {/* 6-LANE CAPACITY UPGRADE / VIOLATION REASON ADVISORY CARD */}
-                  {trafficCapacity?.sixLaneRecommended && (
-                    <div style={{
-                      background: "linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.08) 100%)",
-                      border: "1px solid rgba(245, 158, 11, 0.4)",
-                      borderRadius: "8px",
-                      padding: "10px 14px",
-                      marginTop: "12px",
-                      marginBottom: "6px"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-                        <span style={{ fontSize: "16px" }}>⚡</span>
-                        <strong style={{ color: "var(--amber)", fontSize: "12px" }}>
-                          IRC:SP:84 Section 2.2: 6-Lane Expressway Configuration Recommended
-                        </strong>
-                      </div>
-                      <div style={{ fontSize: "11px", color: "var(--text-main)", lineHeight: "1.4", marginBottom: "8px" }}>
-                        {trafficCapacity.capacityStandardNote || "Projected peak traffic exceeds standard 4-lane design capacity. Alignment extended to 6-lane design capacity under IRC:SP:84 Section 2.2."}
-                      </div>
-                      <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: "10px",
-                        background: "rgba(0, 0, 0, 0.25)",
-                        padding: "6px 10px",
-                        borderRadius: "6px",
-                        border: "1px solid rgba(245, 158, 11, 0.25)"
-                      }}>
-                        <div>
-                          <span style={{ color: "var(--text-muted)" }}>4-Lane V/C: </span>
-                          <span style={{ color: "var(--rose)", fontWeight: "700" }}>{trafficCapacity.projectedVcRatio}</span>
-                          <span style={{ color: "var(--text-muted)", marginLeft: "3px" }}>(Exceeds {trafficCapacity.maxVcRatioCapApplied ?? maxVcRatio ?? 0.70} Cap)</span>
-                        </div>
-                        <div style={{ color: "var(--text-muted)" }}>➔</div>
-                        <div>
-                          <span style={{ color: "var(--text-muted)" }}>6-Lane V/C: </span>
-                          <span style={{ color: "var(--emerald)", fontWeight: "700" }}>
-                            {trafficCapacity.projectedSixLaneVcRatio || (trafficCapacity.projectedTotalPeakTrafficPcuHr ? (trafficCapacity.projectedTotalPeakTrafficPcuHr / 7200).toFixed(2) : "0.54")}
-                          </span>
-                          <span style={{ color: "var(--emerald)", marginLeft: "3px" }}>({trafficCapacity.levelOfService || "LOS B"})</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="section-header" style={{ marginTop: "12px" }}>
-                    <span className="section-title">Network Structures & Civil Works</span>
+              <div className="drawer-scroll-body">
+                {/* Group 1: Sample Regions & Road Type */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Sample Regions to Explore</span>
                   </div>
 
-                  <div className="structures-list">
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>✦</span>
-                        <span>Planned Interchanges</span>
-                      </div>
-                      <div className="struct-count">{networkSummary.interchanges}</div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>↗</span>
-                        <span>Dedicated Feeder Spurs</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.feederSpurs} ({networkSummary.feederSpurKm} km)
-                      </div>
-                    </div>
-
-                    {connectedHubs.length > 0 && (
-                      <div style={{
-                        marginTop: "4px",
-                        marginBottom: "8px",
-                        padding: "8px 10px",
-                        background: "rgba(168, 85, 247, 0.08)",
-                        border: "1px solid rgba(168, 85, 247, 0.25)",
-                        borderRadius: "6px",
-                        fontSize: "11px"
-                      }}>
-                        <div style={{ fontWeight: "700", color: "#a855f7", marginBottom: "6px", display: "flex", justifyContent: "space-between" }}>
-                          <span>Connected Hubs & Mandis ({connectedHubs.length}):</span>
-                          <span style={{ fontSize: "10px", fontWeight: "normal", color: "var(--text-muted)" }}>IRC:SP:84 Grade-Separated</span>
-                        </div>
-                        {connectedHubs.map((h, i) => (
-                          <div key={i} style={{
-                            padding: "6px 0",
-                            borderBottom: i < connectedHubs.length - 1 ? "1px dashed rgba(168, 85, 247, 0.15)" : "none"
-                          }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <div>
-                                <strong style={{ color: "var(--text-main)" }}>{h.name}</strong>
-                                {h.isUserOverride ? (
-                                  <span style={{
-                                    marginLeft: "5px",
-                                    fontSize: "9px",
-                                    padding: "1px 5px",
-                                    borderRadius: "4px",
-                                    background: "rgba(59, 130, 246, 0.2)",
-                                    color: "var(--primary)"
-                                  }}>USER PICK</span>
-                                ) : (
-                                  <span style={{
-                                    marginLeft: "5px",
-                                    fontSize: "9px",
-                                    padding: "1px 5px",
-                                    borderRadius: "4px",
-                                    background: "rgba(16, 185, 129, 0.2)",
-                                    color: "var(--emerald)"
-                                  }}>AUTO HVI</span>
-                                )}
-                                {h.sixLaneRecommended && (
-                                  <span style={{
-                                    marginLeft: "5px",
-                                    fontSize: "9px",
-                                    padding: "1px 5px",
-                                    borderRadius: "4px",
-                                    background: "rgba(245, 158, 11, 0.2)",
-                                    color: "var(--amber)",
-                                    fontWeight: "700"
-                                  }}>6-LANE EXTENSION</span>
-                                )}
-                              </div>
-                              <div style={{ textAlign: "right", fontWeight: "600", color: "#a855f7" }}>
-                                {h.spurKm} km spur
-                              </div>
-                            </div>
-                            <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
-                              {h.tieInRoadRef} • Pop: {h.population.toLocaleString()}
-                            </div>
-                            {h.decisionReason && (
-                              <div style={{
-                                fontSize: "10px",
-                                color: h.sixLaneRecommended ? "var(--amber)" : "var(--text-muted)",
-                                marginTop: "3px",
-                                lineHeight: "1.3",
-                                background: "rgba(0,0,0,0.15)",
-                                padding: "3px 6px",
-                                borderRadius: "4px"
-                              }}>
-                                <strong>Reason / Rule:</strong> {h.decisionReason}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🛣️</span>
-                        <span>Existing Road Tie-In Connectors</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.terminalAccessKm} km ({networkSummary.startRoadRef} → {networkSummary.goalRoadRef})
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🌉</span>
-                        <span>Perennial River Bridges</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.riverBridges} ({networkSummary.riverBridgeSpanM}m span)
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🌊</span>
-                        <span>Canal Aqueducts / Culverts</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.drainageStructures} structures
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🐾</span>
-                        <span>Wildlife Overpasses / Viaducts</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.wildlifePassages} ({networkSummary.wildlifeSpanM}m span)
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>🚊</span>
-                        <span>Railway ROBs & Flyovers</span>
-                      </div>
-                      <div className="struct-count">
-                        {networkSummary.railwayRobs} ROBs / {networkSummary.roadFlyovers} Flyovers
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>📐</span>
-                        <span>Direct RoW Land Acquisition</span>
-                      </div>
-                      <div className="struct-count" style={{ color: "#60a5fa" }}>
-                        {networkSummary.rowHectares} ha ({networkSummary.rowWidthM}m width)
-                      </div>
-                    </div>
-
-                    <div className="struct-item">
-                      <div className="struct-name">
-                        <span>👥</span>
-                        <span>Est. Displaced Population</span>
-                      </div>
-                      <div className="struct-count" style={{ color: "var(--amber)" }}>
-                        {networkSummary.displacedPop} persons
-                      </div>
-                    </div>
+                  <div className="presets-grid">
+                    {PRESET_CORRIDORS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        className={`preset-chip ${selectedPresetId === preset.id ? "active" : ""}`}
+                        onClick={() => applyPreset(preset)}
+                      >
+                        <strong>{preset.name.split(":")[0]}</strong>
+                        <span>{preset.tag}</span>
+                      </button>
+                    ))}
                   </div>
 
-                  {/* EXPANDABLE COMPLIANCE & EVALUATION LOG */}
-                  {hubDecisions.length > 0 && (
-                    <div style={{ marginTop: "12px" }}>
+                  <div className="facility-selector">
+                    {["EXPRESSWAY", "NATIONAL_HIGHWAY", "STATE_HIGHWAY"].map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        className={`facility-btn ${facilityMode === mode ? "active" : ""}`}
+                        onClick={() => setFacilityMode(mode)}
+                      >
+                        {mode === "EXPRESSWAY" ? "Expressway" : mode === "NATIONAL_HIGHWAY" ? "National Hwy" : "State Hwy"}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      <strong>Detailed Live Map Scan</strong>
+                      <span>Check detailed terrain &amp; forest maps for custom places</span>
+                    </div>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={deepIngestion}
+                        onChange={(e) => setDeepIngestion(e.target.checked)}
+                      />
+                      <span className="slider" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Group 2: Start & End Places */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Start &amp; End Places</span>
+                  </div>
+
+                  {/* Origin (Start) */}
+                  <div className="coord-box">
+                    <div className="coord-header">
+                      <span className="coord-title start">Starting Point (A)</span>
                       <button
                         type="button"
-                        onClick={() => setShowAllDecisions((s) => !s)}
-                        style={{
-                          width: "100%",
-                          padding: "8px 10px",
-                          background: "var(--bg-card)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "6px",
-                          color: "var(--text-muted)",
-                          fontSize: "11px",
-                          fontWeight: "600",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease"
+                        className={`pick-map-btn ${mapSelectionMode === "start" ? "active" : ""}`}
+                        onClick={() => {
+                          const next = mapSelectionMode === "start" ? null : "start";
+                          mapSelectionModeRef.current = next;
+                          setMapSelectionMode(next);
+                          if (next) setStatus("Click anywhere on the map to choose your starting point.");
                         }}
                       >
-                        <span>📋 All Evaluated Cities & Constraint Decisions ({hubDecisions.length})</span>
-                        <span>{showAllDecisions ? "▲ Hide" : "▼ View Decisions"}</span>
+                        {mapSelectionMode === "start" ? "Cancel" : "Click on Map"}
                       </button>
+                    </div>
 
-                      {showAllDecisions && (
-                        <div style={{
-                          marginTop: "6px",
-                          maxHeight: "260px",
-                          overflowY: "auto",
-                          background: "var(--bg-card)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "6px",
-                          padding: "8px"
-                        }}>
-                          {hubDecisions.map((d, idx) => {
-                            const isAcc = d.accepted;
-                            const isSixLane = d.reason && d.reason.includes("6-lane");
-                            const badgeColor = isAcc
-                              ? (isSixLane ? "var(--amber)" : "var(--emerald)")
-                              : "var(--text-muted)";
+                    <div className="district-autocomplete-container">
+                      <input
+                        type="text"
+                        className="district-quick-input"
+                        placeholder="Search starting town or district (e.g. Pune, Lucknow)..."
+                        value={startDistrictQuery}
+                        onChange={(e) => setStartDistrictQuery(e.target.value)}
+                      />
+                      {startDistrictSuggestions.length > 0 && (
+                        <div className="district-autocomplete-dropdown">
+                          {startDistrictSuggestions.map((d) => {
+                            const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
+                            const badgeClass = (d.adminLevel || "district").toLowerCase();
                             return (
                               <div
-                                key={idx}
-                                style={{
-                                  padding: "6px 0",
-                                  borderBottom: idx < hubDecisions.length - 1 ? "1px solid var(--border)" : "none",
-                                  fontSize: "11px"
+                                key={d.id}
+                                className="district-autocomplete-item"
+                                onClick={() => {
+                                  setStart({ lat: d.lat, lng: d.lon });
+                                  setSelectedPresetId("custom");
+                                  setStartDistrictQuery("");
+                                  setStartDistrictSuggestions([]);
+                                  if (mapRef.current) {
+                                    mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
+                                  }
                                 }}
                               >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                  <strong style={{ color: isAcc ? "var(--text-main)" : "var(--text-muted)" }}>
-                                    {d.name} {d.district ? `(${d.district})` : ""}
-                                  </strong>
-                                  <span style={{
-                                    fontSize: "9px",
-                                    padding: "1px 6px",
-                                    borderRadius: "4px",
-                                    fontWeight: "700",
-                                    background: isAcc
-                                      ? (isSixLane ? "rgba(245, 158, 11, 0.15)" : "rgba(16, 185, 129, 0.15)")
-                                      : "rgba(100, 116, 139, 0.15)",
-                                    color: badgeColor
-                                  }}>
-                                    {d.status || (isAcc ? "ACCEPTED" : "EXCLUDED")}
+                                <div className="district-item-main">
+                                  <strong>{d.name}</strong>
+                                  <span className={`admin-level-badge ${badgeClass}`}>
+                                    {d.adminLevel || "DISTRICT"}
                                   </span>
+                                  <span className="district-state-badge">{d.stateCode}</span>
                                 </div>
-                                <div style={{
-                                  fontSize: "10px",
-                                  color: isAcc ? (isSixLane ? "var(--amber)" : "var(--emerald)") : "var(--rose)",
-                                  marginTop: "2px",
-                                  lineHeight: "1.3"
-                                }}>
-                                  {d.reason}
-                                </div>
-                                <div style={{ fontSize: "9px", color: "var(--text-muted)", marginTop: "1px" }}>
-                                  Lateral Dist: {d.distanceToCenterlineKm ?? "—"} km • Induced: +{d.inducedPeakTrafficPcuHr ?? 0} PCU/hr • V/C: {d.projectedVcRatio ?? "—"}
+                                <div className="district-item-sub">
+                                  {isSub
+                                    ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District · ${d.state}`
+                                    : `District HQ: ${d.headquarters || d.name} · ${d.state}`}
                                 </div>
                               </div>
                             );
@@ -2305,117 +2355,737 @@ export default function App() {
                         </div>
                       )}
                     </div>
+
+                    <div className="coord-grid">
+                      <div className="input-group">
+                        <label>Latitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={start.lat}
+                          onChange={(e) => {
+                            setStart((s) => ({ ...s, lat: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Longitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={start.lng}
+                          onChange={(e) => {
+                            setStart((s) => ({ ...s, lng: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Destination (End) */}
+                  <div className="coord-box">
+                    <div className="coord-header">
+                      <span className="coord-title end">Ending Point (B)</span>
+                      <button
+                        type="button"
+                        className={`pick-map-btn ${mapSelectionMode === "end" ? "active" : ""}`}
+                        onClick={() => {
+                          const next = mapSelectionMode === "end" ? null : "end";
+                          mapSelectionModeRef.current = next;
+                          setMapSelectionMode(next);
+                          if (next) setStatus("Click anywhere on the map to choose your destination.");
+                        }}
+                      >
+                        {mapSelectionMode === "end" ? "Cancel" : "Click on Map"}
+                      </button>
+                    </div>
+
+                    <div className="district-autocomplete-container">
+                      <input
+                        type="text"
+                        className="district-quick-input"
+                        placeholder="Search destination town or district (e.g. Satara, Ayodhya)..."
+                        value={endDistrictQuery}
+                        onChange={(e) => setEndDistrictQuery(e.target.value)}
+                      />
+                      {endDistrictSuggestions.length > 0 && (
+                        <div className="district-autocomplete-dropdown">
+                          {endDistrictSuggestions.map((d) => {
+                            const isSub = d.adminLevel === "TEHSIL" || d.adminLevel === "TOWN" || d.adminLevel === "SUBDIVISION";
+                            const badgeClass = (d.adminLevel || "district").toLowerCase();
+                            return (
+                              <div
+                                key={d.id}
+                                className="district-autocomplete-item"
+                                onClick={() => {
+                                  setEnd({ lat: d.lat, lng: d.lon });
+                                  setSelectedPresetId("custom");
+                                  setEndDistrictQuery("");
+                                  setEndDistrictSuggestions([]);
+                                  if (mapRef.current) {
+                                    mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
+                                  }
+                                }}
+                              >
+                                <div className="district-item-main">
+                                  <strong>{d.name}</strong>
+                                  <span className={`admin-level-badge ${badgeClass}`}>
+                                    {d.adminLevel || "DISTRICT"}
+                                  </span>
+                                  <span className="district-state-badge">{d.stateCode}</span>
+                                </div>
+                                <div className="district-item-sub">
+                                  {isSub
+                                    ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District · ${d.state}`
+                                    : `District HQ: ${d.headquarters || d.name} · ${d.state}`}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="coord-grid">
+                      <div className="input-group">
+                        <label>Latitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={end.lat}
+                          onChange={(e) => {
+                            setEnd((s) => ({ ...s, lat: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Longitude</label>
+                        <input
+                          type="number"
+                          step="0.0001"
+                          value={end.lng}
+                          onChange={(e) => {
+                            setEnd((s) => ({ ...s, lng: Number(e.target.value) }));
+                            setSelectedPresetId("custom");
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Group 3: Nearby Cities & Route Settings */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Nearby Cities &amp; Route Rules</span>
+                  </div>
+
+                  <div className="toggle-row">
+                    <div className="toggle-label">
+                      <strong>Auto-Connect Nearby Cities</strong>
+                      <span>Add highway exits for major towns along the way</span>
+                    </div>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={autoConnectHubs}
+                        onChange={(e) => setAutoConnectHubs(e.target.checked)}
+                      />
+                      <span className="slider" />
+                    </label>
+                  </div>
+
+                  {autoConnectHubs ? (
+                    <div className="auto-hubs-count-card">
+                      <div className="auto-hubs-count-head">
+                        <span>How Many Cities to Connect</span>
+                        <span className="auto-hubs-pill">
+                          {maxAutoHubs} {maxAutoHubs === 1 ? "City" : "Cities"}
+                        </span>
+                      </div>
+                      <div className="auto-hubs-btn-row">
+                        {[1, 2, 3, 4, 5].map((num) => (
+                          <button
+                            key={num}
+                            type="button"
+                            className={`num-hub-btn ${maxAutoHubs === num ? "active" : ""}`}
+                            onClick={() => setMaxAutoHubs(num)}
+                            title={`Connect up to ${num} cities along the route`}
+                          >
+                            {num}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="auto-hubs-caption">
+                        Picks the most important nearby towns while keeping exits safely spaced apart.
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="planner-note-box">
+                      Automatic city exits are off. Only towns you add below will be connected.
+                    </div>
                   )}
-                </>
-              )}
+
+                  {/* Towns You Want Connected */}
+                  <div className="hubs-box">
+                    <div className="hubs-header">
+                      <div>
+                        <span className="hubs-title">Towns You Want Connected</span>
+                        <div className="hubs-sub">Any town you add here is always given a connecting exit</div>
+                      </div>
+                      <button
+                        type="button"
+                        className={`pick-map-btn ${mapSelectionMode === "hub" ? "active" : ""}`}
+                        onClick={() => {
+                          const next = mapSelectionMode === "hub" ? null : "hub";
+                          mapSelectionModeRef.current = next;
+                          setMapSelectionMode(next);
+                          if (next) setStatus("Click anywhere on the map to add a town along the route.");
+                        }}
+                      >
+                        {mapSelectionMode === "hub" ? "Cancel" : "Click on Map"}
+                      </button>
+                    </div>
+
+                    <div className="district-autocomplete-container">
+                      <div className="hubs-input-row">
+                        <input
+                          type="text"
+                          placeholder="Search district or town (e.g. Satara, Wai)..."
+                          value={customHubInput}
+                          onChange={(e) => setCustomHubInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && customHubInput.trim()) {
+                              e.preventDefault();
+                              const val = customHubInput.trim();
+                              if (!targetHubs.includes(val)) {
+                                setTargetHubs([...targetHubs, val]);
+                              }
+                              setCustomHubInput("");
+                              setDistrictSuggestions([]);
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="hubs-add-btn"
+                          onClick={() => {
+                            if (customHubInput.trim()) {
+                              const val = customHubInput.trim();
+                              if (!targetHubs.includes(val)) {
+                                setTargetHubs([...targetHubs, val]);
+                              }
+                              setCustomHubInput("");
+                              setDistrictSuggestions([]);
+                            }
+                          }}
+                        >
+                          + Add
+                        </button>
+                      </div>
+
+                      {districtSuggestions.length > 0 && (
+                        <div className="district-autocomplete-dropdown">
+                          {districtSuggestions.map((d) => {
+                            const isSub =
+                              d.adminLevel === "TEHSIL" ||
+                              d.adminLevel === "TOWN" ||
+                              d.adminLevel === "SUBDIVISION" ||
+                              d.adminLevel === "TALUK" ||
+                              d.adminLevel === "MANDAL";
+                            const badgeClass = (d.adminLevel || "district").toLowerCase();
+                            const val = isSub
+                              ? `${d.name} (${d.parentDistrict} - ${d.stateCode})`
+                              : `${d.name} (${d.stateCode})`;
+                            return (
+                              <div
+                                key={d.id}
+                                className="district-autocomplete-item"
+                                onClick={() => {
+                                  if (!targetHubs.includes(val)) {
+                                    setTargetHubs([...targetHubs, val]);
+                                  }
+                                  setCustomHubInput("");
+                                  setDistrictSuggestions([]);
+                                  if (mapRef.current) {
+                                    mapRef.current.flyTo([d.lat, d.lon], 9, { duration: 1.0 });
+                                  }
+                                }}
+                              >
+                                <div className="district-item-main">
+                                  <strong>{d.name}</strong>
+                                  <span className={`admin-level-badge ${badgeClass}`}>
+                                    {d.adminLevel || "DISTRICT"}
+                                  </span>
+                                  <span className="district-state-badge">{d.stateCode}</span>
+                                </div>
+                                <div className="district-item-sub">
+                                  {isSub
+                                    ? `${d.adminLevel || "Tehsil"} in ${d.parentDistrict} District · ${d.state}`
+                                    : `District HQ: ${d.headquarters || d.name} · ${d.state}`}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {targetHubs.length > 0 && (
+                      <div className="hubs-selected-list">
+                        {targetHubs.map((hub) => (
+                          <span key={hub} className="hub-selected-tag">
+                            <span>{hub}</span>
+                            <button
+                              type="button"
+                              className="hub-remove-btn"
+                              onClick={() => setTargetHubs(targetHubs.filter((h) => h !== hub))}
+                              title="Remove"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {(() => {
+                      const activePreset = PRESET_CORRIDORS.find((p) => p.id === selectedPresetId);
+                      const suggestions = activePreset?.suggestedHubs || [];
+                      if (suggestions.length === 0) return null;
+                      return (
+                        <div className="hubs-suggestions-wrap">
+                          <div className="hubs-suggestions-label">Nearby Towns You Can Add</div>
+                          <div className="hubs-suggestions">
+                            {suggestions.map((hubName) => {
+                              const isSelected = targetHubs.includes(hubName);
+                              return (
+                                <button
+                                  key={hubName}
+                                  type="button"
+                                  className={`hub-suggest-chip ${isSelected ? "active" : ""}`}
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      setTargetHubs(targetHubs.filter((h) => h !== hubName));
+                                    } else {
+                                      setTargetHubs([...targetHubs, hubName]);
+                                    }
+                                  }}
+                                >
+                                  {isSelected ? `✓ ${hubName}` : `+ ${hubName}`}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Traffic Comfort Preference */}
+                  <div className="los-block">
+                    <div className="planner-field-label">Traffic Comfort Preference</div>
+                    <div className="los-selector">
+                      <button
+                        type="button"
+                        className={`los-btn ${maxVcRatio === 0.70 ? "active" : ""}`}
+                        onClick={() => setMaxVcRatio(0.70)}
+                      >
+                        <strong>Smooth &amp; Fast</strong>
+                        <span>Less crowded · higher speeds</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`los-btn ${maxVcRatio === 0.85 ? "active" : ""}`}
+                        onClick={() => setMaxVcRatio(0.85)}
+                      >
+                        <strong>Connect More Towns</strong>
+                        <span>Busier traffic · more local access</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Allowed Detour Slider */}
+                  <div className="deviation-box">
+                    <div className="deviation-header">
+                      <span className="deviation-title">Room to Curve Around Obstacles</span>
+                      <span className="deviation-badge">Up to +{maxDeviationPercent}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      className="deviation-slider"
+                      min="10"
+                      max="30"
+                      step="1"
+                      value={maxDeviationPercent}
+                      onChange={(e) => setMaxDeviationPercent(Number(e.target.value))}
+                    />
+                    <div className="deviation-scale">
+                      <span>10% Straightest</span>
+                      <span>20% Balanced</span>
+                      <span>30% Extra Detour</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Primary CTA + Status / Error / Snap */}
+                <div className="planner-cta-group">
+                  <button
+                    type="button"
+                    className="generate-btn"
+                    onClick={generateRoute}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="spinner" />
+                        <span>Finding Best Route...</span>
+                      </>
+                    ) : (
+                      <span>Find Best Route</span>
+                    )}
+                  </button>
+
+                  <div className="planner-status-line">{status}</div>
+
+                  {routeInfo && (
+                    <div className="eia-save-box">
+                      <button
+                        className="eia-secondary-btn"
+                        type="button"
+                        onClick={saveCurrentRoute}
+                        disabled={!hasPendingRoute || routeSaveBusy || mode1RouteSignature !== routeSignature()}
+                      >
+                        {routeSaveBusy
+                          ? "Saving route…"
+                          : savedRouteId && mode1RouteSignature === routeSignature()
+                          ? "✓ Route saved for report"
+                          : "Save route for environmental report"}
+                      </button>
+                      {savedRouteId && (
+                        <button
+                          className="eia-secondary-btn"
+                          type="button"
+                          onClick={() => setActiveWorkspace("eia")}
+                          style={{ marginTop: "6px" }}
+                        >
+                          Open Environmental Report Tool →
+                        </button>
+                      )}
+                      {(routeSaveMessage || mongoStatus) && (
+                        <p className="eia-help" role="status">{routeSaveMessage || mongoStatus}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {routingError && (
+                    <div className="error-card">
+                      <div className="error-card-title">{routingError.title}</div>
+                      <div className="error-card-message">{routingError.message}</div>
+                    </div>
+                  )}
+
+                  {snapNotice && (
+                    <div className="snap-alert-card">
+                      <div className="snap-alert-header">
+                        <span>Start / End Point Gently Moved for Safety</span>
+                      </div>
+
+                      {snapNotice.start && (
+                        <div className="snap-item">
+                          <div className="snap-item-title">
+                            <span className="snap-origin-label">Starting Point Moved</span>
+                            <span className="snap-badge">+{snapNotice.start.distanceMeters} m</span>
+                          </div>
+                          <div className="snap-reason">
+                            <strong>Why:</strong> {snapNotice.start.reason}
+                          </div>
+                          <div className="snap-coords-compare">
+                            <div>Original pin: <del>{snapNotice.start.requested.lat}, {snapNotice.start.requested.lng}</del></div>
+                            <div>Safe spot used: <ins>{snapNotice.start.resolved.lat}, {snapNotice.start.resolved.lng}</ins></div>
+                          </div>
+                        </div>
+                      )}
+
+                      {snapNotice.end && (
+                        <div className="snap-item">
+                          <div className="snap-item-title">
+                            <span className="snap-dest-label">Destination Moved</span>
+                            <span className="snap-badge">+{snapNotice.end.distanceMeters} m</span>
+                          </div>
+                          <div className="snap-reason">
+                            <strong>Why:</strong> {snapNotice.end.reason}
+                          </div>
+                          <div className="snap-coords-compare">
+                            <div>Original pin: <del>{snapNotice.end.requested.lat}, {snapNotice.end.requested.lng}</del></div>
+                            <div>Safe spot used: <ins>{snapNotice.end.resolved.lat}, {snapNotice.end.resolved.lng}</ins></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Group 4: Quick Environmental Report */}
+                <section className="planner-group eia-panel">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Quick Environmental Report</span>
+                  </div>
+                  <p className="eia-help">
+                    Prepare a downloadable environmental summary using the map findings and reference library.
+                    This is an early preview and should be verified by field experts.
+                  </p>
+                  <div className="input-group eia-field">
+                    <label htmlFor="eia-project-name">Project / corridor name</label>
+                    <input
+                      id="eia-project-name"
+                      value={eiaProjectName}
+                      onChange={(event) => setEiaProjectName(event.target.value)}
+                      placeholder="e.g. Kaziranga–Karbi Anglong Greenfield Highway"
+                    />
+                  </div>
+                  <div className="input-group eia-field">
+                    <label htmlFor="eia-project-proponent">Project proponent (optional)</label>
+                    <input
+                      id="eia-project-proponent"
+                      value={eiaProjectProponent}
+                      onChange={(event) => setEiaProjectProponent(event.target.value)}
+                      placeholder="Organization / agency"
+                    />
+                  </div>
+                  <div className="input-group eia-field">
+                    <label htmlFor="eia-study-area">Study area</label>
+                    <input
+                      id="eia-study-area"
+                      value={eiaStudyArea}
+                      onChange={(event) => setEiaStudyArea(event.target.value)}
+                    />
+                  </div>
+                  <div className="coord-grid eia-grid">
+                    <div className="input-group eia-field">
+                      <label htmlFor="eia-project-state">State / UT</label>
+                      <input
+                        id="eia-project-state"
+                        value={eiaProjectState}
+                        onChange={(event) => setEiaProjectState(event.target.value)}
+                        placeholder="Assam"
+                      />
+                    </div>
+                    <div className="input-group eia-field">
+                      <label htmlFor="eia-assessment-date">Assessment date</label>
+                      <input
+                        id="eia-assessment-date"
+                        type="date"
+                        value={eiaAssessmentDate}
+                        onChange={(event) => setEiaAssessmentDate(event.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="eia-library-summary">
+                    <span>GIS observations: {mode1GisScreening ? (mode1GisScreening.findings?.length ?? 0) : "not supplied"}</span>
+                    <span>Library: {eiaLibraryStatus ? `${eiaLibraryStatus.documentCount} PDFs · ${eiaLibraryStatus.chunkCount} chunks` : "not checked"}</span>
+                  </div>
+                  {mode1GisScreening?.findings?.length > 0 && (
+                    <div className="eia-findings-preview">
+                      {mode1GisScreening.findings.slice(0, 4).map((finding) => (
+                        <div key={finding.evidenceId}>
+                          <strong>{finding.environmentalComponent}</strong>
+                          <span>{finding.metric}: {finding.value} {finding.units}</span>
+                        </div>
+                      ))}
+                      {mode1GisScreening.findings.length > 4 && (
+                        <small>+ {mode1GisScreening.findings.length - 4} additional cited GIS observations</small>
+                      )}
+                    </div>
+                  )}
+                  <button
+                    className="eia-secondary-btn"
+                    type="button"
+                    onClick={refreshEiaLibrary}
+                    disabled={eiaBusy}
+                  >
+                    Refresh environmental PDF library
+                  </button>
+                  <button
+                    className="generate-btn eia-generate-btn"
+                    type="button"
+                    onClick={generateEnvironmentalReport}
+                    disabled={eiaBusy}
+                  >
+                    {eiaBusy ? <><span className="spinner" /> Preparing report…</> : "Generate environmental report"}
+                  </button>
+                  {eiaMessage && <p className="eia-status" role="status">{eiaMessage}</p>}
+                  {eiaError && <p className="eia-error" role="alert">{eiaError}</p>}
+                  {eiaJob && (
+                    <div className="eia-job-card">
+                      <strong>Job {eiaJob.state}</strong>
+                      {eiaJob.pageCount != null && <span>{eiaJob.pageCount} pages</span>}
+                      <small>{eiaJob.jobId}</small>
+                      {eiaJob.state === "COMPLETED" && (
+                        <div className="eia-downloads">
+                          <button type="button" onClick={() => downloadEiaArtifact("pdf")}>Download PDF</button>
+                          <button type="button" onClick={() => downloadEiaArtifact("document")}>Download DOCX</button>
+                        </div>
+                      )}
+                      {eiaJob.state === "FAILED" && eiaJob.downloadUrl && (
+                        <div className="eia-downloads">
+                          <button type="button" onClick={() => downloadEiaArtifact("document")}>Download draft DOCX</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+              </div>
             </div>
           )}
-
-          <section className="sidebar-section eia-panel">
-              <div className="section-header">
-                <span className="section-title">Mode 1 Environmental EIA</span>
-              </div>
-              <p className="eia-help">
-                Draft an environmental-only report using the indexed PDF library and route GIS screening when available.
-                Without a successful route, GIS findings will be unavailable in the draft. The output is preliminary decision support and requires expert review.
-              </p>
-              <div className="input-group eia-field">
-                <label htmlFor="eia-project-name">Project / corridor name</label>
-                <input id="eia-project-name" value={eiaProjectName}
-                  onChange={(event) => setEiaProjectName(event.target.value)} placeholder="e.g. Kaziranga–Karbi Anglong Greenfield Highway" />
-              </div>
-              <div className="input-group eia-field">
-                <label htmlFor="eia-project-proponent">Project proponent (optional)</label>
-                <input id="eia-project-proponent" value={eiaProjectProponent}
-                  onChange={(event) => setEiaProjectProponent(event.target.value)} placeholder="Organization / agency" />
-              </div>
-              <div className="input-group eia-field">
-                <label htmlFor="eia-study-area">Study area</label>
-                <input id="eia-study-area" value={eiaStudyArea}
-                  onChange={(event) => setEiaStudyArea(event.target.value)} />
-              </div>
-              <div className="coord-grid eia-grid">
-                <div className="input-group eia-field">
-                  <label htmlFor="eia-project-state">State / UT</label>
-                  <input id="eia-project-state" value={eiaProjectState}
-                    onChange={(event) => setEiaProjectState(event.target.value)} placeholder="Assam" />
-                </div>
-                <div className="input-group eia-field">
-                  <label htmlFor="eia-assessment-date">Assessment date</label>
-                  <input id="eia-assessment-date" type="date" value={eiaAssessmentDate}
-                    onChange={(event) => setEiaAssessmentDate(event.target.value)} />
-                </div>
-              </div>
-              <div className="eia-library-summary">
-                <span>GIS observations: {mode1GisScreening ? (mode1GisScreening.findings?.length ?? 0) : "not supplied"}</span>
-                <span>Knowledge base: {eiaLibraryStatus ? `${eiaLibraryStatus.documentCount} PDFs · ${eiaLibraryStatus.chunkCount} chunks` : "not checked"}</span>
-              </div>
-              {mode1GisScreening?.findings?.length > 0 && (
-                <div className="eia-findings-preview">
-                  {mode1GisScreening.findings.slice(0, 4).map((finding) => (
-                    <div key={finding.evidenceId}>
-                      <strong>{finding.environmentalComponent}</strong>
-                      <span>{finding.metric}: {finding.value} {finding.units}</span>
-                    </div>
-                  ))}
-                  {mode1GisScreening.findings.length > 4 && <small>+ {mode1GisScreening.findings.length - 4} additional cited GIS observations</small>}
-                </div>
-              )}
-              <button className="eia-secondary-btn" type="button" onClick={refreshEiaLibrary}
-                disabled={eiaBusy}>
-                Refresh environmental PDF library
-              </button>
-              <button className="generate-btn eia-generate-btn" type="button" onClick={generateEnvironmentalReport}
-                disabled={eiaBusy}>
-                {eiaBusy ? <><span className="spinner" /> Preparing report…</> : "Generate environmental report"}
-              </button>
-              {eiaMessage && <p className="eia-status" role="status">{eiaMessage}</p>}
-              {eiaError && <p className="eia-error" role="alert">{eiaError}</p>}
-              {eiaJob && (
-                <div className="eia-job-card">
-                  <strong>Job {eiaJob.state}</strong>
-                  {eiaJob.pageCount != null && <span>{eiaJob.pageCount} pages</span>}
-                  <small>{eiaJob.jobId}</small>
-                  {eiaJob.state === "COMPLETED" && (
-                    <div className="eia-downloads">
-                      <button type="button" onClick={() => downloadEiaArtifact("pdf")}>Download PDF</button>
-                      <button type="button" onClick={() => downloadEiaArtifact("document")}>Download DOCX</button>
-                    </div>
-                  )}
-                  {eiaJob.state === "FAILED" && eiaJob.downloadUrl && (
-                    <div className="eia-downloads">
-                      <button type="button" onClick={() => downloadEiaArtifact("document")}>Download draft DOCX</button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
         </aside>
 
-        {/* MAP VIEWPORT */}
+        {/* CENTER FRAMED HERO MAP VIEWPORT */}
         <main className="map-viewport">
-          <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
+          <div ref={mapContainerRef} className="leaflet-canvas-host" />
 
-          {/* Floating Quick Action Buttons on Map */}
-          <div className="map-floating-bar">
+          {/* Floating Cream-Glass Basemap Controls & Active 13-Layer Lens Legend HUD */}
+          <MapLensHud
+            baseMapType={baseMapType}
+            lockBasemap={lockBasemap}
+            onSelectBasemap={(id) => setBaseMapType(id)}
+            onResetBasicMap={handleResetBasicMap}
+            onToggleLockBasemap={() => setLockBasemap((v) => !v)}
+            onZoomIndia={() => {
+              if (mapRef.current) {
+                mapRef.current.flyTo([22.5, 78.5], 5, { duration: 1 });
+              }
+            }}
+            activeLayerId={activeLayerId}
+            pinnedLayerIds={pinnedLayerIds}
+            onUnpinLayer={handleTogglePinLayer}
+            onExitLens={handleClearToOverview}
+          />
+        </main>
+
+        {/* RIGHT COLLAPSIBLE DRAWER: 13 MAP IMPACT VIEWS */}
+        <aside className={`studio-drawer right-drawer ${rightDrawerOpen ? "open" : "collapsed"}`}>
+          {!rightDrawerOpen ? (
             <button
-              className="map-control-btn"
-              onClick={() => setBaseMapType((b) => (b === "osm" ? "satellite" : "osm"))}
+              type="button"
+              className="drawer-collapsed-rail"
+              onClick={() => setRightDrawerOpen(true)}
+              title="Open 13 Safety & Impact Map Views"
             >
-              {baseMapType === "osm" ? "🛰️ Satellite View" : "🗺️ Street Map"}
+              <span className="rail-chevron">«</span>
+              {activeLayerCfg && (
+                <span
+                  className="rail-active-dot"
+                  style={{ background: activeLayerCfg.accentColor }}
+                  title={`Active: #${activeLayerCfg.number} ${activeLayerCfg.shortName}`}
+                />
+              )}
+              <span className="rail-label">13 Map Views</span>
             </button>
-            <button
-              className="map-control-btn"
-              onClick={() => {
-                if (mapRef.current) {
-                  mapRef.current.flyTo([22.5, 78.5], 5, { duration: 1 });
-                }
-              }}
-            >
-              🇮🇳 Zoom to India
+          ) : (
+            <div className="drawer-inner">
+              <div className="drawer-topbar">
+                <div>
+                  <span className="drawer-eyebrow">EXPLORE ON THE MAP</span>
+                  <h2 className="drawer-title">13 Impact Views</h2>
+                </div>
+                <button
+                  type="button"
+                  className="drawer-toggle-btn"
+                  onClick={() => setRightDrawerOpen(false)}
+                  title="Hide 13 Impact Views to widen the map"
+                  aria-label="Hide 13 Impact Views"
+                >
+                  »
+                </button>
+              </div>
+
+              <div className="drawer-scroll-body drawer-scroll-layers">
+                <LayerAuditPanel
+                  layerAudit={layerAudit}
+                  routeLayerProfile={routeLayerProfile}
+                  allFeatures={currentFeatures}
+                  activeLayerId={activeLayerId}
+                  pinnedLayerIds={pinnedLayerIds}
+                  onSelectLayer={handleSelectLayer}
+                  onTogglePinLayer={handleTogglePinLayer}
+                  onClearToOverview={handleClearToOverview}
+                  onFocusFeature={handleFocusFeature}
+                  showMultiArchetypes={showMultiArchetypes}
+                  onToggleMultiArchetypes={() => setShowMultiArchetypes((v) => !v)}
+                  cachedArchetypesCount={Object.keys(cachedArchetypes).length}
+                />
+              </div>
+            </div>
+          )}
+        </aside>
+      </section>
+
+      {/* =======================================================
+          SERENE EDITORIAL TRANSITION STRIP
+          ======================================================= */}
+      {routeInfo && (
+        <div className="dossier-scroll-cue">
+          <div className="dossier-scroll-cue-inner">
+            <div className="cue-meta">
+              <span className="cue-eyebrow">ROUTE READY TO EXPLORE</span>
+              <span className="cue-summary">
+                <strong>{routeInfo.routeLengthKm} km</strong> main highway ·{" "}
+                <strong>{networkSummary?.feederSpurs ?? 0}</strong> connecting town roads ·{" "}
+                <strong>{layerAudit.length || 13}</strong> safety &amp; nature checks completed
+              </span>
+            </div>
+            <button type="button" className="cue-scroll-btn" onClick={scrollToDossier}>
+              <span>Read Full Public Impact Report (6 Sections)</span>
+              <span aria-hidden="true">↓</span>
             </button>
           </div>
-        </main>
+        </div>
+      )}
+
+      {/* =======================================================
+          BELOW-THE-FOLD SPACIOUS 6-CHAPTER ENGINEERING DOSSIER
+          ======================================================= */}
+      <div ref={dossierRef}>
+        <EngineeringDossier
+          corridorName={
+            PRESET_CORRIDORS.find((p) => p.id === selectedPresetId)?.name ||
+            "Custom Indian Highway Route"
+          }
+          routeInfo={routeInfo}
+          networkSummary={networkSummary}
+          tradeOffProfile={tradeOffProfile}
+          statutoryClearanceReport={statutoryClearanceReport}
+          layerAudit={layerAudit}
+          routeLayerProfile={routeLayerProfile}
+          routeDiagnostics={routeDiagnostics}
+          terminalRoadConnections={terminalRoadConnections}
+          spurEngineeringSummary={spurEngineeringSummary}
+          currentFeatures={currentFeatures}
+          connectedHubs={connectedHubs}
+          trafficCapacity={trafficCapacity}
+          hubDecisions={hubDecisions}
+          snapNotice={snapNotice}
+          facilityMode={facilityMode}
+          presetDefinitions={PRESET_DEFINITIONS}
+          tradeOffPreset={tradeOffPreset}
+          envWeight={envWeight}
+          socialWeight={socialWeight}
+          directnessWeight={directnessWeight}
+          isRealigning={isRealigning}
+          alternativeRoutes={alternativeRoutes}
+          activeAlternativeId={activeAlternativeId}
+          comparativeDeltasVsBalanced={comparativeDeltasVsBalanced}
+          onSelectPreset={handleSelectPreset}
+          onSliderChange={handleSliderChange}
+          onRealign={() => realignAlignment()}
+          onSwitchArchetype={switchToArchetype}
+          onInspectLayerOnMap={handleInspectLayerFromDossier}
+          onLocateOnMap={handleLocateFromDossier}
+        />
       </div>
     </div>
   );

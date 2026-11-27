@@ -1,12 +1,15 @@
 package in.marg.region;
 
+import in.marg.building.OsmDynamicBuildingSettlementCache;
 import in.marg.model.GeoPoint;
 import in.marg.row.RightOfWayCorridorEngine;
+import in.marg.routing.BuildingCostPolicy;
 import in.marg.routing.CostAssessment;
 import in.marg.routing.CostLayer;
 import in.marg.routing.CostSurface;
 import in.marg.spatial.CoordinateProjection;
 import in.marg.transport.FacilityMode;
+import in.marg.wildlife.IndianWildlifeSanctuaryRegistry;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -71,24 +74,30 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
     ) {}
 
     private static final List<ProtectedSanctuaryCore> PROTECTED_SANCTUARIES = List.of(
-            new ProtectedSanctuaryCore("PA-KAZIRANGA", "Kaziranga National Park Core", "Assam", 26.640, 93.360, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-CORBETT", "Jim Corbett Tiger Reserve Core", "Uttarakhand", 29.530, 78.775, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-RANTHAMBORE", "Ranthambore Tiger Reserve Core", "Rajasthan", 26.017, 76.502, 0.030, 0.070),
-            new ProtectedSanctuaryCore("PA-SARISKA", "Sariska Tiger Reserve Core", "Rajasthan", 27.328, 76.432, 0.028, 0.065),
-            new ProtectedSanctuaryCore("PA-KANHA", "Kanha National Park Core", "Madhya Pradesh", 22.334, 80.611, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-BANDHAVGARH", "Bandhavgarh Tiger Reserve Core", "Madhya Pradesh", 23.722, 81.024, 0.030, 0.070),
-            new ProtectedSanctuaryCore("PA-SATPURA", "Satpura Tiger Reserve Core", "Madhya Pradesh", 22.505, 78.435, 0.030, 0.070),
-            new ProtectedSanctuaryCore("PA-PENCH", "Pench Tiger Reserve Core", "MP/Maharashtra", 21.765, 79.295, 0.028, 0.065),
-            new ProtectedSanctuaryCore("PA-TADOBA", "Tadoba-Andhari Tiger Reserve Core", "Maharashtra", 20.245, 79.360, 0.030, 0.070),
-            new ProtectedSanctuaryCore("PA-SAHYADRI", "Sahyadri / Koyna Wildlife Sanctuary Core", "Maharashtra", 17.790, 73.720, 0.028, 0.065),
-            new ProtectedSanctuaryCore("PA-GIR", "Gir National Park Core", "Gujarat", 21.124, 70.824, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-BANDIPUR", "Bandipur-Nagarhole Biosphere Core", "Karnataka", 11.665, 76.625, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-PERIYAR", "Periyar Tiger Reserve Core", "Kerala", 9.462, 77.235, 0.030, 0.070),
-            new ProtectedSanctuaryCore("PA-NAGARJUNSAGAR", "Nagarjunsagar-Srisailam Tiger Reserve Core", "Andhra Pradesh/Telangana", 16.085, 78.865, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-SIMLIPAL", "Simlipal Tiger Reserve Core", "Odisha", 21.750, 86.330, 0.032, 0.075),
-            new ProtectedSanctuaryCore("PA-SUNDARBANS", "Sundarbans Mangrove Reserve Core", "West Bengal", 21.945, 88.895, 0.035, 0.080),
-            new ProtectedSanctuaryCore("PA-PALAMAU", "Betla / Palamau Tiger Reserve Core", "Jharkhand", 23.885, 84.190, 0.028, 0.065),
-            new ProtectedSanctuaryCore("PA-DUDHWA", "Dudhwa National Park Core", "Uttar Pradesh", 28.485, 80.645, 0.030, 0.070)
+            new ProtectedSanctuaryCore("PA-KAZIRANGA", "Kaziranga National Park & Tiger Reserve Core", "Assam", 26.660, 93.360, 0.045, 0.135),
+            new ProtectedSanctuaryCore("PA-AS-NKARBI", "North Karbi Anglong Wildlife Sanctuary Core", "Assam", 26.480, 93.307, 0.045, 0.135),
+            new ProtectedSanctuaryCore("PA-AS-EKARBI", "East Karbi Anglong Wildlife Sanctuary Core", "Assam", 25.908, 93.380, 0.045, 0.135),
+            new ProtectedSanctuaryCore("PA-AS-MARAT-LONGRI", "Marat Longri Wildlife Sanctuary Core", "Assam", 25.901, 93.289, 0.055, 0.145),
+            new ProtectedSanctuaryCore("PA-AS-NAMBOR", "Nambor-Garampani Wildlife Sanctuary Core", "Assam", 26.419, 93.892, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-AS-MANAS", "Manas National Park & Biosphere Core", "Assam", 26.720, 91.010, 0.045, 0.135),
+            new ProtectedSanctuaryCore("PA-CORBETT", "Jim Corbett Tiger Reserve Core", "Uttarakhand", 29.530, 78.775, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-UK-RAJAJI", "Rajaji National Park & Tiger Reserve Core", "Uttarakhand", 29.980, 78.180, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-RANTHAMBORE", "Ranthambore Tiger Reserve Core", "Rajasthan", 26.017, 76.502, 0.032, 0.122),
+            new ProtectedSanctuaryCore("PA-SARISKA", "Sariska Tiger Reserve Core", "Rajasthan", 27.328, 76.432, 0.030, 0.120),
+            new ProtectedSanctuaryCore("PA-KANHA", "Kanha National Park Core", "Madhya Pradesh", 22.334, 80.611, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-BANDHAVGARH", "Bandhavgarh Tiger Reserve Core", "Madhya Pradesh", 23.722, 81.024, 0.032, 0.122),
+            new ProtectedSanctuaryCore("PA-SATPURA", "Satpura Tiger Reserve Core", "Madhya Pradesh", 22.505, 78.435, 0.030, 0.120),
+            new ProtectedSanctuaryCore("PA-PENCH", "Pench Tiger Reserve Core", "MP/Maharashtra", 21.765, 79.295, 0.030, 0.120),
+            new ProtectedSanctuaryCore("PA-TADOBA", "Tadoba-Andhari Tiger Reserve Core", "Maharashtra", 20.245, 79.360, 0.032, 0.122),
+            new ProtectedSanctuaryCore("PA-SAHYADRI", "Sahyadri / Koyna Wildlife Sanctuary Core", "Maharashtra", 17.790, 73.720, 0.030, 0.120),
+            new ProtectedSanctuaryCore("PA-GIR", "Gir National Park Core", "Gujarat", 21.124, 70.824, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-BANDIPUR", "Bandipur-Nagarhole Biosphere Core", "Karnataka", 11.665, 76.625, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-PERIYAR", "Periyar Tiger Reserve Core", "Kerala", 9.462, 77.235, 0.032, 0.122),
+            new ProtectedSanctuaryCore("PA-NAGARJUNSAGAR", "Nagarjunsagar-Srisailam Tiger Reserve Core", "Andhra Pradesh/Telangana", 16.085, 78.865, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-SIMLIPAL", "Simlipal Tiger Reserve Core", "Odisha", 21.750, 86.330, 0.035, 0.125),
+            new ProtectedSanctuaryCore("PA-SUNDARBANS", "Sundarbans Mangrove Reserve Core", "West Bengal", 21.945, 88.895, 0.038, 0.128),
+            new ProtectedSanctuaryCore("PA-PALAMAU", "Betla / Palamau Tiger Reserve Core", "Jharkhand", 23.885, 84.190, 0.030, 0.120),
+            new ProtectedSanctuaryCore("PA-DUDHWA", "Dudhwa National Park Core", "Uttar Pradesh", 28.485, 80.645, 0.032, 0.122)
     );
 
     private static final List<SacredHeritageExclusionZone> SACRED_HERITAGE_ZONES = List.of(
@@ -179,11 +188,54 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
     private final GeoPoint start;
     private final GeoPoint goal;
     private final FacilityMode facilityMode;
+    private final in.marg.routing.AlignmentPreference preference;
+    private final OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex;
+    private final in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex;
+    private final in.marg.routing.TransportCostPolicy transportPolicy;
+    private final boolean denseColonyLastResortMode;
 
     public PanIndiaDynamicCostLayer(GeoPoint start, GeoPoint goal, FacilityMode facilityMode) {
+        this(start, goal, facilityMode, in.marg.routing.AlignmentPreference.BALANCED, null, false);
+    }
+
+    public PanIndiaDynamicCostLayer(
+            GeoPoint start,
+            GeoPoint goal,
+            FacilityMode facilityMode,
+            in.marg.routing.AlignmentPreference preference) {
+        this(start, goal, facilityMode, preference, null, false);
+    }
+
+    public PanIndiaDynamicCostLayer(
+            GeoPoint start,
+            GeoPoint goal,
+            FacilityMode facilityMode,
+            in.marg.routing.AlignmentPreference preference,
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex,
+            boolean denseColonyLastResortMode) {
+        this(start, goal, facilityMode, preference, osmIndex, null, denseColonyLastResortMode);
+    }
+
+    public PanIndiaDynamicCostLayer(
+            GeoPoint start,
+            GeoPoint goal,
+            FacilityMode facilityMode,
+            in.marg.routing.AlignmentPreference preference,
+            OsmDynamicBuildingSettlementCache.OsmCorridorIndex osmIndex,
+            in.marg.transport.OsmDynamicTransportNetworkCache.OsmTransportIndex osmTransportIndex,
+            boolean denseColonyLastResortMode) {
         this.start = start;
         this.goal = goal;
         this.facilityMode = facilityMode != null ? facilityMode : FacilityMode.EXPRESSWAY;
+        this.preference = preference != null ? preference : in.marg.routing.AlignmentPreference.BALANCED;
+        this.osmIndex = osmIndex;
+        this.osmTransportIndex = osmTransportIndex;
+        this.transportPolicy = in.marg.routing.TransportCostPolicy.defaultPolicy();
+        this.denseColonyLastResortMode = denseColonyLastResortMode;
+    }
+
+    public PanIndiaDynamicCostLayer withDenseColonyLastResortMode() {
+        return new PanIndiaDynamicCostLayer(start, goal, facilityMode, preference, osmIndex, osmTransportIndex, true);
     }
 
     @Override
@@ -199,7 +251,12 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
-        // 1. Hard Constraint Check: Core Protected Sanctuaries & Tiger Reserves
+        // 1. Hard Constraint Check: Core Protected Sanctuaries & Tiger Reserves (Pan-India 690 Statutory Sanctuaries)
+        IndianWildlifeSanctuaryRegistry.StatutorySanctuary directSanctuary =
+                IndianWildlifeSanctuaryRegistry.getDefaultInstance().findIntersectingSanctuary(lat, lon);
+        if (directSanctuary != null) {
+            return CostAssessment.blocked(SOURCE, "PROTECTED_AREA_CORE:" + directSanctuary.id() + " (" + directSanctuary.name() + ")");
+        }
         for (ProtectedSanctuaryCore pa : PROTECTED_SANCTUARIES) {
             double distDeg = Math.hypot(lat - pa.centerLat(), lon - pa.centerLon());
             if (distDeg <= pa.coreRadiusDeg()) {
@@ -215,30 +272,55 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
+        // 2b. Dynamic OSM Hard Exclusion Check: Hospitals, Medical/Educational/Religious Campuses (+ 75m buffer)
+        if (osmIndex != null && !osmIndex.isEmpty()) {
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly instHit =
+                    osmIndex.findInstitutionalExclusion(point, BuildingCostPolicy.DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS);
+            if (instHit != null) {
+                return CostAssessment.blocked(SOURCE, instHit.category() + "_EXCLUSION:" + instHit.name());
+            }
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly colonyHit = osmIndex.findDenseColony(point);
+            if (colonyHit != null && !denseColonyLastResortMode) {
+                return CostAssessment.blocked(SOURCE, "DENSE_RESIDENTIAL_COLONY_EXCLUSION:" + colonyHit.name());
+            }
+        }
+
+        double envMult = preference.environmentalWeight();
+        double socialMult = preference.socialWeight();
+        double directnessMult = 1.0 / Math.max(0.2, preference.directnessWeight());
+
         double totalPenalty = 0.0;
         String dominantClass = classifyPhysiographicZone(lat, lon);
 
-        // 3. Physiographic Terrain & Slope Penalty
-        totalPenalty += physiographicBasePenalty(lat, lon, dominantClass);
-
-        // 4. Wildlife Eco-Sensitive Zone (ESZ) Buffer Penalty
-        for (ProtectedSanctuaryCore pa : PROTECTED_SANCTUARIES) {
-            double distDeg = Math.hypot(lat - pa.centerLat(), lon - pa.centerLon());
-            if (distDeg <= pa.eszRadiusDeg()) {
-                totalPenalty += 2.25 * (1.0 - (distDeg - pa.coreRadiusDeg()) / (pa.eszRadiusDeg() - pa.coreRadiusDeg()));
-                dominantClass = "WILDLIFE_ESZ_BUFFER:" + pa.id();
+        // 2c. Dynamic OSM Dense Colony Last-Resort Barrier or Isolated Building Demolition Penalty
+        if (osmIndex != null && !osmIndex.isEmpty()) {
+            if (denseColonyLastResortMode && osmIndex.findDenseColony(point) != null) {
+                totalPenalty += BuildingCostPolicy.DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY;
+                dominantClass = "DENSE_RESIDENTIAL_COLONY_LAST_RESORT";
+            } else if (osmIndex.findBuildingHit(point, 15.0) != null) {
+                totalPenalty += 75.0 * socialMult;
+                dominantClass = "OSM_ISOLATED_BUILDING_FOOTPRINT";
             }
+        }
+
+        // 3. Physiographic Terrain & Slope Penalty
+        totalPenalty += physiographicBasePenalty(lat, lon, dominantClass) * directnessMult;
+
+        // 4. Wildlife 10 km Eco-Sensitive Zone (ESZ) Buffer Penalty (Last-Resort Ultra-High Penalty)
+        if (IndianWildlifeSanctuaryRegistry.getDefaultInstance().isInsideAnyEszBuffer(lat, lon)) {
+            totalPenalty += in.marg.routing.ProtectedAreaCostLayer.ESZ_10KM_LAST_RESORT_PENALTY;
+            dominantClass = "WILDLIFE_ESZ_10KM_BUFFER";
         }
 
         // 5. Urban Settlement, Building Footprint & Demographic Density Penalty
         for (UrbanSettlementCenter city : URBAN_CENTERS) {
             double distDeg = Math.hypot(lat - city.lat(), lon - city.lon());
             if (distDeg <= city.coreRadiusDeg()) {
-                totalPenalty += 3.40;
+                totalPenalty += 3.40 * socialMult;
                 dominantClass = "URBAN_SETTLEMENT_CORE:" + city.id();
             } else if (distDeg <= city.periUrbanRadiusDeg()) {
                 double ratio = 1.0 - (distDeg - city.coreRadiusDeg()) / (city.periUrbanRadiusDeg() - city.coreRadiusDeg());
-                totalPenalty += 1.45 * ratio;
+                totalPenalty += 1.45 * ratio * socialMult;
             }
         }
 
@@ -247,10 +329,10 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             double distDeg = pointToSegmentDistanceDeg(
                     lat, lon, river.startLat(), river.startLon(), river.endLat(), river.endLon());
             if (distDeg <= river.channelHalfWidthDeg()) {
-                totalPenalty += 4.50; // Active river channel avoidance
+                totalPenalty += 4.50 * envMult; // Active river channel avoidance
                 dominantClass = "PERENNIAL_RIVER_CHANNEL:" + river.id();
             } else if (distDeg <= river.floodplainHalfWidthDeg() * 1.5) {
-                totalPenalty += 2.20; // 500m-1km statutory non-encroachment riparian setback
+                totalPenalty += 2.20 * envMult; // 500m-1km statutory non-encroachment riparian setback
                 dominantClass = "RIVER_FLOODPLAIN_BUFFER:" + river.id();
             }
         }
@@ -258,7 +340,7 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         // 7. Corridor-Local Micro-Topography, Village Clusters & Seasonal Wetland Pockets
         // Ensures even 15-80 km regional queries anywhere in India deflect intelligently
         // around local wetland depressions and rural settlement pockets along the A-B axis.
-        totalPenalty += localCorridorFeaturePenalty(lat, lon);
+        totalPenalty += localCorridorFeaturePenalty(lat, lon) * ((envMult + socialMult) / 2.0);
 
         return new CostAssessment(false, Math.max(0.0, totalPenalty), SOURCE, dominantClass);
     }
@@ -270,6 +352,13 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
 
     @Override
     public CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
+        IndianWildlifeSanctuaryRegistry.StatutorySanctuary segSanctuary =
+                IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                        .findIntersectingSanctuaryForSegment(from.lat(), from.lon(), to.lat(), to.lon());
+        if (segSanctuary != null) {
+            return CostAssessment.blocked(SOURCE, "PROTECTED_AREA_CORE:" + segSanctuary.id() + " (" + segSanctuary.name() + ")");
+        }
+
         // Sub-sample edge to prevent diagonal A* steps from jumping across sacred or sanctuary exclusions
         double[] fractions = {0.2, 0.4, 0.6, 0.8};
         for (double t : fractions) {
@@ -287,8 +376,47 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
-        double edgePenalty = 0.0;
-        String edgeClass = null;
+        // 2. Dynamic OSM Edge Check: Hospitals/Institutional (+ 105m RoW+buffer), Dense Colonies, Isolated Buildings
+        double osmEdgePenalty = 0.0;
+        String osmEdgeClass = null;
+        if (osmIndex != null && !osmIndex.isEmpty()) {
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly instSeg =
+                    osmIndex.findInstitutionalExclusionForSegment(
+                            from, to, 30.0 + BuildingCostPolicy.DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS);
+            if (instSeg != null) {
+                return CostAssessment.blocked(SOURCE, instSeg.category() + "_EDGE_BLOCKED:" + instSeg.name());
+            }
+            OsmDynamicBuildingSettlementCache.IndexedOsmPoly colonySeg =
+                    osmIndex.findDenseColonyForSegment(from, to, 30.0);
+            if (colonySeg != null) {
+                if (!denseColonyLastResortMode) {
+                    return CostAssessment.blocked(SOURCE, "DENSE_RESIDENTIAL_COLONY_EDGE_BLOCKED:" + colonySeg.name());
+                }
+                osmEdgePenalty += BuildingCostPolicy.DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY;
+                osmEdgeClass = "DENSE_RESIDENTIAL_COLONY_LAST_RESORT:" + colonySeg.name();
+            }
+            int bldHits = osmIndex.countBuildingHitsForSegment(from, to, 30.0);
+            if (bldHits > 0) {
+                osmEdgePenalty += bldHits * 60.0 * preference.socialWeight();
+                if (osmEdgeClass == null) {
+                    osmEdgeClass = "OSM_ROW_BUILDING_DEMOLITION_CONFLICT";
+                }
+            }
+        }
+
+        if (osmTransportIndex != null && !osmTransportIndex.isEmpty()) {
+            CostAssessment transportEdge = osmTransportIndex.assessEdge(from, to, facilityMode, transportPolicy);
+            if (transportEdge != null && transportEdge.penaltyMultiplier() > 0.0) {
+                osmEdgePenalty += transportEdge.penaltyMultiplier();
+                if (osmEdgeClass == null) {
+                    osmEdgeClass = "OSM_TRANSPORT_CROSSING_SKEW";
+                }
+            }
+        }
+
+        double edgePenalty = osmEdgePenalty;
+        String edgeClass = osmEdgeClass;
+        double envMult = preference.environmentalWeight();
 
         // Check major river crossings and skew angles
         for (MajorRiverAxis river : MAJOR_RIVERS) {
@@ -305,8 +433,8 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
                 double rivLen = Math.hypot(rivDx, rivDy);
                 if (stepLen > 1e-9 && rivLen > 1e-9) {
                     double cosTheta = Math.abs((stepDx * rivDx + stepDy * rivDy) / (stepLen * rivLen));
-                    // Parallel or acute crossing penalty
-                    edgePenalty += 0.85 + 1.40 * cosTheta;
+                    // Parallel or acute crossing penalty scaled by environmental weight
+                    edgePenalty += (0.85 + 1.40 * cosTheta) * envMult;
                     edgeClass = "RIVER_HYDRAULIC_SKEW:" + river.id();
                 }
             }
@@ -316,7 +444,7 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         double streamSignalFrom = Math.sin(from.lat() * 85.0 + from.lon() * 40.0);
         double streamSignalTo = Math.sin(to.lat() * 85.0 + to.lon() * 40.0);
         if (streamSignalFrom * streamSignalTo <= 0.0 && Math.abs(streamSignalFrom - streamSignalTo) > 0.05) {
-            edgePenalty += 0.22;
+            edgePenalty += 0.22 * envMult;
             if (edgeClass == null) {
                 edgeClass = "WATERSHED_STREAM_CROSSING";
             }
@@ -409,6 +537,10 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         double settlementProximityKm = 0.0;
         double drainageWetlandExposureKm = 0.0;
         double blackCottonOrSoftSoilKm = 0.0;
+        double forestKm = 0.0;
+        double builtUpKm = 0.0;
+        double agricultureKm = 0.0;
+        double barrenKm = 0.0;
         Set<String> physiographicZones = new LinkedHashSet<>();
 
         int riverCrossings = 0;
@@ -430,17 +562,37 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
                     floodExposureKm += stepKm * 0.45;
                     drainageWetlandExposureKm += stepKm * 0.55;
                 }
-                if (zone.contains("MONTANE") || zone.contains("GHATS") || zone.contains("SCARP") || zone.contains("ARAVALLI")) {
+                boolean isHill = zone.contains("MONTANE") || zone.contains("GHATS") || zone.contains("SCARP") || zone.contains("ARAVALLI");
+                boolean isAlluvial = zone.contains("ALLUVIAL") || zone.contains("DELTA") || zone.contains("COASTAL");
+                if (isHill) {
                     steepTerrainKm += stepKm * 0.38;
                 }
                 if (zone.contains("DECCAN") || zone.contains("ALLUVIAL")) {
                     blackCottonOrSoftSoilKm += stepKm * 0.42;
                 }
+                boolean nearUrban = false;
                 for (UrbanSettlementCenter city : URBAN_CENTERS) {
-                    if (Math.hypot(p.lat() - city.lat(), p.lon() - city.lon()) <= city.periUrbanRadiusDeg()) {
+                    double d = Math.hypot(p.lat() - city.lat(), p.lon() - city.lon());
+                    if (d <= city.periUrbanRadiusDeg()) {
                         settlementProximityKm += stepKm;
+                        if (d <= city.coreRadiusDeg()) {
+                            nearUrban = true;
+                        }
                         break;
                     }
+                }
+                boolean nearSanctuaryEsz = IndianWildlifeSanctuaryRegistry.getDefaultInstance()
+                        .isInsideAnyEszBuffer(p.lat(), p.lon());
+                boolean isWoodedPlateau = zone.contains("DECCAN") || zone.contains("PLATEAU")
+                        || zone.contains("SATPURA") || zone.contains("VINDHYA") || zone.contains("EASTERN_GHATS");
+                if (nearUrban) {
+                    builtUpKm += stepKm;
+                } else if (nearSanctuaryEsz || (isHill && wave > 0.45) || (isWoodedPlateau && wave > 0.72)) {
+                    forestKm += stepKm;
+                } else if (isAlluvial || wave <= 0.65) {
+                    agricultureKm += stepKm;
+                } else {
+                    barrenKm += stepKm;
                 }
                 if (i % 6 == 0) {
                     seasonalStreamCrossings++;
@@ -458,9 +610,16 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         int totalWaterCrossings = riverCrossings + seasonalStreamCrossings + canalCrossings;
         int watershedCount = Math.max(2, (int) Math.round(totalKm / 12.0));
 
+        Map<String, Double> lulcExposure = new LinkedHashMap<>();
+        if (forestKm > 0.0) lulcExposure.put("FOREST", round(forestKm));
+        if (agricultureKm > 0.0) lulcExposure.put("AGRICULTURE", round(agricultureKm));
+        if (barrenKm > 0.0) lulcExposure.put("BARREN_WASTELAND", round(barrenKm));
+        if (builtUpKm > 0.0) lulcExposure.put("BUILT_UP", round(builtUpKm));
+
         Map<String, Object> diagnostics = new LinkedHashMap<>();
         diagnostics.put("routeLengthKm", round(totalKm));
         diagnostics.put("physiographicZonesTraversed", new ArrayList<>(physiographicZones));
+        diagnostics.put("lulcExposureKm", lulcExposure);
         diagnostics.put("floodExposureKm", round(floodExposureKm));
         diagnostics.put("steepSlopeExposureKm", round(steepTerrainKm));
         diagnostics.put("settlementProximityKm", round(settlementProximityKm));
@@ -493,6 +652,76 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         }
 
         return diagnostics;
+    }
+
+    /**
+     * Returns {@code true} if {@code point} falls inside any statutory sacred heritage precinct
+     * or protected wildlife sanctuary core (hard legal exclusions that always take precedence
+     * over urban-core exclusion reporting).
+     */
+    public static boolean isStatutoryHardBlock(GeoPoint point) {
+        if (point == null) {
+            return false;
+        }
+        double lat = point.lat();
+        double lon = point.lon();
+        for (SacredHeritageExclusionZone sz : SACRED_HERITAGE_ZONES) {
+            if (Math.hypot(lat - sz.centerLat(), lon - sz.centerLon()) <= sz.exclusionRadiusDeg()) {
+                return true;
+            }
+        }
+        if (IndianWildlifeSanctuaryRegistry.getDefaultInstance().findIntersectingSanctuary(lat, lon) != null) {
+            return true;
+        }
+        for (ProtectedSanctuaryCore pa : PROTECTED_SANCTUARIES) {
+            if (Math.hypot(lat - pa.centerLat(), lon - pa.centerLon()) <= pa.coreRadiusDeg()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the {@link UrbanSettlementCenter} whose urban core encompasses {@code point},
+     * or {@code null} if the point lies outside all metropolitan/city cores.
+     * Used in {@link FacilityMode#EXPRESSWAY} mode per IRC:SP:99-2013 &amp; NHAI greenfield
+     * directives so expressways never start or terminate inside city cores.
+     */
+    public static UrbanSettlementCenter findContainingUrbanCore(GeoPoint point) {
+        if (point == null) {
+            return null;
+        }
+        double lat = point.lat();
+        double lon = point.lon();
+        for (UrbanSettlementCenter city : URBAN_CENTERS) {
+            if (Math.hypot(lat - city.lat(), lon - city.lon()) <= city.coreRadiusDeg()) {
+                return city;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Classifies a Pan-India coordinate into standard settlement exposure tiers
+     * ({@code URBAN_CORE}, {@code INNER_BUFFER}, {@code OUTER_BUFFER}, or {@code NONE}).
+     */
+    public static String classifyUrbanProximity(GeoPoint point) {
+        if (point == null) {
+            return "NONE";
+        }
+        double lat = point.lat();
+        double lon = point.lon();
+        for (UrbanSettlementCenter city : URBAN_CENTERS) {
+            double d = Math.hypot(lat - city.lat(), lon - city.lon());
+            if (d <= city.coreRadiusDeg()) {
+                return "URBAN_CORE";
+            } else if (d <= city.periUrbanRadiusDeg() * 0.6) {
+                return "INNER_BUFFER";
+            } else if (d <= city.periUrbanRadiusDeg()) {
+                return "OUTER_BUFFER";
+            }
+        }
+        return "NONE";
     }
 
     public static double pointToSegmentDistanceDeg(

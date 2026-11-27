@@ -267,21 +267,41 @@ out geom;"""
 
 def fetch_osm_transport(min_lat, min_lon, max_lat, max_lon, region_id):
     try:
+        cache_file = Path("data/cache/osm-transport") / f"ingest_{region_id}_transport.json"
+        if cache_file.exists():
+            try:
+                cached = json.loads(cache_file.read_text(encoding="utf-8"))
+                return cached.get("highways", []), cached.get("railways", [])
+            except Exception:
+                pass
+
         import urllib.request
         import urllib.parse
         bbox = f"{min_lat},{min_lon},{max_lat},{max_lon}"
-        query = f"""[out:json][timeout:4];
+        query = f"""[out:json][timeout:10];
 (
-  way["highway"~"motorway|trunk|primary|secondary"]({bbox});
+  way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"]({bbox});
   way["railway"="rail"]({bbox});
 );
 out geom;"""
-        url = "https://overpass-api.de/api/interpreter"
-        data = urllib.parse.urlencode({"data": query}).encode("utf-8")
-        req = urllib.request.Request(url, data=data, headers={"User-Agent": "MARG-Ingestion/1.0", "Accept": "application/json"})
-        with urllib.request.urlopen(req, timeout=4) as resp:
-            res = json.loads(resp.read().decode("utf-8"))
-        elements = res.get("elements", [])
+        mirrors = [
+            "https://overpass-api.de/api/interpreter",
+            "https://lz4.overpass-api.de/api/interpreter",
+            "https://overpass.kumi.systems/api/interpreter"
+        ]
+        elements = []
+        for url in mirrors:
+            try:
+                data = urllib.parse.urlencode({"data": query}).encode("utf-8")
+                req = urllib.request.Request(url, data=data, headers={"User-Agent": "MARG-Ingestion/3.0", "Accept": "application/json"})
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    res = json.loads(resp.read().decode("utf-8"))
+                    elements = res.get("elements", [])
+                    if elements:
+                        break
+            except Exception:
+                continue
+
         if not elements:
             return None, None
 
@@ -311,22 +331,34 @@ out geom;"""
                 })
             else:
                 h_type = tags.get("highway", "primary")
-                if h_type == "motorway":
-                    cat = "EXPRESSWAY"
-                    tier = "ACCESS_CONTROLLED_EXPRESSWAY"
-                elif h_type == "trunk":
+                ref_val = tags.get("ref", "")
+                name_upper = (name or "").upper()
+                ref_upper = ref_val.upper()
+
+                if "NH" in ref_upper or "NATIONAL HIGHWAY" in name_upper:
                     cat = "NATIONAL_HIGHWAY"
                     tier = "PRIMARY_ARTERIAL"
-                elif h_type == "primary":
+                elif "SH" in ref_upper or "STATE HIGHWAY" in name_upper:
                     cat = "STATE_HIGHWAY"
                     tier = "SECONDARY_ARTERIAL"
-                else:
+                elif "MDR" in ref_upper or "ODR" in ref_upper or "DISTRICT ROAD" in name_upper:
                     cat = "MAJOR_DISTRICT_ROAD"
                     tier = "MAJOR_DISTRICT_CONNECTOR"
+                elif h_type in ("motorway", "trunk", "primary", "motorway_link", "trunk_link", "primary_link"):
+                    cat = "NATIONAL_HIGHWAY"
+                    tier = "PRIMARY_ARTERIAL"
+                elif h_type in ("secondary", "secondary_link"):
+                    cat = "STATE_HIGHWAY"
+                    tier = "SECONDARY_ARTERIAL"
+                elif h_type in ("tertiary", "tertiary_link"):
+                    cat = "MAJOR_DISTRICT_ROAD"
+                    tier = "MAJOR_DISTRICT_CONNECTOR"
+                else:
+                    cat = "LOCAL_ROAD"
+                    tier = "LOCAL_ACCESS"
 
-                ref_val = tags.get("ref")
                 if not ref_val:
-                    ref_val = "NH" if cat == "NATIONAL_HIGHWAY" else ("SH" if cat == "STATE_HIGHWAY" else "MDR")
+                    ref_val = "NH" if cat == "NATIONAL_HIGHWAY" else ("SH" if cat == "STATE_HIGHWAY" else ("MDR" if cat == "MAJOR_DISTRICT_ROAD" else f"OSM-{el['id']}"))
 
                 highways.append({
                     "type": "Feature",
@@ -339,6 +371,9 @@ out geom;"""
                     },
                     "geometry": {"type": "LineString", "coordinates": simplified}
                 })
+
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        cache_file.write_text(json.dumps({"highways": highways, "railways": railways}), encoding="utf-8")
         return highways, railways
     except Exception as ex:
         print(f"[WARN] Live OSM transport fetch failed ({ex}); falling back to parameterized alignments.")
@@ -595,8 +630,19 @@ def ingest_corridor(
         if osm_hwys:
             print(f"[{region_id}] Ingested {len(osm_hwys)} physical road features from OpenStreetMap.")
             for h in osm_hwys:
-                burn_polyline(transport_raster, min_x, max_y, res, h["geometry"]["coordinates"], zone, 180.0, 1)
-                burn_polyline(transport_raster, min_x, max_y, res, h["geometry"]["coordinates"], zone, 75.0, 4)
+                cat = h["properties"].get("category", "LOCAL_ROAD")
+                coords = h["geometry"]["coordinates"]
+                if cat == "NATIONAL_HIGHWAY":
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 180.0, 1)
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 75.0, 4)
+                elif cat == "STATE_HIGHWAY":
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 120.0, 1)
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 50.0, 3)
+                elif cat == "MAJOR_DISTRICT_ROAD":
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 80.0, 1)
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 35.0, 2)
+                else:
+                    burn_polyline(transport_raster, min_x, max_y, res, coords, zone, 20.0, 2)
                 transport_features.append(h)
         if osm_rlys:
             print(f"[{region_id}] Ingested {len(osm_rlys)} physical railway features from OpenStreetMap.")
@@ -1011,6 +1057,32 @@ def ingest_corridor(
         json.dumps({"type": "FeatureCollection", "features": demo_features}, indent=2), encoding="utf-8"
     )
 
+    # 7b. Enhance newly ingested corridor with real OpenStreetMap hospitals, settlements & building footprints
+    try:
+        import fuse_osm_buildings_and_settlements as osm_fuse
+        mid_lat = 0.5 * (start_lat + end_lat)
+        mid_lon = 0.5 * (start_lon + end_lon)
+        dynamic_cfg = {
+            "zone": zone,
+            "epsg": epsg,
+            "bbox": (min_lat, min_lon, max_lat, max_lon),
+            "default_district": display_name,
+            "settlements_out": out_dir / f"{region_id}_settlement_boundaries.geojson",
+            "buildings_out": out_dir / f"{region_id}_building_footprints.geojson",
+            "building_raster_out": out_dir / f"{region_id}_building_density_utm{zone}.tif",
+            "settlement_raster_out": out_dir / f"{region_id}_settlement_exposure_utm{zone}.tif",
+            "transport_geojson": out_dir / f"{region_id}_transport_network.geojson",
+            "spine": [(start_lat, start_lon), (mid_lat, mid_lon), (end_lat, end_lon)],
+            "building_tiles": [
+                (max(min_lat, start_lat - 0.08), max(min_lon, start_lon - 0.08), min(max_lat, start_lat + 0.08), min(max_lon, start_lon + 0.08)),
+                (max(min_lat, mid_lat - 0.10), max(min_lon, mid_lon - 0.10), min(max_lat, mid_lat + 0.10), min(max_lon, mid_lon + 0.10)),
+                (max(min_lat, end_lat - 0.08), max(min_lon, end_lon - 0.08), min(max_lat, end_lat + 0.08), min(max_lon, end_lon + 0.08)),
+            ],
+        }
+        osm_fuse.process_corridor(region_id, dynamic_cfg, refresh=False)
+    except Exception as osm_err:
+        print(f"[MARG-INGEST] Real OSM building fusion skipped (offline/fallback): {osm_err}", flush=True)
+
     # 8. Drainage, Wetlands & Watersheds
     drainage_raster = np.zeros((height, width), dtype=np.uint8)
     wetland_features = []
@@ -1157,14 +1229,29 @@ def ingest_corridor(
         json.dumps({"type": "FeatureCollection", "features": watershed_features}, indent=2), encoding="utf-8"
     )
 
-    # 9. LULC Pre-Cached Samples
+    # 9. LULC Pre-Cached Samples (0.01 deg grid matching RegionalLulcProvider + real OSM forest/water + local GeoTIFF fusion)
     lulc_samples = []
-    step_deg = 0.02
+    step_deg = 0.01
+    osm_forest_polys = []
+    osm_water_polys = []
+    slope_sampler = None
+    wildlife_sampler = None
+    try:
+        import bake_offline_lulc as lulc_baker
+        osm_payload = lulc_baker.fetch_osm_forest_water(region_id, (min_lat, min_lon, max_lat, max_lon), force=False)
+        osm_forest_polys = [p for p in (osm_payload or {}).get("polygons", []) if p.get("cls") == "FOREST"]
+        osm_water_polys = [p for p in (osm_payload or {}).get("polygons", []) if p.get("cls") == "WETLAND_WATER"]
+        slope_sampler = lulc_baker.LocalGeoTiffSampler(out_dir / f"{region_id}_slope_utm{zone}.tif", zone)
+        wildlife_sampler = lulc_baker.LocalGeoTiffSampler(out_dir / f"{region_id}_wildlife_esz_corridors_utm{zone}.tif", zone)
+    except Exception:
+        lulc_baker = None
+
     lat = min_lat
     while lat <= max_lat + 1e-9:
         lon = min_lon
         while lon <= max_lon + 1e-9:
             l_class = "AGRICULTURE"
+            src_tag = f"ON_DEMAND_INGESTION_{region_id.upper()}"
             for st in settlements_data:
                 if math.hypot(lat - st["lat"], lon - st["lon"]) < 0.022:
                     l_class = "BUILT_UP"
@@ -1172,12 +1259,26 @@ def ingest_corridor(
             if l_class == "AGRICULTURE":
                 if math.hypot(lat - pa_lat, lon - pa_lon) < 0.055:
                     l_class = "FOREST"
+                elif lulc_baker is not None:
+                    osm_cls, osm_name = lulc_baker.classify_from_osm(lat, lon, osm_forest_polys, osm_water_polys)
+                    if osm_cls == "FOREST":
+                        l_class = "FOREST"
+                        src_tag = f"OSM_OFFLINE_FOREST:{(osm_name or '')[:40]}"
+                    elif osm_cls == "WETLAND_WATER":
+                        l_class = "WETLAND_WATER"
+                        src_tag = f"OSM_OFFLINE_WATER:{(osm_name or '')[:40]}"
+                    else:
+                        w_val = wildlife_sampler.sample(lat, lon) if wildlife_sampler else None
+                        s_val = slope_sampler.sample(lat, lon) if slope_sampler else None
+                        if (w_val is not None and w_val >= 2.0) or (s_val is not None and s_val >= 13.0):
+                            l_class = "FOREST"
+                            src_tag = f"OFFLINE_RASTER_FOREST_{region_id.upper()}"
             lulc_samples.append(
                 {
                     "lat": round(lat, 4),
                     "lon": round(lon, 4),
                     "type": l_class,
-                    "rawFeatureInfo": f"ON_DEMAND_INGESTION_{region_id.upper()}",
+                    "rawFeatureInfo": src_tag,
                     "remoteSuccess": True,
                     "error": None,
                 }

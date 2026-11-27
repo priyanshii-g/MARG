@@ -11,4 +11,9 @@ public interface CostSurface {
     default CostAssessment assessEdge(GeoPoint from, GeoPoint to) {
         return CostAssessment.FREE;
     }
+
+    /** Whether this cost surface assesses edge transitions between adjacent grid nodes. */
+    default boolean hasEdgeCost() {
+        return false;
+    }
 }

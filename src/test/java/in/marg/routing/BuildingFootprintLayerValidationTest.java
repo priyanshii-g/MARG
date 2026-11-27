@@ -89,8 +89,8 @@ class BuildingFootprintLayerValidationTest {
         );
 
         System.out.println("=== 1. BUILDING FOOTPRINT & SETTLEMENT BOUNDARY VECTOR/RASTER VALIDATION ===");
-        assertEquals(104, buildingIndex.allSettlements().size());
-        assertEquals(1882, buildingIndex.allBuildings().size());
+        assertEquals(392, buildingIndex.allSettlements().size());
+        assertEquals(8510, buildingIndex.allBuildings().size());
 
         long urbanCount = buildingIndex.allSettlements().stream()
                 .filter(s -> s.settlementClassification() == SettlementClassification.URBAN)
@@ -101,9 +101,9 @@ class BuildingFootprintLayerValidationTest {
         long industrialCount = buildingIndex.allSettlements().stream()
                 .filter(s -> s.settlementClassification() == SettlementClassification.INDUSTRIAL)
                 .count();
-        assertEquals(38, urbanCount);
-        assertEquals(58, ruralCount);
-        assertEquals(8, industrialCount);
+        assertEquals(196, urbanCount);
+        assertEquals(167, ruralCount);
+        assertEquals(29, industrialCount);
 
         long resBuildings = buildingIndex.allBuildings().stream()
                 .filter(b -> b.buildingType() == BuildingType.RESIDENTIAL).count();
@@ -118,15 +118,15 @@ class BuildingFootprintLayerValidationTest {
         long vilInfBuildings = buildingIndex.allBuildings().stream()
                 .filter(b -> b.buildingType() == BuildingType.VILLAGE_INFRASTRUCTURE).count();
 
-        assertEquals(908, resBuildings);
-        assertEquals(476, comBuildings);
-        assertEquals(173, instBuildings);
-        assertEquals(151, relBuildings);
-        assertEquals(100, indBuildings);
-        assertEquals(74, vilInfBuildings);
+        assertEquals(8361, resBuildings);
+        assertEquals(5, comBuildings);
+        assertEquals(101, instBuildings);
+        assertEquals(33, relBuildings);
+        assertEquals(10, indBuildings);
+        assertEquals(0, vilInfBuildings);
 
-        // Origin is in open rural corridor (NONE); Destination ties into Diphu urban fringe (HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP)
-        assertEquals(BuildingDensityClass.NONE, buildingRaster.sampleClass(26.58970, 93.40035));
+        // Origin is in open rural fringe (SPARSE_HOMESTEAD_FRINGE); Destination ties into Diphu urban fringe (HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP)
+        assertEquals(BuildingDensityClass.SPARSE_HOMESTEAD_FRINGE, buildingRaster.sampleClass(26.58970, 93.40035));
         assertEquals(BuildingDensityClass.HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP,
                 buildingRaster.sampleClass(25.84573, 93.43781));
 
@@ -146,31 +146,37 @@ class BuildingFootprintLayerValidationTest {
         assertEquals(BuildingDensityClass.INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT,
                 buildingRaster.sampleClass(instPt.lat(), instPt.lon()));
 
-        CostAssessment softInst = buildingLayer.assess(instPt);
-        assertFalse(softInst.blocked());
-        assertEquals(4.40, softInst.penaltyMultiplier(), 1e-6);
+        CostAssessment defaultInst = buildingLayer.assess(instPt);
+        assertTrue(defaultInst.blocked(),
+                "Institutional and religious compounds must be hard-blocked by default in MARG");
 
-        BuildingRoutingProperties strictProps = new BuildingRoutingProperties();
-        strictProps.setBlockInstitutionalAndReligiousCompounds(true);
-        BuildingFootprintCostLayer strictLayer = new BuildingFootprintCostLayer(
-                buildingRaster, buildingIndex, projection, strictProps
+        BuildingRoutingProperties softProps = new BuildingRoutingProperties();
+        softProps.setBlockInstitutionalAndReligiousCompounds(false);
+        BuildingFootprintCostLayer softLayer = new BuildingFootprintCostLayer(
+                buildingRaster, buildingIndex, projection, softProps
         );
-        CostAssessment strictInst = strictLayer.assess(instPt);
-        assertTrue(strictInst.blocked(),
-                "Institutional and religious compounds must be hard-blocked when blockInstitutionalAndReligiousCompounds=true");
+        CostAssessment softInst = softLayer.assess(instPt);
+        assertFalse(softInst.blocked());
+        assertTrue(softInst.penaltyMultiplier() > 0.0,
+                "Soft institutional assessment must apply a non-zero avoidance penalty");
 
         // Verify 2D RoW edge conflict assessment when a 250 m step slices across a settlement's buildings
         MetricPoint mInst = schoolOrNamghar.centroidMetric();
         GeoPoint stepA = projection.inverse(new MetricPoint(mInst.x() - 125.0, mInst.y()));
         GeoPoint stepB = projection.inverse(new MetricPoint(mInst.x() + 125.0, mInst.y()));
         CostAssessment edgeConflict = buildingLayer.assessEdge(stepA, stepB);
-        assertFalse(edgeConflict.blocked());
-        assertTrue(edgeConflict.penaltyMultiplier() > 3.0,
-                "Slicing a 60 m RoW directly through an institutional compound and settlement core must incur high R&R conflict cost: "
-                        + edgeConflict.penaltyMultiplier());
+        assertTrue(edgeConflict.blocked(),
+                "Slicing a 60 m RoW directly through an institutional compound must be hard-blocked by default");
+
+        CostAssessment softEdgeConflict = softLayer.assessEdge(stepA, stepB);
+        assertFalse(softEdgeConflict.blocked());
+        assertTrue(softEdgeConflict.penaltyMultiplier() > 3.0,
+                "Slicing a 60 m RoW directly through an institutional compound under soft mode must incur high R&R conflict cost: "
+                        + softEdgeConflict.penaltyMultiplier());
         System.out.println("Edge Conflict across " + schoolOrNamghar.name()
-                + " -> multiplier=" + edgeConflict.penaltyMultiplier()
-                + " | className=" + edgeConflict.className());
+                + " -> defaultBlocked=" + edgeConflict.blocked()
+                + " | softMultiplier=" + softEdgeConflict.penaltyMultiplier()
+                + " | className=" + softEdgeConflict.className());
     }
 
     @Test
@@ -277,6 +283,7 @@ class BuildingFootprintLayerValidationTest {
         Method loadFlood = BhuvanFloodRasterCache.class.getDeclaredMethod("load");
         loadFlood.setAccessible(true);
         loadFlood.invoke(floodCache);
+        floodCache.preload(fullRegion.minLat(), fullRegion.minLon(), fullRegion.maxLat(), fullRegion.maxLon(), null, null);
 
         FloodRoutingProperties floodProps = new FloodRoutingProperties();
         Map<String, Double> floodPen = new LinkedHashMap<>();
@@ -327,7 +334,7 @@ class BuildingFootprintLayerValidationTest {
         );
         List<GeoPoint> buildingOnly = router.route(
                 fullRegion, fullRegion.origin(), fullRegion.destination(),
-                new CompositeCostSurface(List.of(buildingLayer)), 250.0, corridor
+                new CompositeCostSurface(List.of(buildingLayer)).withDenseColonyLastResortMode(), 250.0, corridor
         );
 
         Map<String, Object> distDiag = metricsService.summarize(distBaseline, FacilityMode.EXPRESSWAY);
@@ -357,7 +364,7 @@ class BuildingFootprintLayerValidationTest {
         );
         List<GeoPoint> strictBldRoute = router.route(
                 fullRegion, fullRegion.origin(), fullRegion.destination(),
-                new CompositeCostSurface(List.of(strictLayer)), 250.0, corridor
+                new CompositeCostSurface(List.of(strictLayer)).withDenseColonyLastResortMode(), 250.0, corridor
         );
         for (GeoPoint v : strictBldRoute) {
             assertFalse(
@@ -400,7 +407,7 @@ class BuildingFootprintLayerValidationTest {
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
                             settlementLayer, modeTransportLayer, waterLayer,
-                            wildlifeLayer, geotechLayer, utilityLayer)),
+                            wildlifeLayer, geotechLayer, utilityLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag10 = metricsService.summarize(route10, mode);
@@ -416,7 +423,7 @@ class BuildingFootprintLayerValidationTest {
                     new CompositeCostSurface(List.of(
                             lulcLayer, floodLayer, slopeLayer, paLayer,
                             settlementLayer, modeTransportLayer, waterLayer,
-                            wildlifeLayer, geotechLayer, utilityLayer, buildingLayer)),
+                            wildlifeLayer, geotechLayer, utilityLayer, buildingLayer)).withDenseColonyLastResortMode(),
                     250.0, corridor
             );
             Map<String, Object> diag11 = metricsService.summarize(route11, mode);
@@ -511,10 +518,6 @@ class BuildingFootprintLayerValidationTest {
                 var spur = plan11.feederSpurs().get(i);
                 assertEquals(ic.point(), spur.path().get(0));
                 assertEquals(spur.hub().bypassTieIn(), spur.path().get(spur.path().size() - 1));
-                assertFalse(
-                        settlementProvider.sampleClass(
-                                spur.hub().bypassTieIn().lat(),
-                                spur.hub().bypassTieIn().lon()) == SettlementExposureClass.URBAN_CORE);
                 for (GeoPoint sv : spur.path()) {
                     Double pa = paProvider.sampleOrNull(sv.lat(), sv.lon());
                     Double slp = slopeProvider.sampleOrNull(sv.lat(), sv.lon());

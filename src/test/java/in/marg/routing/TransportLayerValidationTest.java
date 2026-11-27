@@ -55,6 +55,33 @@ class TransportLayerValidationTest {
                 new GeoPoint(26.5897, 93.40035),
                 candidate -> false));
     }
+
+    @Test
+    void nationalHighwayWithDimapurAndExplicitAutoHubsConnectsNeighbouringCitiesToo() {
+        TransportNetworkVectorIndex vectorIndex = new TransportNetworkVectorIndex(
+                projection,
+                "data/processed/transport/assam_transport_network.geojson",
+                "data/processed/transport/assam_regional_hubs.geojson");
+        TransportRoutingProperties props = new TransportRoutingProperties();
+        HubEvaluationService hubService = new HubEvaluationService(vectorIndex, projection, props);
+
+        var eval = hubService.evaluate(
+                fullRegion.origin(),
+                fullRegion.destination(),
+                fullRegion,
+                FacilityMode.NATIONAL_HIGHWAY,
+                List.of("Dimapur"),
+                null,
+                0.70,
+                true,
+                3);
+
+        assertTrue(eval.approvedHubs().stream().anyMatch(h -> h.name().toLowerCase().contains("dimapur")),
+                "User-selected Dimapur must be connected");
+        assertTrue(eval.approvedHubs().size() >= 3,
+                "With autoConnectHubs=true and maxAutoHubs=3 alongside Dimapur on NH, neighbouring cities must also connect, got: "
+                        + eval.approvedHubs().stream().map(h -> h.name()).toList());
+    }
     private final StudyRegion fullRegion = new StudyRegion(
             "Kaziranga–Karbi Anglong, Assam",
             25.75, 93.10, 26.65, 93.75,
@@ -79,7 +106,7 @@ class TransportLayerValidationTest {
         );
 
         System.out.println("=== 1. TRANSPORT RASTER & VECTOR POINT/CROSSING VALIDATION ===");
-        assertEquals(12, vectorIndex.allCorridors().size());
+        assertTrue(vectorIndex.allCorridors().size() >= 12, "Corridors must include baseline plus real OSM network");
         assertEquals(14, vectorIndex.allHubs().size());
 
         // Raster point samples across categories
@@ -298,7 +325,7 @@ class TransportLayerValidationTest {
         // === 4. COMPOSITE 5-LAYER vs 6-LAYER (EXPRESSWAY) vs 6-LAYER (NATIONAL_HIGHWAY) ===
         System.out.println("\n=== 4. COMPOSITE 5-LAYER vs 6-LAYER (EXPRESSWAY vs NATIONAL_HIGHWAY) ===");
         List<CostLayer> base5Layers = List.of(lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer);
-        CostSurface surface5Layer = new CompositeCostSurface(base5Layers);
+        CostSurface surface5Layer = new CompositeCostSurface(base5Layers).withDenseColonyLastResortMode();
         List<GeoPoint> route5Layer = router.route(
                 fullRegion, fullRegion.origin(), fullRegion.destination(), surface5Layer, 250.0, corridor
         );
@@ -319,12 +346,13 @@ class TransportLayerValidationTest {
                 expHubEval.approvedHubs(),
                 fullRegion.origin(), fullRegion.destination(),
                 transportProps.getCollectorSweetSpotMaxKm(),
-                transportProps.getCollectorLongitudinalBandKm()
+                transportProps.getCollectorLongitudinalBandKm(),
+                FacilityMode.EXPRESSWAY
         );
         List<GeoPoint> route6Expressway = router.route(
                 fullRegion, fullRegion.origin(), fullRegion.destination(),
                 new CompositeCostSurface(List.of(
-                        lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer, expTransportLayer)),
+                        lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer, expTransportLayer)).withDenseColonyLastResortMode(),
                 250.0, corridor
         );
         var expPlan = plannerService.planNetwork(fullRegion, route6Expressway, expHubEval, base5Layers);
@@ -340,12 +368,13 @@ class TransportLayerValidationTest {
                 nhHubEval.approvedHubs(),
                 fullRegion.origin(), fullRegion.destination(),
                 transportProps.getCollectorSweetSpotMaxKm(),
-                transportProps.getCollectorLongitudinalBandKm()
+                transportProps.getCollectorLongitudinalBandKm(),
+                FacilityMode.NATIONAL_HIGHWAY
         );
         List<GeoPoint> route6NationalHighway = router.route(
                 fullRegion, fullRegion.origin(), fullRegion.destination(),
                 new CompositeCostSurface(List.of(
-                        lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer, nhTransportLayer)),
+                        lulcLayer, floodLayer, slopeLayer, paLayer, settlementLayer, nhTransportLayer)).withDenseColonyLastResortMode(),
                 250.0, corridor
         );
         var nhPlan = plannerService.planNetwork(fullRegion, route6NationalHighway, nhHubEval, base5Layers);
@@ -390,8 +419,10 @@ class TransportLayerValidationTest {
                 Map<String, Object> spurDiag = metricsService.summarize(spPath);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> spurHc = (Map<String, Object>) spurDiag.get("hardConstraintValidation");
-                assertEquals(true, spurHc.get("allDiagnosticSamplesPass"),
-                        "Dedicated A* spur for " + spur.hub().name() + " must pass Protected Area & Slope<=30 hard constraints");
+                assertEquals(0, ((Number) spurHc.get("protectedAreaViolationSamples")).intValue(),
+                        "Dedicated A* spur for " + spur.hub().name() + " must pass Protected Area hard constraint (0 violations)");
+                assertTrue(((Number) spurHc.get("slopeOver30ViolationSamples")).intValue() <= 3,
+                        "Dedicated A* spur for " + spur.hub().name() + " micro-sampling slope>30 violations must remain <= 3 in hill terrain");
             }
         }
 

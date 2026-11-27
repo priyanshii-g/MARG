@@ -14,6 +14,9 @@ import java.util.Map;
  */
 public class BuildingCostPolicy {
 
+    public static final double DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS = 75.0;
+    public static final double DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY = 1000.0;
+
     private final Map<BuildingDensityClass, Double> nodePenalties;
     private final Map<BuildingType, Double> structureDemolitionCostKmEq;
     private final Map<SettlementClassification, Double> settlementSeverancePenalty;
@@ -23,6 +26,8 @@ public class BuildingCostPolicy {
     private final boolean blockInstitutionalAndReligiousCompounds;
     private final boolean blockHighDensityBuiltUp;
     private final boolean blockNoData;
+    private final double institutionalSafetyBufferMeters;
+    private final double denseColonyLastResortPenalty;
 
     public BuildingCostPolicy(
             Map<BuildingDensityClass, Double> nodePenalties,
@@ -34,6 +39,32 @@ public class BuildingCostPolicy {
             boolean blockInstitutionalAndReligiousCompounds,
             boolean blockHighDensityBuiltUp,
             boolean blockNoData) {
+        this(
+                nodePenalties,
+                structureDemolitionCostKmEq,
+                settlementSeverancePenalty,
+                rowEvaluationHalfWidthMeters,
+                structureProximityBufferMeters,
+                proximitySurchargeFactor,
+                blockInstitutionalAndReligiousCompounds,
+                blockHighDensityBuiltUp,
+                blockNoData,
+                DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS,
+                DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
+    }
+
+    public BuildingCostPolicy(
+            Map<BuildingDensityClass, Double> nodePenalties,
+            Map<BuildingType, Double> structureDemolitionCostKmEq,
+            Map<SettlementClassification, Double> settlementSeverancePenalty,
+            double rowEvaluationHalfWidthMeters,
+            double structureProximityBufferMeters,
+            double proximitySurchargeFactor,
+            boolean blockInstitutionalAndReligiousCompounds,
+            boolean blockHighDensityBuiltUp,
+            boolean blockNoData,
+            double institutionalSafetyBufferMeters,
+            double denseColonyLastResortPenalty) {
         this.nodePenalties = new EnumMap<>(BuildingDensityClass.class);
         this.nodePenalties.putAll(nodePenalties);
         this.structureDemolitionCostKmEq = new EnumMap<>(BuildingType.class);
@@ -46,16 +77,18 @@ public class BuildingCostPolicy {
         this.blockInstitutionalAndReligiousCompounds = blockInstitutionalAndReligiousCompounds;
         this.blockHighDensityBuiltUp = blockHighDensityBuiltUp;
         this.blockNoData = blockNoData;
+        this.institutionalSafetyBufferMeters = Math.max(50.0, institutionalSafetyBufferMeters);
+        this.denseColonyLastResortPenalty = Math.max(100.0, denseColonyLastResortPenalty);
     }
 
     public static BuildingCostPolicy defaultPolicy() {
         Map<BuildingDensityClass, Double> nodeDefaults = new EnumMap<>(BuildingDensityClass.class);
         nodeDefaults.put(BuildingDensityClass.NONE, 0.0);
-        nodeDefaults.put(BuildingDensityClass.SPARSE_HOMESTEAD_FRINGE, 0.25);
-        nodeDefaults.put(BuildingDensityClass.LOW_DENSITY_RURAL_RIBBON, 0.70);
-        nodeDefaults.put(BuildingDensityClass.MEDIUM_DENSITY_VILLAGE_CLUSTER, 1.55);
-        nodeDefaults.put(BuildingDensityClass.HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP, 2.85);
-        nodeDefaults.put(BuildingDensityClass.INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT, 4.40);
+        nodeDefaults.put(BuildingDensityClass.SPARSE_HOMESTEAD_FRINGE, 5.0);
+        nodeDefaults.put(BuildingDensityClass.LOW_DENSITY_RURAL_RIBBON, 18.0);
+        nodeDefaults.put(BuildingDensityClass.MEDIUM_DENSITY_VILLAGE_CLUSTER, 65.0);
+        nodeDefaults.put(BuildingDensityClass.HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP, DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
+        nodeDefaults.put(BuildingDensityClass.INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT, 2500.0);
         nodeDefaults.put(BuildingDensityClass.NODATA, 0.0);
 
         Map<BuildingType, Double> structureDefaults = new EnumMap<>(BuildingType.class);
@@ -65,9 +98,9 @@ public class BuildingCostPolicy {
 
         Map<SettlementClassification, Double> severanceDefaults =
                 new EnumMap<>(SettlementClassification.class);
-        for (SettlementClassification sc : SettlementClassification.values()) {
-            severanceDefaults.put(sc, sc.defaultSeverancePenaltyFactor());
-        }
+        severanceDefaults.put(SettlementClassification.RURAL, 25.0);
+        severanceDefaults.put(SettlementClassification.URBAN, DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
+        severanceDefaults.put(SettlementClassification.INDUSTRIAL, 150.0);
 
         return new BuildingCostPolicy(
                 nodeDefaults,
@@ -76,9 +109,26 @@ public class BuildingCostPolicy {
                 30.0,
                 60.0,
                 0.35,
+                true,
+                true,
                 false,
+                DEFAULT_INSTITUTIONAL_SAFETY_BUFFER_METERS,
+                DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
+    }
+
+    public BuildingCostPolicy withDenseColonyLastResortMode() {
+        return new BuildingCostPolicy(
+                nodePenalties,
+                structureDemolitionCostKmEq,
+                settlementSeverancePenalty,
+                rowEvaluationHalfWidthMeters,
+                structureProximityBufferMeters,
+                proximitySurchargeFactor,
+                true,
                 false,
-                false);
+                blockNoData,
+                institutionalSafetyBufferMeters,
+                denseColonyLastResortPenalty);
     }
 
     public double nodePenalty(BuildingDensityClass densityClass) {
@@ -134,6 +184,14 @@ public class BuildingCostPolicy {
 
     public boolean blockNoData() {
         return blockNoData;
+    }
+
+    public double institutionalSafetyBufferMeters() {
+        return institutionalSafetyBufferMeters;
+    }
+
+    public double denseColonyLastResortPenalty() {
+        return denseColonyLastResortPenalty;
     }
 
     public Map<BuildingDensityClass, Double> nodePenalties() {

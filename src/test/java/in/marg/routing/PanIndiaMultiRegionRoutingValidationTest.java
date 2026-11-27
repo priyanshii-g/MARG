@@ -464,4 +464,65 @@ class PanIndiaMultiRegionRoutingValidationTest {
                 });
         assertTrue(hasSpurWithReason, "Feeder spurs must carry explicit decisionReason for frontend display");
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void validateMultiObjectiveTradeOffsAndRequestScopedPreferences() {
+        RegionalCorridorRegistry registry = new RegionalCorridorRegistry();
+        CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
+        CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
+
+        // 1. Route with BALANCED preset
+        Map<String, Object> balancedRoute = controller.route(
+                26.58970, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                false, 0,
+                "assam", null, null,
+                1.0, 1.0, 1.0, "BALANCED"
+        );
+        Map<?, ?> balancedMeta = (Map<?, ?>) balancedRoute.get("metadata");
+        Map<?, ?> balancedProfile = (Map<?, ?>) balancedMeta.get("tradeOffProfile");
+        assertNotNull(balancedProfile, "Trade-off profile must be computed and present in metadata");
+        Map<?, ?> balancedScores = (Map<?, ?>) balancedProfile.get("scores");
+        assertNotNull(balancedScores.get("environmentalScore"));
+        assertNotNull(balancedScores.get("socialScore"));
+        assertNotNull(balancedScores.get("directnessScore"));
+        assertNotNull(balancedScores.get("connectivityScore"));
+        assertNotNull(balancedProfile.get("tradeOffNarrative"));
+        List<?> balancedCompromises = (List<?>) balancedProfile.get("keyCompromises");
+        assertFalse(balancedCompromises.isEmpty(), "Key compromises must be listed");
+
+        // 2. Route with ECO_SHIELD preset (high environmental weight = 2.5)
+        Map<String, Object> ecoRoute = controller.route(
+                26.58970, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                false, 0,
+                "assam", null, null,
+                2.5, 1.0, 0.8, "ECO_SHIELD"
+        );
+        Map<?, ?> ecoMeta = (Map<?, ?>) ecoRoute.get("metadata");
+        Map<?, ?> ecoProfile = (Map<?, ?>) ecoMeta.get("tradeOffProfile");
+        assertNotNull(ecoProfile);
+        String ecoNarrative = (String) ecoProfile.get("tradeOffNarrative");
+        assertTrue(ecoNarrative.contains("Eco-Shield") || ecoNarrative.contains("natural habitat"),
+                "Narrative must explain the eco-shield priority");
+
+        // 3. Subsequent route with default weights verifies zero pollution/mutation of shared singleton state
+        Map<String, Object> resetRoute = controller.route(
+                26.58970, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", null, null, null,
+                false, 0,
+                "assam", null, null
+        );
+        Map<?, ?> resetMeta = (Map<?, ?>) resetRoute.get("metadata");
+        Map<?, ?> resetProfile = (Map<?, ?>) resetMeta.get("tradeOffProfile");
+        Map<?, ?> resetPref = (Map<?, ?>) resetMeta.get("alignmentPreference");
+        assertEquals(1.0, ((Number) resetPref.get("environmentalWeight")).doubleValue(), 1e-4,
+                "Default request must revert to environmentalWeight 1.0 without singleton state pollution");
+        assertEquals(1.0, ((Number) resetPref.get("socialWeight")).doubleValue(), 1e-4);
+        assertEquals(1.0, ((Number) resetPref.get("directnessWeight")).doubleValue(), 1e-4);
+    }
 }
