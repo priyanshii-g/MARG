@@ -287,12 +287,19 @@ export const LAYER_CATALOG = [
     accentColor: "#0891b2",
     preferredBasemap: "satellite",
     profileField: "drainage",
-    vectorFeatureRoles: ["DRAINAGE_CROSSING_STRUCTURE", "WETLAND_HYDROLOGIC_MITIGATION_ZONE"],
+    vectorFeatureRoles: [
+      "CORRIDOR_WETLAND_POLYGON",
+      "CORRIDOR_DRAINAGE_CHANNEL",
+      "DRAINAGE_CROSSING_STRUCTURE",
+      "WETLAND_HYDROLOGIC_MITIGATION_ZONE",
+    ],
     description: "Protects natural wetlands and adds drainage tunnels under the road so monsoon rainwater flows naturally.",
     legend: [
-      { key: "NONE", label: "Dry Ground", color: "#10b981" },
-      { key: "SEASONAL_STREAM_CHANNEL", label: "Stream or Canal", color: "#06b6d4" },
-      { key: "WETLAND_BUFFER", label: "Wetland Buffer", color: "#0284c7" },
+      { key: "WELL_DRAINED_UPLAND_OR_NONE", label: "Dry Ground", color: "#10b981" },
+      { key: "SEASONAL_STREAM_AND_TORRENT_CORRIDOR", label: "Stream or Canal", color: "#06b6d4" },
+      { key: "SEASONAL_MARSH_AND_WETLAND_BUFFER", label: "Wetland Buffer", color: "#0284c7" },
+      { key: "CORRIDOR_WETLAND_POLYGON", label: "Natural Wetland / Beel", color: "#0ea5e9" },
+      { key: "CORRIDOR_DRAINAGE_CHANNEL", label: "Stream, Drain or Canal", color: "#38bdf8" },
       { key: "DRAINAGE_CROSSING_STRUCTURE", label: "Water Drainage Culvert", color: "#0891b2" },
       { key: "WETLAND_HYDROLOGIC_MITIGATION_ZONE", label: "Protected Wetland Zone", color: "#14b8a6" },
     ],
@@ -307,8 +314,10 @@ export function getSegmentColor(layerConfig, rawValue) {
   const exact = layerConfig.legend.find((item) => item.key === key);
   if (exact) return exact.color;
   // Partial fallbacks for drainage/geotech variants
-  if (key.includes("WETLAND")) return "#0284c7";
-  if (key.includes("STREAM") || key.includes("CANAL") || key.includes("CHANNEL") || key.includes("THALWEG")) return "#06b6d4";
+  if (key.includes("WETLAND_CORE")) return "#1d4ed8";
+  if (key.includes("WETLAND") || key.includes("MARSH")) return "#0284c7";
+  if (key.includes("CANAL")) return "#0891b2";
+  if (key.includes("STREAM") || key.includes("CHANNEL") || key.includes("THALWEG") || key.includes("WATERCOURSE") || key.includes("SWALE")) return "#06b6d4";
   if (key.includes("HIGH") || key.includes("SEVERE") || key.includes("SHEAR")) return "#ef4444";
   if (key.includes("MODERATE")) return "#f59e0b";
   if (key.includes("LOW") || key.includes("SPARSE")) return "#84cc16";

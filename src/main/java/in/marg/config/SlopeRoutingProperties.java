@@ -11,10 +11,10 @@ public class SlopeRoutingProperties {
     private double steepMaxDegrees = 25.0;
     private double verySteepMaxDegrees = 30.0;
 
-    private double lowPenalty = 0.15;
-    private double moderatePenalty = 0.40;
-    private double steepPenalty = 1.00;
-    private double verySteepPenalty = 2.00;
+    private double lowPenalty = 0.25;
+    private double moderatePenalty = 0.80;
+    private double steepPenalty = 3.00;
+    private double verySteepPenalty = 7.00;
 
     private boolean blockNoData = true;
     private boolean blockAboveVerySteep = true;

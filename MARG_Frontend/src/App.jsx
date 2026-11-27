@@ -202,7 +202,7 @@ export default function App() {
   const [targetHubs, setTargetHubs] = useState([]);
   const [customHubInput, setCustomHubInput] = useState("");
   const [maxVcRatio, setMaxVcRatio] = useState(0.70);
-  const [maxDeviationPercent, setMaxDeviationPercent] = useState(15);
+  const [maxDeviationPercent, setMaxDeviationPercent] = useState(20);
 
   // All-India 780+ Districts Search & Autocomplete State
   const [districtSuggestions, setDistrictSuggestions] = useState([]);
@@ -219,25 +219,19 @@ export default function App() {
   const [networkSummary, setNetworkSummary] = useState(null);
   const [connectedHubs, setConnectedHubs] = useState([]);
   const [trafficCapacity, setTrafficCapacity] = useState(null);
+  const [trafficCapacityAlerts, setTrafficCapacityAlerts] = useState([]);
   const [hubDecisions, setHubDecisions] = useState([]);
   const [showAllDecisions, setShowAllDecisions] = useState(false);
 
-  // Unified Workspace Navigation & Mode 1 EIA / MongoDB Route Persistence State
+  // Unified Workspace Navigation & MongoDB Route Persistence State
   const [activeWorkspace, setActiveWorkspace] = useState("home");
-  const [mode1GisScreening, setMode1GisScreening] = useState(null);
   const [mode1RouteSignature, setMode1RouteSignature] = useState(null);
   const [eiaProjectName, setEiaProjectName] = useState("");
   const [eiaProjectProponent, setEiaProjectProponent] = useState("");
   const [eiaStudyArea, setEiaStudyArea] = useState("Kaziranga–Karbi Anglong corridor");
   const [eiaProjectState, setEiaProjectState] = useState("Assam");
-  const [eiaAssessmentDate, setEiaAssessmentDate] = useState(new Date().toISOString().slice(0, 10));
-  const [eiaLibraryStatus, setEiaLibraryStatus] = useState(null);
-  const [eiaBusy, setEiaBusy] = useState(false);
-  const [eiaMessage, setEiaMessage] = useState("");
-  const [eiaJob, setEiaJob] = useState(null);
-  const [eiaError, setEiaError] = useState("");
   const [savedRouteId, setSavedRouteId] = useState("");
-  const [mongoStatus, setMongoStatus] = useState("Routes save to MongoDB when you choose Save generated route for EIA.");
+  const [mongoStatus, setMongoStatus] = useState("Generate a route above, then save it to MongoDB for future reference or reports.");
   const [hasPendingRoute, setHasPendingRoute] = useState(false);
   const [routeSaveBusy, setRouteSaveBusy] = useState(false);
   const [routeSaveMessage, setRouteSaveMessage] = useState("");
@@ -319,7 +313,6 @@ export default function App() {
       setSpurEngineeringSummary(null);
       setActiveLayerId(null);
       setPinnedLayerIds(new Set());
-      setMode1GisScreening(null);
       setMode1RouteSignature(null);
       pendingRouteRef.current = null;
       setHasPendingRoute(false);
@@ -402,7 +395,6 @@ export default function App() {
 
       if (mode === "start") {
         setStart({ lat, lng });
-        setMode1GisScreening(null);
         setMode1RouteSignature(null);
         setRouteInfo(null);
         pendingRouteRef.current = null;
@@ -414,7 +406,6 @@ export default function App() {
         setStatus(`📍 Starting point set: ${lat}, ${lng}`);
       } else if (mode === "end") {
         setEnd({ lat, lng });
-        setMode1GisScreening(null);
         setMode1RouteSignature(null);
         setRouteInfo(null);
         pendingRouteRef.current = null;
@@ -664,6 +655,7 @@ export default function App() {
       setTradeOffProfile(cached.tradeOffProfile);
       setConnectedHubs(cached.connectedHubs);
       setTrafficCapacity(cached.trafficCapacity);
+      setTrafficCapacityAlerts(cached.trafficCapacityAlerts || []);
       setHubDecisions(cached.hubDecisions);
       setStatutoryClearanceReport(cached.statutoryClearanceReport || cached.tradeOffProfile?.statutoryClearanceReport || null);
 
@@ -671,7 +663,6 @@ export default function App() {
       const cachedCoords = extractMainlineCoordinates(cached.features || []);
       pendingRouteRef.current = cachedData && cachedCoords.length >= 2 ? cachedData : null;
       setHasPendingRoute(Boolean(pendingRouteRef.current));
-      setMode1GisScreening(cachedData?.metadata?.environmentalSectionInput ?? null);
       const cachedStart = cachedData?.metadata?.endpointResolution?.resolvedStart;
       const cachedGoal = cachedData?.metadata?.endpointResolution?.resolvedGoal;
       setMode1RouteSignature(routeSignature(
@@ -780,6 +771,7 @@ export default function App() {
     setStart(preset.start);
     setEnd(preset.end);
     setTargetHubs([]);
+    setTrafficCapacityAlerts([]);
     setSnapNotice(null);
     setRoutingError(null);
     setCachedArchetypes({});
@@ -794,14 +786,12 @@ export default function App() {
     setSpurEngineeringSummary(null);
     setActiveLayerId(null);
     setPinnedLayerIds(new Set());
-    setMode1GisScreening(null);
     setMode1RouteSignature(null);
     setRouteInfo(null);
     pendingRouteRef.current = null;
     setHasPendingRoute(false);
     setSavedRouteId("");
     setRouteSaveMessage("");
-    setEiaJob(null);
     setEiaProjectName(preset.name);
     setEiaStudyArea(preset.name);
     setEiaProjectState(preset.id === "western_ghats" ? "Maharashtra"
@@ -821,7 +811,10 @@ export default function App() {
   // -----------------------------------------------------------
   // Main Alignment Generation Call
   // -----------------------------------------------------------
-  async function generateRoute() {
+  async function generateRoute(overrides = {}) {
+    const effectiveMaxVc = overrides.maxVcRatio !== undefined ? overrides.maxVcRatio : maxVcRatio;
+    const effectiveTargetHubs = Array.isArray(overrides.targetHubs) ? overrides.targetHubs : targetHubs;
+
     if (!isInsideIndia(start.lat, start.lng) || !isInsideIndia(end.lat, end.lng)) {
       setRoutingError({
         title: "Coordinates Outside Boundary",
@@ -835,14 +828,12 @@ export default function App() {
     setHasPendingRoute(false);
     setSavedRouteId("");
     setRouteSaveMessage("");
-    setMode1GisScreening(null);
     setMode1RouteSignature(null);
-    setEiaJob(null);
-    setEiaError("");
     setRoutingError(null);
     setSnapNotice(null);
     setConnectedHubs([]);
     setTrafficCapacity(null);
+    setTrafficCapacityAlerts([]);
     setHubDecisions([]);
     setShowAllDecisions(false);
     setStatus("Checking forests, floods, hills, and homes to find the best route...");
@@ -869,11 +860,11 @@ export default function App() {
         params.append("maxAutoHubs", maxAutoHubs.toString());
       }
 
-      if (targetHubs.length > 0) {
-        params.append("targetHubs", targetHubs.join(","));
+      if (effectiveTargetHubs.length > 0) {
+        params.append("targetHubs", effectiveTargetHubs.join(","));
       }
-      if (maxVcRatio != null) {
-        params.append("maxVcRatio", maxVcRatio.toString());
+      if (effectiveMaxVc != null) {
+        params.append("maxVcRatio", effectiveMaxVc.toString());
       }
       if (maxDeviationPercent != null) {
         params.append("maxDeviationPercent", maxDeviationPercent.toString());
@@ -1097,6 +1088,30 @@ export default function App() {
     const allDecisions = pipelineMeta.hubDecisions || [];
     setHubDecisions(allDecisions);
 
+    const capacityAlerts = Array.isArray(meta.trafficCapacityAlerts)
+      ? meta.trafficCapacityAlerts
+      : Array.isArray(pipelineMeta.capacityAlerts)
+        ? pipelineMeta.capacityAlerts
+        : [];
+    setTrafficCapacityAlerts(capacityAlerts);
+
+    // If any user-added city violated the active Traffic Comfort Preference, remove it from active targetHubs immediately
+    const droppedUserCities = capacityAlerts
+      .filter((a) => a?.code === "USER_CITY_REMOVED_FOR_CAPACITY" && Array.isArray(a.droppedHubs))
+      .flatMap((a) => a.droppedHubs)
+      .map((name) => String(name).trim().toLowerCase())
+      .filter(Boolean);
+    if (droppedUserCities.length > 0) {
+      setTargetHubs((prev) =>
+        prev.filter((token) => {
+          const norm = String(token).trim().toLowerCase();
+          return !droppedUserCities.some(
+            (dropped) => norm === dropped || norm.includes(dropped) || dropped.includes(norm)
+          );
+        })
+      );
+    }
+
     const newRouteInfo = {
       routeLengthKm: routeKm.toFixed(2),
       baselineLengthKm: baseKm.toFixed(2),
@@ -1145,8 +1160,7 @@ export default function App() {
     const clearanceReport = data.statutoryClearanceReport || meta.statutoryClearanceReport || profile?.statutoryClearanceReport || null;
     setStatutoryClearanceReport(clearanceReport);
 
-    // Sync Mode 1 Environmental EIA screening & MongoDB persistence payload
-    setMode1GisScreening(meta.environmentalSectionInput ?? null);
+    // Sync MongoDB route persistence payload
     const resolvedStartPt = meta.endpointResolution?.resolvedStart;
     const resolvedGoalPt = meta.endpointResolution?.resolvedGoal;
     setMode1RouteSignature(routeSignature(
@@ -1175,6 +1189,7 @@ export default function App() {
       statutoryClearanceReport: clearanceReport,
       connectedHubs: hubList,
       trafficCapacity: trafficAnalysis,
+      trafficCapacityAlerts: capacityAlerts,
       hubDecisions: allDecisions,
       presetKey: targetKey,
     };
@@ -1682,6 +1697,12 @@ export default function App() {
 
       // 10b. Wetland Protection Zones (L13)
       else if (role === "WETLAND_HYDROLOGIC_MITIGATION_ZONE") {
+        const mitigationTxt = humanizeClassLabel(
+          props.recommendedMitigation || props.recommendedEngineeringMitigation || "Water Flow Protection Culvert"
+        );
+        const clearanceTxt = props.clearanceFromDirectRowEdgeMeters != null
+          ? `<br/><b>Distance from Road Edge:</b> ${props.clearanceFromDirectRowEdgeMeters} m`
+          : "";
         if (geomType === "Point") {
           const coords = feature.geometry.coordinates;
           const marker = L.circleMarker([coords[1], coords[0]], {
@@ -1691,17 +1712,53 @@ export default function App() {
             fillColor: "#14b8a6",
             fillOpacity: 0.35,
           }).bindPopup(
-            `<div class="popup-title">💧 Protected Wetland Crossing</div><div class="popup-meta"><b>Wetland:</b> ${props.wetlandName || props.name || "Natural Wetland"}<br/><b>Protection Plan:</b> ${humanizeClassLabel(props.recommendedEngineeringMitigation || "Water Flow Protection Culvert")}</div>`
+            `<div class="popup-title">💧 Protected Wetland Zone</div><div class="popup-meta"><b>Wetland:</b> ${props.wetlandName || props.name || "Natural Wetland"}${clearanceTxt}<br/><b>Protection Plan:</b> ${mitigationTxt}</div>`
           );
           group.addLayer(marker);
         } else {
           const layer = L.geoJSON(feature, {
             style: { color: "#0d9488", weight: 2, fillColor: "#14b8a6", fillOpacity: 0.28 },
           }).bindPopup(
-            `<div class="popup-title">💧 Protected Wetland Zone</div><div class="popup-meta">${props.wetlandName || props.name || "Wetland Buffer"}</div>`
+            `<div class="popup-title">💧 Protected Wetland Zone</div><div class="popup-meta"><b>Wetland:</b> ${props.wetlandName || props.name || "Wetland Buffer"}${clearanceTxt}<br/><b>Protection Plan:</b> ${mitigationTxt}</div>`
           );
           group.addLayer(layer);
         }
+      }
+
+      // 10c. Corridor Natural Wetlands / Beels / Jheels / Taals Polygons (L13)
+      else if (role === "CORRIDOR_WETLAND_POLYGON" && (geomType === "Polygon" || geomType === "MultiPolygon")) {
+        const isProtected = Boolean(props.isRamsar || props.isProtectedBeel);
+        const badge = props.isRamsar
+          ? "Ramsar Protected Wetland"
+          : (props.isProtectedBeel ? "Protected Natural Wetland / Beel" : "Natural Wetland / Marsh");
+        const layer = L.geoJSON(feature, {
+          style: {
+            color: isProtected ? "#0369a1" : "#0284c7",
+            weight: isProtected ? 2.2 : 1.6,
+            fillColor: isProtected ? "#0ea5e9" : "#38bdf8",
+            fillOpacity: isProtected ? 0.38 : 0.28,
+          },
+        }).bindPopup(
+          `<div class="popup-title">🪷 ${props.wetlandName || "Natural Wetland"}</div><div class="popup-meta"><b>Status:</b> ${badge}<br/><b>Type:</b> ${humanizeClassLabel(props.wetlandCategory || "WETLAND")}<br/><b>Area:</b> ${props.areaHectares != null ? `${props.areaHectares} hectares` : "—"}${props.district ? `<br/><b>District:</b> ${props.district}${props.state ? `, ${props.state}` : ""}` : ""}<br/><b>Protection:</b> ${props.legalStatute || "Wetlands (Conservation & Management) Rules, 2017"}</div>`
+        );
+        group.addLayer(layer);
+      }
+
+      // 10d. Corridor Streams, Seasonal Torrents & Irrigation Canals (L13)
+      else if (role === "CORRIDOR_DRAINAGE_CHANNEL" && (geomType === "LineString" || geomType === "MultiLineString")) {
+        const isCanal = String(props.sublayerType || "").toUpperCase().includes("CANAL");
+        const isSeasonal = String(props.sublayerType || "").toUpperCase().includes("SEASONAL");
+        const layer = L.geoJSON(feature, {
+          style: {
+            color: isCanal ? "#0284c7" : "#38bdf8",
+            weight: isCanal ? 2.8 : 2.0,
+            opacity: 0.85,
+            dashArray: isSeasonal ? "5, 4" : null,
+          },
+        }).bindPopup(
+          `<div class="popup-title">💧 ${props.channelName || "Local Stream / Drainage Channel"}</div><div class="popup-meta"><b>Type:</b> ${humanizeClassLabel(props.sublayerType || "SEASONAL_STREAM")}<br/><b>Estimated Width:</b> ${props.designWidthMeters != null ? `${props.designWidthMeters} m` : "—"}<br/><b>Crossing Design:</b> ${humanizeClassLabel(props.recommendedStructureType || "BOX_CULVERT")}</div>`
+        );
+        group.addLayer(layer);
       }
 
       // 11. Start & End Connecting Roads (L6 & Overview)
@@ -1986,135 +2043,12 @@ export default function App() {
       const saved = await response.json();
       setSavedRouteId(saved.routeId);
       setHasPendingRoute(false);
-      setMongoStatus("MongoDB connected · generated routes are available for later reports.");
-      setRouteSaveMessage(`Saved “${saved.projectName}” for EIA generation. Route ID: ${saved.routeId}`);
+      setMongoStatus("MongoDB connected · generated routes are saved for future access.");
+      setRouteSaveMessage(`Saved “${saved.projectName}”. Route ID: ${saved.routeId}`);
     } catch (error) {
       setRouteSaveMessage(`Could not save route to MongoDB: ${error.message || "database unavailable"}`);
     } finally {
       setRouteSaveBusy(false);
-    }
-  }
-
-  async function eiaRequest(url, options = {}) {
-    const headers = new Headers(options.headers || {});
-    if (options.body && !(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
-    const response = await fetch(url, { ...options, headers });
-    if (!response.ok) {
-      let message = `Request failed (${response.status})`;
-      const rawBody = await response.text();
-      try {
-        const body = JSON.parse(rawBody);
-        const primary = body.error || body.message || message;
-        message = body.detail ? `${primary} (${body.detail})` : primary;
-      } catch {
-        if (rawBody) message = rawBody;
-      }
-      throw new Error(message);
-    }
-    return response;
-  }
-
-  async function refreshEiaLibrary() {
-    setEiaBusy(true);
-    setEiaError("");
-    setEiaMessage("Refreshing the environmental PDF library…");
-    try {
-      const response = await eiaRequest("/api/eia/library/refresh", { method: "POST" });
-      const library = await response.json();
-      setEiaLibraryStatus(library);
-      setEiaMessage(`Indexed ${library.documentCount} documents and ${library.chunkCount} page-preserving chunks.`);
-    } catch (error) {
-      setEiaError(error.message || "Could not refresh the environmental library.");
-      setEiaMessage("");
-    } finally {
-      setEiaBusy(false);
-    }
-  }
-
-  async function generateEnvironmentalReport() {
-    if (mode1GisScreening && (!mode1RouteSignature || mode1RouteSignature !== routeSignature())) {
-      setEiaError("Route settings have changed since the displayed alignment was generated. Generate the route again before drafting its report.");
-      return;
-    }
-    if (!eiaProjectName.trim() || !eiaStudyArea.trim() || !eiaProjectState.trim() || !eiaAssessmentDate) {
-      setEiaError("Project name, study area, state/UT, and assessment date are required.");
-      return;
-    }
-
-    setEiaBusy(true);
-    setEiaError("");
-    setEiaJob(null);
-    setEiaMessage("Indexing current root-folder PDFs before evidence retrieval…");
-    try {
-      const refreshResponse = await eiaRequest("/api/eia/library/refresh", { method: "POST" });
-      const library = await refreshResponse.json();
-      setEiaLibraryStatus(library);
-      if (!library.chunkCount) throw new Error("No readable PDF passages were indexed. Add the required environmental PDFs to the configured knowledge folder and refresh.");
-
-      setEiaMessage("Retrieving guidance, screening legal references, and drafting evidence-linked sections…");
-      const generationResponse = await eiaRequest("/api/eia/reports/from-library", {
-        method: "POST",
-        body: JSON.stringify({
-          projectName: eiaProjectName.trim(),
-          projectProponent: eiaProjectProponent.trim() || null,
-          routeAlternativeName: mode1GisScreening ? "MARG Greenfield Route Alternative" : null,
-          studyArea: eiaStudyArea.trim(),
-          projectState: eiaProjectState.trim(),
-          reportVersion: "v1.0",
-          assessmentDate: eiaAssessmentDate,
-          gisScreening: mode1GisScreening || null,
-          projectFacts: [],
-        }),
-      });
-      const receipt = await generationResponse.json();
-      setEiaJob(receipt);
-      if (receipt.state === "REJECTED" || receipt.state === "FAILED") {
-        setEiaError(receipt.validationIssues?.map((issue) => issue.message).join(" ") || receipt.message || "The report job was rejected.");
-        setEiaMessage("");
-        return;
-      }
-
-      const terminalStates = new Set(["COMPLETED", "REJECTED", "FAILED"]);
-      let latest = receipt;
-      for (let attempt = 0; attempt < 180 && !terminalStates.has(latest.state); attempt += 1) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        const statusResponse = await eiaRequest(`/api/eia/reports/jobs/${encodeURIComponent(receipt.jobId)}`);
-        latest = await statusResponse.json();
-        setEiaJob(latest);
-        setEiaMessage(latest.message || `Report job is ${latest.state.toLowerCase()}…`);
-      }
-      if (latest.state === "COMPLETED") {
-        setEiaMessage(`Environmental report is ready (${latest.pageCount ?? "—"} pages).`);
-      } else if (latest.state === "REJECTED" || latest.state === "FAILED") {
-        setEiaError(latest.validationIssues?.map((issue) => issue.message).join(" ") || latest.message || "Report generation failed.");
-        setEiaMessage("");
-      } else {
-        setEiaMessage("Report is still processing. You can check again using this job ID: " + receipt.jobId);
-      }
-    } catch (error) {
-      setEiaError(error.message || "Environmental report generation failed.");
-      setEiaMessage("");
-    } finally {
-      setEiaBusy(false);
-    }
-  }
-
-  async function downloadEiaArtifact(format) {
-    if (!eiaJob?.jobId) return;
-    setEiaError("");
-    try {
-      const response = await eiaRequest(`/api/eia/reports/${encodeURIComponent(eiaJob.jobId)}/${format}`);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `marg-environmental-eia-${eiaJob.jobId}.${format === "pdf" ? "pdf" : "docx"}`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      setEiaError(error.message || "Report download failed.");
     }
   }
 
@@ -2520,8 +2454,13 @@ export default function App() {
                         ))}
                       </div>
                       <div className="auto-hubs-caption">
-                        Picks the most important nearby towns while keeping exits safely spaced apart.
+                        Total connected cities limit — any towns you add below get top priority, within your traffic comfort cap.
                       </div>
+                      {targetHubs.length > maxAutoHubs && (
+                        <div className="auto-hubs-priority-note">
+                          You added {targetHubs.length} towns while the total city limit is {maxAutoHubs}. Your added towns are prioritized up to your traffic limit.
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="planner-note-box">
@@ -2534,7 +2473,7 @@ export default function App() {
                     <div className="hubs-header">
                       <div>
                         <span className="hubs-title">Towns You Want Connected</span>
-                        <div className="hubs-sub">Any town you add here is always given a connecting exit</div>
+                        <div className="hubs-sub">Given top priority within your city limit and traffic comfort cap</div>
                       </div>
                       <button
                         type="button"
@@ -2695,7 +2634,7 @@ export default function App() {
                         onClick={() => setMaxVcRatio(0.70)}
                       >
                         <strong>Smooth &amp; Fast</strong>
-                        <span>Less crowded · higher speeds</span>
+                        <span>≤ 70% road capacity · higher speeds</span>
                       </button>
                       <button
                         type="button"
@@ -2703,7 +2642,7 @@ export default function App() {
                         onClick={() => setMaxVcRatio(0.85)}
                       >
                         <strong>Connect More Towns</strong>
-                        <span>Busier traffic · more local access</span>
+                        <span>≤ 85% road capacity · more local access</span>
                       </button>
                     </div>
                   </div>
@@ -2731,12 +2670,96 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Group 4: Route Options & Custom Route Weighting */}
+                <div className="planner-group">
+                  <div className="planner-group-header">
+                    <span className="planner-group-title">Route Priority &amp; Custom Weights</span>
+                    {tradeOffPreset === "CUSTOM" && (
+                      <span className="planner-custom-pill">Custom</span>
+                    )}
+                  </div>
+
+                  <div className="planner-priority-grid">
+                    {Object.values(PRESET_DEFINITIONS).map((p) => {
+                      const isSelected = tradeOffPreset === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          className={`planner-priority-btn ${isSelected ? "active" : ""}`}
+                          onClick={() => handleSelectPreset(p.id)}
+                          disabled={isLoading || isRealigning}
+                          title={p.description}
+                        >
+                          <span className="planner-priority-label">{p.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="planner-weights-box">
+                    <div className="planner-weights-head">Custom Route Weighting</div>
+                    <label className="planner-weight-row">
+                      <div className="planner-weight-meta">
+                        <span>Protect Forests, Rivers &amp; Wildlife</span>
+                        <strong className="mono-num">{envWeight.toFixed(1)}×</strong>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={envWeight}
+                        onChange={(e) => handleSliderChange("env", e.target.value)}
+                      />
+                    </label>
+                    <label className="planner-weight-row">
+                      <div className="planner-weight-meta">
+                        <span>Avoid Homes, Schools &amp; Villages</span>
+                        <strong className="mono-num">{socialWeight.toFixed(1)}×</strong>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={socialWeight}
+                        onChange={(e) => handleSliderChange("social", e.target.value)}
+                      />
+                    </label>
+                    <label className="planner-weight-row">
+                      <div className="planner-weight-meta">
+                        <span>Keep Travel Distance Short</span>
+                        <strong className="mono-num">{directnessWeight.toFixed(1)}×</strong>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={directnessWeight}
+                        onChange={(e) => handleSliderChange("direct", e.target.value)}
+                      />
+                    </label>
+                    {routeInfo && tradeOffPreset === "CUSTOM" && (
+                      <button
+                        type="button"
+                        className="eia-secondary-btn"
+                        onClick={() => realignAlignment()}
+                        disabled={isRealigning || isLoading}
+                      >
+                        {isRealigning ? "Updating custom route…" : "Apply Custom Weights to Map"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 {/* Primary CTA + Status / Error / Snap */}
                 <div className="planner-cta-group">
                   <button
                     type="button"
                     className="generate-btn"
-                    onClick={generateRoute}
+                    onClick={() => generateRoute()}
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -2751,40 +2774,23 @@ export default function App() {
 
                   <div className="planner-status-line">{status}</div>
 
-                  {routeInfo && (
-                    <div className="eia-save-box">
-                      <button
-                        className="eia-secondary-btn"
-                        type="button"
-                        onClick={saveCurrentRoute}
-                        disabled={!hasPendingRoute || routeSaveBusy || mode1RouteSignature !== routeSignature()}
-                      >
-                        {routeSaveBusy
-                          ? "Saving route…"
-                          : savedRouteId && mode1RouteSignature === routeSignature()
-                          ? "✓ Route saved for report"
-                          : "Save route for environmental report"}
-                      </button>
-                      {savedRouteId && (
-                        <button
-                          className="eia-secondary-btn"
-                          type="button"
-                          onClick={() => setActiveWorkspace("eia")}
-                          style={{ marginTop: "6px" }}
-                        >
-                          Open Environmental Report Tool →
-                        </button>
-                      )}
-                      {(routeSaveMessage || mongoStatus) && (
-                        <p className="eia-help" role="status">{routeSaveMessage || mongoStatus}</p>
-                      )}
-                    </div>
-                  )}
-
                   {routingError && (
                     <div className="error-card">
                       <div className="error-card-title">{routingError.title}</div>
                       <div className="error-card-message">{routingError.message}</div>
+                    </div>
+                  )}
+
+                  {trafficCapacityAlerts.length > 0 && (
+                    <div className="sidebar-capacity-alert-list" role="alert">
+                      {trafficCapacityAlerts.map((alert, idx) => (
+                        <div key={`${alert.code || "cap"}-${idx}`} className="sidebar-capacity-alert-card">
+                          <div className="sidebar-capacity-alert-title">
+                            <span>⚠️ {alert.title}</span>
+                          </div>
+                          <div className="sidebar-capacity-alert-msg">{alert.message}</div>
+                        </div>
+                      ))}
                     </div>
                   )}
 
@@ -2829,114 +2835,73 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Group 4: Quick Environmental Report */}
-                <section className="planner-group eia-panel">
+                {/* Group 5: Save Route (MongoDB Persistence) */}
+                <section className="planner-group eia-panel save-route-panel">
                   <div className="planner-group-header">
-                    <span className="planner-group-title">Quick Environmental Report</span>
+                    <span className="planner-group-title">Save Route</span>
+                    {savedRouteId && mode1RouteSignature === routeSignature() && (
+                      <span className="planner-saved-pill">Saved</span>
+                    )}
                   </div>
                   <p className="eia-help">
-                    Prepare a downloadable environmental summary using the map findings and reference library.
-                    This is an early preview and should be verified by field experts.
+                    Save your generated route and its GIS screening data to MongoDB so it can be reused later.
                   </p>
                   <div className="input-group eia-field">
-                    <label htmlFor="eia-project-name">Project / corridor name</label>
+                    <label htmlFor="save-project-name">Project / corridor name</label>
                     <input
-                      id="eia-project-name"
+                      id="save-project-name"
                       value={eiaProjectName}
                       onChange={(event) => setEiaProjectName(event.target.value)}
                       placeholder="e.g. Kaziranga–Karbi Anglong Greenfield Highway"
                     />
                   </div>
                   <div className="input-group eia-field">
-                    <label htmlFor="eia-project-proponent">Project proponent (optional)</label>
+                    <label htmlFor="save-project-proponent">Project proponent (optional)</label>
                     <input
-                      id="eia-project-proponent"
+                      id="save-project-proponent"
                       value={eiaProjectProponent}
                       onChange={(event) => setEiaProjectProponent(event.target.value)}
                       placeholder="Organization / agency"
                     />
                   </div>
-                  <div className="input-group eia-field">
-                    <label htmlFor="eia-study-area">Study area</label>
-                    <input
-                      id="eia-study-area"
-                      value={eiaStudyArea}
-                      onChange={(event) => setEiaStudyArea(event.target.value)}
-                    />
-                  </div>
                   <div className="coord-grid eia-grid">
                     <div className="input-group eia-field">
-                      <label htmlFor="eia-project-state">State / UT</label>
+                      <label htmlFor="save-study-area">Study area</label>
                       <input
-                        id="eia-project-state"
+                        id="save-study-area"
+                        value={eiaStudyArea}
+                        onChange={(event) => setEiaStudyArea(event.target.value)}
+                      />
+                    </div>
+                    <div className="input-group eia-field">
+                      <label htmlFor="save-project-state">State / UT</label>
+                      <input
+                        id="save-project-state"
                         value={eiaProjectState}
                         onChange={(event) => setEiaProjectState(event.target.value)}
                         placeholder="Assam"
                       />
                     </div>
-                    <div className="input-group eia-field">
-                      <label htmlFor="eia-assessment-date">Assessment date</label>
-                      <input
-                        id="eia-assessment-date"
-                        type="date"
-                        value={eiaAssessmentDate}
-                        onChange={(event) => setEiaAssessmentDate(event.target.value)}
-                      />
-                    </div>
                   </div>
-                  <div className="eia-library-summary">
-                    <span>GIS observations: {mode1GisScreening ? (mode1GisScreening.findings?.length ?? 0) : "not supplied"}</span>
-                    <span>Library: {eiaLibraryStatus ? `${eiaLibraryStatus.documentCount} PDFs · ${eiaLibraryStatus.chunkCount} chunks` : "not checked"}</span>
+                  <div className="eia-save-box">
+                    <button
+                      className="eia-secondary-btn save-route-btn"
+                      type="button"
+                      onClick={saveCurrentRoute}
+                      disabled={!routeInfo || !hasPendingRoute || routeSaveBusy || mode1RouteSignature !== routeSignature()}
+                    >
+                      {routeSaveBusy
+                        ? "Saving route…"
+                        : savedRouteId && mode1RouteSignature === routeSignature()
+                        ? "✓ Route saved"
+                        : routeInfo
+                        ? "Save generated route"
+                        : "Generate a route to save"}
+                    </button>
+                    {(routeSaveMessage || mongoStatus) && (
+                      <p className="eia-help" role="status">{routeSaveMessage || mongoStatus}</p>
+                    )}
                   </div>
-                  {mode1GisScreening?.findings?.length > 0 && (
-                    <div className="eia-findings-preview">
-                      {mode1GisScreening.findings.slice(0, 4).map((finding) => (
-                        <div key={finding.evidenceId}>
-                          <strong>{finding.environmentalComponent}</strong>
-                          <span>{finding.metric}: {finding.value} {finding.units}</span>
-                        </div>
-                      ))}
-                      {mode1GisScreening.findings.length > 4 && (
-                        <small>+ {mode1GisScreening.findings.length - 4} additional cited GIS observations</small>
-                      )}
-                    </div>
-                  )}
-                  <button
-                    className="eia-secondary-btn"
-                    type="button"
-                    onClick={refreshEiaLibrary}
-                    disabled={eiaBusy}
-                  >
-                    Refresh environmental PDF library
-                  </button>
-                  <button
-                    className="generate-btn eia-generate-btn"
-                    type="button"
-                    onClick={generateEnvironmentalReport}
-                    disabled={eiaBusy}
-                  >
-                    {eiaBusy ? <><span className="spinner" /> Preparing report…</> : "Generate environmental report"}
-                  </button>
-                  {eiaMessage && <p className="eia-status" role="status">{eiaMessage}</p>}
-                  {eiaError && <p className="eia-error" role="alert">{eiaError}</p>}
-                  {eiaJob && (
-                    <div className="eia-job-card">
-                      <strong>Job {eiaJob.state}</strong>
-                      {eiaJob.pageCount != null && <span>{eiaJob.pageCount} pages</span>}
-                      <small>{eiaJob.jobId}</small>
-                      {eiaJob.state === "COMPLETED" && (
-                        <div className="eia-downloads">
-                          <button type="button" onClick={() => downloadEiaArtifact("pdf")}>Download PDF</button>
-                          <button type="button" onClick={() => downloadEiaArtifact("document")}>Download DOCX</button>
-                        </div>
-                      )}
-                      {eiaJob.state === "FAILED" && eiaJob.downloadUrl && (
-                        <div className="eia-downloads">
-                          <button type="button" onClick={() => downloadEiaArtifact("document")}>Download draft DOCX</button>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </section>
               </div>
             </div>
@@ -2946,6 +2911,75 @@ export default function App() {
         {/* CENTER FRAMED HERO MAP VIEWPORT */}
         <main className="map-viewport">
           <div ref={mapContainerRef} className="leaflet-canvas-host" />
+
+          {/* Prominent High-Visibility Traffic Capacity & Priority City Alert Banner */}
+          {trafficCapacityAlerts.length > 0 && (
+            <div className="traffic-capacity-alert-stack" role="alert" aria-live="assertive">
+              {trafficCapacityAlerts.map((alert, idx) => {
+                const isUserRemoved = alert.code === "USER_CITY_REMOVED_FOR_CAPACITY";
+                const canUpgradeTo85 = (alert.maxVcPercent ?? Math.round(maxVcRatio * 100)) < 85;
+                return (
+                  <div
+                    key={`${alert.code || "cap-alert"}-${idx}`}
+                    className={`traffic-capacity-alert-banner ${isUserRemoved ? "severity-removed" : "severity-reduced"}`}
+                  >
+                    <div className="tca-icon-badge" aria-hidden="true">⚠️</div>
+                    <div className="tca-body">
+                      <div className="tca-header-row">
+                        <strong className="tca-title">{alert.title}</strong>
+                        <span className="tca-cap-pill">
+                          {alert.finalVcPercent ?? "—"}% / {alert.maxVcPercent ?? Math.round(maxVcRatio * 100)}% max
+                        </span>
+                      </div>
+                      <p className="tca-message">{alert.message}</p>
+                      <div className="tca-actions">
+                        {canUpgradeTo85 && (
+                          <button
+                            type="button"
+                            className="tca-upgrade-btn"
+                            disabled={isLoading}
+                            onClick={() => {
+                              const restoredHubs = isUserRemoved && Array.isArray(alert.droppedHubs)
+                                ? Array.from(new Set([...targetHubs, ...alert.droppedHubs]))
+                                : targetHubs;
+                              setMaxVcRatio(0.85);
+                              if (isUserRemoved && Array.isArray(alert.droppedHubs)) {
+                                setTargetHubs(restoredHubs);
+                              }
+                              generateRoute({ maxVcRatio: 0.85, targetHubs: restoredHubs });
+                            }}
+                          >
+                            {isUserRemoved
+                              ? "Switch to Connect More Towns (85%) & Re-Add"
+                              : "Switch to Connect More Towns (85%)"}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="tca-dismiss-btn"
+                          onClick={() =>
+                            setTrafficCapacityAlerts((prev) => prev.filter((_, i) => i !== idx))
+                          }
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="tca-close-x"
+                      aria-label="Close alert"
+                      onClick={() =>
+                        setTrafficCapacityAlerts((prev) => prev.filter((_, i) => i !== idx))
+                      }
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Floating Cream-Glass Basemap Controls & Active 13-Layer Lens Legend HUD */}
           <MapLensHud
@@ -3067,6 +3101,7 @@ export default function App() {
           currentFeatures={currentFeatures}
           connectedHubs={connectedHubs}
           trafficCapacity={trafficCapacity}
+          trafficCapacityAlerts={trafficCapacityAlerts}
           hubDecisions={hubDecisions}
           snapNotice={snapNotice}
           facilityMode={facilityMode}

@@ -370,6 +370,32 @@ public class PanIndiaDynamicCorridorService {
             Integer maxAutoHubs,
             in.marg.routing.AlignmentPreference preference,
             Boolean deep) {
+        return routeDynamicPanIndia(
+                requestedStart,
+                requestedGoal,
+                facilityMode,
+                corridorBufferDeg,
+                maxDeviationPercent,
+                targetHubs,
+                autoConnectHubs,
+                maxAutoHubs,
+                preference,
+                deep,
+                null);
+    }
+
+    public Map<String, Object> routeDynamicPanIndia(
+            GeoPoint requestedStart,
+            GeoPoint requestedGoal,
+            FacilityMode facilityMode,
+            Double corridorBufferDeg,
+            Double maxDeviationPercent,
+            List<String> targetHubs,
+            Boolean autoConnectHubs,
+            Integer maxAutoHubs,
+            in.marg.routing.AlignmentPreference preference,
+            Boolean deep,
+            Double maxVcRatio) {
 
         if (!isWithinIndiaBounds(requestedStart) || !isWithinIndiaBounds(requestedGoal)) {
             throw new IllegalArgumentException(
@@ -431,12 +457,27 @@ public class PanIndiaDynamicCorridorService {
         GeoPoint start = startSnap.resolvedStart();
         GeoPoint goal = startSnap.resolvedGoal();
 
-        // Resolve requested intermediate hubs / Indian districts
+        // Strict traffic carrying-capacity cap (never exceed 100% or the user's selected Traffic Comfort Preference)
+        double effectiveMaxVc = maxVcRatio != null ? Math.min(1.0, maxVcRatio) : 0.75;
+        int maxVcPercent = (int) Math.round(effectiveMaxVc * 100.0);
+        String comfortProfileName = in.marg.transport.HubEvaluationService.describeComfortProfile(effectiveMaxVc);
+        double designCapacityPcuHr = mode == FacilityMode.EXPRESSWAY ? 4800.0 : 3600.0;
+        double baseThroughTrafficPcuHr = mode == FacilityMode.EXPRESSWAY ? 1400.0 : 1350.0;
+        double currentVolumePcuHr = baseThroughTrafficPcuHr;
+
+        List<String> droppedUserHubNames = new ArrayList<>();
+        List<String> keptUserHubNames = new ArrayList<>();
+        List<String> capacityRejectedAutoHubNames = new ArrayList<>();
+        double peakRejectedUserVc = 0.0;
+
+        // Step 1: Resolve requested user intermediate hubs FIRST (highest priority), strictly enforcing effectiveMaxVc
         List<ResolvedIntermediateHub> resolvedHubs = new ArrayList<>();
         if (targetHubs != null && !targetHubs.isEmpty()) {
             for (String raw : targetHubs) {
                 if (raw == null || raw.isBlank()) continue;
                 String token = raw.trim();
+                ResolvedIntermediateHub candidateHub = null;
+                double inducedPcuHr = 45.0 * 9.5; // Default ~45k town
                 if (token.matches("^[-+]?[0-9]*\\.?[0-9]+[ ,;]+[-+]?[0-9]*\\.?[0-9]+$")) {
                     String[] parts = token.split("[ ,;]+");
                     try {
@@ -444,19 +485,32 @@ public class PanIndiaDynamicCorridorService {
                         double p2 = Double.parseDouble(parts[1]);
                         double lat = (p1 >= 6.0 && p1 <= 38.0) ? p1 : p2;
                         double lon = (p1 >= 6.0 && p1 <= 38.0) ? p2 : p1;
-                        resolvedHubs.add(new ResolvedIntermediateHub("HUB-" + resolvedHubs.size(), "Hub Point", new GeoPoint(lat, lon)));
+                        candidateHub = new ResolvedIntermediateHub("HUB-" + resolvedHubs.size(), "Hub Point", new GeoPoint(lat, lon));
                     } catch (Exception ignored) {}
                 } else if (districtsCatalog != null) {
                     var optDist = districtsCatalog.lookup(token);
                     if (optDist.isPresent()) {
                         DistrictRecord dr = optDist.get();
-                        resolvedHubs.add(new ResolvedIntermediateHub(dr.id(), dr.displayLabel(), dr.toGeoPoint()));
+                        candidateHub = new ResolvedIntermediateHub(dr.id(), dr.displayLabel(), dr.toGeoPoint());
+                        inducedPcuHr = estimatePanIndiaHubPcuHr(dr);
                     }
                 }
+                if (candidateHub == null) continue;
+                double projectedVolume = currentVolumePcuHr + inducedPcuHr;
+                double vcAfter = projectedVolume / designCapacityPcuHr;
+                if (vcAfter > effectiveMaxVc + 1e-9) {
+                    droppedUserHubNames.add(candidateHub.name());
+                    peakRejectedUserVc = Math.max(peakRejectedUserVc, vcAfter);
+                    continue;
+                }
+                currentVolumePcuHr = projectedVolume;
+                resolvedHubs.add(candidateHub);
+                keptUserHubNames.add(candidateHub.name());
             }
         }
 
-        // Autonomous discovery of intermediate districts/towns along corridor when enabled
+        // Step 2: Autonomous discovery of intermediate districts/towns along corridor up to total cap = autoLimit,
+        // prioritizing user-added hubs and strictly enforcing effectiveMaxVc
         boolean enableAuto = autoConnectHubs == null || Boolean.TRUE.equals(autoConnectHubs);
         int autoLimit = (maxAutoHubs != null && maxAutoHubs >= 0) ? maxAutoHubs : 2;
         if (enableAuto && districtsCatalog != null && autoLimit > 0) {
@@ -552,6 +606,17 @@ public class PanIndiaDynamicCorridorService {
                             }
                             if (tooClose) continue;
 
+                            double inducedPcuHr = estimatePanIndiaHubPcuHr(dr);
+                            double projectedVolume = currentVolumePcuHr + inducedPcuHr;
+                            double projectedVc = projectedVolume / designCapacityPcuHr;
+                            if (projectedVc > effectiveMaxVc + 1e-9) {
+                                if (!capacityRejectedAutoHubNames.contains(dr.displayLabel())) {
+                                    capacityRejectedAutoHubNames.add(dr.displayLabel());
+                                }
+                                continue;
+                            }
+
+                            currentVolumePcuHr = projectedVolume;
                             resolvedHubs.add(new ResolvedIntermediateHub(
                                     dr.id(),
                                     dr.displayLabel() + " (Auto-Discovered)",
@@ -564,6 +629,58 @@ public class PanIndiaDynamicCorridorService {
                     }
                 }
             }
+        }
+
+        double finalVcRatio = currentVolumePcuHr / designCapacityPcuHr;
+        int finalVcPercent = (int) Math.round(finalVcRatio * 100.0);
+        List<String> keptHubNames = resolvedHubs.stream().map(ResolvedIntermediateHub::name).toList();
+        List<Map<String, Object>> trafficCapacityAlerts = new ArrayList<>();
+        if (!droppedUserHubNames.isEmpty()) {
+            String droppedList = String.join(", ", droppedUserHubNames);
+            String hint = effectiveMaxVc < 0.84
+                    ? " Switch to 'Connect More Towns' (85% capacity) or remove another city to include it."
+                    : " Try Expressway mode (higher capacity) or select fewer major cities.";
+            trafficCapacityAlerts.add(new in.marg.transport.HubEvaluationService.CapacityAlert(
+                    "USER_CITY_REMOVED_FOR_CAPACITY",
+                    "warning",
+                    "City Removed to Respect Traffic Comfort Limit",
+                    "Removed " + droppedList + " because connecting "
+                            + (droppedUserHubNames.size() == 1 ? "it" : "them")
+                            + " would push road usage to " + Math.round(peakRejectedUserVc * 100.0)
+                            + "%, exceeding your " + maxVcPercent + "% (" + comfortProfileName
+                            + ") limit. Road usage is kept at " + finalVcPercent + "%." + hint,
+                    List.copyOf(droppedUserHubNames),
+                    keptHubNames,
+                    maxVcPercent,
+                    finalVcPercent
+            ).toMap());
+        }
+        if (enableAuto && maxAutoHubs != null && resolvedHubs.size() < autoLimit && !capacityRejectedAutoHubNames.isEmpty()) {
+            List<String> skippedPreview = capacityRejectedAutoHubNames.size() > 3
+                    ? capacityRejectedAutoHubNames.subList(0, 3)
+                    : capacityRejectedAutoHubNames;
+            String priorityNote = !keptUserHubNames.isEmpty()
+                    ? ", prioritizing your added " + (keptUserHubNames.size() == 1 ? "city (" : "cities (")
+                            + String.join(", ", keptUserHubNames) + ")"
+                    : "";
+            String hint = effectiveMaxVc < 0.84
+                    ? " Switch to 'Connect More Towns' (85% capacity) if you want more towns connected."
+                    : "";
+            trafficCapacityAlerts.add(new in.marg.transport.HubEvaluationService.CapacityAlert(
+                    "AUTO_CITIES_REDUCED_FOR_CAPACITY",
+                    "warning",
+                    "Connected Cities Reduced to Prevent Road Overcrowding",
+                    "Connected " + resolvedHubs.size() + " of " + autoLimit + " requested "
+                            + (autoLimit == 1 ? "city" : "cities")
+                            + priorityNote
+                            + " (skipped " + String.join(", ", skippedPreview)
+                            + ") so road usage stays at " + finalVcPercent + "% — within your "
+                            + maxVcPercent + "% (" + comfortProfileName + ") traffic limit." + hint,
+                    List.copyOf(capacityRejectedAutoHubNames),
+                    keptHubNames,
+                    maxVcPercent,
+                    finalVcPercent
+            ).toMap());
         }
 
         // Order intermediate hubs along corridor vector
@@ -650,10 +767,10 @@ public class PanIndiaDynamicCorridorService {
                         ROUTING_RESOLUTION_METERS,
                         stageWindow);
 
-                RouteConstraints constraints = RouteConstraints.none();
+                RouteConstraints constraints = RouteConstraints.forFacilityMode(null, mode);
                 if (effectiveMaxDev != null && Double.isFinite(effectiveMaxDev) && effectiveMaxDev >= 0.0) {
                     double maxStageKm = router.routeLengthKm(stageBaseline) * (1.0 + effectiveMaxDev / 100.0);
-                    constraints = RouteConstraints.maxLengthKm(maxStageKm);
+                    constraints = RouteConstraints.forFacilityMode(maxStageKm, mode);
                 }
 
                 List<GeoPoint> stageMainline;
@@ -726,6 +843,17 @@ public class PanIndiaDynamicCorridorService {
             }
             mainline = stitched;
         }
+        in.marg.routing.HorizontalCurveSmoother.SmoothingResult curveSmoothing =
+                in.marg.routing.HorizontalCurveSmoother.smoothAndAudit(
+                        mainline,
+                        panIndiaSurface,
+                        null,
+                        projection,
+                        PAN_INDIA_BOUNDS,
+                        in.marg.routing.HorizontalCurveSmoother.CurveProfile.forFacilityMode(mode));
+        mainline = curveSmoothing.smoothedPath();
+        Map<String, Object> horizontalGeometryAudit = curveSmoothing.report().toMap();
+
         double totalTerminalAccessRoadLengthKm = round(startConnectorKm + goalConnectorKm);
 
         double baselineLengthKm = router.routeLengthKm(baseline);
@@ -736,8 +864,9 @@ public class PanIndiaDynamicCorridorService {
 
         RightOfWayCorridorEngine.CorridorFootprint rowFootprint =
                 rowEngine.buildCorridorFootprint(mainline, mode);
-        Map<String, Object> routeDiagnostics = panIndiaSurface.summarizeRouteDiagnostics(
-                mainline, mode, projection, rowFootprint);
+        Map<String, Object> routeDiagnostics = new LinkedHashMap<>(panIndiaSurface.summarizeRouteDiagnostics(
+                mainline, mode, projection, rowFootprint));
+        routeDiagnostics.put("horizontalGeometryAudit", horizontalGeometryAudit);
 
         StudyRegion overallWindow = unionWindow(
                 localWindowAround(start, bufferDeg),
@@ -892,6 +1021,18 @@ public class PanIndiaDynamicCorridorService {
             ));
         }
 
+        Map<String, Object> trafficAnalysis = new LinkedHashMap<>();
+        trafficAnalysis.put("designCapacityPcuHr", designCapacityPcuHr);
+        trafficAnalysis.put("baseThroughTrafficPcuHr", baseThroughTrafficPcuHr);
+        trafficAnalysis.put("projectedTotalTrafficPcuHr", round(currentVolumePcuHr));
+        trafficAnalysis.put("projectedVcRatio", round(finalVcRatio));
+        trafficAnalysis.put("maxVcRatioCapApplied", effectiveMaxVc);
+        trafficAnalysis.put("levelOfService", in.marg.transport.HubEvaluationService.classifyLevelOfService(finalVcRatio));
+        trafficAnalysis.put("overCapacityWarning", finalVcRatio > effectiveMaxVc + 1e-9);
+        trafficAnalysis.put("sixLaneRecommended", false);
+        trafficAnalysis.put("laneConfigurationRecommended", "4_LANE_STANDARD");
+        networkSummary.put("trafficCapacityAnalysis", trafficAnalysis);
+
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("corridorTierMode", CorridorTierMode.TIER_1_DYNAMIC_PAN_INDIA.name());
         metadata.put("regionId", "pan_india");
@@ -903,8 +1044,10 @@ public class PanIndiaDynamicCorridorService {
         metadata.put("targetHubs", resolvedHubs.stream().map(ResolvedIntermediateHub::name).toList());
         metadata.put("autoConnectHubs", enableAuto);
         metadata.put("maxAutoHubs", maxAutoHubs != null ? maxAutoHubs : "DEFAULT");
+        metadata.put("trafficCapacityAlerts", trafficCapacityAlerts);
         metadata.put("endpointResolution", startSnap.toMetadataMap());
         metadata.put("terminalRoadConnections", terminalRoadConnections);
+        metadata.put("horizontalGeometryAudit", horizontalGeometryAudit);
         metadata.put("facilityMode", mode.name());
         metadata.put("searchWindow", overallWindow);
         metadata.put("distanceBaselineLengthKm", round(baselineLengthKm));
@@ -932,12 +1075,11 @@ public class PanIndiaDynamicCorridorService {
         @SuppressWarnings("unchecked")
         Map<String, Object> statutoryReport = tradeOffProfile.get("statutoryClearanceReport") instanceof Map<?, ?> m
                 ? (Map<String, Object>) m : null;
-        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier1Audit(
-                routeDiagnostics, baselineDiagnostics, mainline, baseline,
-                terminalRoadConnections, statutoryReport, features, mode, projection);
         List<Map<String, Object>> routeLayerProfile = in.marg.routing.LayerVerificationAuditService.sampleTier1RouteProfile(
                 mainline, projection);
         List<Map<String, Object>> spurLayerProfiles = new ArrayList<>();
+        List<in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry> spurDiagEntries = new ArrayList<>();
+        List<in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry> baselineSpurDiagEntries = new ArrayList<>();
         for (Map<String, Object> f : features) {
             if (!(f.get("properties") instanceof Map<?, ?> props)) continue;
             Object role = props.get("featureRole");
@@ -951,13 +1093,37 @@ public class PanIndiaDynamicCorridorService {
                 }
             }
             if (spurPts.size() >= 2) {
+                String spurId = String.valueOf(props.get("corridorId") != null ? props.get("corridorId") : role);
+                String hubName = String.valueOf(props.get("connectingHub") != null ? props.get("connectingHub") : "Terminal Spur");
                 Map<String, Object> sp = new LinkedHashMap<>();
-                sp.put("spurId", String.valueOf(props.get("corridorId") != null ? props.get("corridorId") : role));
-                sp.put("servedHubName", String.valueOf(props.get("connectingHub") != null ? props.get("connectingHub") : "Terminal Spur"));
+                sp.put("spurId", spurId);
+                sp.put("servedHubName", hubName);
                 sp.put("samples", in.marg.routing.LayerVerificationAuditService.sampleTier1RouteProfile(spurPts, projection));
                 spurLayerProfiles.add(sp);
+
+                if ("FEEDER_SPUR_HIGHWAY".equals(role)) {
+                    double spLen = props.get("lengthKm") instanceof Number n ? n.doubleValue() : router.routeLengthKm(spurPts);
+                    Map<String, Object> spDiag = panIndiaSurface.summarizeRouteDiagnostics(spurPts, mode, projection, null);
+                    spurDiagEntries.add(new in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry(
+                            spurId, hubName, spLen, spDiag));
+
+                    GeoPoint hubTarget = spurPts.get(spurPts.size() - 1);
+                    List<GeoPoint> straightSpurPath = in.marg.routing.RouteAlignmentPostRefiner.buildStraightLineSpurPath(
+                            baseline, hubTarget, projection, ROUTING_RESOLUTION_METERS);
+                    if (straightSpurPath.size() >= 2) {
+                        double baseSpurLenKm = router.routeLengthKm(straightSpurPath);
+                        Map<String, Object> baseSpDiag = panIndiaSurface.summarizeRouteDiagnostics(
+                                straightSpurPath, mode, projection, null);
+                        baselineSpurDiagEntries.add(new in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry(
+                                "BASE-" + spurId, hubName, baseSpurLenKm, baseSpDiag));
+                    }
+                }
             }
         }
+        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier1Audit(
+                routeDiagnostics, baselineDiagnostics, mainline, baseline,
+                terminalRoadConnections, statutoryReport, features, mode, projection,
+                spurDiagEntries, baselineSpurDiagEntries);
         metadata.put("layerAudit", layerAudit);
         metadata.put("routeLayerProfile", routeLayerProfile);
         metadata.put("spurLayerProfiles", spurLayerProfiles);
@@ -1003,6 +1169,26 @@ public class PanIndiaDynamicCorridorService {
         response.put("warning", "Preliminary greenfield planning corridor only; not a legal land-acquisition or clearance determination.");
         response.put("features", features);
         return response;
+    }
+
+    private static double estimatePanIndiaHubPcuHr(DistrictRecord dr) {
+        if (dr == null) return 45.0 * 9.5;
+        double popThousands;
+        double industrialFactor;
+        if (!dr.isDistrict()) {
+            popThousands = 32.0;
+            industrialFactor = 1.0;
+        } else if (dr.tier() <= 1) {
+            popThousands = 150.0;
+            industrialFactor = 1.15;
+        } else if (dr.tier() == 2) {
+            popThousands = 85.0;
+            industrialFactor = 1.05;
+        } else {
+            popThousands = 50.0;
+            industrialFactor = 1.0;
+        }
+        return popThousands * 9.5 * industrialFactor;
     }
 
     private List<GeoPoint> buildStageWaypoints(
@@ -1212,6 +1398,101 @@ public class PanIndiaDynamicCorridorService {
                     ));
                 }
             }
+
+            // 4. Authoritative Pan-India Wetlands Polygons (Ramsar Sites & Major Indian Beels/Jheels/Taals/Backwaters)
+            List<in.marg.drainage.IndianWetlandRegistry.MappedWetland> nearbyWetlands =
+                    in.marg.drainage.IndianWetlandRegistry.getDefaultInstance()
+                            .findWetlandsInWindow(minLat - 0.45, minLon - 0.45, maxLat + 0.45, maxLon + 0.45);
+            int wmzSeq = 1;
+            for (in.marg.drainage.IndianWetlandRegistry.MappedWetland w : nearbyWetlands) {
+                List<List<Double>> wRing = new ArrayList<>(w.polygonLonLat().size());
+                for (double[] pt : w.polygonLonLat()) {
+                    wRing.add(List.of(
+                            Math.round(pt[0] * 100000.0) / 100000.0,
+                            Math.round(pt[1] * 100000.0) / 100000.0));
+                }
+                Map<String, Object> wProps = new LinkedHashMap<>();
+                wProps.put("featureRole", "CORRIDOR_WETLAND_POLYGON");
+                wProps.put("wetlandId", w.id());
+                wProps.put("wetlandName", w.name());
+                wProps.put("wetlandCategory", w.wetlandCategory());
+                wProps.put("state", w.state());
+                wProps.put("district", w.district());
+                wProps.put("basin", w.basin());
+                wProps.put("areaHectares", round(w.areaHectares()));
+                wProps.put("isRamsar", w.isRamsar());
+                wProps.put("isProtectedBeel", w.isProtectedWetland());
+                wProps.put("legalStatute", w.legalStatute());
+                wProps.put("recommendedMitigation", "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY");
+                wProps.put("centroidLat", w.centerLat());
+                wProps.put("centroidLon", w.centerLon());
+                features.add(Map.of(
+                        "type", "Feature",
+                        "geometry", Map.of("type", "Polygon", "coordinates", List.of(wRing)),
+                        "properties", wProps
+                ));
+
+                // Flag a wetland hydrologic mitigation zone if the mainline passes within 500 m
+                double minDistM = Double.POSITIVE_INFINITY;
+                for (GeoPoint p : mainline) {
+                    if (p.lat() < w.minLat() - 0.05 || p.lat() > w.maxLat() + 0.05
+                            || p.lon() < w.minLon() - 0.05 || p.lon() > w.maxLon() + 0.05) {
+                        continue;
+                    }
+                    double d = w.approximateDistanceMeters(p.lat(), p.lon());
+                    if (d < minDistM) {
+                        minDistM = d;
+                    }
+                }
+                if (minDistM <= 500.0) {
+                    Map<String, Object> wmzProps = new LinkedHashMap<>();
+                    wmzProps.put("featureRole", "WETLAND_HYDROLOGIC_MITIGATION_ZONE");
+                    wmzProps.put("zoneId", String.format(Locale.ROOT, "WMZ-PAN-%03d", wmzSeq++));
+                    wmzProps.put("wetlandId", w.id());
+                    wmzProps.put("wetlandName", w.name());
+                    wmzProps.put("wetlandCategory", w.wetlandCategory());
+                    wmzProps.put("district", w.district());
+                    wmzProps.put("isProtectedBeel", w.isProtectedWetland());
+                    wmzProps.put("clearanceFromDirectRowEdgeMeters", round(Math.max(0.0, minDistM - 30.0)));
+                    wmzProps.put("recommendedMitigation", "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY");
+                    wmzProps.put("recommendedEngineeringMitigation", "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY");
+                    features.add(Map.of(
+                            "type", "Feature",
+                            "geometry", Map.of("type", "Point", "coordinates", List.of(w.centerLon(), w.centerLat())),
+                            "properties", wmzProps
+                    ));
+                }
+            }
+
+            // 5. Major River & Drainage Basin Channels within corridor window (for L7 & L13 map overlays)
+            for (PanIndiaDynamicCostLayer.MajorRiverAxis river : PanIndiaDynamicCostLayer.MAJOR_RIVERS) {
+                double rMinLat = Math.min(river.startLat(), river.endLat());
+                double rMaxLat = Math.max(river.startLat(), river.endLat());
+                double rMinLon = Math.min(river.startLon(), river.endLon());
+                double rMaxLon = Math.max(river.startLon(), river.endLon());
+                if (rMaxLat < minLat - 0.35 || rMinLat > maxLat + 0.35
+                        || rMaxLon < minLon - 0.35 || rMinLon > maxLon + 0.35) {
+                    continue;
+                }
+                Map<String, Object> rivProps = new LinkedHashMap<>();
+                rivProps.put("featureRole", "CORRIDOR_DRAINAGE_CHANNEL");
+                rivProps.put("channelId", river.id());
+                rivProps.put("channelName", river.name());
+                rivProps.put("sublayerType", "NATURAL_DRAINAGE_CHANNEL");
+                rivProps.put("designWidthMeters", river.designSpanMeters());
+                rivProps.put("recommendedStructureType", "MULTI_CELL_BOX_CULVERT_OR_MINOR_BRIDGE");
+                features.add(Map.of(
+                        "type", "Feature",
+                        "geometry", Map.of(
+                                "type", "LineString",
+                                "coordinates", List.of(
+                                        List.of(round(river.startLon()), round(river.startLat())),
+                                        List.of(round(river.endLon()), round(river.endLat()))
+                                )
+                        ),
+                        "properties", rivProps
+                ));
+            }
         }
 
         return features;
@@ -1329,6 +1610,7 @@ public class PanIndiaDynamicCorridorService {
         double dLat = Math.abs(toPt.lat() - fromPt.lat());
         double dLon = Math.abs(toPt.lon() - fromPt.lon());
         int stages = Math.max(1, (int) Math.ceil(Math.max(dLat, dLon) / MAX_SINGLE_STAGE_SPAN_DEG));
+        RouteConstraints connConstraints = RouteConstraints.forFacilityMode(null, FacilityMode.NATIONAL_HIGHWAY);
         for (boolean lastResortColony : new boolean[]{false, true}) {
             PanIndiaDynamicCostLayer connSurface = new PanIndiaDynamicCostLayer(
                     fromPt, toPt, mode, in.marg.routing.AlignmentPreference.BALANCED, osmIndex, lastResortColony);
@@ -1343,13 +1625,23 @@ public class PanIndiaDynamicCorridorService {
                     PanIndiaDynamicCostLayer sSurface = new PanIndiaDynamicCostLayer(
                             sA, sB, mode, in.marg.routing.AlignmentPreference.BALANCED, osmIndex, lastResortColony);
                     List<GeoPoint> seg = router.route(
-                            PAN_INDIA_BOUNDS, sA, sB, sSurface, ROUTING_RESOLUTION_METERS, sWin);
+                            PAN_INDIA_BOUNDS, sA, sB, sSurface, ROUTING_RESOLUTION_METERS, sWin, connConstraints);
                     appendPathSegment(connector, seg);
                 }
                 if (!connector.isEmpty()) {
                     connector.set(0, fromPt);
                     connector.set(connector.size() - 1, toPt);
-                    return connector;
+                    int localUtmZone = Math.max(1, Math.min(60,
+                            (int) Math.floor((0.5 * (fromPt.lon() + toPt.lon()) + 180.0) / 6.0) + 1));
+                    in.marg.spatial.CoordinateProjection localProj =
+                            new in.marg.spatial.Wgs84UtmProjection(localUtmZone);
+                    return in.marg.routing.HorizontalCurveSmoother.smoothAndAudit(
+                            connector,
+                            connSurface,
+                            null,
+                            localProj,
+                            PAN_INDIA_BOUNDS,
+                            in.marg.routing.HorizontalCurveSmoother.CurveProfile.FEEDER_SPUR).smoothedPath();
                 }
             } catch (RuntimeException ignored) {
             }

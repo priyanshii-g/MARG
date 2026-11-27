@@ -116,6 +116,7 @@ const CLASS_LABEL_MAP = {
   TERMINAL_ENDPOINT_EXCLUDED: "Near Start or End",
   OUTSIDE_CORRIDOR_BUFFER: "Too Far from Route",
   BELOW_MODE_POPULATION_THRESHOLD: "Smaller Town",
+  CAPACITY_VC_USER_HUB_DROPPED: "Removed (Traffic Limit)",
   CAPACITY_VC_GATE_REJECTED: "Skipped (Traffic Limit)",
   SPACING_GATE_REJECTED: "Skipped (Too Close to Exit)",
 };
@@ -171,7 +172,8 @@ export function humanizeTrafficFlow(vcRatio, rawLos) {
     if (num <= 0.65) return { label: "Smooth Flow", detail: `${pct}% of road capacity used` };
     if (num <= 0.80) return { label: "Steady Flow", detail: `${pct}% of road capacity used` };
     if (num <= 0.95) return { label: "Busy Traffic", detail: `${pct}% of road capacity used` };
-    return { label: "Near Full Capacity", detail: `${pct}% of road capacity used` };
+    if (num <= 1.00) return { label: "Near Full Capacity", detail: `${pct}% of road capacity used` };
+    return { label: "Over Capacity", detail: `${pct}% of road capacity used` };
   }
   if (rawLos) {
     return { label: humanizeClassLabel(rawLos), detail: "Estimated peak-hour flow" };
@@ -342,8 +344,11 @@ export function humanizeText(raw) {
     [/riparian encroachment/gi, "disturbance near riverbanks"],
     [/riparian setback/gi, "riverbank safety buffer"],
     [/natural levees/gi, "higher, drier ground"],
+    [/flood inundation zones?/gi, "flood-prone areas"],
     [/inundation zones?/gi, "flood-prone areas"],
     [/inundation/gi, "flooding"],
+    [/High Flood Level/gi, "safe monsoon flood height"],
+    [/HFL protection/gi, "monsoon flood protection"],
     [/hydrologic mitigation/gi, "water-flow protection"],
     [/cross-drainage culverts\/aqueducts/gi, "water drainage tunnels & culverts"],
     [/cross-drainage structures/gi, "water drainage culverts"],

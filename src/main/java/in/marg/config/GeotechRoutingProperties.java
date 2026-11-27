@@ -13,10 +13,10 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "marg.routing.geotech")
 public class GeotechRoutingProperties {
 
-    private boolean blockActiveLandslideZones = false;
+    private boolean blockActiveLandslideZones = true;
     private boolean blockNoData = false;
     private double scarpSkewPenaltyFactor = 1.40;
-    private double parallelScarpUndercutPenalty = 2.50;
+    private double parallelScarpUndercutPenalty = 4.00;
     private double parallelScarpRadiusMeters = 260.0;
 
     private Map<GeotechHazardClass, Double> nodePenalties =

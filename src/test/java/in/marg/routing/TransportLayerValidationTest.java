@@ -57,7 +57,7 @@ class TransportLayerValidationTest {
     }
 
     @Test
-    void nationalHighwayWithDimapurAndExplicitAutoHubsConnectsNeighbouringCitiesToo() {
+    void strictTrafficCapacityCapAndTotalHubLimitPrioritizeUserCityAndEmitAlerts() {
         TransportNetworkVectorIndex vectorIndex = new TransportNetworkVectorIndex(
                 projection,
                 "data/processed/transport/assam_transport_network.geojson",
@@ -65,7 +65,30 @@ class TransportLayerValidationTest {
         TransportRoutingProperties props = new TransportRoutingProperties();
         HubEvaluationService hubService = new HubEvaluationService(vectorIndex, projection, props);
 
-        var eval = hubService.evaluate(
+        // Case A: Expressway with 85% cap (Connect More Towns), maxAutoHubs=3, user adds Dimapur
+        // Must NEVER connect 4 cities (total cap = 3 with Dimapur prioritized), and V/C must stay <= 0.85
+        var exp85 = hubService.evaluate(
+                fullRegion.origin(),
+                fullRegion.destination(),
+                fullRegion,
+                FacilityMode.EXPRESSWAY,
+                List.of("Dimapur"),
+                null,
+                0.85,
+                true,
+                3);
+        assertTrue(exp85.projectedVcRatio() <= 0.85,
+                "Projected V/C must strictly respect 85% cap, got: " + exp85.projectedVcRatio());
+        assertFalse(exp85.overCapacityWarning());
+        assertTrue(exp85.approvedHubs().size() <= 3,
+                "With maxAutoHubs=3 and user-added Dimapur, total connected cities must be <= 3 (never 4), got: "
+                        + exp85.approvedHubs().stream().map(h -> h.name()).toList());
+        assertTrue(exp85.approvedHubs().stream().anyMatch(h -> h.name().toLowerCase().contains("dimapur")),
+                "User-selected Dimapur must be kept as highest priority when within 85% cap");
+
+        // Case B: National Highway with 70% cap (Smooth & Fast), maxAutoHubs=3, user adds Dimapur
+        // Must NEVER exceed 70% V/C; if Dimapur exceeds 70% cap, it must be removed with a clear alert
+        var nh70 = hubService.evaluate(
                 fullRegion.origin(),
                 fullRegion.destination(),
                 fullRegion,
@@ -75,12 +98,15 @@ class TransportLayerValidationTest {
                 0.70,
                 true,
                 3);
-
-        assertTrue(eval.approvedHubs().stream().anyMatch(h -> h.name().toLowerCase().contains("dimapur")),
-                "User-selected Dimapur must be connected");
-        assertTrue(eval.approvedHubs().size() >= 3,
-                "With autoConnectHubs=true and maxAutoHubs=3 alongside Dimapur on NH, neighbouring cities must also connect, got: "
-                        + eval.approvedHubs().stream().map(h -> h.name()).toList());
+        assertTrue(nh70.projectedVcRatio() <= 0.70,
+                "Projected V/C must strictly respect 70% Smooth & Fast limit, got: " + nh70.projectedVcRatio());
+        assertFalse(nh70.overCapacityWarning());
+        assertTrue(nh70.approvedHubs().size() <= 3,
+                "Total connected cities must never exceed maxAutoHubs=3");
+        if (nh70.approvedHubs().stream().noneMatch(h -> h.name().toLowerCase().contains("dimapur"))) {
+            assertTrue(nh70.capacityAlerts().stream().anyMatch(a -> "USER_CITY_REMOVED_FOR_CAPACITY".equals(a.code())),
+                    "Dropping user-selected Dimapur for exceeding 70% cap must emit USER_CITY_REMOVED_FOR_CAPACITY alert");
+        }
     }
     private final StudyRegion fullRegion = new StudyRegion(
             "Kaziranga–Karbi Anglong, Assam",
@@ -200,20 +226,26 @@ class TransportLayerValidationTest {
         assertTrue(nhEval.decisions().stream().anyMatch(d -> "CAPACITY_VC_GATE_REJECTED".equals(d.status())),
                 "Carrying Capacity Gate must actively reject excess candidate hubs once V/C approaches 0.75");
 
-        // 3. USER IMMUTABLE OVERRIDES (forcing overload to verify immutable lock-in & over-capacity warning)
+        // 3. USER PRIORITY OVERRIDES STRICTLY CAPPED BY TRAFFIC COMFORT LIMIT (V/C <= 0.75)
         var overrideEval = hubService.evaluate(
                 fullRegion.origin(), fullRegion.destination(), corridor,
                 FacilityMode.NATIONAL_HIGHWAY,
                 List.of("Howraghat", "Dokmoka", "Silonijan", "Dillai", "Bokakhat"),
                 null, null
         );
-        System.out.println("\n=== 2C. HUB PIPELINE: USER IMMUTABLE OVERRIDES ===");
+        System.out.println("\n=== 2C. HUB PIPELINE: USER PRIORITY CAPPED BY TRAFFIC LIMIT ===");
         System.out.println("Approved Hubs: " + overrideEval.approvedHubs().stream().map(h -> h.name()).toList()
                 + " | V/C=" + overrideEval.projectedVcRatio() + " (" + overrideEval.levelOfService()
-                + ") | overCapacityWarning=" + overrideEval.overCapacityWarning());
-        assertEquals(5, overrideEval.approvedHubs().size());
-        assertTrue(overrideEval.overCapacityWarning(),
-                "Forcing 5 major hubs must trigger overCapacityWarning while respecting immutable user overrides");
+                + ") | alerts=" + overrideEval.capacityAlerts().size());
+        assertTrue(overrideEval.projectedVcRatio() <= 0.75,
+                "Even with 5 user-added hubs, V/C must strictly stay <= 0.75, got: " + overrideEval.projectedVcRatio());
+        assertFalse(overrideEval.overCapacityWarning());
+        assertTrue(overrideEval.approvedHubs().size() < 5,
+                "Excess user-added hubs that would exceed V/C cap must be removed");
+        assertTrue(overrideEval.decisions().stream().anyMatch(d -> "CAPACITY_VC_USER_HUB_DROPPED".equals(d.status())),
+                "Dropped user hubs must be recorded with CAPACITY_VC_USER_HUB_DROPPED status");
+        assertTrue(overrideEval.capacityAlerts().stream().anyMatch(a -> "USER_CITY_REMOVED_FOR_CAPACITY".equals(a.code())),
+                "Removing violating user hubs must emit a clear USER_CITY_REMOVED_FOR_CAPACITY alert");
     }
 
     @Test

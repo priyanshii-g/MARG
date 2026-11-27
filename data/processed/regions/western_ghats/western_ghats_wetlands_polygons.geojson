@@ -1,8 +1,10 @@
 {
   "type": "FeatureCollection",
+  "name": "western_ghats 2D Natural & Designated Wetlands, Reservoir Backwaters & Floodplain Marshes",
   "features": [
     {
       "type": "Feature",
+      "id": "WET-WESTERN_GHATS-001",
       "properties": {
         "id": "WET-WESTERN_GHATS-001",
         "name": "Nira Backwater Seasonal Marsh",
@@ -10,86 +12,104 @@
         "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
         "district": "Pune",
         "watershedId": "WS-WESTERN_GHATS-01",
-        "areaHectares": 14.7,
-        "perimeterMeters": 1405.0,
+        "areaHectares": 18.5,
+        "equivalentRadiusMeters": 242.7,
         "seasonalDepthMeters": 2.4,
-        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
         "isProtectedBeel": true,
-        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
         "centroidLat": 18.195,
-        "centroidLon": 73.912
+        "centroidLon": 73.912,
+        "utmX": 384943.12,
+        "utmY": 2012100.94
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              73.91431,
-              18.1958
+              73.912976,
+              18.197508
             ],
             [
-              73.913912,
-              18.196322
+              73.912539,
+              18.198069
             ],
             [
-              73.913222,
-              18.196642
+              73.911845,
+              18.197983
             ],
             [
-              73.912346,
-              18.196712
+              73.911221,
+              18.197194
             ],
             [
-              73.911418,
-              18.196522
+              73.910767,
+              18.196365
             ],
             [
-              73.910578,
-              18.1961
+              73.910272,
+              18.195615
             ],
             [
-              73.909955,
-              18.19551
+              73.909941,
+              18.194711
             ],
             [
-              73.909643,
-              18.194843
+              73.910071,
+              18.193917
             ],
             [
-              73.90969,
-              18.1942
+              73.910402,
+              18.1934
             ],
             [
-              73.910088,
-              18.193678
+              73.910694,
+              18.192946
             ],
             [
-              73.910778,
-              18.193358
+              73.911088,
+              18.192655
             ],
             [
-              73.911654,
-              18.193288
+              73.91158,
+              18.192608
             ],
             [
-              73.912582,
-              18.193478
+              73.912131,
+              18.192485
             ],
             [
-              73.913422,
-              18.1939
+              73.912897,
+              18.192472
             ],
             [
-              73.914045,
-              18.19449
+              73.91365,
+              18.193172
             ],
             [
-              73.914357,
-              18.195157
+              73.913886,
+              18.194329
             ],
             [
-              73.91431,
-              18.1958
+              73.913723,
+              18.195242
+            ],
+            [
+              73.913598,
+              18.195898
+            ],
+            [
+              73.913476,
+              18.196479
+            ],
+            [
+              73.913241,
+              18.196953
+            ],
+            [
+              73.912976,
+              18.197508
             ]
           ]
         ]
@@ -97,6 +117,7 @@
     },
     {
       "type": "Feature",
+      "id": "WET-WESTERN_GHATS-002",
       "properties": {
         "id": "WET-WESTERN_GHATS-002",
         "name": "Krishna-Dhom Command Waterlogged Tank",
@@ -104,86 +125,1686 @@
         "wetlandCategory": "COMMUNITY_FISHERY_TANK",
         "district": "Satara",
         "watershedId": "WS-WESTERN_GHATS-01",
-        "areaHectares": 13.74,
-        "perimeterMeters": 1355.8,
+        "areaHectares": 16.2,
+        "equivalentRadiusMeters": 227.1,
         "seasonalDepthMeters": 2.4,
-        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
         "isProtectedBeel": false,
-        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
         "centroidLat": 17.91,
-        "centroidLon": 73.968
+        "centroidLon": 73.968,
+        "utmX": 390689.66,
+        "utmY": 1980531.1
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              73.970218,
-              17.910769
+              73.966121,
+              17.911701
             ],
             [
-              73.969833,
-              17.911277
+              73.965262,
+              17.911671
             ],
             [
-              73.969169,
-              17.91159
+              73.96498,
+              17.91106
             ],
             [
-              73.968327,
-              17.911662
+              73.965517,
+              17.910175
             ],
             [
-              73.967435,
-              17.91148
+              73.966278,
+              17.909469
             ],
             [
-              73.966629,
-              17.911073
+              73.966953,
+              17.908939
             ],
             [
-              73.966032,
-              17.910502
+              73.967618,
+              17.908594
             ],
             [
-              73.965735,
-              17.909855
+              73.968219,
+              17.9084
             ],
             [
-              73.965782,
-              17.909231
+              73.968868,
+              17.908075
             ],
             [
-              73.966167,
-              17.908723
+              73.969677,
+              17.907768
             ],
             [
-              73.966831,
-              17.90841
+              73.970227,
+              17.907984
             ],
             [
-              73.967673,
-              17.908338
+              73.970291,
+              17.908602
             ],
             [
-              73.968565,
-              17.90852
+              73.970307,
+              17.909191
             ],
             [
-              73.969371,
-              17.908927
+              73.970353,
+              17.909834
             ],
             [
-              73.969968,
-              17.909498
+              73.969967,
+              17.910607
             ],
             [
-              73.970265,
-              17.910145
+              73.969188,
+              17.911205
             ],
             [
-              73.970218,
-              17.910769
+              73.968426,
+              17.911565
+            ],
+            [
+              73.967755,
+              17.911788
+            ],
+            [
+              73.967209,
+              17.911755
+            ],
+            [
+              73.966785,
+              17.911618
+            ],
+            [
+              73.966121,
+              17.911701
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-003",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-003",
+        "name": "Bhatghar Dam Eastern Backwater Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RESERVOIR_BACKWATER_MARSH",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 42.0,
+        "equivalentRadiusMeters": 365.6,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.172,
+        "centroidLon": 73.845,
+        "utmX": 377841.05,
+        "utmY": 2009599.16
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.849024,
+              18.173686
+            ],
+            [
+              73.84908,
+              18.174686
+            ],
+            [
+              73.848219,
+              18.175293
+            ],
+            [
+              73.846741,
+              18.175244
+            ],
+            [
+              73.845269,
+              18.174872
+            ],
+            [
+              73.843983,
+              18.174221
+            ],
+            [
+              73.843201,
+              18.173324
+            ],
+            [
+              73.842716,
+              18.172606
+            ],
+            [
+              73.841613,
+              18.171978
+            ],
+            [
+              73.840189,
+              18.170957
+            ],
+            [
+              73.839861,
+              18.169846
+            ],
+            [
+              73.840777,
+              18.169219
+            ],
+            [
+              73.842042,
+              18.168974
+            ],
+            [
+              73.843402,
+              18.169024
+            ],
+            [
+              73.844767,
+              18.16951
+            ],
+            [
+              73.845876,
+              18.170087
+            ],
+            [
+              73.847052,
+              18.17049
+            ],
+            [
+              73.848346,
+              18.171112
+            ],
+            [
+              73.848951,
+              18.172026
+            ],
+            [
+              73.848889,
+              18.172844
+            ],
+            [
+              73.849024,
+              18.173686
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-004",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-004",
+        "name": "Veer Dam Nira Floodplain Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RESERVOIR_BACKWATER_MARSH",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 65.0,
+        "equivalentRadiusMeters": 454.9,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.132,
+        "centroidLon": 74.082,
+        "utmX": 402887.3,
+        "utmY": 2005031.74
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.081923,
+              18.13809
+            ],
+            [
+              74.080806,
+              18.137575
+            ],
+            [
+              74.080066,
+              18.136164
+            ],
+            [
+              74.079591,
+              18.134761
+            ],
+            [
+              74.078978,
+              18.133542
+            ],
+            [
+              74.078663,
+              18.131961
+            ],
+            [
+              74.07914,
+              18.130454
+            ],
+            [
+              74.079819,
+              18.129374
+            ],
+            [
+              74.080254,
+              18.12798
+            ],
+            [
+              74.080944,
+              18.126376
+            ],
+            [
+              74.08208,
+              18.12569
+            ],
+            [
+              74.083277,
+              18.126036
+            ],
+            [
+              74.084313,
+              18.12702
+            ],
+            [
+              74.084826,
+              18.128762
+            ],
+            [
+              74.084546,
+              18.130701
+            ],
+            [
+              74.084223,
+              18.132026
+            ],
+            [
+              74.084532,
+              18.133369
+            ],
+            [
+              74.084762,
+              18.135326
+            ],
+            [
+              74.084168,
+              18.136991
+            ],
+            [
+              74.08309,
+              18.137803
+            ],
+            [
+              74.081923,
+              18.13809
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-005",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-005",
+        "name": "Khadakwasla Upper Backwater Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RESERVOIR_BACKWATER_MARSH",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 54.0,
+        "equivalentRadiusMeters": 414.6,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.428,
+        "centroidLon": 73.765,
+        "utmX": 369570.56,
+        "utmY": 2037983.26
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.75909,
+              18.430311
+            ],
+            [
+              73.759527,
+              18.429053
+            ],
+            [
+              73.761147,
+              18.427936
+            ],
+            [
+              73.762385,
+              18.427242
+            ],
+            [
+              73.762944,
+              18.426412
+            ],
+            [
+              73.763888,
+              18.425407
+            ],
+            [
+              73.765384,
+              18.42478
+            ],
+            [
+              73.766983,
+              18.424523
+            ],
+            [
+              73.768575,
+              18.424521
+            ],
+            [
+              73.769636,
+              18.425108
+            ],
+            [
+              73.769772,
+              18.426134
+            ],
+            [
+              73.769719,
+              18.427092
+            ],
+            [
+              73.76971,
+              18.428078
+            ],
+            [
+              73.768841,
+              18.429114
+            ],
+            [
+              73.767225,
+              18.429718
+            ],
+            [
+              73.765877,
+              18.430047
+            ],
+            [
+              73.764681,
+              18.430677
+            ],
+            [
+              73.763108,
+              18.431319
+            ],
+            [
+              73.761473,
+              18.431432
+            ],
+            [
+              73.760036,
+              18.431097
+            ],
+            [
+              73.75909,
+              18.430311
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-006",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-006",
+        "name": "Katraj-Jambhulwadi Percolation Tank Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "COMMUNITY_FISHERY_TANK",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 14.8,
+        "equivalentRadiusMeters": 217.0,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.442,
+        "centroidLon": 73.848,
+        "utmX": 378347.1,
+        "utmY": 2039474.75
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.850187,
+              18.444072
+            ],
+            [
+              73.8496,
+              18.444235
+            ],
+            [
+              73.848777,
+              18.443839
+            ],
+            [
+              73.848162,
+              18.443452
+            ],
+            [
+              73.847617,
+              18.443276
+            ],
+            [
+              73.846977,
+              18.442985
+            ],
+            [
+              73.846313,
+              18.442476
+            ],
+            [
+              73.845613,
+              18.441776
+            ],
+            [
+              73.845149,
+              18.440927
+            ],
+            [
+              73.845435,
+              18.440355
+            ],
+            [
+              73.846238,
+              18.440331
+            ],
+            [
+              73.846849,
+              18.440391
+            ],
+            [
+              73.847253,
+              18.440232
+            ],
+            [
+              73.847802,
+              18.440219
+            ],
+            [
+              73.848445,
+              18.440516
+            ],
+            [
+              73.849113,
+              18.440929
+            ],
+            [
+              73.849794,
+              18.441494
+            ],
+            [
+              73.850187,
+              18.442205
+            ],
+            [
+              73.850226,
+              18.442838
+            ],
+            [
+              73.850264,
+              18.443452
+            ],
+            [
+              73.850187,
+              18.444072
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-007",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-007",
+        "name": "Nasrapur-Shivganga Valley Seasonal Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 12.4,
+        "equivalentRadiusMeters": 198.7,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.258,
+        "centroidLon": 73.892,
+        "utmX": 382870.07,
+        "utmY": 2019084.89
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.891161,
+              18.260005
+            ],
+            [
+              73.890823,
+              18.259754
+            ],
+            [
+              73.890641,
+              18.259296
+            ],
+            [
+              73.890468,
+              18.258813
+            ],
+            [
+              73.890409,
+              18.258186
+            ],
+            [
+              73.890655,
+              18.257486
+            ],
+            [
+              73.891022,
+              18.256862
+            ],
+            [
+              73.89139,
+              18.256135
+            ],
+            [
+              73.891932,
+              18.255453
+            ],
+            [
+              73.892522,
+              18.255415
+            ],
+            [
+              73.892852,
+              18.255965
+            ],
+            [
+              73.89302,
+              18.256481
+            ],
+            [
+              73.893204,
+              18.256852
+            ],
+            [
+              73.89333,
+              18.257294
+            ],
+            [
+              73.893431,
+              18.257833
+            ],
+            [
+              73.893523,
+              18.258583
+            ],
+            [
+              73.893294,
+              18.259504
+            ],
+            [
+              73.892671,
+              18.260052
+            ],
+            [
+              73.892055,
+              18.260044
+            ],
+            [
+              73.891599,
+              18.259988
+            ],
+            [
+              73.891161,
+              18.260005
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-008",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-008",
+        "name": "Kapurhol-Bhor Foothill Percolation Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 15.6,
+        "equivalentRadiusMeters": 222.8,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.215,
+        "centroidLon": 73.958,
+        "utmX": 389820.68,
+        "utmY": 2014285.77
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.955781,
+              18.215043
+            ],
+            [
+              73.956027,
+              18.214677
+            ],
+            [
+              73.956144,
+              18.214279
+            ],
+            [
+              73.956251,
+              18.213693
+            ],
+            [
+              73.956908,
+              18.213187
+            ],
+            [
+              73.957961,
+              18.213168
+            ],
+            [
+              73.958842,
+              18.21346
+            ],
+            [
+              73.959579,
+              18.213719
+            ],
+            [
+              73.960224,
+              18.214034
+            ],
+            [
+              73.960479,
+              18.214494
+            ],
+            [
+              73.960461,
+              18.214952
+            ],
+            [
+              73.960437,
+              18.215399
+            ],
+            [
+              73.960131,
+              18.215827
+            ],
+            [
+              73.959464,
+              18.216094
+            ],
+            [
+              73.958802,
+              18.216332
+            ],
+            [
+              73.958036,
+              18.216719
+            ],
+            [
+              73.956956,
+              18.216908
+            ],
+            [
+              73.956069,
+              18.216567
+            ],
+            [
+              73.955751,
+              18.215977
+            ],
+            [
+              73.955697,
+              18.21547
+            ],
+            [
+              73.955781,
+              18.215043
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-009",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-009",
+        "name": "Shirwal Nira Riverine Oxbow Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 22.3,
+        "equivalentRadiusMeters": 266.4,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.148,
+        "centroidLon": 73.988,
+        "utmX": 392952.24,
+        "utmY": 2006854.29
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.989215,
+              18.150595
+            ],
+            [
+              73.988576,
+              18.150342
+            ],
+            [
+              73.988036,
+              18.150292
+            ],
+            [
+              73.98731,
+              18.150456
+            ],
+            [
+              73.986396,
+              18.150029
+            ],
+            [
+              73.985804,
+              18.148941
+            ],
+            [
+              73.985668,
+              18.147819
+            ],
+            [
+              73.985781,
+              18.146932
+            ],
+            [
+              73.986165,
+              18.146385
+            ],
+            [
+              73.986662,
+              18.146173
+            ],
+            [
+              73.986951,
+              18.145759
+            ],
+            [
+              73.987268,
+              18.145023
+            ],
+            [
+              73.98795,
+              18.144814
+            ],
+            [
+              73.988712,
+              18.145464
+            ],
+            [
+              73.989312,
+              18.146341
+            ],
+            [
+              73.989886,
+              18.147192
+            ],
+            [
+              73.990275,
+              18.148177
+            ],
+            [
+              73.990245,
+              18.149081
+            ],
+            [
+              73.990034,
+              18.14979
+            ],
+            [
+              73.989755,
+              18.150397
+            ],
+            [
+              73.989215,
+              18.150595
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-010",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-010",
+        "name": "Khandala-Lonand Seasonal Tank Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "COMMUNITY_FISHERY_TANK",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 17.9,
+        "equivalentRadiusMeters": 238.7,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.042,
+        "centroidLon": 74.028,
+        "utmX": 397121.9,
+        "utmY": 1995102.56
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.025884,
+              18.044179
+            ],
+            [
+              74.025694,
+              18.043616
+            ],
+            [
+              74.025639,
+              18.042998
+            ],
+            [
+              74.025609,
+              18.042319
+            ],
+            [
+              74.025955,
+              18.041507
+            ],
+            [
+              74.026639,
+              18.040789
+            ],
+            [
+              74.027377,
+              18.040198
+            ],
+            [
+              74.028151,
+              18.039794
+            ],
+            [
+              74.028781,
+              18.039905
+            ],
+            [
+              74.029092,
+              18.040329
+            ],
+            [
+              74.029516,
+              18.040439
+            ],
+            [
+              74.030297,
+              18.04039
+            ],
+            [
+              74.030825,
+              18.040806
+            ],
+            [
+              74.030687,
+              18.041642
+            ],
+            [
+              74.030156,
+              18.04252
+            ],
+            [
+              74.029409,
+              18.043254
+            ],
+            [
+              74.028554,
+              18.043603
+            ],
+            [
+              74.027889,
+              18.043624
+            ],
+            [
+              74.027312,
+              18.043845
+            ],
+            [
+              74.026534,
+              18.044244
+            ],
+            [
+              74.025884,
+              18.044179
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-011",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-011",
+        "name": "Wai-Krishna Riverbank Floodplain Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 24.5,
+        "equivalentRadiusMeters": 279.3,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 17.952,
+        "centroidLon": 73.882,
+        "utmX": 381607.48,
+        "utmY": 1985231.07
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.885514,
+              17.953221
+            ],
+            [
+              73.885307,
+              17.95389
+            ],
+            [
+              73.884663,
+              17.954396
+            ],
+            [
+              73.883579,
+              17.954527
+            ],
+            [
+              73.882339,
+              17.954093
+            ],
+            [
+              73.881425,
+              17.953518
+            ],
+            [
+              73.880586,
+              17.953189
+            ],
+            [
+              73.8796,
+              17.952801
+            ],
+            [
+              73.879032,
+              17.952165
+            ],
+            [
+              73.879008,
+              17.951543
+            ],
+            [
+              73.878965,
+              17.950945
+            ],
+            [
+              73.878997,
+              17.950284
+            ],
+            [
+              73.879574,
+              17.949817
+            ],
+            [
+              73.880519,
+              17.94963
+            ],
+            [
+              73.88161,
+              17.949591
+            ],
+            [
+              73.882787,
+              17.949924
+            ],
+            [
+              73.883541,
+              17.950704
+            ],
+            [
+              73.88374,
+              17.951419
+            ],
+            [
+              73.884177,
+              17.951879
+            ],
+            [
+              73.885037,
+              17.952464
+            ],
+            [
+              73.885514,
+              17.953221
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-012",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-012",
+        "name": "Dhom Dam Backwater Retention Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RESERVOIR_BACKWATER_MARSH",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 48.0,
+        "equivalentRadiusMeters": 390.9,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 17.978,
+        "centroidLon": 73.822,
+        "utmX": 375271.22,
+        "utmY": 1988147.35
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.822261,
+              17.982747
+            ],
+            [
+              73.821292,
+              17.982905
+            ],
+            [
+              73.820189,
+              17.982702
+            ],
+            [
+              73.819361,
+              17.98146
+            ],
+            [
+              73.819401,
+              17.979542
+            ],
+            [
+              73.819874,
+              17.978107
+            ],
+            [
+              73.819966,
+              17.97706
+            ],
+            [
+              73.819885,
+              17.975765
+            ],
+            [
+              73.820174,
+              17.974458
+            ],
+            [
+              73.820799,
+              17.973353
+            ],
+            [
+              73.821698,
+              17.972514
+            ],
+            [
+              73.822766,
+              17.97269
+            ],
+            [
+              73.823527,
+              17.974035
+            ],
+            [
+              73.823955,
+              17.975437
+            ],
+            [
+              73.824495,
+              17.976519
+            ],
+            [
+              73.824894,
+              17.977854
+            ],
+            [
+              73.824637,
+              17.979218
+            ],
+            [
+              73.824079,
+              17.980198
+            ],
+            [
+              73.823652,
+              17.981204
+            ],
+            [
+              73.823093,
+              17.982231
+            ],
+            [
+              73.822261,
+              17.982747
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-013",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-013",
+        "name": "Pachwad-Krishna Meander Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 19.4,
+        "equivalentRadiusMeters": 248.5,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 17.872,
+        "centroidLon": 73.992,
+        "utmX": 393209.25,
+        "utmY": 1976312.52
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.989145,
+              17.873333
+            ],
+            [
+              73.989208,
+              17.872722
+            ],
+            [
+              73.98916,
+              17.872129
+            ],
+            [
+              73.989551,
+              17.87145
+            ],
+            [
+              73.99046,
+              17.870957
+            ],
+            [
+              73.991334,
+              17.870691
+            ],
+            [
+              73.992081,
+              17.870416
+            ],
+            [
+              73.992863,
+              17.870216
+            ],
+            [
+              73.993633,
+              17.870184
+            ],
+            [
+              73.994544,
+              17.870172
+            ],
+            [
+              73.995502,
+              17.870365
+            ],
+            [
+              73.995684,
+              17.871048
+            ],
+            [
+              73.994846,
+              17.871871
+            ],
+            [
+              73.993878,
+              17.872421
+            ],
+            [
+              73.993266,
+              17.872857
+            ],
+            [
+              73.992663,
+              17.873303
+            ],
+            [
+              73.991916,
+              17.873655
+            ],
+            [
+              73.991036,
+              17.873994
+            ],
+            [
+              73.989992,
+              17.874233
+            ],
+            [
+              73.98924,
+              17.873983
+            ],
+            [
+              73.989145,
+              17.873333
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-014",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-014",
+        "name": "Kanher Dam Venna Backwater Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RESERVOIR_BACKWATER_MARSH",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 38.0,
+        "equivalentRadiusMeters": 347.8,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 17.742,
+        "centroidLon": 73.922,
+        "utmX": 385709.76,
+        "utmY": 1961969.47
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.925587,
+              17.744996
+            ],
+            [
+              73.924392,
+              17.744929
+            ],
+            [
+              73.923438,
+              17.744868
+            ],
+            [
+              73.922467,
+              17.744599
+            ],
+            [
+              73.921514,
+              17.744142
+            ],
+            [
+              73.92045,
+              17.743706
+            ],
+            [
+              73.919223,
+              17.742978
+            ],
+            [
+              73.91849,
+              17.741889
+            ],
+            [
+              73.918444,
+              17.740906
+            ],
+            [
+              73.918374,
+              17.739979
+            ],
+            [
+              73.918324,
+              17.73893
+            ],
+            [
+              73.919049,
+              17.738387
+            ],
+            [
+              73.920345,
+              17.7387
+            ],
+            [
+              73.921511,
+              17.739282
+            ],
+            [
+              73.922492,
+              17.739832
+            ],
+            [
+              73.923336,
+              17.740529
+            ],
+            [
+              73.92411,
+              17.741257
+            ],
+            [
+              73.925272,
+              17.742104
+            ],
+            [
+              73.926522,
+              17.743391
+            ],
+            [
+              73.926658,
+              17.744596
+            ],
+            [
+              73.925587,
+              17.744996
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-015",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-015",
+        "name": "Khed-Shivapur Stream Confluence Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Pune",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 13.5,
+        "equivalentRadiusMeters": 207.3,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 18.338,
+        "centroidLon": 73.852,
+        "utmX": 378696.8,
+        "utmY": 2027963.58
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.851135,
+              18.34053
+            ],
+            [
+              73.850824,
+              18.34003
+            ],
+            [
+              73.850685,
+              18.339428
+            ],
+            [
+              73.850769,
+              18.338757
+            ],
+            [
+              73.850821,
+              18.338212
+            ],
+            [
+              73.850651,
+              18.337579
+            ],
+            [
+              73.85065,
+              18.336624
+            ],
+            [
+              73.851123,
+              18.335824
+            ],
+            [
+              73.85177,
+              18.335568
+            ],
+            [
+              73.852321,
+              18.335573
+            ],
+            [
+              73.85278,
+              18.33572
+            ],
+            [
+              73.853072,
+              18.33615
+            ],
+            [
+              73.853249,
+              18.336644
+            ],
+            [
+              73.853502,
+              18.337077
+            ],
+            [
+              73.853646,
+              18.337703
+            ],
+            [
+              73.853411,
+              18.33844
+            ],
+            [
+              73.853025,
+              18.339045
+            ],
+            [
+              73.852702,
+              18.339741
+            ],
+            [
+              73.852239,
+              18.340525
+            ],
+            [
+              73.851626,
+              18.340829
+            ],
+            [
+              73.851135,
+              18.34053
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-WESTERN_GHATS-016",
+      "properties": {
+        "id": "WET-WESTERN_GHATS-016",
+        "name": "Satara-Mahuli Sangam Floodplain Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Satara",
+        "watershedId": "WS-WESTERN_GHATS-01",
+        "areaHectares": 26.0,
+        "equivalentRadiusMeters": 287.7,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 17.705,
+        "centroidLon": 74.058,
+        "utmX": 400109.22,
+        "utmY": 1957798.12
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.054843,
+              17.705258
+            ],
+            [
+              74.054727,
+              17.70467
+            ],
+            [
+              74.055072,
+              17.704066
+            ],
+            [
+              74.056038,
+              17.703717
+            ],
+            [
+              74.056962,
+              17.703505
+            ],
+            [
+              74.057829,
+              17.703071
+            ],
+            [
+              74.059067,
+              17.702691
+            ],
+            [
+              74.060338,
+              17.702832
+            ],
+            [
+              74.061189,
+              17.703365
+            ],
+            [
+              74.061609,
+              17.704024
+            ],
+            [
+              74.061373,
+              17.704724
+            ],
+            [
+              74.060558,
+              17.705258
+            ],
+            [
+              74.060033,
+              17.705648
+            ],
+            [
+              74.05995,
+              17.706275
+            ],
+            [
+              74.059404,
+              17.707023
+            ],
+            [
+              74.058208,
+              17.707342
+            ],
+            [
+              74.056972,
+              17.707224
+            ],
+            [
+              74.055886,
+              17.70696
+            ],
+            [
+              74.055085,
+              17.706495
+            ],
+            [
+              74.054857,
+              17.70585
+            ],
+            [
+              74.054843,
+              17.705258
             ]
           ]
         ]

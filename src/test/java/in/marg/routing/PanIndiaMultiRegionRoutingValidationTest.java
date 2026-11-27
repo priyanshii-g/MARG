@@ -428,32 +428,43 @@ class PanIndiaMultiRegionRoutingValidationTest {
         CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
         CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
 
+        // User adds Dimapur and selects maxAutoHubs=3 with Connect More Towns (85% cap)
+        // Must connect at most 3 cities total (never 4), prioritizing Dimapur, with V/C strictly <= 0.85
         Map<String, Object> assamRoute = controller.route(
                 26.58970, 93.40035, 25.84573, 93.43781,
                 250.0, 0.15, 2000, null,
-                "EXPRESSWAY", "Dimapur", null, null,
-                true, 2,
+                "EXPRESSWAY", "Dimapur", null, 0.85,
+                true, 3,
                 "assam", null, null
         );
         Map<?, ?> meta = (Map<?, ?>) assamRoute.get("metadata");
         Map<?, ?> pipeline = (Map<?, ?>) meta.get("hubEvaluationPipeline");
         List<?> approved = (List<?>) pipeline.get("approvedHubIds");
-        assertEquals(3, approved.size(), "When user specifies Dimapur and selects 2 auto hubs, 3 hubs must be approved");
-        assertTrue(approved.stream().anyMatch(h -> String.valueOf(h).contains("Dimapur")), "User hub Dimapur must be approved");
+        assertTrue(approved.size() >= 1 && approved.size() <= 3,
+                "When user specifies Dimapur and selects 3 total cities, at most 3 hubs must be approved (never 4), got: " + approved);
+        assertTrue(approved.stream().anyMatch(h -> String.valueOf(h).contains("Dimapur")),
+                "User hub Dimapur must be prioritized and approved within 85% cap");
 
         List<Map<?, ?>> features = (List<Map<?, ?>>) assamRoute.get("features");
         long spurCount = features.stream()
                 .filter(f -> "DEDICATED_FEEDER_SPUR".equals(((Map<?, ?>) f.get("properties")).get("featureRole")))
                 .count();
-        assertEquals(3, spurCount, "Expected exactly 3 dedicated feeder spurs for Dimapur + 2 autonomous hubs");
+        assertEquals(approved.size(), spurCount, "Dedicated feeder spur count must match approved hub count");
 
-        // Verify capacity analysis and 6-lane configuration recommendations
+        // Verify strict traffic capacity cap enforcement (never > 85% or > 100%)
         Map<?, ?> netSummary = (Map<?, ?>) meta.get("transportNetworkAndCapacitySummary");
         Map<?, ?> trafficAnalysis = (Map<?, ?>) netSummary.get("trafficCapacityAnalysis");
-        assertEquals(Boolean.TRUE, trafficAnalysis.get("sixLaneRecommended"),
-                "High induced traffic from Dimapur and regional hubs must recommend 6-lane configuration under IRC:SP:84 §2.2");
-        assertEquals("6_LANE_EXPANSION", trafficAnalysis.get("laneConfigurationRecommended"));
-        assertTrue(String.valueOf(trafficAnalysis.get("capacityStandardNote")).contains("6-Lane Expressway"));
+        double projectedVc = ((Number) trafficAnalysis.get("projectedVcRatio")).doubleValue();
+        assertTrue(projectedVc <= 0.85,
+                "Projected V/C must strictly stay <= 0.85 (Connect More Towns limit), got: " + projectedVc);
+        assertEquals(Boolean.FALSE, trafficAnalysis.get("overCapacityWarning"));
+
+        // Verify capacity alert is emitted if fewer than 3 cities fit within the 85% limit
+        List<?> alerts = (List<?>) meta.get("trafficCapacityAlerts");
+        if (approved.size() < 3) {
+            assertTrue(alerts != null && !alerts.isEmpty(),
+                    "Reducing connected cities below requested 3 to protect traffic capacity must emit a frontend alert");
+        }
 
         // Verify that feeder spurs carry decisionStatus and decisionReason
         boolean hasSpurWithReason = features.stream()
@@ -463,6 +474,24 @@ class PanIndiaMultiRegionRoutingValidationTest {
                     return p.get("decisionReason") != null && !String.valueOf(p.get("decisionReason")).isBlank();
                 });
         assertTrue(hasSpurWithReason, "Feeder spurs must carry explicit decisionReason for frontend display");
+
+        // Also verify Smooth & Fast (70% cap) never exceeds 70% V/C
+        Map<String, Object> smoothRoute = controller.route(
+                26.58970, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", "Dimapur", null, 0.70,
+                true, 3,
+                "assam", null, null
+        );
+        Map<?, ?> smoothMeta = (Map<?, ?>) smoothRoute.get("metadata");
+        Map<?, ?> smoothNet = (Map<?, ?>) smoothMeta.get("transportNetworkAndCapacitySummary");
+        Map<?, ?> smoothTraffic = (Map<?, ?>) smoothNet.get("trafficCapacityAnalysis");
+        double smoothVc = ((Number) smoothTraffic.get("projectedVcRatio")).doubleValue();
+        assertTrue(smoothVc <= 0.70,
+                "Projected V/C under Smooth & Fast (70%) must strictly stay <= 0.70, got: " + smoothVc);
+        List<?> smoothAlerts = (List<?>) smoothMeta.get("trafficCapacityAlerts");
+        assertTrue(smoothAlerts != null && !smoothAlerts.isEmpty(),
+                "Enforcing 70% cap with Dimapur + 3 requested cities must notify the user via trafficCapacityAlerts");
     }
 
     @Test

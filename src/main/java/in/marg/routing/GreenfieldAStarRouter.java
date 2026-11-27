@@ -46,16 +46,16 @@ public class GreenfieldAStarRouter {
                                 CostSurface surface, double resolutionMeters,
                                 StudyRegion searchWindow, RouteConstraints constraints) {
         validateResolution(resolutionMeters);
-        if (constraints == null || constraints.maxRouteLengthKm() == null) {
-            return unconstrainedAStar(start, goal, surface, resolutionMeters, searchWindow);
+        RouteConstraints effective = constraints != null ? constraints : RouteConstraints.none();
+        if (effective.maxRouteLengthKm() == null) {
+            return unconstrainedAStar(start, goal, surface, resolutionMeters, searchWindow, effective);
         }
-        return constrainedLagrangianAStar(start, goal, surface, resolutionMeters, searchWindow,
-                constraints.maxRouteLengthKm());
+        return constrainedLagrangianAStar(start, goal, surface, resolutionMeters, searchWindow, effective);
     }
 
     private List<GeoPoint> unconstrainedAStar(GeoPoint start, GeoPoint goal,
                                                CostSurface surface, double resolutionMeters,
-                                               StudyRegion searchWindow) {
+                                               StudyRegion searchWindow, RouteConstraints constraints) {
         Grid grid = buildGrid(searchWindow, resolutionMeters);
         Node startNode = nearestNavigableNode(start, grid, surface);
         Node goalNode = nearestNavigableNode(goal, grid, surface);
@@ -80,8 +80,12 @@ public class GreenfieldAStarRouter {
                 return reconstructNodePath(cameFrom, current, start, goal, grid);
             }
 
+            Node prev = cameFrom.get(current);
             GeoPoint currentPoint = point(current, grid);
             for (Node next : neighbors(current, grid.rows(), grid.cols())) {
+                if (prev != null && next.equals(prev)) {
+                    continue;
+                }
                 GeoPoint nextPoint = point(next, grid);
                 if (!searchWindow.contains(nextPoint)) {
                     continue;
@@ -106,7 +110,8 @@ public class GreenfieldAStarRouter {
                 double multiplier = 1.0
                         + Math.max(0.0, assessment.penaltyMultiplier())
                         + Math.max(0.0, edgeAssessment.penaltyMultiplier());
-                double nextG = currentEntry.g() + stepKm * multiplier;
+                double turnPenaltyKm = computeTurnPenaltyKm(prev, current, next, constraints);
+                double nextG = currentEntry.g() + stepKm * multiplier + turnPenaltyKm;
                 if (nextG + EPS < gScore.getOrDefault(next, Double.POSITIVE_INFINITY)) {
                     gScore.put(next, nextG);
                     cameFrom.put(next, current);
@@ -129,39 +134,31 @@ public class GreenfieldAStarRouter {
      */
     private List<GeoPoint> constrainedLagrangianAStar(GeoPoint start, GeoPoint goal,
                                                        CostSurface surface, double resolutionMeters,
-                                                       StudyRegion searchWindow, double maxRouteLengthKm) {
+                                                       StudyRegion searchWindow, RouteConstraints constraints) {
+        double maxRouteLengthKm = constraints.maxRouteLengthKm();
         Grid grid = buildGrid(searchWindow, resolutionMeters);
         Node startNode = nearestNavigableNode(start, grid, surface);
         Node goalNode = nearestNavigableNode(goal, grid, surface);
-        System.out.println("DEBUG_NODES: startNode=" + startNode + " sBlocked=" + surface.assess(point(startNode, grid)).blocked()
-                + " goalNode=" + goalNode + " gBlocked=" + surface.assess(point(goalNode, grid)).blocked()
-                + " goalPt=" + point(goalNode, grid) + " gClass=" + surface.assess(point(goalNode, grid)).className());
-        for (Node nbr : neighbors(goalNode, grid.rows(), grid.cols())) {
-            GeoPoint nPt = point(nbr, grid);
-            CostAssessment na = surface.assess(nPt);
-            CostAssessment ea = surface.assessEdge(nPt, point(goalNode, grid));
-            System.out.println("  GOAL_NBR: " + nbr + " nBlocked=" + na.blocked() + "(" + na.className() + ") eBlocked=" + ea.blocked() + "(" + ea.className() + ")");
-        }
         ensureEndpointAccessible(surface, start, goal);
 
         Map<Node, CostAssessment> costCache = new HashMap<>();
         Map<Long, CostAssessment> edgeCostCache = new HashMap<>();
 
         List<GeoPoint> unconstrained = weightedAStar(start, goal, surface, grid,
-                startNode, goalNode, 0.0, costCache, edgeCostCache, searchWindow);
+                startNode, goalNode, 0.0, costCache, edgeCostCache, searchWindow, constraints);
         if (routeLengthKm(unconstrained) <= maxRouteLengthKm + 1e-7) {
             return unconstrained;
         }
 
         double low = 0.0;
-        double high = 0.25;
+        double high = 0.5;
         double previousDist = Double.POSITIVE_INFINITY;
         WeightedPath bestFeasible = null;
         WeightedPath shortestHardFeasible = evaluatePath(unconstrained, surface);
-        final int maxBracketRuns = 6;
+        final int maxBracketRuns = 8;
         for (int i = 0; i < maxBracketRuns; i++) {
             List<GeoPoint> path = weightedAStar(start, goal, surface, grid,
-                    startNode, goalNode, high, costCache, edgeCostCache, searchWindow);
+                    startNode, goalNode, high, costCache, edgeCostCache, searchWindow, constraints);
             WeightedPath candidate = evaluatePath(path, surface);
             if (Double.isFinite(candidate.originalCostKm())
                     && (shortestHardFeasible == null
@@ -172,20 +169,20 @@ public class GreenfieldAStarRouter {
                 bestFeasible = candidate;
                 break;
             }
-            if (i >= 2 && Math.abs(candidate.physicalDistanceKm() - previousDist) < 0.05) {
+            if (i >= 3 && Math.abs(candidate.physicalDistanceKm() - previousDist) < 0.05) {
                 // Converged to the shortest hard-constraint compliant bypass; further lambda scaling cannot shorten it
                 break;
             }
             previousDist = candidate.physicalDistanceKm();
             low = high;
-            high *= 2.0;
-            if (high > 64.0) break;
+            high *= 2.5;
+            if (high > 300.0) break;
         }
 
         if (bestFeasible == null) {
             List<GeoPoint> distanceBaseline = weightedAStar(start, goal,
                     new DistanceOnlyCostSurface(), grid,
-                    startNode, goalNode, 0.0, new HashMap<>(), new HashMap<>(), searchWindow);
+                    startNode, goalNode, 0.0, new HashMap<>(), new HashMap<>(), searchWindow, RouteConstraints.none());
             if (routeLengthKm(distanceBaseline) <= maxRouteLengthKm + 1e-7) {
                 WeightedPath evaluatedDistanceBaseline = evaluatePath(distanceBaseline, surface);
                 if (Double.isFinite(evaluatedDistanceBaseline.originalCostKm())
@@ -204,7 +201,7 @@ public class GreenfieldAStarRouter {
         for (int i = 0; i < binaryIterations; i++) {
             double mid = (low + high) / 2.0;
             List<GeoPoint> path = weightedAStar(start, goal, surface, grid,
-                    startNode, goalNode, mid, costCache, edgeCostCache, searchWindow);
+                    startNode, goalNode, mid, costCache, edgeCostCache, searchWindow, constraints);
             WeightedPath candidate = evaluatePath(path, surface);
             if (candidate.physicalDistanceKm() <= maxRouteLengthKm + 1e-7) {
                 if (bestFeasible == null
@@ -230,10 +227,41 @@ public class GreenfieldAStarRouter {
         return (min << 32) | (max & 0xFFFFFFFFL);
     }
 
+    private static double computeTurnPenaltyKm(Node prev, Node current, Node next, RouteConstraints constraints) {
+        if (prev == null || constraints == null || !constraints.enforceTurnDiscipline()) {
+            return 0.0;
+        }
+        int inDr = current.r() - prev.r();
+        int inDc = current.c() - prev.c();
+        int outDr = next.r() - current.r();
+        int outDc = next.c() - current.c();
+        double inLen = Math.hypot(inDr, inDc);
+        double outLen = Math.hypot(outDr, outDc);
+        if (inLen <= EPS || outLen <= EPS) {
+            return 0.0;
+        }
+        double cos = (inDr * outDr + inDc * outDc) / (inLen * outLen);
+        if (cos > 0.95) {
+            // 0° straight continuation
+            return 0.0;
+        }
+        if (cos > 0.35) {
+            // 45° single-step gentle deflection — small penalty discourages grid staircasing
+            return constraints.gentleTurnPenaltyKmEq();
+        }
+        if (cos >= -0.35) {
+            // 90° sharp corner — steep penalty forces smooth multi-step 45° sweep unless strictly boxed in
+            return constraints.sharpTurnPenaltyKmEq();
+        }
+        // >= 135° hairpin reversal — prohibitive penalty unless no other escape exists
+        return constraints.sharpTurnPenaltyKmEq() * 2.5;
+    }
+
     private List<GeoPoint> weightedAStar(GeoPoint start, GeoPoint goal,
         CostSurface surface, Grid grid, Node startNode, Node goalNode, 
         double lambda, Map<Node, CostAssessment> sharedCostCache,
-        Map<Long, CostAssessment> sharedEdgeCostCache, StudyRegion searchWindow) {
+        Map<Long, CostAssessment> sharedEdgeCostCache, StudyRegion searchWindow,
+        RouteConstraints constraints) {
         PriorityQueue<OpenEntry> open = new PriorityQueue<>(Comparator.comparingDouble(OpenEntry::f));
         Map<Node, Double> gScore = new HashMap<>();
         Map<Node, Node> cameFrom = new HashMap<>();
@@ -252,8 +280,12 @@ public class GreenfieldAStarRouter {
                 return reconstructNodePath(cameFrom, current, start, goal, grid);
             }
 
+            Node prev = cameFrom.get(current);
             GeoPoint currentPoint = point(current, grid);
             for (Node next : neighbors(current, grid.rows(), grid.cols())) {
+                if (prev != null && next.equals(prev)) {
+                    continue;
+                }
                 GeoPoint nextPoint = point(next, grid);
                 if (!searchWindow.contains(nextPoint)) {
                     continue;
@@ -276,7 +308,8 @@ public class GreenfieldAStarRouter {
                         + Math.max(0.0, assessment.penaltyMultiplier())
                         + Math.max(0.0, edgeAssessment.penaltyMultiplier())
                         + lambda;
-                double nextG = currentEntry.g() + stepKm * multiplier;
+                double turnPenaltyKm = computeTurnPenaltyKm(prev, current, next, constraints);
+                double nextG = currentEntry.g() + stepKm * multiplier + turnPenaltyKm;
                 if (nextG + EPS < gScore.getOrDefault(next, Double.POSITIVE_INFINITY)) {
                     gScore.put(next, nextG);
                     cameFrom.put(next, current);
@@ -410,14 +443,25 @@ public class GreenfieldAStarRouter {
         return false;
     }
 
+    private boolean isEndpointTieInSafe(GeoPoint endpoint, Node node, Grid grid, CostSurface surface) {
+        if (!surface.hasEdgeCost()) {
+            return true;
+        }
+        GeoPoint pt = point(node, grid);
+        return !surface.assessEdge(endpoint, pt).blocked();
+    }
+
     private Node nearestNavigableNode(GeoPoint point, Grid grid, CostSurface surface) {
         Node base = nearestNode(point, grid);
-        if (isNavigableNode(base, grid, surface)) {
+        if (isNavigableNode(base, grid, surface) && isEndpointTieInSafe(point, base, grid, surface)) {
             return base;
         }
+        Node fallbackNavigable = isNavigableNode(base, grid, surface) ? base : null;
         for (int radius = 1; radius <= 4; radius++) {
-            Node best = null;
-            double bestDist = Double.POSITIVE_INFINITY;
+            Node bestClean = null;
+            double bestCleanDist = Double.POSITIVE_INFINITY;
+            Node bestFallback = null;
+            double bestFallbackDist = Double.POSITIVE_INFINITY;
             for (int dr = -radius; dr <= radius; dr++) {
                 for (int dc = -radius; dc <= radius; dc++) {
                     if (Math.abs(dr) != radius && Math.abs(dc) != radius) continue;
@@ -427,19 +471,27 @@ public class GreenfieldAStarRouter {
                         Node candidate = new Node(nr, nc);
                         if (isNavigableNode(candidate, grid, surface)) {
                             double dist = Math.hypot(dr, dc);
-                            if (dist < bestDist) {
-                                bestDist = dist;
-                                best = candidate;
+                            if (isEndpointTieInSafe(point, candidate, grid, surface)) {
+                                if (dist < bestCleanDist) {
+                                    bestCleanDist = dist;
+                                    bestClean = candidate;
+                                }
+                            } else if (fallbackNavigable == null && dist < bestFallbackDist) {
+                                bestFallbackDist = dist;
+                                bestFallback = candidate;
                             }
                         }
                     }
                 }
             }
-            if (best != null) {
-                return best;
+            if (bestClean != null) {
+                return bestClean;
+            }
+            if (fallbackNavigable == null && bestFallback != null) {
+                fallbackNavigable = bestFallback;
             }
         }
-        return base;
+        return fallbackNavigable != null ? fallbackNavigable : base;
     }
 
     private double heuristicKm(Node a, Node b, Grid grid) {

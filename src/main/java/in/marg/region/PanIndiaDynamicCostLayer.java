@@ -337,6 +337,21 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
             }
         }
 
+        // 6b. Authoritative Pan-India Wetlands Registry (Ramsar Sites & Major Beels/Jheels/Taals/Backwaters)
+        in.marg.drainage.IndianWetlandRegistry wetlandReg = in.marg.drainage.IndianWetlandRegistry.getDefaultInstance();
+        in.marg.drainage.IndianWetlandRegistry.MappedWetland directWetland = wetlandReg.findContainingWetland(lat, lon);
+        if (directWetland != null) {
+            totalPenalty += (directWetland.isRamsar() ? 500.0 : 350.0) * envMult;
+            dominantClass = "NATURAL_OR_DESIGNATED_WETLAND_CORE:" + directWetland.id();
+        } else {
+            in.marg.drainage.IndianWetlandRegistry.MappedWetland nearWetland =
+                    wetlandReg.findWetlandWithinBuffer(lat, lon, 350.0);
+            if (nearWetland != null) {
+                totalPenalty += 4.50 * envMult;
+                dominantClass = "SEASONAL_MARSH_AND_WETLAND_BUFFER:" + nearWetland.id();
+            }
+        }
+
         // 7. Corridor-Local Micro-Topography, Village Clusters & Seasonal Wetland Pockets
         // Ensures even 15-80 km regional queries anywhere in India deflect intelligently
         // around local wetland depressions and rural settlement pockets along the A-B axis.
@@ -438,6 +453,15 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
                     edgeClass = "RIVER_HYDRAULIC_SKEW:" + river.id();
                 }
             }
+        }
+
+        // Edge wetland crossing barrier penalty against authoritative Pan-India Wetlands Registry
+        in.marg.drainage.IndianWetlandRegistry.MappedWetland segWetland =
+                in.marg.drainage.IndianWetlandRegistry.getDefaultInstance()
+                        .findIntersectingWetlandForSegment(from.lat(), from.lon(), to.lat(), to.lon());
+        if (segWetland != null) {
+            edgePenalty += (segWetland.isRamsar() ? 500.0 : 350.0) * envMult;
+            edgeClass = "WETLAND_CORE_EDGE_BARRIER:" + segWetland.id();
         }
 
         // Local seasonal stream / watershed thalweg skew penalty
@@ -627,16 +651,72 @@ public class PanIndiaDynamicCostLayer implements CostLayer, CostSurface {
         diagnostics.put("drainageWetlandExposureKm", round(drainageWetlandExposureKm));
         diagnostics.put("protectedAreaEncroachmentKm", 0.0);
 
+        // Evaluate authoritative Pan-India Wetlands Registry along the route
+        in.marg.drainage.IndianWetlandRegistry wetlandReg = in.marg.drainage.IndianWetlandRegistry.getDefaultInstance();
+        Set<String> directWetlandIds = new LinkedHashSet<>();
+        Set<String> buffer250WetlandIds = new LinkedHashSet<>();
+        double wetlandDirectKm = 0.0;
+        double minWetlandClearanceM = Double.POSITIVE_INFINITY;
+        double rMinLat = Double.POSITIVE_INFINITY, rMaxLat = Double.NEGATIVE_INFINITY;
+        double rMinLon = Double.POSITIVE_INFINITY, rMaxLon = Double.NEGATIVE_INFINITY;
+        for (GeoPoint p : route) {
+            rMinLat = Math.min(rMinLat, p.lat());
+            rMaxLat = Math.max(rMaxLat, p.lat());
+            rMinLon = Math.min(rMinLon, p.lon());
+            rMaxLon = Math.max(rMaxLon, p.lon());
+        }
+        List<in.marg.drainage.IndianWetlandRegistry.MappedWetland> corridorWetlands =
+                route.isEmpty() ? List.of() : wetlandReg.findWetlandsInWindow(
+                        rMinLat - 0.45, rMinLon - 0.45, rMaxLat + 0.45, rMaxLon + 0.45);
+        for (int i = 1; i < route.size(); i++) {
+            GeoPoint a = route.get(i - 1);
+            GeoPoint b = route.get(i);
+            double segKm = projection.distanceMeters(a, b) / 1000.0;
+            int parts = Math.max(1, (int) Math.ceil(segKm / 0.25));
+            double partKm = segKm / parts;
+            for (int j = 0; j < parts; j++) {
+                double t = (j + 0.5) / parts;
+                double sLat = a.lat() + t * (b.lat() - a.lat());
+                double sLon = a.lon() + t * (b.lon() - a.lon());
+                for (in.marg.drainage.IndianWetlandRegistry.MappedWetland w : corridorWetlands) {
+                    if (sLat < w.minLat() - 0.05 || sLat > w.maxLat() + 0.05
+                            || sLon < w.minLon() - 0.05 || sLon > w.maxLon() + 0.05) {
+                        continue;
+                    }
+                    double dM = w.approximateDistanceMeters(sLat, sLon);
+                    if (dM < minWetlandClearanceM) {
+                        minWetlandClearanceM = dM;
+                    }
+                    if (dM <= 30.0) {
+                        directWetlandIds.add(w.id());
+                        wetlandDirectKm += partKm;
+                    } else if (dM <= 250.0) {
+                        buffer250WetlandIds.add(w.id());
+                    }
+                }
+            }
+        }
+        double rowWidthM = rowFootprint != null ? rowFootprint.mainlineRowWidthMeters() : 60.0;
+        double wetlandDirectHa = round((wetlandDirectKm * 1000.0 * rowWidthM) / 10_000.0);
+        if (wetlandDirectKm > 0.0) {
+            drainageWetlandExposureKm += wetlandDirectKm;
+        }
+
         Map<String, Object> drainageSummary = new LinkedHashMap<>();
-        drainageSummary.put("wetlandsInDirectRowCount", 0);
-        drainageSummary.put("wetlandAreaInDirectRowHectares", 0.0);
+        drainageSummary.put("wetlandsInDirectRowCount", directWetlandIds.size());
+        drainageSummary.put("wetlandsIn250mBufferCount", buffer250WetlandIds.size());
+        drainageSummary.put("wetlandAreaInDirectRowHectares", wetlandDirectHa);
+        drainageSummary.put("totalIndexedWetlandsCount", corridorWetlands.size());
+        drainageSummary.put("minWetlandClearanceFromRowEdgeMeters",
+                Double.isFinite(minWetlandClearanceM) ? round(Math.max(0.0, minWetlandClearanceM - rowWidthM / 2.0)) : 9999.0);
         drainageSummary.put("totalWaterCrossingsCount", totalWaterCrossings);
         drainageSummary.put("seasonalStreamCrossingsCount", seasonalStreamCrossings);
         drainageSummary.put("irrigationCanalCrossingsCount", canalCrossings);
         drainageSummary.put("watershedsTraversedCount", watershedCount);
         drainageSummary.put("watershedBoundaryCrossingsCount", Math.max(1, watershedCount - 1));
-        drainageSummary.put("drainageObstructionRiskIndex", round(Math.min(28.0, 8.5 + drainageWetlandExposureKm * 1.4)));
-        drainageSummary.put("drainageObstructionRiskTier", "LOW_MODERATE");
+        drainageSummary.put("drainageObstructionRiskIndex",
+                round(Math.min(48.0, directWetlandIds.size() * 14.0 + wetlandDirectHa * 4.0 + 4.5 + drainageWetlandExposureKm * 1.1)));
+        drainageSummary.put("drainageObstructionRiskTier", directWetlandIds.isEmpty() ? "LOW_MODERATE" : "HIGH_WETLAND_PROXIMITY");
         drainageSummary.put("totalDrainageStructuresRequiredCount", totalWaterCrossings);
         drainageSummary.put("totalRecommendedDrainageSpanMeters", round(totalWaterCrossings * 14.5));
         diagnostics.put("drainageAndWetlandSummary", drainageSummary);

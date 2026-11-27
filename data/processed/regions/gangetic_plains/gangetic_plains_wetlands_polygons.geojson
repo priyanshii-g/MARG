@@ -1,8 +1,10 @@
 {
   "type": "FeatureCollection",
+  "name": "gangetic_plains 2D Natural & Designated Wetlands, Reservoir Backwaters & Floodplain Marshes",
   "features": [
     {
       "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-001",
       "properties": {
         "id": "WET-GANGETIC_PLAINS-001",
         "name": "Bhagauli-Kalyani Oxbow Jheel (Taal)",
@@ -10,86 +12,104 @@
         "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
         "district": "Barabanki",
         "watershedId": "WS-GANGETIC_PLAINS-01",
-        "areaHectares": 17.15,
-        "perimeterMeters": 1516.0,
+        "areaHectares": 24.5,
+        "equivalentRadiusMeters": 279.3,
         "seasonalDepthMeters": 2.4,
-        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
         "isProtectedBeel": true,
-        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
         "centroidLat": 26.872,
-        "centroidLon": 81.575
+        "centroidLon": 81.575,
+        "utmX": 557113.75,
+        "utmY": 2972387.73
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.57765,
-              26.872862
+              81.572535,
+              26.874091
             ],
             [
-              81.577191,
-              26.873427
+              81.571408,
+              26.874055
             ],
             [
-              81.576399,
-              26.873775
+              81.571038,
+              26.873303
             ],
             [
-              81.575393,
-              26.873853
+              81.571743,
+              26.872216
             ],
             [
-              81.574328,
-              26.873649
+              81.572742,
+              26.871347
             ],
             [
-              81.573365,
-              26.873194
+              81.573627,
+              26.870695
             ],
             [
-              81.572651,
-              26.872557
+              81.574498,
+              26.870272
             ],
             [
-              81.572295,
-              26.871835
+              81.575287,
+              26.870032
             ],
             [
-              81.57235,
-              26.871138
+              81.576139,
+              26.869632
             ],
             [
-              81.572809,
-              26.870573
+              81.577199,
+              26.869255
             ],
             [
-              81.573601,
-              26.870225
+              81.577921,
+              26.869521
             ],
             [
-              81.574607,
-              26.870147
+              81.578005,
+              26.870281
             ],
             [
-              81.575672,
-              26.870351
+              81.578026,
+              26.871005
             ],
             [
-              81.576635,
-              26.870806
+              81.578086,
+              26.871796
             ],
             [
-              81.577349,
-              26.871443
+              81.57758,
+              26.872746
             ],
             [
-              81.577705,
-              26.872165
+              81.576559,
+              26.873481
             ],
             [
-              81.57765,
-              26.872862
+              81.575558,
+              26.873924
+            ],
+            [
+              81.574679,
+              26.874199
+            ],
+            [
+              81.573962,
+              26.874158
+            ],
+            [
+              81.573406,
+              26.87399
+            ],
+            [
+              81.572535,
+              26.874091
             ]
           ]
         ]
@@ -97,6 +117,7 @@
     },
     {
       "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-002",
       "properties": {
         "id": "WET-GANGETIC_PLAINS-002",
         "name": "Rudauli Command Waterlogged Taal",
@@ -104,86 +125,1686 @@
         "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
         "district": "Ayodhya",
         "watershedId": "WS-GANGETIC_PLAINS-01",
-        "areaHectares": 15.11,
-        "perimeterMeters": 1417.7,
+        "areaHectares": 21.8,
+        "equivalentRadiusMeters": 263.4,
         "seasonalDepthMeters": 2.4,
-        "hydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
         "isProtectedBeel": true,
-        "recommendedMitigation": "PILE_SUPPORTED_VIADUCT_OR_REALIGNMENT",
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
         "centroidLat": 26.805,
-        "centroidLon": 81.845
+        "centroidLon": 81.845,
+        "utmX": 583982.78,
+        "utmY": 2965116.78
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              81.847459,
-              26.8058
+              81.848086,
+              26.806215
             ],
             [
-              81.847028,
-              26.806338
+              81.848129,
+              26.806935
             ],
             [
-              81.846288,
-              26.806672
+              81.847469,
+              26.807373
             ],
             [
-              81.845353,
-              26.806751
+              81.846336,
+              26.807337
             ],
             [
-              81.844363,
-              26.806564
+              81.845206,
+              26.807069
             ],
             [
-              81.843471,
-              26.806139
+              81.84422,
+              26.8066
             ],
             [
-              81.842811,
-              26.80554
+              81.84362,
+              26.805954
             ],
             [
-              81.842484,
-              26.804859
+              81.843249,
+              26.805436
             ],
             [
-              81.842541,
-              26.8042
+              81.842402,
+              26.804984
             ],
             [
-              81.842972,
-              26.803662
+              81.84131,
+              26.804248
             ],
             [
-              81.843712,
-              26.803328
+              81.841059,
+              26.803448
             ],
             [
-              81.844647,
-              26.803249
+              81.841761,
+              26.802997
             ],
             [
-              81.845637,
-              26.803436
+              81.842732,
+              26.80282
             ],
             [
-              81.846529,
-              26.803861
+              81.843775,
+              26.802856
             ],
             [
-              81.847189,
-              26.80446
+              81.844821,
+              26.803206
             ],
             [
-              81.847516,
-              26.805141
+              81.845672,
+              26.803622
             ],
             [
-              81.847459,
-              26.8058
+              81.846574,
+              26.803912
+            ],
+            [
+              81.847566,
+              26.804361
+            ],
+            [
+              81.84803,
+              26.805019
+            ],
+            [
+              81.847983,
+              26.805608
+            ],
+            [
+              81.848086,
+              26.806215
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-003",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-003",
+        "name": "Parvati Arga Bird Sanctuary Ramsar Jheel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "RAMSAR_OR_PROTECTED_BEEL",
+        "district": "Gonda",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 185.0,
+        "equivalentRadiusMeters": 767.4,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.935,
+        "centroidLon": 82.165,
+        "utmX": 615656.81,
+        "utmY": 2979768.6
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.164861,
+              26.945273
+            ],
+            [
+              82.162853,
+              26.944406
+            ],
+            [
+              82.161522,
+              26.942025
+            ],
+            [
+              82.160667,
+              26.939658
+            ],
+            [
+              82.159566,
+              26.937602
+            ],
+            [
+              82.158998,
+              26.934935
+            ],
+            [
+              82.159857,
+              26.932392
+            ],
+            [
+              82.161079,
+              26.93057
+            ],
+            [
+              82.16186,
+              26.928218
+            ],
+            [
+              82.1631,
+              26.925512
+            ],
+            [
+              82.165144,
+              26.924355
+            ],
+            [
+              82.167296,
+              26.924939
+            ],
+            [
+              82.16916,
+              26.926598
+            ],
+            [
+              82.170082,
+              26.929537
+            ],
+            [
+              82.169578,
+              26.932808
+            ],
+            [
+              82.168997,
+              26.935044
+            ],
+            [
+              82.169553,
+              26.937309
+            ],
+            [
+              82.169967,
+              26.940611
+            ],
+            [
+              82.168899,
+              26.94342
+            ],
+            [
+              82.16696,
+              26.94479
+            ],
+            [
+              82.164861,
+              26.945273
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-004",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-004",
+        "name": "Rethi-Barabanki Floodplain Oxbow Jheel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 28.4,
+        "equivalentRadiusMeters": 300.7,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.925,
+        "centroidLon": 81.258,
+        "utmX": 525614.53,
+        "utmY": 2978154.46
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.25344,
+              26.926676
+            ],
+            [
+              81.253777,
+              26.925763
+            ],
+            [
+              81.255026,
+              26.924954
+            ],
+            [
+              81.255982,
+              26.92445
+            ],
+            [
+              81.256414,
+              26.923849
+            ],
+            [
+              81.257142,
+              26.923119
+            ],
+            [
+              81.258297,
+              26.922665
+            ],
+            [
+              81.25953,
+              26.922478
+            ],
+            [
+              81.260759,
+              26.922477
+            ],
+            [
+              81.261577,
+              26.922903
+            ],
+            [
+              81.261682,
+              26.923647
+            ],
+            [
+              81.261641,
+              26.924342
+            ],
+            [
+              81.261634,
+              26.925057
+            ],
+            [
+              81.260964,
+              26.925808
+            ],
+            [
+              81.259717,
+              26.926246
+            ],
+            [
+              81.258677,
+              26.926484
+            ],
+            [
+              81.257753,
+              26.926941
+            ],
+            [
+              81.25654,
+              26.927407
+            ],
+            [
+              81.255278,
+              26.927489
+            ],
+            [
+              81.25417,
+              26.927246
+            ],
+            [
+              81.25344,
+              26.926676
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-005",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-005",
+        "name": "Safdarganj-Kalyani Meander Taal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 22.0,
+        "equivalentRadiusMeters": 264.6,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.908,
+        "centroidLon": 81.392,
+        "utmX": 538924.13,
+        "utmY": 2976305.72
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.394836,
+              26.910526
+            ],
+            [
+              81.394075,
+              26.910725
+            ],
+            [
+              81.393007,
+              26.910242
+            ],
+            [
+              81.39221,
+              26.90977
+            ],
+            [
+              81.391503,
+              26.909556
+            ],
+            [
+              81.390673,
+              26.909201
+            ],
+            [
+              81.389812,
+              26.90858
+            ],
+            [
+              81.388904,
+              26.907727
+            ],
+            [
+              81.388302,
+              26.906692
+            ],
+            [
+              81.388673,
+              26.905994
+            ],
+            [
+              81.389715,
+              26.905965
+            ],
+            [
+              81.390507,
+              26.906039
+            ],
+            [
+              81.391031,
+              26.905844
+            ],
+            [
+              81.391743,
+              26.905829
+            ],
+            [
+              81.392578,
+              26.906191
+            ],
+            [
+              81.393443,
+              26.906694
+            ],
+            [
+              81.394327,
+              26.907383
+            ],
+            [
+              81.394836,
+              26.90825
+            ],
+            [
+              81.394888,
+              26.909021
+            ],
+            [
+              81.394936,
+              26.90977
+            ],
+            [
+              81.394836,
+              26.910526
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-006",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-006",
+        "name": "Masauli-Sharda Sahayak Seepage Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 19.5,
+        "equivalentRadiusMeters": 249.1,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.968,
+        "centroidLon": 81.345,
+        "utmX": 534239.05,
+        "utmY": 2982937.7
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.343879,
+              26.970514
+            ],
+            [
+              81.343427,
+              26.9702
+            ],
+            [
+              81.343184,
+              26.969625
+            ],
+            [
+              81.342953,
+              26.96902
+            ],
+            [
+              81.342874,
+              26.968233
+            ],
+            [
+              81.343203,
+              26.967355
+            ],
+            [
+              81.343693,
+              26.966573
+            ],
+            [
+              81.344185,
+              26.965661
+            ],
+            [
+              81.344909,
+              26.964806
+            ],
+            [
+              81.345697,
+              26.964758
+            ],
+            [
+              81.346138,
+              26.965447
+            ],
+            [
+              81.346362,
+              26.966095
+            ],
+            [
+              81.346609,
+              26.96656
+            ],
+            [
+              81.346777,
+              26.967115
+            ],
+            [
+              81.346912,
+              26.96779
+            ],
+            [
+              81.347036,
+              26.968731
+            ],
+            [
+              81.346729,
+              26.969887
+            ],
+            [
+              81.345896,
+              26.970573
+            ],
+            [
+              81.345073,
+              26.970564
+            ],
+            [
+              81.344464,
+              26.970493
+            ],
+            [
+              81.343879,
+              26.970514
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-007",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-007",
+        "name": "Dariyabad-Kalyani Floodplain Jheel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 31.2,
+        "equivalentRadiusMeters": 315.1,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.885,
+        "centroidLon": 81.512,
+        "utmX": 550850.15,
+        "utmY": 2973800.78
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.508657,
+              26.885061
+            ],
+            [
+              81.509028,
+              26.884543
+            ],
+            [
+              81.509204,
+              26.88398
+            ],
+            [
+              81.509366,
+              26.883152
+            ],
+            [
+              81.510356,
+              26.882436
+            ],
+            [
+              81.511942,
+              26.882409
+            ],
+            [
+              81.513269,
+              26.882822
+            ],
+            [
+              81.514378,
+              26.883188
+            ],
+            [
+              81.51535,
+              26.883634
+            ],
+            [
+              81.515733,
+              26.884285
+            ],
+            [
+              81.515707,
+              26.884933
+            ],
+            [
+              81.51567,
+              26.885565
+            ],
+            [
+              81.515209,
+              26.88617
+            ],
+            [
+              81.514206,
+              26.886547
+            ],
+            [
+              81.513208,
+              26.886883
+            ],
+            [
+              81.512055,
+              26.887431
+            ],
+            [
+              81.510428,
+              26.887699
+            ],
+            [
+              81.509092,
+              26.887216
+            ],
+            [
+              81.508612,
+              26.886381
+            ],
+            [
+              81.508532,
+              26.885664
+            ],
+            [
+              81.508657,
+              26.885061
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-008",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-008",
+        "name": "Ramsanehighat Gomti-Kalyani Oxbow Taal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 26.8,
+        "equivalentRadiusMeters": 292.1,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.785,
+        "centroidLon": 81.545,
+        "utmX": 554175.22,
+        "utmY": 2962738.49
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.546418,
+              26.787845
+            ],
+            [
+              81.545672,
+              26.787567
+            ],
+            [
+              81.545042,
+              26.787513
+            ],
+            [
+              81.544195,
+              26.787692
+            ],
+            [
+              81.543128,
+              26.787225
+            ],
+            [
+              81.542438,
+              26.786031
+            ],
+            [
+              81.542278,
+              26.784801
+            ],
+            [
+              81.54241,
+              26.783829
+            ],
+            [
+              81.542859,
+              26.78323
+            ],
+            [
+              81.543439,
+              26.782997
+            ],
+            [
+              81.543776,
+              26.782543
+            ],
+            [
+              81.544146,
+              26.781737
+            ],
+            [
+              81.544942,
+              26.781507
+            ],
+            [
+              81.545831,
+              26.78222
+            ],
+            [
+              81.546531,
+              26.783181
+            ],
+            [
+              81.547201,
+              26.784114
+            ],
+            [
+              81.547654,
+              26.785194
+            ],
+            [
+              81.54762,
+              26.786185
+            ],
+            [
+              81.547373,
+              26.786962
+            ],
+            [
+              81.547048,
+              26.787628
+            ],
+            [
+              81.546418,
+              26.787845
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-009",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-009",
+        "name": "Haidergarh Gomti Backwater Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 34.0,
+        "equivalentRadiusMeters": 329.0,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.645,
+        "centroidLon": 81.365,
+        "utmX": 536326.71,
+        "utmY": 2947168.61
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.361898,
+              26.648002
+            ],
+            [
+              81.361619,
+              26.647227
+            ],
+            [
+              81.361539,
+              26.646375
+            ],
+            [
+              81.361494,
+              26.645439
+            ],
+            [
+              81.362002,
+              26.644321
+            ],
+            [
+              81.363004,
+              26.64333
+            ],
+            [
+              81.364086,
+              26.642517
+            ],
+            [
+              81.365222,
+              26.641959
+            ],
+            [
+              81.366145,
+              26.642113
+            ],
+            [
+              81.366601,
+              26.642698
+            ],
+            [
+              81.367223,
+              26.642848
+            ],
+            [
+              81.368368,
+              26.642781
+            ],
+            [
+              81.369141,
+              26.643355
+            ],
+            [
+              81.36894,
+              26.644506
+            ],
+            [
+              81.368161,
+              26.645716
+            ],
+            [
+              81.367066,
+              26.646728
+            ],
+            [
+              81.365813,
+              26.647209
+            ],
+            [
+              81.364837,
+              26.647238
+            ],
+            [
+              81.363991,
+              26.647543
+            ],
+            [
+              81.36285,
+              26.648092
+            ],
+            [
+              81.361898,
+              26.648002
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-010",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-010",
+        "name": "Sohawal-Saryu Floodplain Oxbow Jheel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Ayodhya",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 29.5,
+        "equivalentRadiusMeters": 306.4,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.768,
+        "centroidLon": 81.995,
+        "utmX": 598923.87,
+        "utmY": 2961126.41
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.999108,
+              26.76934
+            ],
+            [
+              81.998867,
+              26.770074
+            ],
+            [
+              81.998113,
+              26.770629
+            ],
+            [
+              81.996846,
+              26.770773
+            ],
+            [
+              81.995397,
+              26.770296
+            ],
+            [
+              81.994328,
+              26.769666
+            ],
+            [
+              81.993347,
+              26.769305
+            ],
+            [
+              81.992194,
+              26.768879
+            ],
+            [
+              81.99153,
+              26.768181
+            ],
+            [
+              81.991502,
+              26.767498
+            ],
+            [
+              81.991451,
+              26.766842
+            ],
+            [
+              81.99149,
+              26.766117
+            ],
+            [
+              81.992164,
+              26.765605
+            ],
+            [
+              81.993269,
+              26.765399
+            ],
+            [
+              81.994544,
+              26.765357
+            ],
+            [
+              81.99592,
+              26.765722
+            ],
+            [
+              81.996802,
+              26.766578
+            ],
+            [
+              81.997035,
+              26.767363
+            ],
+            [
+              81.997545,
+              26.767867
+            ],
+            [
+              81.998551,
+              26.768509
+            ],
+            [
+              81.999108,
+              26.76934
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-011",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-011",
+        "name": "Ayodhya-Guptar Ghat Saryu Riverine Marsh",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Ayodhya",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 36.4,
+        "equivalentRadiusMeters": 340.4,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.818,
+        "centroidLon": 82.138,
+        "utmX": 613092.52,
+        "utmY": 2966784.07
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.138242,
+              26.822134
+            ],
+            [
+              82.137343,
+              26.822271
+            ],
+            [
+              82.136319,
+              26.822095
+            ],
+            [
+              82.135551,
+              26.821013
+            ],
+            [
+              82.135588,
+              26.819343
+            ],
+            [
+              82.136027,
+              26.818093
+            ],
+            [
+              82.136112,
+              26.817182
+            ],
+            [
+              82.136037,
+              26.816053
+            ],
+            [
+              82.136305,
+              26.814916
+            ],
+            [
+              82.136885,
+              26.813953
+            ],
+            [
+              82.13772,
+              26.813223
+            ],
+            [
+              82.138711,
+              26.813376
+            ],
+            [
+              82.139418,
+              26.814547
+            ],
+            [
+              82.139814,
+              26.815768
+            ],
+            [
+              82.140316,
+              26.816711
+            ],
+            [
+              82.140686,
+              26.817873
+            ],
+            [
+              82.140447,
+              26.819061
+            ],
+            [
+              82.13993,
+              26.819914
+            ],
+            [
+              82.139533,
+              26.82079
+            ],
+            [
+              82.139015,
+              26.821685
+            ],
+            [
+              82.138242,
+              26.822134
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-012",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-012",
+        "name": "Nawabganj-Ghaghara Diara Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Gonda",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 48.0,
+        "equivalentRadiusMeters": 390.9,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.872,
+        "centroidLon": 82.142,
+        "utmX": 613436.22,
+        "utmY": 2972769.22
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.137208,
+              26.874097
+            ],
+            [
+              82.137314,
+              26.873135
+            ],
+            [
+              82.137234,
+              26.872203
+            ],
+            [
+              82.137889,
+              26.871136
+            ],
+            [
+              82.139416,
+              26.87036
+            ],
+            [
+              82.140883,
+              26.869941
+            ],
+            [
+              82.142135,
+              26.869509
+            ],
+            [
+              82.143448,
+              26.869193
+            ],
+            [
+              82.144741,
+              26.869144
+            ],
+            [
+              82.14627,
+              26.869125
+            ],
+            [
+              82.147877,
+              26.869428
+            ],
+            [
+              82.148183,
+              26.870502
+            ],
+            [
+              82.146776,
+              26.871796
+            ],
+            [
+              82.145151,
+              26.872663
+            ],
+            [
+              82.144124,
+              26.873348
+            ],
+            [
+              82.143112,
+              26.87405
+            ],
+            [
+              82.141859,
+              26.874603
+            ],
+            [
+              82.140382,
+              26.875136
+            ],
+            [
+              82.138629,
+              26.875512
+            ],
+            [
+              82.137368,
+              26.875119
+            ],
+            [
+              82.137208,
+              26.874097
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-013",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-013",
+        "name": "Milkipur-Tamsa Seasonal Taal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Ayodhya",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 25.0,
+        "equivalentRadiusMeters": 282.1,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.642,
+        "centroidLon": 81.892,
+        "utmX": 588780.63,
+        "utmY": 2947094.36
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.8951,
+              26.64443
+            ],
+            [
+              81.894067,
+              26.644376
+            ],
+            [
+              81.893243,
+              26.644326
+            ],
+            [
+              81.892404,
+              26.644108
+            ],
+            [
+              81.89158,
+              26.643737
+            ],
+            [
+              81.89066,
+              26.643384
+            ],
+            [
+              81.8896,
+              26.642793
+            ],
+            [
+              81.888966,
+              26.64191
+            ],
+            [
+              81.888926,
+              26.641112
+            ],
+            [
+              81.888866,
+              26.640361
+            ],
+            [
+              81.888823,
+              26.63951
+            ],
+            [
+              81.88945,
+              26.639069
+            ],
+            [
+              81.89057,
+              26.639324
+            ],
+            [
+              81.891577,
+              26.639795
+            ],
+            [
+              81.892425,
+              26.640242
+            ],
+            [
+              81.893155,
+              26.640807
+            ],
+            [
+              81.893824,
+              26.641397
+            ],
+            [
+              81.894828,
+              26.642084
+            ],
+            [
+              81.895908,
+              26.643129
+            ],
+            [
+              81.896026,
+              26.644106
+            ],
+            [
+              81.8951,
+              26.64443
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-014",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-014",
+        "name": "Ramnagar-Ghaghara Floodplain Jheel",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "OXBOW_FLOODPLAIN_BEEL",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 41.5,
+        "equivalentRadiusMeters": 363.5,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": true,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 27.082,
+        "centroidLon": 81.465,
+        "utmX": 546101.85,
+        "utmY": 2995602.72
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.463383,
+              27.086436
+            ],
+            [
+              81.462801,
+              27.085559
+            ],
+            [
+              81.462542,
+              27.084503
+            ],
+            [
+              81.462699,
+              27.083327
+            ],
+            [
+              81.462797,
+              27.082372
+            ],
+            [
+              81.462478,
+              27.081262
+            ],
+            [
+              81.462477,
+              27.079587
+            ],
+            [
+              81.463361,
+              27.078186
+            ],
+            [
+              81.46457,
+              27.077737
+            ],
+            [
+              81.4656,
+              27.077745
+            ],
+            [
+              81.466457,
+              27.078002
+            ],
+            [
+              81.467004,
+              27.078756
+            ],
+            [
+              81.467335,
+              27.079623
+            ],
+            [
+              81.467808,
+              27.080381
+            ],
+            [
+              81.468077,
+              27.08148
+            ],
+            [
+              81.467637,
+              27.082772
+            ],
+            [
+              81.466916,
+              27.083833
+            ],
+            [
+              81.466312,
+              27.085053
+            ],
+            [
+              81.465447,
+              27.086428
+            ],
+            [
+              81.4643,
+              27.086959
+            ],
+            [
+              81.463383,
+              27.086436
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-015",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-015",
+        "name": "Zaidpur-Gomti Alluvial Taal",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "COMMUNITY_FISHERY_TANK",
+        "district": "Barabanki",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 18.6,
+        "equivalentRadiusMeters": 243.3,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.815,
+        "centroidLon": 81.325,
+        "utmX": 532297.64,
+        "utmY": 2965986.38
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.32215,
+              26.815218
+            ],
+            [
+              81.322045,
+              26.81472
+            ],
+            [
+              81.322357,
+              26.81421
+            ],
+            [
+              81.323229,
+              26.813915
+            ],
+            [
+              81.324063,
+              26.813735
+            ],
+            [
+              81.324845,
+              26.813369
+            ],
+            [
+              81.325963,
+              26.813047
+            ],
+            [
+              81.327111,
+              26.813166
+            ],
+            [
+              81.327879,
+              26.813617
+            ],
+            [
+              81.328258,
+              26.814174
+            ],
+            [
+              81.328045,
+              26.814767
+            ],
+            [
+              81.327309,
+              26.815218
+            ],
+            [
+              81.326836,
+              26.815548
+            ],
+            [
+              81.326761,
+              26.816079
+            ],
+            [
+              81.326267,
+              26.816711
+            ],
+            [
+              81.325188,
+              26.816981
+            ],
+            [
+              81.324072,
+              26.816881
+            ],
+            [
+              81.323091,
+              26.816658
+            ],
+            [
+              81.322368,
+              26.816265
+            ],
+            [
+              81.322163,
+              26.815719
+            ],
+            [
+              81.32215,
+              26.815218
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "WET-GANGETIC_PLAINS-016",
+      "properties": {
+        "id": "WET-GANGETIC_PLAINS-016",
+        "name": "Faizabad-Bikapur Command Wetland",
+        "sublayerType": "WETLAND",
+        "wetlandCategory": "SEASONAL_MARSH_DEPRESSION",
+        "district": "Ayodhya",
+        "watershedId": "WS-GANGETIC_PLAINS-01",
+        "areaHectares": 27.2,
+        "equivalentRadiusMeters": 294.2,
+        "seasonalDepthMeters": 2.4,
+        "ecologicalAndHydrologicalSensitivity": "HIGH_FLOODPLAIN_RETENTION_WETLAND",
+        "isProtectedBeel": false,
+        "recommendedMitigation": "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY",
+        "centroidLat": 26.685,
+        "centroidLon": 82.085,
+        "utmX": 607950.68,
+        "utmY": 2952005.93
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              82.086265,
+              26.687156
+            ],
+            [
+              82.085933,
+              26.687754
+            ],
+            [
+              82.085278,
+              26.688131
+            ],
+            [
+              82.08439,
+              26.687742
+            ],
+            [
+              82.083546,
+              26.686984
+            ],
+            [
+              82.082755,
+              26.686066
+            ],
+            [
+              82.082282,
+              26.68496
+            ],
+            [
+              82.082294,
+              26.683967
+            ],
+            [
+              82.082402,
+              26.683114
+            ],
+            [
+              82.082564,
+              26.682267
+            ],
+            [
+              82.083201,
+              26.681935
+            ],
+            [
+              82.084101,
+              26.682346
+            ],
+            [
+              82.084796,
+              26.682703
+            ],
+            [
+              82.085517,
+              26.682679
+            ],
+            [
+              82.086484,
+              26.682975
+            ],
+            [
+              82.08737,
+              26.683874
+            ],
+            [
+              82.087991,
+              26.685044
+            ],
+            [
+              82.088231,
+              26.686234
+            ],
+            [
+              82.087755,
+              26.687
+            ],
+            [
+              82.086846,
+              26.687071
+            ],
+            [
+              82.086265,
+              26.687156
             ]
           ]
         ]

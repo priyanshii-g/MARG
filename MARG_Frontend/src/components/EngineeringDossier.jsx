@@ -138,6 +138,7 @@ export default function EngineeringDossier({
   currentFeatures,
   connectedHubs,
   trafficCapacity,
+  trafficCapacityAlerts,
   hubDecisions,
   snapNotice,
   facilityMode,
@@ -418,6 +419,22 @@ export default function EngineeringDossier({
             </div>
           </div>
 
+          {Array.isArray(trafficCapacityAlerts) && trafficCapacityAlerts.length > 0 && (
+            <div className="dossier-capacity-alerts" role="alert">
+              {trafficCapacityAlerts.map((alert, idx) => (
+                <div key={`${alert.code || "dossier-cap"}-${idx}`} className="dossier-capacity-alert">
+                  <div className="dossier-capacity-alert-head">
+                    <strong>⚠️ {alert.title}</strong>
+                    <span className="mono-num">
+                      {alert.finalVcPercent ?? "—"}% used / {alert.maxVcPercent ?? "—"}% max limit
+                    </span>
+                  </div>
+                  <p>{alert.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Wildlife Park Protection Status Card */}
           {statutoryClearanceReport?.hasSanctuaryIntersection ? (
             <div className="dossier-statutory-alert">
@@ -571,7 +588,12 @@ export default function EngineeringDossier({
                               {comp && (
                                 <div className="dl-compare-block">
                                   <div className="dl-compare-head">
-                                    <span>{humanizeMetricLabel(comp.metricLabel)}</span>
+                                    <span>
+                                      {humanizeMetricLabel(comp.metricLabel)}
+                                      {comp.includesConnectingRoads && (
+                                        <span className="cmp-scope-tag"> · incl. connecting roads</span>
+                                      )}
+                                    </span>
                                     {typeof comp.deltaPercent === "number" && (
                                       <span className={`dl-delta ${comp.deltaValue <= 0 ? "good" : "neutral"}`}>
                                         {comp.deltaValue > 0 ? "+" : ""}{comp.deltaPercent}%
@@ -587,7 +609,10 @@ export default function EngineeringDossier({
                                           style={{ width: `${Math.min(100, ((Number(comp.baselineValue) || 0) / maxVal) * 100)}%` }}
                                         />
                                       </div>
-                                      <span className="dl-bar-num">{comp.baselineValue} {displayUnit}</span>
+                                      <span className="dl-bar-num">
+                                        {comp.baselineValue} {displayUnit}
+                                        {comp.baselineRateNote && <small className="cmp-rate-note"> ({comp.baselineRateNote})</small>}
+                                      </span>
                                     </div>
                                     <div className="dl-bar-line">
                                       <span className="dl-bar-lbl strong">Smart Route</span>
@@ -597,9 +622,17 @@ export default function EngineeringDossier({
                                           style={{ width: `${Math.min(100, ((Number(comp.routeValue) || 0) / maxVal) * 100)}%` }}
                                         />
                                       </div>
-                                      <span className="dl-bar-num strong">{comp.routeValue} {displayUnit}</span>
+                                      <span className="dl-bar-num strong">
+                                        {comp.routeValue} {displayUnit}
+                                        {comp.routeRateNote && <small className="cmp-rate-note"> ({comp.routeRateNote})</small>}
+                                      </span>
                                     </div>
                                   </div>
+                                  {comp.baselineHardViolationNote && (
+                                    <div className="cmp-baseline-caveat">
+                                      ℹ️ {comp.baselineHardViolationNote}
+                                    </div>
+                                  )}
                                 </div>
                               )}
 

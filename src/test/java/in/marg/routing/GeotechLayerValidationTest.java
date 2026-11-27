@@ -93,19 +93,33 @@ class GeotechLayerValidationTest {
         assertEquals(GeotechHazardClass.ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE,
                 geotechRaster.sampleClass(26.55000, 93.33000)); // Northern Karbi Boundary Fault Active Core
 
-        // Verify blockActiveLandslideZones toggle (soft penalty by default vs hard constraint when enabled)
+        // Verify IRC:SP:48 / IRC:SP:106 / NDMA defaults:
+        //  - ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE is hard-blocked by default (with 2500x last-resort barrier mode)
+        //  - HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP carries extreme 30.0x soft penalty (not hard-blocked)
         GeoPoint activeFaultSlidePt = new GeoPoint(26.55000, 93.33000);
-        CostAssessment softSlide = geotechLayer.assess(activeFaultSlidePt);
-        assertFalse(softSlide.blocked());
-        assertEquals(4.20, softSlide.penaltyMultiplier(), 1e-6);
+        assertTrue(geotechLayer.assess(activeFaultSlidePt).blocked(),
+                "Active tectonic landslide shear cores must be hard-blocked by default (blockActiveLandslideZones=true)");
 
-        GeotechRoutingProperties strictGeotechProps = new GeotechRoutingProperties();
-        strictGeotechProps.setBlockActiveLandslideZones(true);
-        GeotechLandslideCostLayer strictGeotechLayer = new GeotechLandslideCostLayer(
-                geotechRaster, geotechIndex, projection, strictGeotechProps
+        GeoPoint highScarpPt = new GeoPoint(26.22000, 93.41000);
+        CostAssessment highScarpAssessment = geotechLayer.assess(highScarpPt);
+        assertFalse(highScarpAssessment.blocked(),
+                "High landslide susceptibility scarps must use extreme soft penalty rather than hard-block");
+        assertEquals(30.00, highScarpAssessment.penaltyMultiplier(), 1e-6);
+
+        GeotechLandslideCostLayer lastResortLayer = geotechLayer.withActiveLandslideLastResortMode();
+        CostAssessment barrierSlide = lastResortLayer.assess(activeFaultSlidePt);
+        assertFalse(barrierSlide.blocked(), "Last-resort barrier mode must allow unavoidable mountain bottleneck crossings");
+        assertEquals(GeotechLandslideCostLayer.ACTIVE_LANDSLIDE_LAST_RESORT_BARRIER_PENALTY,
+                barrierSlide.penaltyMultiplier(), 1e-6);
+
+        GeotechRoutingProperties softGeotechProps = new GeotechRoutingProperties();
+        softGeotechProps.setBlockActiveLandslideZones(false);
+        GeotechLandslideCostLayer softGeotechLayer = new GeotechLandslideCostLayer(
+                geotechRaster, geotechIndex, projection, softGeotechProps
         );
-        assertTrue(strictGeotechLayer.assess(activeFaultSlidePt).blocked(),
-                "Active tectonic landslide shear cores must be hard-blocked when blockActiveLandslideZones=true");
+        CostAssessment softSlide = softGeotechLayer.assess(activeFaultSlidePt);
+        assertFalse(softSlide.blocked());
+        assertEquals(50.00, softSlide.penaltyMultiplier(), 1e-6);
 
         // Verify 90-degree perpendicular traverse vs <20-degree acute side-hill cut across Kaliani Shear Zone
         GeoPoint northPerp = new GeoPoint(26.3950, 93.4250);
@@ -128,9 +142,9 @@ class GeotechLayerValidationTest {
         double perpStepKm = projection.distanceMeters(northPerp, southPerp) / 1000.0;
         double acuteStepKm = projection.distanceMeters(acuteA, acuteB) / 1000.0;
         double perpMitigationCostKmEq =
-                geotechLayer.assessEdge(northPerp, southPerp).penaltyMultiplier() * perpStepKm;
+                softGeotechLayer.assessEdge(northPerp, southPerp).penaltyMultiplier() * perpStepKm;
         double acuteMitigationCostKmEq =
-                geotechLayer.assessEdge(acuteA, acuteB).penaltyMultiplier() * acuteStepKm;
+                softGeotechLayer.assessEdge(acuteA, acuteB).penaltyMultiplier() * acuteStepKm;
 
         System.out.printf("Kaliani Shear 90-deg Traverse : angle=%.1f deg | stabLen=%.1f m | cost=%.2f km-eq%n",
                 perpCrossings.get(0).crossingAngleDegrees(), perpStabLen, perpMitigationCostKmEq);
@@ -146,7 +160,7 @@ class GeotechLayerValidationTest {
         GeoPoint parallelA = new GeoPoint(26.3928, 93.4180);
         GeoPoint parallelB = new GeoPoint(26.3925, 93.4240);
         assertTrue(geotechIndex.findStepCrossings(parallelA, parallelB).isEmpty());
-        CostAssessment parallelEdge = geotechLayer.assessEdge(parallelA, parallelB);
+        CostAssessment parallelEdge = softGeotechLayer.assessEdge(parallelA, parallelB);
         assertTrue(parallelEdge.penaltyMultiplier() > 1.5,
                 "Running longitudinally parallel along an active shear/landslide scarp must incur toe-undercutting penalty");
     }

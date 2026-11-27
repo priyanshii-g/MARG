@@ -35,6 +35,8 @@ function extractFeatureCoordAndLabel(feature) {
   const label =
     props.name ||
     props.riverName ||
+    props.channelName ||
+    props.targetFeatureName ||
     props.corridorName ||
     props.sanctuaryName ||
     props.settlementName ||
@@ -48,12 +50,17 @@ function extractFeatureCoordAndLabel(feature) {
     humanizeClassLabel(role);
 
   const sub =
+    (props.areaHectares != null && role === "CORRIDOR_WETLAND_POLYGON"
+      ? `${props.areaHectares} ha • ${humanizeClassLabel(props.wetlandCategory || "Wetland")}`
+      : null) ||
+    props.recommendedMitigation ||
     props.recommendedEngineeringMitigation ||
     props.mitigationStructure ||
     props.protectionType ||
     props.bridgeType ||
     props.structureType ||
     props.tieInRoadRef ||
+    props.sublayerType ||
     props.category ||
     (props.chainageKm != null ? `${props.chainageKm} km from start` : "");
 
@@ -398,7 +405,12 @@ export default function LayerAuditPanel({
                                 {comp && (
                                   <div className="layer-comparison-box">
                                     <div className="layer-comparison-title">
-                                      <span>{humanizeMetricLabel(comp.metricLabel)}</span>
+                                      <span>
+                                        {humanizeMetricLabel(comp.metricLabel)}
+                                        {comp.includesConnectingRoads && (
+                                          <span className="cmp-scope-tag"> · incl. connecting roads</span>
+                                        )}
+                                      </span>
                                       {typeof comp.deltaPercent === "number" && (
                                         <span
                                           className={`layer-delta-pill ${
@@ -432,6 +444,9 @@ export default function LayerAuditPanel({
                                               </div>
                                               <span className="cmp-bar-val">
                                                 {comp.baselineValue} {displayUnit}
+                                                {comp.baselineRateNote && (
+                                                  <small className="cmp-rate-note"> ({comp.baselineRateNote})</small>
+                                                )}
                                               </span>
                                             </div>
                                             <div className="cmp-bar-row">
@@ -447,12 +462,20 @@ export default function LayerAuditPanel({
                                               </div>
                                               <span className="cmp-bar-val strong">
                                                 {comp.routeValue} {displayUnit}
+                                                {comp.routeRateNote && (
+                                                  <small className="cmp-rate-note"> ({comp.routeRateNote})</small>
+                                                )}
                                               </span>
                                             </div>
                                           </>
                                         );
                                       })()}
                                     </div>
+                                    {comp.baselineHardViolationNote && (
+                                      <div className="cmp-baseline-caveat">
+                                        ℹ️ {comp.baselineHardViolationNote}
+                                      </div>
+                                    )}
                                   </div>
                                 )}
 
@@ -469,7 +492,11 @@ export default function LayerAuditPanel({
                                   Object.keys(audit.exposureBreakdown).length > 0 && (
                                     <div className="layer-exposure-box">
                                       <div className="layer-exposure-header">
-                                        <span>What This Route Passes Through</span>
+                                        <span>
+                                          {audit.includesConnectingRoads
+                                            ? "What This Route Passes Through (Main + Connecting Roads)"
+                                            : "What This Route Passes Through"}
+                                        </span>
                                       </div>
                                       {(() => {
                                         const entries = Object.entries(audit.exposureBreakdown)
@@ -488,12 +515,12 @@ export default function LayerAuditPanel({
                                                     width: `${(Number(v) / total) * 100}%`,
                                                     background: getSegmentColor(cfg, k),
                                                   }}
-                                                  title={`${humanizeClassLabel(k)}: ${v}`}
+                                                  title={`${humanizeClassLabel(k)}: ${v} km`}
                                                 />
                                               ))}
                                             </div>
                                             <div className="exposure-chips">
-                                              {entries.slice(0, 5).map(([k, v]) => (
+                                              {entries.slice(0, 7).map(([k, v]) => (
                                                 <span key={k} className="exposure-chip">
                                                   <span
                                                     className="exposure-dot"
@@ -507,6 +534,51 @@ export default function LayerAuditPanel({
                                           </>
                                         );
                                       })()}
+                                    </div>
+                                  )}
+
+                                {/* Connecting Roads (Feeder Spurs) Per-Town Breakdown */}
+                                {audit.connectingRoadsImpact &&
+                                  Array.isArray(audit.connectingRoadsImpact.perSpur) &&
+                                  audit.connectingRoadsImpact.perSpur.length > 0 && (
+                                    <div
+                                      className={`layer-spurs-impact-box ${
+                                        audit.connectingRoadsImpact.hasNotableExposure ? "has-exposure" : ""
+                                      }`}
+                                    >
+                                      <div className="layer-spurs-impact-header">
+                                        <span>
+                                          🟣 Connecting Roads ({audit.connectingRoadsImpact.spursCount})
+                                        </span>
+                                        <span className="layer-spurs-km-badge">
+                                          {audit.connectingRoadsImpact.totalLengthKm} km
+                                          {audit.connectingRoadsImpact.baselineLengthKm != null
+                                            ? ` (Straight: ${audit.connectingRoadsImpact.baselineLengthKm} km)`
+                                            : ""}
+                                        </span>
+                                      </div>
+                                      {audit.connectingRoadsImpact.summary && (
+                                        <div className="layer-spurs-impact-summary">
+                                          {humanizeText(audit.connectingRoadsImpact.summary)}
+                                        </div>
+                                      )}
+                                      <div className="layer-spurs-impact-rows">
+                                        {audit.connectingRoadsImpact.perSpur.map((sp, spIdx) => (
+                                          <div
+                                            key={`${sp.spurId || sp.hubName || "sp"}-${spIdx}`}
+                                            className={`layer-spur-row sev-${sp.severity || "ok"}`}
+                                          >
+                                            <div className="layer-spur-row-top">
+                                              <span className={`layer-spur-dot sev-${sp.severity || "ok"}`} />
+                                              <strong className="layer-spur-hub">{sp.hubName}</strong>
+                                              <span className="layer-spur-len">{sp.lengthKm} km</span>
+                                            </div>
+                                            <div className="layer-spur-metric">
+                                              {humanizeText(sp.metricSummary)}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
                                     </div>
                                   )}
 
