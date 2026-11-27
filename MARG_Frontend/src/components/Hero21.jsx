@@ -185,8 +185,8 @@ export default function Hero21({
                 onClick={btn.onClick}
                 className={`cursor-pointer rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 border ${
                   idx === 1
-                    ? "bg-[#24523E] text-[#F7F5F0] border-[#24523E] shadow-sm hover:bg-[#2E664D]"
-                    : "bg-[#FFFFFF]/85 text-[#24523E] border-[#24523E]/20 backdrop-blur-sm hover:bg-[#FFFFFF] hover:border-[#24523E]/45"
+                    ? "bg-[#1D4635] text-[#F7F5F0] border-[#1D4635] shadow-sm hover:bg-[#265B45]"
+                    : "bg-[#FFFFFF]/85 text-[#1D4635] border-[#1D4635]/20 backdrop-blur-sm hover:bg-[#FFFFFF] hover:border-[#1D4635]/45"
                 }`}
               >
                 {btn.label}
@@ -213,7 +213,7 @@ export default function Hero21({
               <motion.a
                 variants={ctaVariants}
                 href="#modes"
-                className="group inline-flex items-center gap-2 rounded-full bg-[#24523E] px-7 py-3 text-sm font-semibold text-[#F7F5F0] no-underline shadow-md transition-all hover:bg-[#2E664D] hover:shadow-lg"
+                className="group inline-flex items-center gap-2 rounded-full bg-[#1D4635] px-7 py-3 text-sm font-semibold text-[#F7F5F0] no-underline shadow-md transition-all hover:bg-[#265B45] hover:shadow-lg"
               >
                 Explore Workflows
                 <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -221,7 +221,7 @@ export default function Hero21({
               <motion.a
                 variants={ctaVariants}
                 href="#about"
-                className="group inline-flex items-center gap-1.5 rounded-full border border-[#24523E]/25 bg-[#FFFFFF]/70 px-5 py-2.5 text-sm font-semibold text-[#24523E] no-underline backdrop-blur-sm transition-all hover:bg-[#FFFFFF]"
+                className="group inline-flex items-center gap-1.5 rounded-full border border-[#1D4635]/25 bg-[#FFFFFF]/70 px-5 py-2.5 text-sm font-semibold text-[#1D4635] no-underline backdrop-blur-sm transition-all hover:bg-[#FFFFFF]"
               >
                 About MARG
                 <ArrowRight className="size-3.5 -rotate-45 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
