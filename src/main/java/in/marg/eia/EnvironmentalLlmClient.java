@@ -92,13 +92,17 @@ public class EnvironmentalLlmClient {
                     }
                     return result;
                 } catch (HttpStatusCodeException exception) {
-                    if (exception.getStatusCode().value() != SERVICE_UNAVAILABLE) {
+                    int statusCode = exception.getStatusCode().value();
+                    if (statusCode != SERVICE_UNAVAILABLE && statusCode != 404 && statusCode != 429) {
                         throw exception;
                     }
                     lastUnavailable = exception;
                     consecutiveUnavailable++;
-                    log.warn("LLM operation '{}' received HTTP 503 from model '{}' (attempt {}).",
-                            operation, model, attempt + 1);
+                    log.warn("LLM operation '{}' received HTTP {} from model '{}' (attempt {}): {}",
+                            operation, statusCode, model, attempt + 1, exception.getMessage());
+                    if (statusCode == 404) {
+                        break; // Move immediately to next model candidate if 404
+                    }
                 }
             }
         }

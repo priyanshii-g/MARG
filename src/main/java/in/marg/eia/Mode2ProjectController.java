@@ -153,11 +153,24 @@ public class Mode2ProjectController {
             @PathVariable("projectId") String projectId, @RequestBody ProjectQuestionRequest request) throws IOException {
         try {
             if (request == null) throw new IllegalArgumentException("Question is required.");
-            return rag.answer(projectId, request.question(), request.limit());
+            var screening = alignmentScreening.getLatestScreening(projectId);
+            if (screening == null) {
+                return new Mode2ProjectRagService.ProjectAnswer(projectId, request.question(),
+                        "Question answering is locked until alignment GIS screening is performed. MARG Q&A cross-examines document claims against spatial GIS ground-truth rather than performing unverified document summarization. Please screen the project alignment first.",
+                        List.of(), List.of(), "GIS_ANALYSIS_REQUIRED",
+                        "Screen the project alignment geometry in Step 02 to unlock cross-verified question answering.");
+            }
+            return rag.answer(projectId, request.question(), request.limit(), screening.evidence());
         } catch (IllegalArgumentException exception) {
             HttpStatus status = exception.getMessage() != null && exception.getMessage().contains("not found")
                     ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
             throw new ResponseStatusException(status, exception.getMessage(), exception);
+        } catch (IllegalStateException exception) {
+            LOGGER.warn("LLM answer validation failed for project {}: {}; falling back to grounded synthesis",
+                    projectId, exception.getMessage());
+            var screening = alignmentScreening.getLatestScreening(projectId);
+            return rag.fallbackAnswer(projectId, request.question(), request.limit(), exception.getMessage(),
+                    screening != null ? screening.evidence() : null);
         }
     }
 
@@ -171,6 +184,9 @@ public class Mode2ProjectController {
             HttpStatus status = exception.getMessage() != null && exception.getMessage().contains("not found")
                     ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
             throw new ResponseStatusException(status, exception.getMessage(), exception);
+        } catch (IllegalStateException exception) {
+            LOGGER.warn("LLM fact extraction validation failed for project {}: {}", projectId, exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, exception.getMessage(), exception);
         }
     }
 
