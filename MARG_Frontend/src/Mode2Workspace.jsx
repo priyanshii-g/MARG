@@ -685,7 +685,7 @@ export default function Mode2Workspace({ onHome }) {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[300px_1fr] xl:grid-cols-[320px_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[290px_1fr] xl:grid-cols-[290px_1fr_380px] items-start">
           {/* Sidebar */}
           <aside className="space-y-5">
             <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 shadow-sm">
@@ -757,7 +757,7 @@ export default function Mode2Workspace({ onHome }) {
           </aside>
 
           {/* Main workspace sections */}
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
             {/* 01 · Alignment Input & Form */}
             <section className="rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF] p-6 sm:p-7 shadow-sm">
               <div>
@@ -1065,7 +1065,7 @@ export default function Mode2Workspace({ onHome }) {
                         "SETTLEMENT_EXPOSURE", "WATER_BODIES", "WILDLIFE_CORRIDORS_AND_ESZ", "GEOTECH_HAZARDS",
                         "DRAINAGE_AND_WETLANDS", "UTILITY_CORRIDORS", "BUILDING_DENSITY", "POPULATION_DENSITY"
                       ]).map((layer) => (
-                        <span key={layer} className="rounded-md border border-emerald-700/60 bg-[#16231c] px-2.5 py-1 font-mono text-[11px] font-semibold text-[#143627] shadow-sm">
+                        <span key={layer} className="rounded-full border border-[#BBD3C2] bg-[#E9F2EC] px-3 py-1 font-mono text-[11px] font-semibold text-[#143627]">
                           ✓ {layer}
                         </span>
                       ))}
@@ -1073,10 +1073,10 @@ export default function Mode2Workspace({ onHome }) {
                   </div>
 
                   {/* Executive Decision Recommendation Card */}
-                  <div className="rounded-xl border border-emerald-500/60 bg-gradient-to-br from-[#0c1c14] to-[#07130d] p-5 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8E8DD] pb-3">
+                  <div className="rounded-2xl border border-[#BBD3C2] bg-gradient-to-br from-[#EEF5F0] to-[#F7F5F0] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8E8DD] pb-3.5">
                       <div>
-                        <span className="inline-block rounded-full bg-emerald-500/20 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#143627] border border-[#D8E8DD]">
+                        <span className="inline-block rounded-full bg-[#DCEAE0] px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-[#143627] border border-[#BBD3C2]">
                           MARG Statutory Screening Verdict &amp; Decision Support
                         </span>
                         <h4 className="mt-2 text-base font-bold text-[#1C2420]">
@@ -1084,14 +1084,14 @@ export default function Mode2Workspace({ onHome }) {
                         </h4>
                       </div>
                       <div className="text-right">
-                        <span className="rounded-lg bg-emerald-900/90 px-3 py-1.5 font-mono text-xs font-bold text-[#143627] border border-emerald-600/80 shadow-none">
+                        <span className="rounded-full bg-[#C9DFCF] px-3.5 py-1.5 font-mono text-xs font-bold text-[#143627] border border-[#8CB396]">
                           RECOMMENDED FOR STAGE-I APPRAISAL WITH EMP CONDITIONS
                         </span>
                       </div>
                     </div>
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                      <div className="rounded-lg border border-[#E5ECE6] bg-[#FFFFFF] p-3.5">
+                      <div className="rounded-2xl border border-[#E5ECE6] bg-[#FFFFFF] p-4">
                         <span className="text-[11px] font-bold uppercase text-[#68736B]">1. Geometry &amp; Alignment Length</span>
                         <p className="mt-1 text-sm font-semibold text-[#143627]">5.43 km Verified Fit</p>
                         <p className="mt-1 text-xs leading-relaxed text-[#4A5950]">
@@ -1099,7 +1099,7 @@ export default function Mode2Workspace({ onHome }) {
                         </p>
                       </div>
 
-                      <div className="rounded-lg border border-[#E5ECE6] bg-[#FFFFFF] p-3.5">
+                      <div className="rounded-2xl border border-[#E5ECE6] bg-[#FFFFFF] p-4">
                         <span className="text-[11px] font-bold uppercase text-[#68736B]">2. Forest &amp; Biodiversity Impact</span>
                         <p className="mt-1 text-sm font-semibold text-[#B45309]">14.56 ha Forest Diversion</p>
                         <p className="mt-1 text-xs leading-relaxed text-[#4A5950]">
@@ -1107,7 +1107,7 @@ export default function Mode2Workspace({ onHome }) {
                         </p>
                       </div>
 
-                      <div className="rounded-lg border border-[#E5ECE6] bg-[#FFFFFF] p-3.5">
+                      <div className="rounded-2xl border border-[#E5ECE6] bg-[#FFFFFF] p-4">
                         <span className="text-[11px] font-bold uppercase text-[#68736B]">3. Hydrology &amp; Slope Stability</span>
                         <p className="mt-1 text-sm font-semibold text-[#143627]">Low Disaster Vulnerability</p>
                         <p className="mt-1 text-xs leading-relaxed text-[#4A5950]">
@@ -1116,7 +1116,7 @@ export default function Mode2Workspace({ onHome }) {
                       </div>
                     </div>
 
-                    <div className="mt-4 rounded-lg border border-emerald-900/70 bg-[#07130e] p-3.5 text-xs leading-relaxed text-[#2A352E]">
+                    <div className="mt-4 rounded-2xl border border-[#D8E8DD] bg-[#FFFFFF] p-4 text-xs leading-relaxed text-[#2A352E]">
                       <strong className="text-[#143627] font-bold uppercase">Executive Recommendation for Non-Technical Appraisal: </strong>
                       The existing alignment represents the most practical engineering option. While an alternative bypass could circumvent forest canopy, it lengthens the corridor by +0.76 km and intersects inhabited homesteads/farmland. Proceeding with the existing alignment is optimal provided wildlife corridors are safeguarded with structural eco-ducts and acoustic barriers.
                     </div>
@@ -1781,48 +1781,45 @@ export default function Mode2Workspace({ onHome }) {
                 </div>
               )}
             </section>
+          </div>
 
-            {/* 02 · Cross-Verified Question Answering */}
+          {/* 02 · Sticky Side Panel: Cross-Verified Question Answering */}
+          <aside className="xl:sticky xl:top-6 space-y-5">
             {!comparison ? (
-              <section className="rounded-3xl border border-[#D9DDD3] bg-[#FFFFFF] p-6 text-[#4A5950]">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="rounded bg-[#D1E3D6] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#68736B] border border-[#D9DDD3]">
-                      🔒 Gated Feature
-                    </span>
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#68736B]">02 · Cross-Verified Question Answering</p>
-                  </div>
+              <section className="rounded-3xl border border-[#D9DDD3] bg-[#FFFFFF] p-6 text-[#4A5950] shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="rounded-full bg-[#DCEAE0] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#143627] border border-[#BBD3C2]">
+                    🔒 Gated Feature
+                  </span>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#59645C]">02 · Q&amp;A</p>
                 </div>
-                <div className="mt-4 rounded-xl border border-dashed border-[#D9DDD3] bg-[#FAF9F6] p-6 text-center">
-                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#D1E3D6] text-[#68736B] mb-3">
+                <div className="mt-4 rounded-2xl border border-dashed border-[#D5E2D8] bg-[#FAF9F6] p-6 text-center">
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#DCEAE0] text-[#143627] mb-3">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                   </div>
-                  <h4 className="text-base font-semibold text-[#2A352E]">GIS Screening &amp; Verification Required</h4>
-                  <p className="mt-1.5 text-xs text-[#68736B] max-w-lg mx-auto leading-relaxed">
-                    MARG does not perform unverified document summarization. Question answering is unlocked once you screen the alignment above, allowing questions to be cross-examined against real spatial GIS observations and Indian statutory guidelines.
+                  <h4 className="text-sm font-semibold text-[#143627]">GIS Screening Required</h4>
+                  <p className="mt-1.5 text-xs text-[#59645C] leading-relaxed">
+                    Run <strong>Compare project claims with GIS</strong> to unlock cross-verified Q&amp;A right here alongside your spatial results.
                   </p>
                 </div>
               </section>
             ) : (
-              <section className="rounded-3xl border border-[#143627]/40 bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="rounded bg-emerald-500/20 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-[#143627] border border-[#D8E8DD]">
-                      ✓ GIS Screened &amp; Cross-Verified Active
-                    </span>
-                    <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#143627]">02 · Cross-Verified Question Answering</p>
-                  </div>
-                  <span className="text-sm font-semibold text-[#4A5950]">
-                    Verified against {comparison.gisScreening?.assessedLayers?.length || 13} GIS Layers
+              <section className="rounded-3xl border border-[#BBD3C2] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.08)]">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="rounded-full bg-[#DCEAE0] px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#143627] border border-[#BBD3C2]">
+                    ✓ GIS Cross-Verified
+                  </span>
+                  <span className="text-[11px] font-semibold text-[#59645C]">
+                    {comparison.gisScreening?.assessedLayers?.length || 13} GIS Layers
                   </span>
                 </div>
-                <h3 className="mt-2.5 text-2xl font-bold text-[#1C2420]">Ask with Spatial GIS Ground-Truth &amp; Statutory Guidance</h3>
-                <p className="mt-1 text-sm leading-6 text-[#4A5950]">
-                  Every answer cross-examines document assertions against verified GIS spatial observations and Indian statutory rules.
+                <h3 className="mt-3 text-lg font-bold text-[#143627]">02 · Cross-Verified Q&amp;A</h3>
+                <p className="mt-1 text-xs leading-5 text-[#59645C]">
+                  Cross-examine DPR assertions against verified GIS observations and Indian statutory law.
                 </p>
 
                 {/* Quick Question Pills */}
-                <div className="mt-4 flex flex-wrap gap-2.5">
+                <div className="mt-4 flex flex-col gap-2">
                   {[
                     "What forest diversion is claimed vs GIS observed?",
                     "Are there river bridges or water crossings along the route?",
@@ -1833,23 +1830,24 @@ export default function Mode2Workspace({ onHome }) {
                       key={q}
                       type="button"
                       onClick={() => setQuestion(q)}
-                      className="rounded-lg border border-emerald-700/60 bg-[#16231c] px-4 py-2 text-sm text-[#143627] hover:bg-[#BDD6C5]/50 hover:text-[#1C2420] transition-colors font-medium shadow-sm"
+                      className="rounded-xl border border-[#8CB396] bg-[#E9F2EC] px-3.5 py-2 text-left text-xs font-semibold text-[#143627] hover:bg-[#D1E3D6] transition-colors"
                     >
                       💬 {q}
                     </button>
                   ))}
                 </div>
 
-                <form onSubmit={askQuestion} className="mt-5 flex flex-col gap-2.5 sm:flex-row">
-                  <input
+                <form onSubmit={askQuestion} className="mt-4 space-y-2.5">
+                  <textarea
+                    rows={2}
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="e.g. What forest diversion and bridge structures does the project disclose vs GIS findings?"
-                    className="min-w-0 flex-1 rounded-lg border border-[#D9DDD3] bg-[#FAF9F6] px-4 py-3.5 text-sm text-[#2A352E] placeholder-slate-500 outline-none focus:border-emerald-500"
+                    placeholder="Ask about forest diversion, bridges, wildlife corridors, or discrepancies…"
+                    className="w-full rounded-xl border border-[#D5E2D8] bg-[#FAF9F6] px-3.5 py-2.5 text-xs text-[#1C2420] placeholder:text-[#7C887E] outline-none focus:border-[#143627]"
                   />
                   <button
                     disabled={!question.trim() || busy}
-                    className="rounded-lg bg-emerald-700 px-6 py-3.5 text-sm font-bold text-[#1C2420] hover:bg-emerald-600 disabled:opacity-50 transition-colors shadow-xs"
+                    className="w-full rounded-full bg-[#143627] px-5 py-2.5 text-xs font-semibold text-[#FFFFFF] hover:bg-[#1E4D38] disabled:opacity-50 transition-colors border-0"
                     type="submit"
                   >
                     {busy ? "Cross-examining…" : "Ask with citations"}
@@ -1857,19 +1855,19 @@ export default function Mode2Workspace({ onHome }) {
                 </form>
 
                 {answer && (
-                  <div className="mt-6 border-t border-[#E5ECE6] pt-5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <strong className="text-base font-bold text-[#1C2420]">Cross-Verified Answer</strong>
-                      <span className="rounded bg-[#E9F2EC] px-3 py-1 font-mono text-xs font-bold text-[#143627] border border-emerald-800">
+                  <div className="mt-5 border-t border-[#E5ECE6] pt-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <strong className="text-sm font-bold text-[#143627]">Cross-Verified Answer</strong>
+                      <span className="rounded-full bg-[#E9F2EC] px-2.5 py-0.5 font-mono text-[10px] font-bold text-[#143627] border border-[#BBD3C2]">
                         {answer.status}
                       </span>
                     </div>
-                    <p className="mt-3.5 whitespace-pre-wrap text-sm leading-7 text-[#2A352E] bg-[#08120d] p-5 rounded-xl border border-[#E5ECE6] shadow-none">
+                    <p className="mt-2.5 whitespace-pre-wrap text-xs leading-6 text-[#1C2420] bg-[#FAF9F6] p-4 rounded-2xl border border-[#E5ECE6]">
                       {answer.answer}
                     </p>
                     {answer.sources?.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        <p className="text-xs font-bold uppercase tracking-wider text-[#4A5950]">Cited Evidence &amp; Sources:</p>
+                      <div className="mt-3 space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[#59645C]">Cited Evidence:</p>
                         {answer.sources.map((source) => (
                           <EvidenceCard key={source.evidenceId} source={source} />
                         ))}
@@ -1879,7 +1877,7 @@ export default function Mode2Workspace({ onHome }) {
                 )}
               </section>
             )}
-          </div>
+          </aside>
         </div>
       </div>
     </main>
