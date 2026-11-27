@@ -56,19 +56,19 @@ export function RunActionButton({
       transition={{ type: "spring", stiffness: 320, damping: 22 }}
       className={`group relative inline-flex min-h-[46px] items-center justify-center gap-2.5 overflow-hidden rounded-full px-6 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
         isPrimary
-          ? "bg-[#2D6A4F] text-[#FFFFFF] hover:bg-[#3B8263] border border-[#2D6A4F] shadow-[0_2px_8px_rgba(45,106,79,0.18)]"
-          : "bg-[#EEF4EF] text-[#24523E] hover:bg-[#E1EDE4] border border-[#CBE0D1] shadow-none"
+          ? "bg-[#24523E] text-[#FFFFFF] hover:bg-[#2E664D] border border-[#24523E] shadow-[0_2px_8px_rgba(45,106,79,0.18)]"
+          : "bg-[#E4EFE7] text-[#24523E] hover:bg-[#D5E6DA] border border-[#CBE0D1] shadow-none"
       } ${className}`}
     >
       <span className="relative z-10 flex items-center gap-2">
         {busy ? (
-          <Loader2 className={`size-4 animate-spin ${isPrimary ? "text-emerald-200" : "text-[#2D6A4F]"}`} />
+          <Loader2 className={`size-4 animate-spin ${isPrimary ? "text-emerald-200" : "text-[#24523E]"}`} />
         ) : done ? (
-          <CheckCircle2 className={`size-4 ${isPrimary ? "text-emerald-300" : "text-[#2D6A4F]"}`} />
+          <CheckCircle2 className={`size-4 ${isPrimary ? "text-emerald-300" : "text-[#24523E]"}`} />
         ) : isPrimary ? (
           <Zap className="size-4 text-amber-300 transition-transform duration-200 group-hover:scale-110" />
         ) : (
-          <Sparkles className="size-4 text-[#2D6A4F] transition-transform duration-200 group-hover:rotate-12" />
+          <Sparkles className="size-4 text-[#24523E] transition-transform duration-200 group-hover:rotate-12" />
         )}
         <AnimatedText text={label} />
       </span>

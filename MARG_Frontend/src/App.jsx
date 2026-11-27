@@ -157,12 +157,12 @@ function HomePage({ onMode1, onMode2, onEia }) {
                 transition={{ type: "spring", stiffness: 240, damping: 24, delay: idx * 0.08 }}
                 whileHover={{ y: -8 }}
                 onClick={mode.onClick}
-                className="group flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF]/95 p-3 shadow-[0_20px_50px_rgba(45,106,79,0.09)] backdrop-blur-md transition-shadow duration-300 hover:border-[#40916C]/50 hover:shadow-[0_28px_64px_rgba(45,106,79,0.16)]"
+                className="group flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-[#D8E8DD] bg-[#FFFFFF]/95 p-3 shadow-[0_20px_50px_rgba(45,106,79,0.09)] backdrop-blur-md transition-shadow duration-300 hover:border-[#2E664D]/50 hover:shadow-[0_28px_64px_rgba(45,106,79,0.16)]"
               >
                 <div className="space-y-2 px-4 pt-3.5 pb-4">
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF4EF] px-3 py-1 font-mono text-[11px] font-semibold text-[#2D6A4F]">
-                      <Icon className="size-3.5 text-[#40916C]" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E4EFE7] px-3 py-1 font-mono text-[11px] font-semibold text-[#24523E]">
+                      <Icon className="size-3.5 text-[#2E664D]" />
                       {mode.number} · {mode.tag}
                     </span>
                     <span className="h-2 w-2 rounded-full bg-[#52B788] transition-transform group-hover:scale-125" />
@@ -205,7 +205,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
         >
           <div className="grid gap-8 border-b border-[#E5ECE6] pb-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#EEF4EF] px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-[#1B4332]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#E4EFE7] px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-[#1B4332]">
                 About MARG
               </span>
               <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#1B4332] sm:text-3xl">
@@ -228,7 +228,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ type: "spring", stiffness: 250, damping: 24, delay: idx * 0.07 }}
                   whileHover={{ y: -4 }}
-                  className="rounded-2xl border border-[#E2EAE3] bg-[#F7F5F0]/70 p-5 transition-colors hover:border-[#2D6A4F]/40 hover:bg-[#EEF4EF]/60"
+                  className="rounded-2xl border border-[#E2EAE3] bg-[#F7F5F0]/70 p-5 transition-colors hover:border-[#24523E]/40 hover:bg-[#E4EFE7]/60"
                 >
                   <div className="flex size-10 items-center justify-center rounded-xl bg-[#1B4332] text-[#F7F5F0] shadow-sm">
                     <CapIcon className="size-5" />
@@ -877,7 +877,7 @@ export default function App() {
           `<div style="font-size:11px;">
             <strong style="color:${pDef.color};">${pDef.label || pDef.shortLabel}</strong><br/>
             <span>Route Length: <b>${altLength} km</b> (+${altDev}% longer than straight line)</span><br/>
-            <span style="font-size:10px; color:#2D6A4F; font-weight:700;">Click this line to view this route option</span>
+            <span style="font-size:10px; color:#24523E; font-weight:700;">Click this line to view this route option</span>
           </div>`,
           { sticky: true }
         );

@@ -307,20 +307,20 @@ export default function Mode1EiaWorkspace({ onHome }) {
   return <main className="marg-modern min-h-screen bg-[#F7F5F0] text-[#1C2420] antialiased">
     <header className="flex items-center justify-between border-b border-[#D9DDD3] bg-[#FFFFFF]/95 px-6 py-4 backdrop-blur-sm sm:px-10">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#2D6A4F] text-sm font-bold text-[#F7F5F0] shadow-sm">M</div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#24523E] text-sm font-bold text-[#F7F5F0] shadow-sm">M</div>
         <div>
           <p className="text-sm font-semibold tracking-[0.14em] text-[#24523E]">MARG · STATUTORY EIA</p>
           <p className="text-xs text-[#59645C]">Environmental Impact Assessment report workspace</p>
         </div>
       </div>
-      <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#EEF4EF] transition-colors">
+      <button type="button" onClick={onHome} className="rounded-full border border-[#D8E8DD] bg-[#FAF9F6] px-5 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#E4EFE7] transition-colors">
         ← All workflows
       </button>
     </header>
 
     <div className="mx-auto max-w-[1600px] w-full px-4 py-8 sm:px-6 lg:px-8">
       <div className="border-b border-[#D8E8DD] pb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#2D6A4F]">Statutory Decision Support</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#24523E]">Statutory Decision Support</p>
         <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-[#24523E] sm:text-3xl">Generate Environmental EIA Report</h1>
         <p className="mt-2 max-w-3xl text-xs leading-5 text-[#59645C]">
           Integrates Mode 1 GIS spatial screening, verified statutory acts (FCA 1980, EPA 1986, CPCB standards), and operator DPR specifications to draft an evidence-grounded EIA report.
@@ -359,7 +359,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
           <div>
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-[#24523E]">1. Select Saved Alignment</h2>
-              <button type="button" onClick={refreshRoutes} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#EEF4EF] transition-colors">Refresh routes</button>
+              <button type="button" onClick={refreshRoutes} className="rounded-full border border-[#D5E2D8] bg-[#FFFFFF] px-4 py-2 text-xs font-semibold text-[#24523E] hover:bg-[#E4EFE7] transition-colors">Refresh routes</button>
             </div>
             <label className="mt-2 block">
               <select
@@ -465,7 +465,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
                 <button
                   type="button"
                   onClick={() => setSpecs(BLANK_SPECS)}
-                  className="rounded border border-[#3b4e41] bg-transparent px-3 py-1.5 text-xs font-medium text-[#94a3b8] hover:bg-[#EEF4EF] hover:text-[#24523E] transition-all"
+                  className="rounded border border-[#3b4e41] bg-transparent px-3 py-1.5 text-xs font-medium text-[#94a3b8] hover:bg-[#E4EFE7] hover:text-[#24523E] transition-all"
                 >
                   Clear Fields
                 </button>
@@ -993,7 +993,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
           <section className="rounded-3xl border border-[#E3ECE5] bg-[#FFFFFF] p-6 shadow-[0_2px_10px_rgba(45,106,79,0.06)]">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-[#24523E]">Evidence Register</h2>
-              <span className="font-mono text-[10px] text-[#24523E] bg-[#EEF4EF] px-2 py-0.5 rounded border border-[#D8E8DD]">
+              <span className="font-mono text-[10px] text-[#24523E] bg-[#E4EFE7] px-2 py-0.5 rounded border border-[#D8E8DD]">
                 {findings.length} GIS Records
               </span>
             </div>
@@ -1061,7 +1061,7 @@ export default function Mode1EiaWorkspace({ onHome }) {
                   <ShimmerButton type="button" onClick={() => download("pdf")} className="px-4 py-2 text-xs">
                     Download PDF
                   </ShimmerButton>
-                  <button type="button" onClick={() => download("document")} className="rounded-full border border-[#D5E2D8] bg-[#EEF4EF] px-5 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-[#E1EDE4] transition-colors">
+                  <button type="button" onClick={() => download("document")} className="rounded-full border border-[#D5E2D8] bg-[#E4EFE7] px-5 py-2.5 text-xs font-semibold text-[#24523E] hover:bg-[#D5E6DA] transition-colors">
                     Download DOCX
                   </button>
                 </div>
