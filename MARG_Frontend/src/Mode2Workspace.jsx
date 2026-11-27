@@ -382,6 +382,9 @@ export default function Mode2Workspace({ onHome }) {
   const [submittedCoords, setSubmittedCoords] = useState(null);
   const [comparison, setComparison] = useState(null);
   const [alternative, setAlternative] = useState(null);
+  const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
+  const [statutoryRisk, setStatutoryRisk] = useState(null);
+  const [mitigationCalc, setMitigationCalc] = useState(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -517,7 +520,7 @@ export default function Mode2Workspace({ onHome }) {
 
   async function analyzeAlignment(event) {
     if (event) event.preventDefault();
-    setBusy(true); setError(""); setComparison(null);
+    setBusy(true); setError(""); setComparison(null); setStatutoryRisk(null); setMitigationCalc(null);
     try {
       const activePid = await autoEnsureProject();
       const coordinates = getCoords();
@@ -534,13 +537,19 @@ export default function Mode2Workspace({ onHome }) {
         }),
       });
       setComparison(result);
+      const [riskRes, campaRes] = await Promise.allSettled([
+        api(`/api/mode2/projects/${encodeURIComponent(activePid)}/statutory-risk`),
+        api(`/api/mode2/projects/${encodeURIComponent(activePid)}/mitigation-calculator`),
+      ]);
+      if (riskRes.status === "fulfilled") setStatutoryRisk(riskRes.value);
+      if (campaRes.status === "fulfilled") setMitigationCalc(campaRes.value);
       setNotice(`Screened ${coordinates.length} vertices across ${result.gisScreening?.assessedLayers?.length || 0} GIS layers.`);
     } catch (e) { setError(e.message); }
     finally { setBusy(false); }
   }
 
   async function recommendAlternative() {
-    setBusy(true); setError(""); setAlternative(null);
+    setBusy(true); setError(""); setAlternative(null); setSelectedOptionIdx(0);
     try {
       const activePid = await autoEnsureProject();
       const coordinates = getCoords();
@@ -555,21 +564,28 @@ export default function Mode2Workspace({ onHome }) {
         }),
       });
       setAlternative(result);
-      setNotice("MARG generated a composite GIS alternative candidate between the alignment endpoints.");
+      setSelectedOptionIdx(0);
+      setNotice(`MARG generated ${result.options?.length || 1} multi-objective GIS alternative option(s) between the alignment endpoints.`);
     } catch (e) { setError(e.message); setNotice(""); }
     finally { setBusy(false); }
   }
 
   function downloadAlternative() {
-    if (!alternative?.candidateCoordinates?.length) return;
+    const activeOpt = alternative?.options?.[selectedOptionIdx];
+    const coords = activeOpt?.coordinates || alternative?.candidateCoordinates;
+    if (!coords?.length) return;
     const feature = {
       type: "Feature",
-      properties: { name: "MARG GIS-engine candidate", recommendationStatus: alternative.recommendationStatus },
-      geometry: { type: "LineString", coordinates: alternative.candidateCoordinates },
+      properties: {
+        name: activeOpt?.optionTitle || "MARG GIS-engine candidate",
+        optionId: activeOpt?.optionId || "PRIMARY",
+        recommendationStatus: activeOpt?.recommendationStatus || alternative.recommendationStatus,
+      },
+      geometry: { type: "LineString", coordinates: coords },
     };
     const url = URL.createObjectURL(new Blob([JSON.stringify(feature, null, 2)], { type: "application/geo+json" }));
     const anchor = document.createElement("a");
-    anchor.href = url; anchor.download = "marg-mode2-alternative-candidate.geojson";
+    anchor.href = url; anchor.download = `marg-mode2-alternative-${(activeOpt?.optionId || "candidate").toLowerCase()}.geojson`;
     document.body.appendChild(anchor); anchor.click(); anchor.remove(); URL.revokeObjectURL(url);
   }
 
@@ -824,27 +840,44 @@ export default function Mode2Workspace({ onHome }) {
               {(submittedCoords?.length >= 2 || alternative?.candidateCoordinates?.length >= 2) && (
                 <Mode2Map
                   submitted={submittedCoords}
-                  candidate={alternative?.candidateCoordinates}
-                  candidateFeatures={alternative?.candidateFeatures}
+                  candidate={alternative?.options?.[selectedOptionIdx]?.coordinates || alternative?.candidateCoordinates}
+                  candidateFeatures={alternative?.options?.[selectedOptionIdx]?.features || alternative?.candidateFeatures}
                 />
               )}
 
               {/* Alternative Results Section */}
-              {alternative && (
+              {alternative && (() => {
+                const options = alternative.options?.length > 0 ? alternative.options : [{
+                  optionId: "PRIMARY",
+                  optionTitle: "Primary GIS Candidate",
+                  rationale: "Composite GIS route candidate between submitted endpoints.",
+                  preference: { environmentalWeight: 2.5, socialWeight: 1.0, directnessWeight: 0.8 },
+                  recommendationStatus: alternative.recommendationStatus,
+                  coordinates: alternative.candidateCoordinates,
+                  routeLengthKm: alternative.candidateRouteLengthKm,
+                  lengthDeltaVsExistingKm: alternative.candidateLengthMinusExistingKm,
+                  environmentalComparisons: alternative.environmentalComparisons,
+                  features: alternative.candidateFeatures,
+                }];
+                const activeOpt = options[selectedOptionIdx] || options[0];
+                const activeStatus = activeOpt?.recommendationStatus || alternative.recommendationStatus;
+                const activeComparisons = activeOpt?.environmentalComparisons || alternative.environmentalComparisons || [];
+
+                return (
                 <div className="mt-8 space-y-6 rounded-2xl border border-emerald-800/70 bg-[#121c17] p-6 shadow-2xl">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-400">
-                        GIS-engine candidate · {alternative.existingRoute?.regionDisplayName}
+                        Multi-Objective GIS Alternatives · {alternative.existingRoute?.regionDisplayName}
                       </p>
                       <h3 className="mt-1 text-2xl font-bold tracking-tight text-white flex items-center gap-3">
-                        <span>{alternative.recommendationStatus.replaceAll("_", " ")}</span>
+                        <span>{activeStatus.replaceAll("_", " ")}</span>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold font-mono border ${
-                          alternative.recommendationStatus === "SUSTAINABLE_BYPASS_CANDIDATE_FOUND"
+                          activeStatus === "POTENTIAL_ALTERNATIVE_FOR_REVIEW" || activeStatus === "SUSTAINABLE_BYPASS_CANDIDATE_FOUND"
                             ? "bg-emerald-950 text-emerald-300 border-emerald-500 shadow-md"
                             : "bg-amber-950 text-amber-300 border-amber-500 shadow-md"
                         }`}>
-                          {alternative.recommendationStatus === "SUSTAINABLE_BYPASS_CANDIDATE_FOUND" ? "✓ Recommended" : "Advisory Screening"}
+                          {activeStatus === "POTENTIAL_ALTERNATIVE_FOR_REVIEW" ? "✓ Lower GIS Exposure" : "Advisory Screening"}
                         </span>
                       </h3>
                     </div>
@@ -854,8 +887,50 @@ export default function Mode2Workspace({ onHome }) {
                       className="border border-emerald-600 bg-emerald-950/80 px-4 py-2 text-xs font-bold text-emerald-300 hover:bg-emerald-800 hover:text-white rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                      Download candidate GeoJSON
+                      Download {activeOpt.optionId} GeoJSON
                     </button>
+                  </div>
+
+                  {/* 3-Option Weight Matrix Selector */}
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {options.map((opt, idx) => {
+                      const isSelected = idx === selectedOptionIdx;
+                      const pref = opt.preference || {};
+                      return (
+                        <button
+                          key={opt.optionId || idx}
+                          type="button"
+                          onClick={() => setSelectedOptionIdx(idx)}
+                          className={`text-left rounded-xl border p-4 transition-all ${
+                            isSelected
+                              ? "border-emerald-400 bg-emerald-950/50 shadow-lg ring-1 ring-emerald-400/50"
+                              : "border-slate-700/80 bg-[#0a110d] hover:border-slate-500"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                              {opt.optionId}
+                            </span>
+                            <span className="text-xs font-bold text-white">
+                              {opt.routeLengthKm ?? "—"} km
+                            </span>
+                          </div>
+                          <h4 className="mt-1.5 text-sm font-bold text-white leading-snug">{opt.optionTitle}</h4>
+                          <p className="mt-1.5 text-[11px] leading-relaxed text-slate-300">{opt.rationale}</p>
+                          <div className="mt-2.5 flex flex-wrap gap-1.5 font-mono text-[10px]">
+                            <span className="rounded bg-emerald-900/50 px-1.5 py-0.5 text-emerald-300 border border-emerald-700/50">
+                              Env {pref.environmentalWeight ?? 1.0}x
+                            </span>
+                            <span className="rounded bg-blue-900/50 px-1.5 py-0.5 text-blue-300 border border-blue-700/50">
+                              Social {pref.socialWeight ?? 1.0}x
+                            </span>
+                            <span className="rounded bg-slate-800 px-1.5 py-0.5 text-slate-300 border border-slate-700">
+                              Direct {pref.directnessWeight ?? 1.0}x
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                   
                   {/* Summary Metric Cards */}
@@ -866,46 +941,24 @@ export default function Mode2Workspace({ onHome }) {
                     </div>
                     <div className="rounded-xl border border-slate-700/80 bg-[#0a110d] p-4 text-center shadow-inner">
                       <span className="text-[11px] text-slate-400 uppercase block font-bold tracking-wider">Candidate Length</span>
-                      <span className="text-xl font-bold text-emerald-400 mt-1 block">{alternative.candidateRouteLengthKm ?? "—"} km</span>
+                      <span className="text-xl font-bold text-emerald-400 mt-1 block">{activeOpt.routeLengthKm ?? "—"} km</span>
                     </div>
                     <div className="rounded-xl border border-slate-700/80 bg-[#0a110d] p-4 text-center shadow-inner">
                       <span className="text-[11px] text-slate-400 uppercase block font-bold tracking-wider">Length Delta</span>
                       <span className="text-xl font-bold text-white mt-1 block">
-                        {alternative.candidateLengthMinusExistingKm != null ? (alternative.candidateLengthMinusExistingKm > 0 ? `+${alternative.candidateLengthMinusExistingKm}` : alternative.candidateLengthMinusExistingKm) : "—"} km
+                        {activeOpt.lengthDeltaVsExistingKm != null ? (activeOpt.lengthDeltaVsExistingKm > 0 ? `+${activeOpt.lengthDeltaVsExistingKm}` : activeOpt.lengthDeltaVsExistingKm) : "—"} km
                       </span>
                     </div>
                   </div>
 
-                  {/* Plain-English Alternative Trade-Off & Recommendation Banner */}
-                  <div className="rounded-xl border border-blue-500/40 bg-gradient-to-br from-[#0a1520] to-[#060e17] p-4 shadow-xl">
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-blue-500/20 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-blue-300 border border-blue-500/40">
-                        Alternative Corridor Recommendation &amp; Trade-Off Summary
-                      </span>
-                    </div>
-                    <div className="mt-2.5 grid gap-3 sm:grid-cols-2 text-xs leading-relaxed text-slate-300">
-                      <div className="rounded-lg border border-slate-800 bg-[#0a131b] p-3">
-                        <span className="font-bold text-amber-400 block mb-1">Option A: Widen Existing Alignment (5.43 km)</span>
-                        Follows the established road footprint. Confines disturbance to the existing RoW buffer. Requires diversion of 14.56 ha forest and 3 wildlife underpasses, but completely avoids displacing rural habitations and farms.
-                      </div>
-                      <div className="rounded-lg border border-slate-800 bg-[#0a131b] p-3">
-                        <span className="font-bold text-emerald-400 block mb-1">Option B: Southern Agricultural Bypass (6.19 km)</span>
-                        Adds +0.76 km to route length. Steers outside the notified dense forest core, but cuts through private agricultural land and requires extensive new land acquisition and resettlement.
-                      </div>
-                    </div>
-                    <p className="mt-3 text-xs font-medium text-blue-200/90 border-t border-blue-900/40 pt-2">
-                      💡 <strong>Decision Takeaway:</strong> Widening the existing 5.43 km road with wildlife crossing structures is the environmentally and socially superior route compared to building a new greenfield bypass through private rural land.
-                    </p>
-                  </div>
-
-                  {alternative.environmentalComparisons?.filter(item => !item.metric?.toLowerCase().includes("nodata")).length > 0 && (
+                  {activeComparisons.filter(item => !item.metric?.toLowerCase().includes("nodata")).length > 0 && (
                     <div className="border border-slate-700/80 rounded-xl overflow-hidden shadow-2xl bg-[#0a110d]">
                       <div className="bg-[#15221b] px-4 py-3.5 border-b border-slate-700 flex flex-wrap items-center justify-between gap-2">
                         <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
-                          Layer-by-Layer Environmental Indicators
+                          Layer-by-Layer Environmental Indicators · {activeOpt.optionId}
                         </h4>
                         <span className="text-[11px] text-slate-300 font-medium">
-                          Audited across 13 GIS spatial layers (Submitted vs. MARG Candidate)
+                          Audited across 13 GIS spatial layers (Submitted vs. {activeOpt.optionTitle})
                         </span>
                       </div>
                       <div className="overflow-x-auto">
@@ -919,7 +972,7 @@ export default function Mode2Workspace({ onHome }) {
                             </tr>
                           </thead>
                           <tbody>
-                            {alternative.environmentalComparisons
+                            {activeComparisons
                               .filter((item) => !item.metric?.toLowerCase().includes("nodata"))
                               .map((item) => (
                                 <tr key={item.metric} className="border-b border-slate-800/80 bg-[#121c17] hover:bg-[#1a2921] transition-colors">
@@ -957,7 +1010,8 @@ export default function Mode2Workspace({ onHome }) {
                     </p>
                   )}
                 </div>
-              )}
+                );
+              })()}
 
               {/* Comparison (GIS vs document) results */}
               {comparison && (
@@ -1467,6 +1521,238 @@ export default function Mode2Workspace({ onHome }) {
                       <p className="mt-3 text-xs text-slate-400">No validated retrieved claim for: {comparison.projectFacts.missingFields.join(", ")}</p>
                     )}
                   </details>
+
+                  {/* 2-Page Executive Decision-Support Summary Bar */}
+                  <div className="rounded-xl border border-emerald-500/40 bg-gradient-to-r from-[#0e1f17] to-[#11241b] p-5 shadow-xl flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                        Decision-Support Deliverable · NHAI / MoEFCC / Multilateral Lenders
+                      </span>
+                      <h4 className="mt-1 text-base font-bold text-white">
+                        2-Page Executive Fact-Check &amp; Verification Brief
+                      </h4>
+                      <p className="mt-0.5 text-xs text-slate-300">
+                        Includes Readiness Scorecard, DPR vs. GIS Reconciliation, Statutory Clearances Checklist, and CAMPA Budget.
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2.5">
+                      <a
+                        href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/pdf`}
+                        download={`marg-executive-brief-${projectId}.pdf`}
+                        className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500 transition-colors shadow-sm"
+                      >
+                        ⬇ Download 2-Page Brief (PDF)
+                      </a>
+                      <a
+                        href={`/api/mode2/projects/${encodeURIComponent(projectId)}/executive-brief/docx`}
+                        download={`marg-executive-brief-${projectId}.docx`}
+                        className="rounded-lg border border-emerald-500/70 bg-emerald-950/60 px-4 py-2 text-xs font-bold text-emerald-200 hover:bg-emerald-900 transition-colors"
+                      >
+                        ⬇ Download Brief (DOCX)
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Statutory Risk & Clearance Delay Scorer (Red-Flag Engine) */}
+                  {statutoryRisk && (
+                    <div className="rounded-xl border border-slate-700/80 bg-[#0d1611] p-5 shadow-xl space-y-5">
+                      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-800 pb-4">
+                        <div>
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                            Statutory Risk &amp; Clearance Delay Scorer (Red-Flag Engine)
+                          </span>
+                          <h4 className="mt-1 text-lg font-bold text-white flex flex-wrap items-center gap-2.5">
+                            <span>{statutoryRisk.tierLabel}</span>
+                            <span className="rounded-full bg-slate-800 px-3 py-0.5 font-mono text-xs text-slate-200 border border-slate-700">
+                              Timeline: {statutoryRisk.estimatedClearanceTimeline}
+                            </span>
+                          </h4>
+                          <p className="mt-2 text-xs leading-relaxed text-slate-300 max-w-3xl">
+                            {statutoryRisk.executiveVerdict}
+                          </p>
+                        </div>
+                        <div className="rounded-xl border border-slate-700 bg-[#07100b] px-5 py-3 text-center min-w-[140px]">
+                          <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Readiness Score</span>
+                          <span className={`text-3xl font-extrabold font-mono mt-0.5 block ${
+                            statutoryRisk.score >= 80 ? "text-emerald-400" : statutoryRisk.score >= 50 ? "text-amber-400" : "text-rose-400"
+                          }`}>
+                            {statutoryRisk.score}<span className="text-sm text-slate-400">/100</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Risk Findings Grid */}
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {(statutoryRisk.redFlags || []).map((item) => (
+                          <div key={item.id} className="rounded-lg border border-rose-500/50 bg-rose-950/20 p-4 space-y-1.5">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-mono text-[10px] font-bold text-rose-300">🔴 {item.id} · {item.category}</span>
+                              <span className="font-mono text-[10px] text-rose-200 bg-rose-900/50 px-2 py-0.5 rounded">Delay: {item.potentialDelay}</span>
+                            </div>
+                            <h5 className="text-sm font-bold text-white">{item.headline}</h5>
+                            <p className="text-xs text-slate-300"><strong className="text-amber-300">Claim:</strong> {item.disclosedClaim}</p>
+                            <p className="text-xs text-slate-300"><strong className="text-emerald-300">GIS:</strong> {item.gisGroundTruth}</p>
+                            <p className="text-[11px] text-rose-200/90 pt-1 border-t border-rose-900/40">{item.requiredAction}</p>
+                          </div>
+                        ))}
+                        {(statutoryRisk.moderateQueries || []).map((item) => (
+                          <div key={item.id} className="rounded-lg border border-amber-500/40 bg-amber-950/15 p-4 space-y-1.5">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-mono text-[10px] font-bold text-amber-300">🟡 {item.id} · {item.category}</span>
+                              <span className="font-mono text-[10px] text-amber-200 bg-amber-900/40 px-2 py-0.5 rounded">Delay: {item.potentialDelay}</span>
+                            </div>
+                            <h5 className="text-sm font-bold text-white">{item.headline}</h5>
+                            <p className="text-xs text-slate-300"><strong className="text-amber-300">Claim:</strong> {item.disclosedClaim}</p>
+                            <p className="text-xs text-slate-300"><strong className="text-emerald-300">GIS:</strong> {item.gisGroundTruth}</p>
+                            <p className="text-[11px] text-amber-100/80 pt-1 border-t border-amber-900/30">{item.requiredAction}</p>
+                          </div>
+                        ))}
+                        {(statutoryRisk.concordantItems || []).map((item) => (
+                          <div key={item.id} className="rounded-lg border border-emerald-500/30 bg-emerald-950/15 p-4 space-y-1">
+                            <span className="font-mono text-[10px] font-bold text-emerald-300">🟢 {item.id} · CONCORDANT</span>
+                            <h5 className="text-sm font-bold text-white">{item.headline}</h5>
+                            <p className="text-xs text-slate-300">{item.gisGroundTruth}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Statutory Clearances Checklist */}
+                      {(statutoryRisk.statutoryChecklist || []).length > 0 && (
+                        <div className="border border-slate-800 rounded-lg overflow-hidden bg-[#080f0b]">
+                          <div className="bg-[#111d16] px-4 py-2.5 border-b border-slate-800 text-xs font-bold uppercase tracking-wider text-emerald-300">
+                            Statutory Clearances Checklist
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="border-b border-slate-800 text-slate-400">
+                                  <th className="py-2.5 px-3">Clearance / Act</th>
+                                  <th className="py-2.5 px-3">Appraisal Authority</th>
+                                  <th className="py-2.5 px-3">Status &amp; Required Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {statutoryRisk.statutoryChecklist.map((chk, idx) => (
+                                  <tr key={idx} className="border-b border-slate-800/60">
+                                    <td className="py-2.5 px-3 font-semibold text-white">{chk.stage?.replaceAll("_", " ")}</td>
+                                    <td className="py-2.5 px-3 text-slate-300">{chk.authority}</td>
+                                    <td className="py-2.5 px-3 text-slate-200">{chk.statusNote}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Automated Mitigation & CAMPA Cost Calculator */}
+                  {mitigationCalc && (
+                    <div className="rounded-xl border border-slate-700/80 bg-[#0d1611] p-5 shadow-xl space-y-5">
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                        <div>
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                            Automated Mitigation &amp; CAMPA Cost Calculator
+                          </span>
+                          <h4 className="mt-1 text-lg font-bold text-white">
+                            MoEFCC NPV, 1:2 Compensatory Afforestation &amp; WII Wildlife Underpass Budget
+                          </h4>
+                        </div>
+                        <div className="rounded-lg border border-emerald-500/40 bg-emerald-950/40 px-4 py-2 text-right">
+                          <span className="block text-[10px] uppercase tracking-wider text-emerald-300 font-bold">Total Statutory Liability</span>
+                          <span className="text-xl font-extrabold text-white font-mono">
+                            ₹{mitigationCalc.totalStatutoryLiabilityCrores} Cr
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div className="rounded-lg border border-slate-800 bg-[#07100b] p-3">
+                          <span className="text-[10px] uppercase text-slate-400 font-bold block">Forest Diversion</span>
+                          <span className="text-lg font-bold text-amber-300">{mitigationCalc.forestDiversionHectares} ha</span>
+                        </div>
+                        <div className="rounded-lg border border-slate-800 bg-[#07100b] p-3">
+                          <span className="text-[10px] uppercase text-slate-400 font-bold block">1:2 CA Land Required</span>
+                          <span className="text-lg font-bold text-emerald-300">{mitigationCalc.compensatoryAfforestationHectares} ha</span>
+                        </div>
+                        <div className="rounded-lg border border-slate-800 bg-[#07100b] p-3">
+                          <span className="text-[10px] uppercase text-slate-400 font-bold block">CAMPA NPV Deposit</span>
+                          <span className="text-lg font-bold text-white">₹{mitigationCalc.totalNpvCrores} Cr</span>
+                        </div>
+                        <div className="rounded-lg border border-slate-800 bg-[#07100b] p-3">
+                          <span className="text-[10px] uppercase text-slate-400 font-bold block">Wildlife Underpasses</span>
+                          <span className="text-lg font-bold text-emerald-300">{mitigationCalc.wildlifeUnderpassesCount} (₹{mitigationCalc.totalWildlifeUnderpassCrores} Cr)</span>
+                        </div>
+                      </div>
+
+                      {/* NPV Breakdown Table */}
+                      {(mitigationCalc.npvBreakdown || []).length > 0 && (
+                        <div className="border border-slate-800 rounded-lg overflow-hidden bg-[#080f0b]">
+                          <div className="bg-[#111d16] px-4 py-2 border-b border-slate-800 text-xs font-bold uppercase tracking-wider text-emerald-300">
+                            MoEFCC Eco-Class NPV Calculation Breakdown
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="border-b border-slate-800 text-slate-400">
+                                  <th className="py-2 px-3">Eco-Class</th>
+                                  <th className="py-2 px-3">Canopy</th>
+                                  <th className="py-2 px-3">Area (ha)</th>
+                                  <th className="py-2 px-3">Rate (₹/ha)</th>
+                                  <th className="py-2 px-3">NPV (₹ Cr)</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {mitigationCalc.npvBreakdown.map((row, idx) => (
+                                  <tr key={idx} className="border-b border-slate-800/60">
+                                    <td className="py-2 px-3 font-semibold text-white">{row.ecoClass}</td>
+                                    <td className="py-2 px-3 text-slate-300">{row.canopyDensity}</td>
+                                    <td className="py-2 px-3 text-amber-300 font-mono">{row.areaHectares}</td>
+                                    <td className="py-2 px-3 text-slate-300 font-mono">₹{Number(row.ratePerHectare).toLocaleString("en-IN")}</td>
+                                    <td className="py-2 px-3 text-emerald-300 font-bold font-mono">₹{row.totalNpvCrores} Cr</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Wildlife Underpass Specs */}
+                      {(mitigationCalc.wupSpecifications || []).length > 0 && (
+                        <div className="border border-slate-800 rounded-lg overflow-hidden bg-[#080f0b]">
+                          <div className="bg-[#111d16] px-4 py-2 border-b border-slate-800 text-xs font-bold uppercase tracking-wider text-emerald-300">
+                            WII / IRC:SP:118 Wildlife Underpass (WUP) Engineering Specifications
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="border-b border-slate-800 text-slate-400">
+                                  <th className="py-2 px-3">ID</th>
+                                  <th className="py-2 px-3">Target Species</th>
+                                  <th className="py-2 px-3">Clearance (H × Span)</th>
+                                  <th className="py-2 px-3">Openness Ratio</th>
+                                  <th className="py-2 px-3">Guide Fencing</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {mitigationCalc.wupSpecifications.map((wup, idx) => (
+                                  <tr key={idx} className="border-b border-slate-800/60">
+                                    <td className="py-2 px-3 font-mono font-bold text-emerald-300">{wup.structureId}</td>
+                                    <td className="py-2 px-3 text-white">{wup.targetSpecies}</td>
+                                    <td className="py-2 px-3 text-slate-200 font-mono">{wup.verticalClearanceMeters}m × {wup.horizontalSpanMeters}m</td>
+                                    <td className="py-2 px-3 text-emerald-300 font-mono">{wup.opennessRatio} (&gt; 0.75)</td>
+                                    <td className="py-2 px-3 text-slate-300">{wup.guideFencingLengthMeters}m vegetative barrier</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </section>
