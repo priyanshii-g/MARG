@@ -11,6 +11,7 @@ import { humanizeClassLabel, humanizeText } from "./utils/plainLanguage";
 import LayerAuditPanel from "./components/LayerAuditPanel";
 import MapLensHud from "./components/MapLensHud";
 import EngineeringDossier from "./components/EngineeringDossier";
+import Hero21 from "./components/Hero21.jsx";
 import Mode2Workspace from "./Mode2Workspace.jsx";
 import Mode1EiaWorkspace from "./Mode1EiaWorkspace.jsx";
 
@@ -90,25 +91,16 @@ function HomePage({ onMode1, onMode2, onEia }) {
 
   return (
     <main className="marg-home min-h-screen bg-[#f4f3ed] text-[#202820]">
-      <header className="flex items-center justify-between border-b border-[#d9ddd3] px-6 py-5 sm:px-10">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#294b3b] text-sm font-bold tracking-wide text-white">M</div>
-          <div><p className="text-sm font-semibold tracking-[0.18em]">MARG</p><p className="text-xs text-[#68736b]">Public guide to responsible highway planning</p></div>
-        </div>
-        <span className="hidden text-xs uppercase tracking-[0.16em] text-[#68736b] sm:block">Public information &amp; planning tool</span>
-      </header>
-      <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 sm:px-10 sm:pt-20">
-        <div className="grid gap-10 border-b border-[#d9ddd3] pb-12 md:grid-cols-[1.15fr_0.85fr] md:items-end">
+      <Hero21 onMode1={onMode1} onMode2={onMode2} onEia={onEia} />
+      <section id="modes" className="mx-auto max-w-6xl px-6 pb-16 pt-14 sm:px-10 sm:pt-16">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[#d9ddd3] pb-6">
           <div>
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#557260]">Public planning portal</p>
-            <h1 className="max-w-2xl text-4xl font-medium leading-[1.12] tracking-tight sm:text-6xl">Plan safer roads.<br />Protect nature.<br /><span className="text-[#557260]">Inform the public.</span></h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#557260]">Interactive Workflows</p>
+            <h2 className="mt-2 text-2xl font-medium tracking-tight text-[#202820] sm:text-3xl">Choose how you want to explore MARG</h2>
           </div>
-          <div className="max-w-md md:justify-self-end">
-            <p className="text-base leading-7 text-[#59645c]">Choose how you want to explore. MARG turns complex maps and environmental data into clear, transparent information for planners and citizens alike.</p>
-            <div className="mt-7 flex items-center gap-3 text-xs text-[#68736b]"><span className="h-px w-10 bg-[#8c9b8d]" /> Open public highway planning prototype</div>
-          </div>
+          <span className="text-xs text-[#68736b]">Public highway planning &amp; environmental appraisal</span>
         </div>
-        <div className="grid gap-4 pt-7 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {modes.map((mode) => <article key={mode.number} className="group flex min-h-[280px] flex-col border border-[#d9ddd3] bg-[#fbfbf8] p-6 transition-colors hover:border-[#8c9b8d] sm:p-7">
             <div className="flex items-center justify-between"><span className="font-mono text-xs text-[#7c887e]">{mode.number}</span><span className="h-2 w-2 rounded-full bg-[#91a28f]" /></div>
             <h2 className="mt-10 text-xl font-medium tracking-tight">{mode.title}</h2>
