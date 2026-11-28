@@ -28,7 +28,7 @@ export function OnboardingSetupCard({
   totalSteps = 3,
   onContinue,
   continueLabel = "Apply Appraisal Profile",
-  imageUrl = "https://assets.watermelon.sh/hero-20-bg.avif",
+  imageUrl = "/images/eia_button.jpg",
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -150,7 +150,7 @@ export function OnboardingSetupCard({
         </div>
 
         <div className="relative hidden md:block min-h-[240px] border-l border-[#D8E8DD]">
-          <img src={imageUrl} alt="Botanical corridor preview" className="h-full w-full object-cover" />
+          <img src={imageUrl} alt="Statutory EIA & Geospatial Appraisal" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1B4332]/90 via-[#1B4332]/30 to-transparent p-5 flex flex-col justify-end">
             <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-200">
               Evidence-First Drafting

@@ -213,7 +213,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
               </h2>
             </div>
             <p className="text-sm leading-6 text-[#59645C]">
-              MARG (Multi-objective Alignment &amp; Regulatory Governance) supports highway agencies, NABET-accredited consultants, and appraisal committees in evaluating alignment feasibility before formal PARIVESH submission—uniting deterministic GIS analysis, document RAG, and Indian statutory compliance.
+              MARG (Multiobjective AI for Responsible Geospatial Planning) supports highway agencies, NABET-accredited consultants, and appraisal committees in evaluating alignment feasibility before formal PARIVESH submission—uniting deterministic GIS analysis, document RAG, and Indian statutory compliance.
             </p>
           </div>
 
@@ -243,7 +243,7 @@ function HomePage({ onMode1, onMode2, onEia }) {
 
         <footer className="mt-12 flex flex-col gap-2 border-t border-[#D9DDD3] pt-6 text-xs leading-5 text-[#5c6b60] sm:flex-row sm:justify-between">
           <span>Preliminary technical decision support — final alignments require field surveys and competent statutory clearances.</span>
-          <span>MARG · Highway Planning &amp; Regulatory Governance Platform</span>
+          <span>MARG · Multiobjective AI for Responsible Geospatial Planning</span>
         </footer>
       </section>
     </main>
