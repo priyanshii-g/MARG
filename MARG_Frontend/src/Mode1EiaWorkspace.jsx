@@ -320,10 +320,10 @@ export default function Mode1EiaWorkspace({ onHome }) {
 
     <div className="mx-auto max-w-[1600px] w-full px-4 py-8 sm:px-6 lg:px-8">
       <div className="border-b border-[#D8E8DD] pb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#143627]">Statutory Decision Support</p>
-        <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-[#143627] sm:text-3xl">Generate Environmental EIA Report</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#143627]">Statutory Documentation · Live Baselines</p>
+        <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-[#143627] sm:text-3xl">Environmental Impact Assessment Studio</h1>
         <p className="mt-2 max-w-3xl text-xs leading-5 text-[#59645C]">
-          Integrates Mode 1 GIS spatial screening, verified statutory acts (FCA 1980, EPA 1986, CPCB standards), and operator DPR specifications to draft an evidence-grounded EIA report.
+          Synthesize screened alignments, live CAMS/Open-Meteo air baselines, and Indian statutory rules into publication-ready DOCX and PDF reports.
         </p>
       </div>
 

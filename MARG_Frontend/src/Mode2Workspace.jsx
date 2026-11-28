@@ -634,10 +634,10 @@ export default function Mode2Workspace({ onHome }) {
       <div className="mx-auto max-w-[1720px] px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-7 flex flex-col justify-between gap-4 border-b border-[#d9ddd3] pb-6 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#557260]">Project evidence and alignment</p>
-            <h1 className="mt-2 text-3xl font-medium tracking-tight sm:text-4xl">Existing project workspace</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#557260]">DPR Verification · Risk Scoring · Route Alternatives</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Existing Project Review</h1>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-[#68736b]">
-              Upload a proposal PDF, verify DPR claims against 13 engineering, social, and ecological GIS layers, score statutory risks, and compare multi-objective route alternatives.
+              Audit project reports against 13 spatial layers, surface clearance blockers, estimate mitigation budgets, and test alternative alignments.
             </p>
           </div>
           <span className="text-xs text-[#7c887e]">13-layer composite GIS engine online</span>

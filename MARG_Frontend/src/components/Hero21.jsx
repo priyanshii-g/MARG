@@ -126,9 +126,9 @@ function DropCharsLine({ text, className = "" }) {
 
 export default function Hero21({
   brandName = "MARG",
-  headingLine1 = "Plan Smarter Roads.",
-  headingLine2 = "Balance Every Trade-Off.",
-  description = "MARG is a multi-objective highway planning and appraisal platform—balancing engineering efficiency, community impact, safety, and environmental compliance across India.",
+  headingLine1 = "Better Highways.",
+  headingLine2 = "Balanced by Design.",
+  description = "Plan corridors that weigh engineering terrain, flood resilience, local communities, and environmental law—all on one spatial canvas.",
   backgroundImage = "https://assets.watermelon.sh/hero-20-bg.avif",
   onMode1,
   onMode2,
@@ -234,8 +234,8 @@ export default function Hero21({
           variants={cardVariants}
           className="relative z-10 mx-auto hidden w-full max-w-6xl items-center justify-between text-xs font-medium text-[#1B4332]/75 sm:flex"
         >
-          <span>13 Spatial &amp; Engineering Layers · Multi-Objective Sustainable Development</span>
-          <span>Preliminary Desktop Decision Support</span>
+          <span>13 Spatial Layers · Engineering, Social &amp; Environmental Intelligence</span>
+          <span>Decision Support for Sustainable Infrastructure</span>
         </motion.div>
       </motion.div>
     </section>

@@ -88,30 +88,30 @@ function HomePage({ onMode1, onMode2, onEia }) {
   const modes = [
     {
       number: "01",
-      tag: "Multi-Objective Routing",
-      title: "Plan a new highway route",
-      detail: "Optimize new highway corridors across engineering terrain, flood safety, settlements, and ecological constraints.",
-      action: "Open route planner",
+      tag: "Route Planner",
+      title: "Design a New Corridor",
+      detail: "Generate multi-objective alignments that balance terrain, flood safety, habitations, and ecological zones.",
+      action: "Launch Route Planner",
       icon: Compass,
       image: "/images/mode1_image.jpg",
       onClick: onMode1,
     },
     {
       number: "02",
-      tag: "Project Audit & Alternatives",
-      title: "Review an existing project",
-      detail: "Verify DPR claims against 13 spatial layers, score statutory clearance risks, and compare multi-objective route alternatives.",
-      action: "Open project review",
+      tag: "Project Audit",
+      title: "Verify an Existing DPR",
+      detail: "Cross-check project reports against GIS ground truth, score clearance risks, and compare alternative routes.",
+      action: "Open Project Review",
       icon: ShieldCheck,
       image: "/images/mode2_button.png",
       onClick: onMode2,
     },
     {
       number: "03",
-      tag: "Statutory Appraisal",
-      title: "Prepare environmental report",
-      detail: "Generate evidence-backed EIA & sustainable development appraisal reports grounded in GIS metrics and live baselines.",
-      action: "Open environmental reports",
+      tag: "EIA & Appraisal",
+      title: "Draft Statutory Reports",
+      detail: "Turn screened routes, live atmospheric baselines, and legal norms into structured EIA reports.",
+      action: "Create EIA Report",
       icon: FileCheck2,
       image: "/images/eia_button.jpg",
       onClick: onEia,
@@ -121,23 +121,23 @@ function HomePage({ onMode1, onMode2, onEia }) {
   const aboutCapabilities = [
     {
       icon: Layers,
-      title: "13-Layer Multi-Objective Routing",
-      detail: "Balances terrain slopes, flood hazards, river crossings, settlements, and ecological buffers using tunable spatial cost surfaces.",
+      title: "Multi-Objective Pathfinding",
+      detail: "Routes across 13 spatial layers—terrain, hydrology, settlements, and forests—to avoid costly late-stage redesigns.",
     },
     {
       icon: ShieldAlert,
-      title: "DPR Audit, Risk & Mitigation Costing",
-      detail: "Cross-examines project reports against GIS ground truth to score clearance readiness and estimate statutory mitigation & crossing budgets.",
-    },
-    {
-      icon: Scale,
-      title: "Evidence-Grounded EIA Reports",
-      detail: "Synthesizes structured, natural-language EIA chapters from verified GIS metrics, live atmospheric baselines, and statutory rules.",
+      title: "Automated Risk & Costing",
+      detail: "Detects DPR-vs-GIS mismatches, scores regulatory readiness (0–100%), and estimates statutory mitigation budgets.",
     },
     {
       icon: Trees,
-      title: "Tunable Route Trade-Offs",
-      detail: "Generates Balanced, Eco-Shield, and Social Safeguard alternatives so planners can weigh cost, land acquisition, and sustainability.",
+      title: "Side-by-Side Route Options",
+      detail: "Compares Balanced, Eco-Shield, and Social Safeguard alignments so teams can weigh length, cost, and displacement.",
+    },
+    {
+      icon: Scale,
+      title: "Evidence-Backed EIA Drafting",
+      detail: "Produces structured PDF and Word reports citing exact DPR page numbers, GIS observations, and live baselines.",
     },
   ];
 
@@ -209,11 +209,11 @@ function HomePage({ onMode1, onMode2, onEia }) {
                 About MARG
               </span>
               <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#1B4332] sm:text-3xl">
-                Multi-objective highway planning built for sustainable infrastructure development.
+                Where infrastructure ambition meets spatial clarity.
               </h2>
             </div>
             <p className="text-sm leading-6 text-[#59645C]">
-              MARG (Multi-objective Alignment &amp; Regulatory Governance) is an open decision-support platform for planners, MoEFCC appraisal committees, NHAI, and citizens. Instead of optimizing for a single factor, MARG balances civil engineering feasibility, community &amp; livelihood protection, disaster resilience, and environmental compliance.
+              MARG (Multi-objective Alignment &amp; Regulatory Governance) helps highway planners, appraisal committees, and communities evaluate every trade-off upfront—uniting civil engineering constraints, land &amp; livelihood impact, and statutory compliance.
             </p>
           </div>
 
