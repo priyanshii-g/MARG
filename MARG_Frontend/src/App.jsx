@@ -88,19 +88,19 @@ function HomePage({ onMode1, onMode2, onEia }) {
   const modes = [
     {
       number: "01",
-      tag: "Route Planner",
-      title: "Design a New Corridor",
-      detail: "Generate multi-objective alignments that balance terrain, flood safety, habitations, and ecological zones.",
-      action: "Launch Route Planner",
+      tag: "Corridor Planning",
+      title: "Multi-Objective Route Alignment",
+      detail: "Compute feasible highway alignments across terrain slopes, floodplains, settlements, and statutory forest/wildlife buffers using tunable cost matrices.",
+      action: "Open Route Planner",
       icon: Compass,
       image: "/images/mode1_image.jpg",
       onClick: onMode1,
     },
     {
       number: "02",
-      tag: "Project Audit",
-      title: "Verify an Existing DPR",
-      detail: "Cross-check project reports against GIS ground truth, score clearance risks, and compare alternative routes.",
+      tag: "DPR & Statutory Audit",
+      title: "DPR Verification & Risk Scoring",
+      detail: "Cross-examine submitted KML corridors and DPR PDFs against GIS ground truth, score clearance readiness (0–100%), estimate CAMPA/WUP liabilities, and test alternative alignments.",
       action: "Open Project Review",
       icon: ShieldCheck,
       image: "/images/mode2_button.png",
@@ -108,10 +108,10 @@ function HomePage({ onMode1, onMode2, onEia }) {
     },
     {
       number: "03",
-      tag: "EIA & Appraisal",
-      title: "Draft Statutory Reports",
-      detail: "Turn screened routes, live atmospheric baselines, and legal norms into structured EIA reports.",
-      action: "Create EIA Report",
+      tag: "Statutory Reporting",
+      title: "EIA & EMP Report Generation",
+      detail: "Draft structured, evidence-cited Environmental Impact Assessment reports (DOCX/PDF) combining GIS observations, live atmospheric baselines, and Indian statutory norms.",
+      action: "Open EIA Studio",
       icon: FileCheck2,
       image: "/images/eia_button.jpg",
       onClick: onEia,
@@ -121,23 +121,23 @@ function HomePage({ onMode1, onMode2, onEia }) {
   const aboutCapabilities = [
     {
       icon: Layers,
-      title: "Multi-Objective Pathfinding",
-      detail: "Routes across 13 spatial layers—terrain, hydrology, settlements, and forests—to avoid costly late-stage redesigns.",
+      title: "Deterministic 13-Layer GIS",
+      detail: "Screens alignments against Bhuvan LULC, Reserve Forests, ESZ/wildlife buffers, flood zones, slopes >15%, and habitation clusters.",
     },
     {
       icon: ShieldAlert,
-      title: "Automated Risk & Costing",
-      detail: "Detects DPR-vs-GIS mismatches, scores regulatory readiness (0–100%), and estimates statutory mitigation budgets.",
+      title: "Regulatory Readiness & CAMPA",
+      detail: "Flags FCA 1980, WLPA 1972, and EIA 2006 clearance bottlenecks, computes Eco-Class NPV, 1:2 CA land, and sizes WII wildlife underpasses.",
     },
     {
       icon: Trees,
-      title: "Side-by-Side Route Options",
-      detail: "Compares Balanced, Eco-Shield, and Social Safeguard alignments so teams can weigh length, cost, and displacement.",
+      title: "Multi-Objective Alternatives",
+      detail: "Re-routes between submitted endpoints using Eco-Shield, Balanced, and Social Safeguard weight matrices to quantify engineering vs. land trade-offs.",
     },
     {
       icon: Scale,
-      title: "Evidence-Backed EIA Drafting",
-      detail: "Produces structured PDF and Word reports citing exact DPR page numbers, GIS observations, and live baselines.",
+      title: "Auditable EIA Drafting",
+      detail: "Generates multi-chapter DOCX and PDF reports where every numeric claim and legal citation is validated against traceable GIS and DPR evidence.",
     },
   ];
 
@@ -206,14 +206,14 @@ function HomePage({ onMode1, onMode2, onEia }) {
           <div className="grid gap-8 border-b border-[#E5ECE6] pb-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-[#D1E3D6] px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-[#1B4332]">
-                About MARG
+                Institutional Architecture
               </span>
               <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#1B4332] sm:text-3xl">
-                Where infrastructure ambition meets spatial clarity.
+                Technical decision support for highway planning, regulatory audit, and statutory appraisal.
               </h2>
             </div>
             <p className="text-sm leading-6 text-[#59645C]">
-              MARG (Multi-objective Alignment &amp; Regulatory Governance) helps highway planners, appraisal committees, and communities evaluate every trade-off upfront—uniting civil engineering constraints, land &amp; livelihood impact, and statutory compliance.
+              MARG (Multi-objective Alignment &amp; Regulatory Governance) supports highway agencies, NABET-accredited consultants, and appraisal committees in evaluating alignment feasibility before formal PARIVESH submission—uniting deterministic GIS analysis, document RAG, and Indian statutory compliance.
             </p>
           </div>
 
@@ -242,8 +242,8 @@ function HomePage({ onMode1, onMode2, onEia }) {
         </motion.section>
 
         <footer className="mt-12 flex flex-col gap-2 border-t border-[#D9DDD3] pt-6 text-xs leading-5 text-[#5c6b60] sm:flex-row sm:justify-between">
-          <span>Public planning preview — final routes require on-ground surveys and official approvals.</span>
-          <span>MARG · Multi-objective sustainable highway planning for India</span>
+          <span>Preliminary technical decision support — final alignments require field surveys and competent statutory clearances.</span>
+          <span>MARG · Highway Planning &amp; Regulatory Governance Platform</span>
         </footer>
       </section>
     </main>

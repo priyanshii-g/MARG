@@ -634,10 +634,10 @@ export default function Mode2Workspace({ onHome }) {
       <div className="mx-auto max-w-[1720px] px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-7 flex flex-col justify-between gap-4 border-b border-[#d9ddd3] pb-6 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#557260]">DPR Verification · Risk Scoring · Route Alternatives</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Existing Project Review</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#557260]">DPR Verification · Statutory Readiness · Mitigation Costing</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Existing Project Appraisal &amp; Verification</h1>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-[#68736b]">
-              Audit project reports against 13 spatial layers, surface clearance blockers, estimate mitigation budgets, and test alternative alignments.
+              Upload DPR/Form-A PDFs and KML/GeoJSON alignments to verify claims against 13 GIS layers, score clearance risks, compute CAMPA/WUP budgets, and evaluate multi-objective alternatives.
             </p>
           </div>
           <span className="text-xs text-[#7c887e]">13-layer composite GIS engine online</span>

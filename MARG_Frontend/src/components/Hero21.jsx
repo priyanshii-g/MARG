@@ -126,9 +126,9 @@ function DropCharsLine({ text, className = "" }) {
 
 export default function Hero21({
   brandName = "MARG",
-  headingLine1 = "Better Highways.",
-  headingLine2 = "Balanced by Design.",
-  description = "Plan corridors that weigh engineering terrain, flood resilience, local communities, and environmental law—all on one spatial canvas.",
+  headingLine1 = "Highway Appraisal,",
+  headingLine2 = "Grounded in Evidence.",
+  description = "Technical decision-support platform for NHAI, State PWDs, and MoEFCC appraisal committees—integrating 13-layer GIS corridor routing, DPR compliance auditing, and statutory EIA generation.",
   backgroundImage = "https://assets.watermelon.sh/hero-20-bg.avif",
   onMode1,
   onMode2,
@@ -234,8 +234,8 @@ export default function Hero21({
           variants={cardVariants}
           className="relative z-10 mx-auto hidden w-full max-w-6xl items-center justify-between text-xs font-medium text-[#1B4332]/75 sm:flex"
         >
-          <span>13 Spatial Layers · Engineering, Social &amp; Environmental Intelligence</span>
-          <span>Decision Support for Sustainable Infrastructure</span>
+          <span>13 Spatial &amp; Regulatory Layers · Built for Highway Authorities &amp; Appraisal Committees</span>
+          <span>Preliminary Technical Decision Support · Not a Substitute for Statutory Clearance</span>
         </motion.div>
       </motion.div>
     </section>
