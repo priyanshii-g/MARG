@@ -236,8 +236,14 @@ function Mode2Map({ submitted, candidate, candidateFeatures }) {
         const role = feature.properties?.featureRole || "";
         const geomType = feature.geometry?.type;
 
-        // Skip regional river channels and large non-route lines
-        if (role === "CORRIDOR_RIVER_CHANNEL" || role === "FEEDER_SPUR_HIGHWAY" || role === "TERMINAL_ACCESS_ROAD") return;
+        // Skip regional river/drainage/wetland context overlays and non-route lines
+        if (
+          role === "CORRIDOR_RIVER_CHANNEL" ||
+          role === "CORRIDOR_WETLAND_POLYGON" ||
+          role === "CORRIDOR_DRAINAGE_CHANNEL" ||
+          role === "FEEDER_SPUR_HIGHWAY" ||
+          role === "TERMINAL_ACCESS_ROAD"
+        ) return;
 
         // RoW Corridor Footprint Polygon
         if (role.includes("ROW_CORRIDOR") && showRoW && geomType === "Polygon") {

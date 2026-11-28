@@ -146,4 +146,93 @@ class LayerVerificationAuditTest {
         assertNotNull(spurEngSummary, "metadata.spurEngineeringSummary must be present");
         assertTrue(((Number) spurEngSummary.get("spursEvaluated")).intValue() >= 1);
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void dimapurFeederSpurFloodAndConnectingRoadsAppearAcrossAll13LayerAuditCards() {
+        RegionalCorridorRegistry registry = new RegionalCorridorRegistry();
+        CorridorIngestionService ingestionService = new CorridorIngestionService(registry);
+        CompositeRoutingController controller = new CompositeRoutingController(registry, ingestionService);
+
+        Map<String, Object> route = controller.route(
+                26.5897, 93.40035, 25.84573, 93.43781,
+                250.0, 0.15, 2000, null,
+                "EXPRESSWAY", "Dimapur", null, 0.85,
+                true, 2,
+                "assam", null, null
+        );
+
+        Map<?, ?> meta = (Map<?, ?>) route.get("metadata");
+        List<Map<String, Object>> layerAudit = (List<Map<String, Object>>) meta.get("layerAudit");
+        assertNotNull(layerAudit);
+        assertEquals(13, layerAudit.size());
+
+        // Every one of the 13 layer cards must include connectingRoadsImpact listing Dimapur
+        for (Map<String, Object> rec : layerAudit) {
+            assertEquals(Boolean.TRUE, rec.get("includesConnectingRoads"),
+                    "Layer " + rec.get("layerId") + " must set includesConnectingRoads=true when spurs exist");
+            Map<String, Object> impact = (Map<String, Object>) rec.get("connectingRoadsImpact");
+            assertNotNull(impact, "Layer " + rec.get("layerId") + " must include connectingRoadsImpact");
+            List<Map<String, Object>> perSpur = (List<Map<String, Object>>) impact.get("perSpur");
+            assertNotNull(perSpur);
+            assertTrue(perSpur.stream().anyMatch(r -> String.valueOf(r.get("hubName")).toLowerCase().contains("dimapur")),
+                    "Layer " + rec.get("layerId") + " connectingRoadsImpact must list Dimapur spur");
+        }
+
+        // Layer 2 Flood must report Dimapur's flood-prone exposure in exposureBreakdown & headline (never falsely claim 0.0 km)
+        Map<String, Object> l2 = layerAudit.get(1);
+        assertEquals("L2_FLOOD", l2.get("layerId"));
+        Map<String, Object> l2Breakdown = (Map<String, Object>) l2.get("exposureBreakdown");
+        double modHighKm = ((Number) l2Breakdown.getOrDefault("MODERATE", 0.0)).doubleValue()
+                + ((Number) l2Breakdown.getOrDefault("HIGH", 0.0)).doubleValue()
+                + ((Number) l2Breakdown.getOrDefault("VERY_HIGH", 0.0)).doubleValue();
+        String l2Headline = String.valueOf(l2.get("headlineProof"));
+        if (modHighKm > 0.01) {
+            assertFalse(l2Headline.contains("(0.0 km flood risk)"),
+                    "Layer 2 Flood must NOT claim 0.0 km flood risk when connecting roads cross Moderate/High flood zones: " + l2Headline);
+            assertTrue(l2Headline.toLowerCase().contains("connecting roads") || l2Headline.toLowerCase().contains("dimapur"),
+                    "Layer 2 Flood headline must explicitly mention connecting road flood risk: " + l2Headline);
+            Map<String, Object> l2Comp = (Map<String, Object>) l2.get("comparison");
+            assertTrue(((Number) l2Comp.get("routeValue")).doubleValue() > 0.01,
+                    "Layer 2 comparison routeValue must include connecting-road Moderate-Severe flood exposure");
+        }
+        System.out.println("L2 Flood Breakdown (Main + Spurs): " + l2Breakdown);
+        System.out.println("L2 Flood Headline: " + l2Headline);
+        System.out.println("L2 Flood Verdict: " + l2.get("verdict"));
+        System.out.println("L2 Connecting Roads Impact: " + l2.get("connectingRoadsImpact"));
+
+        // Verify apples-to-apples straight-line feeder spur statistics + per-km rates are emitted
+        Map<String, Object> l1 = layerAudit.get(0);
+        Map<String, Object> l3 = layerAudit.get(2);
+        Map<String, Object> l6 = layerAudit.get(5);
+        Map<String, Object> l11 = layerAudit.get(10);
+        Map<String, Object> l1Comp = (Map<String, Object>) l1.get("comparison");
+        Map<String, Object> l3Comp = (Map<String, Object>) l3.get("comparison");
+        Map<String, Object> l6Comp = (Map<String, Object>) l6.get("comparison");
+        Map<String, Object> l11Comp = (Map<String, Object>) l11.get("comparison");
+        assertEquals(Boolean.TRUE, l1Comp.get("includesConnectingRoads"));
+        assertNotNull(l1Comp.get("baselineRateNote"));
+        assertNotNull(l1Comp.get("routeRateNote"));
+        Map<String, Object> l1Impact = (Map<String, Object>) l1.get("connectingRoadsImpact");
+        assertNotNull(l1Impact.get("baselineLengthKm"), "connectingRoadsImpact must include baselineLengthKm for straight-line spurs");
+        Map<String, Object> l9 = layerAudit.get(8);
+        Map<String, Object> l9Breakdown = (Map<String, Object>) l9.get("exposureBreakdown");
+        double activeLandslideKm = ((Number) l9Breakdown.getOrDefault("ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE", 0.0)).doubleValue();
+        double highLandslideKm = ((Number) l9Breakdown.getOrDefault("HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP", 0.0)).doubleValue();
+        double severeFloodKm = ((Number) l2Breakdown.getOrDefault("VERY_HIGH", 0.0)).doubleValue();
+        double highFloodKm = ((Number) l2Breakdown.getOrDefault("HIGH", 0.0)).doubleValue();
+        System.out.println("L9 Geotech Breakdown (Main + Spurs): " + l9Breakdown);
+        System.out.println("L9 Geotech Verdict: " + l9.get("verdict") + " | Check: " + l9.get("hardConstraintCheck"));
+        System.out.println("=== ASSAM + DIMAPUR RE-BALANCED BENCHMARK ===");
+        System.out.println("L1 LULC:      " + l1Comp);
+        System.out.println("L2 Flood:     " + l2.get("comparison") + " | high=" + highFloodKm + " km, severe=" + severeFloodKm + " km");
+        System.out.println("L3 Slope:     " + l3Comp);
+        System.out.println("L4 PA:        " + layerAudit.get(3).get("comparison"));
+        System.out.println("L6 Transport: " + l6Comp);
+        System.out.println("L9 Geotech:   " + l9.get("comparison") + " | active=" + activeLandslideKm + " km, high=" + highLandslideKm + " km");
+        System.out.println("L11 Building: " + l11Comp);
+        assertEquals(0.0, activeLandslideKm, 1e-6, "Active Landslide Zone must be 0.0 km across main corridor and connecting roads");
+        assertEquals(0.0, highFloodKm, 1e-6, "High Flood Zone must be 0.0 km across main corridor and connecting roads");
+        assertEquals(0.0, severeFloodKm, 1e-6, "Severe (VERY_HIGH) Flood Zone must be 0.0 km across main corridor and connecting roads");
+    }
 }

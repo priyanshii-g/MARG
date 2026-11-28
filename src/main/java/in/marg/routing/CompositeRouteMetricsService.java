@@ -1416,6 +1416,17 @@ public class CompositeRouteMetricsService {
         }
         if (drainageRowImpact != null) {
             Map<String, Object> drainageSummary = new LinkedHashMap<>(drainageRowImpact.toSummaryMap());
+            // Top-level convenience fields mirroring nested summaries so audit cards & clients can read them directly
+            drainageSummary.put("wetlandsInDirectRowCount", drainageRowImpact.wetlandsInDirectRowCount());
+            drainageSummary.put("wetlandsIn100mBufferCount", drainageRowImpact.wetlandsIn100mBufferCount());
+            drainageSummary.put("wetlandsIn250mBufferCount", drainageRowImpact.wetlandsIn250mBufferCount());
+            drainageSummary.put("wetlandAreaInDirectRowHectares", drainageRowImpact.wetlandAreaInDirectRowHectares());
+            drainageSummary.put("minWetlandClearanceFromRowEdgeMeters", drainageRowImpact.minWetlandClearanceFromRowEdgeMeters());
+            drainageSummary.put("drainageObstructionRiskIndex", drainageRowImpact.drainageObstructionRiskIndex());
+            drainageSummary.put("totalWaterCrossingsCount", drainageRowImpact.totalWaterCrossingsCount());
+            drainageSummary.put("totalDrainageStructuresRequiredCount", drainageRowImpact.totalDrainageStructuresRequiredCount());
+            drainageSummary.put("totalIndexedWetlandsCount", drainageVectorIndex.allWetlands().size());
+            drainageSummary.put("totalIndexedDrainageChannelsCount", drainageVectorIndex.allDrainageLines().size());
             drainageSummary.put(
                     "drainageAndWetlandEdgePenaltyKmEquivalent",
                     round(drainageEdgePenaltyKm));

@@ -11,27 +11,27 @@ package in.marg.building;
  */
 public enum BuildingType {
     RESIDENTIAL(
-            15.0,
+            55.0,
             "Residential Homestead / Dwelling",
             "RFCTLARR_2013_RESIDENTIAL_REHABILITATION_AND_COMPENSATION"),
     COMMERCIAL(
-            25.0,
+            65.0,
             "Commercial Shop / Weekly Bazaar Stall / Roadside Establishment",
             "COMMERCIAL_LIVELIHOOD_RESETTLEMENT_AND_SERVICE_ROAD_ACCESS"),
     INSTITUTIONAL(
-            60.0,
+            120.0,
             "Hospital / School / Primary Health Center / Public Institution",
             "HARD_BLOCK_OR_ALIGNMENT_SHIFT_TO_PRESERVE_INSTITUTION"),
     RELIGIOUS(
-            60.0,
+            120.0,
             "Namghar / Temple / Church / Mosque / Sacred Community Compound",
             "STRICT_HARD_EXCLUSION_TO_PROTECT_SACRED_SITE"),
     INDUSTRIAL(
-            35.0,
+            75.0,
             "Industrial Unit / Factory / Mill / Storage Godown",
             "INDUSTRIAL_ASSET_COMPENSATION_AND_HEAVY_VEHICLE_UNDERPASS"),
     VILLAGE_INFRASTRUCTURE(
-            20.0,
+            60.0,
             "Panchayat Hall / Community Granary / Rural Water Supply Tank",
             "COMMUNITY_INFRASTRUCTURE_RELOCATION_AND_PEDESTRIAN_UNDERPASS");
 

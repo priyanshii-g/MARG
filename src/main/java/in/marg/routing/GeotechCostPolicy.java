@@ -45,24 +45,27 @@ public class GeotechCostPolicy {
         nodeDefaults.put(GeotechHazardClass.COMPETENT_BEDROCK_STABLE_SUBGRADE, 0.0);
         nodeDefaults.put(GeotechHazardClass.WEATHERED_RESIDUAL_MODERATE_SOIL, 0.25);
         nodeDefaults.put(GeotechHazardClass.SOFT_ALLUVIAL_COMPRESSIBLE_CLAY, 0.85);
-        nodeDefaults.put(GeotechHazardClass.MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY, 1.20);
-        nodeDefaults.put(GeotechHazardClass.LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE, 2.10);
-        nodeDefaults.put(GeotechHazardClass.HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP, 2.65);
-        nodeDefaults.put(GeotechHazardClass.ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE, 4.20);
+        nodeDefaults.put(GeotechHazardClass.MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY, 2.50);
+        nodeDefaults.put(GeotechHazardClass.LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE, 3.20);
+        // Very high soft penalty on High Landslide Susceptibility Scarps (IRC:SP:48 / IRC:SP:106: ~11x Forest, highest non-blocked priority)
+        nodeDefaults.put(GeotechHazardClass.HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP, 30.00);
+        // Active Tectonic Landslide Shear Cores are hard-blocked by default (blockActiveLandslideZones=true);
+        // extreme diagnostic / soft fallback weight when evaluated outside hard-block mode.
+        nodeDefaults.put(GeotechHazardClass.ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE, 50.00);
         nodeDefaults.put(GeotechHazardClass.NODATA, 0.0);
 
         Map<GeotechHazardTier, Double> mitigationDefaults = new EnumMap<>(GeotechHazardTier.class);
-        mitigationDefaults.put(GeotechHazardTier.ACTIVE_FAULT_SHEAR_ZONE, 2.60);
-        mitigationDefaults.put(GeotechHazardTier.UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP, 1.70);
-        mitigationDefaults.put(GeotechHazardTier.LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH, 1.15);
+        mitigationDefaults.put(GeotechHazardTier.ACTIVE_FAULT_SHEAR_ZONE, 4.50);
+        mitigationDefaults.put(GeotechHazardTier.UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP, 2.80);
+        mitigationDefaults.put(GeotechHazardTier.LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH, 1.80);
 
         return new GeotechCostPolicy(
                 nodeDefaults,
                 mitigationDefaults,
                 1.40,
-                2.50,
+                4.00,
                 260.0,
-                false,
+                true,
                 false);
     }
 

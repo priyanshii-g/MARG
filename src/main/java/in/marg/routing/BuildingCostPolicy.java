@@ -84,9 +84,9 @@ public class BuildingCostPolicy {
     public static BuildingCostPolicy defaultPolicy() {
         Map<BuildingDensityClass, Double> nodeDefaults = new EnumMap<>(BuildingDensityClass.class);
         nodeDefaults.put(BuildingDensityClass.NONE, 0.0);
-        nodeDefaults.put(BuildingDensityClass.SPARSE_HOMESTEAD_FRINGE, 5.0);
-        nodeDefaults.put(BuildingDensityClass.LOW_DENSITY_RURAL_RIBBON, 18.0);
-        nodeDefaults.put(BuildingDensityClass.MEDIUM_DENSITY_VILLAGE_CLUSTER, 65.0);
+        nodeDefaults.put(BuildingDensityClass.SPARSE_HOMESTEAD_FRINGE, 1.0);
+        nodeDefaults.put(BuildingDensityClass.LOW_DENSITY_RURAL_RIBBON, 3.5);
+        nodeDefaults.put(BuildingDensityClass.MEDIUM_DENSITY_VILLAGE_CLUSTER, 12.0);
         nodeDefaults.put(BuildingDensityClass.HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP, DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
         nodeDefaults.put(BuildingDensityClass.INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT, 2500.0);
         nodeDefaults.put(BuildingDensityClass.NODATA, 0.0);
@@ -98,9 +98,9 @@ public class BuildingCostPolicy {
 
         Map<SettlementClassification, Double> severanceDefaults =
                 new EnumMap<>(SettlementClassification.class);
-        severanceDefaults.put(SettlementClassification.RURAL, 25.0);
+        severanceDefaults.put(SettlementClassification.RURAL, 8.0);
         severanceDefaults.put(SettlementClassification.URBAN, DEFAULT_DENSE_COLONY_LAST_RESORT_PENALTY);
-        severanceDefaults.put(SettlementClassification.INDUSTRIAL, 150.0);
+        severanceDefaults.put(SettlementClassification.INDUSTRIAL, 100.0);
 
         return new BuildingCostPolicy(
                 nodeDefaults,

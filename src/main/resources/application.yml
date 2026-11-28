@@ -63,13 +63,13 @@ marg:
       # Dimensionless additive movement-cost contributions.
       # 0 = no extra cost; values are MARG model parameters, not official land-use values.
       penalties:
-        BUILT_UP: 1.5
-        FOREST: 0.8
-        WETLAND_WATER: 2.0
-        AGRICULTURE: 0.25
+        BUILT_UP: 3.5
+        FOREST: 2.8
+        WETLAND_WATER: 4.0
+        AGRICULTURE: 0.30
         GRASS_GRAZING: 0.10
         BARREN_WASTELAND: 0.0
-        SNOW: 2.5
+        SNOW: 3.5
         UNKNOWN: 1.0
     slope:
       free-max-degrees: 5.0
@@ -78,10 +78,10 @@ marg:
       steep-max-degrees: 25.0
       very-steep-max-degrees: 30.0
 
-      low-penalty: 0.15
-      moderate-penalty: 0.40
-      steep-penalty: 1.00
-      very-steep-penalty: 2.00
+      low-penalty: 0.25
+      moderate-penalty: 0.80
+      steep-penalty: 3.00
+      very-steep-penalty: 7.00
 
       block-no-data: true
       block-above-very-steep: true
@@ -89,10 +89,10 @@ marg:
     flood:
       penalties:
         VERY_LOW: 0.0
-        LOW: 0.20
-        MODERATE: 0.60
-        HIGH: 1.50
-        VERY_HIGH: 3.00
+        LOW: 0.40
+        MODERATE: 3.50
+        HIGH: 22.00
+        VERY_HIGH: 60.00
         NOT_IN_HAZARD_LAYER: 0.0
         UNKNOWN: 2.00
 
@@ -101,9 +101,9 @@ marg:
       block-no-data: false
       penalties:
         NONE: 0.0
-        OUTER_BUFFER: 1.50
-        INNER_BUFFER: 6.00
-        RURAL_CORE: 35.00
+        OUTER_BUFFER: 0.50
+        INNER_BUFFER: 2.20
+        RURAL_CORE: 10.00
         URBAN_CORE: 1000.00
         NODATA: 0.0
 
@@ -130,18 +130,18 @@ marg:
       collector-longitudinal-band-km: 10.0
       node-penalties:
         NONE: 0.0
-        ROAD_PARALLEL_BUFFER: 0.40
-        MDR_CORRIDOR: 1.10
-        SH_CORRIDOR: 1.60
-        NH_CORRIDOR: 2.20
-        RAILWAY_BUFFER: 0.90
-        RAILWAY_CORRIDOR: 3.50
+        ROAD_PARALLEL_BUFFER: 1.20
+        MDR_CORRIDOR: 2.00
+        SH_CORRIDOR: 3.00
+        NH_CORRIDOR: 4.00
+        RAILWAY_BUFFER: 2.00
+        RAILWAY_CORRIDOR: 6.00
         NODATA: 0.0
       crossing-base-cost-km-eq:
-        RAILWAY: 2.40
-        NATIONAL_HIGHWAY: 1.50
-        STATE_HIGHWAY: 0.95
-        MAJOR_DISTRICT_ROAD: 0.55
+        RAILWAY: 5.00
+        NATIONAL_HIGHWAY: 3.00
+        STATE_HIGHWAY: 1.80
+        MAJOR_DISTRICT_ROAD: 1.00
 
     hydrology:
       block-wetlands: false
@@ -184,24 +184,24 @@ marg:
         LOCAL_WILDLIFE_DISPERSAL_AXIS: 0.95
 
     geotech:
-      block-active-landslide-zones: false
+      block-active-landslide-zones: true
       block-no-data: false
       scarp-skew-penalty-factor: 1.40
-      parallel-scarp-undercut-penalty: 2.50
+      parallel-scarp-undercut-penalty: 4.00
       parallel-scarp-radius-meters: 260.0
       node-penalties:
         COMPETENT_BEDROCK_STABLE_SUBGRADE: 0.0
         WEATHERED_RESIDUAL_MODERATE_SOIL: 0.25
         SOFT_ALLUVIAL_COMPRESSIBLE_CLAY: 0.85
-        MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY: 1.20
-        LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE: 2.10
-        HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP: 2.65
-        ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE: 4.20
+        MODERATE_COLLUVIAL_LANDSLIDE_SUSCEPTIBILITY: 2.50
+        LIQUEFIABLE_ORGANIC_MARSH_SUBGRADE: 3.20
+        HIGH_LANDSLIDE_SUSCEPTIBILITY_SCARP: 30.00
+        ACTIVE_TECTONIC_LANDSLIDE_SHEAR_CORE: 50.00
         NODATA: 0.0
       mitigation-base-cost-km-eq:
-        ACTIVE_FAULT_SHEAR_ZONE: 2.60
-        UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP: 1.70
-        LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH: 1.15
+        ACTIVE_FAULT_SHEAR_ZONE: 4.50
+        UNSTABLE_COLLUVIAL_LANDSLIDE_SCARP: 2.80
+        LIQUEFIABLE_ALLUVIAL_FAULT_TROUGH: 1.80
 
     utility:
       block-substations-and-towers: false
@@ -247,23 +247,23 @@ marg:
       proximity-surcharge-factor: 0.35
       node-penalties:
         NONE: 0.0
-        SPARSE_HOMESTEAD_FRINGE: 5.0
-        LOW_DENSITY_RURAL_RIBBON: 18.0
-        MEDIUM_DENSITY_VILLAGE_CLUSTER: 65.0
+        SPARSE_HOMESTEAD_FRINGE: 1.0
+        LOW_DENSITY_RURAL_RIBBON: 3.5
+        MEDIUM_DENSITY_VILLAGE_CLUSTER: 12.0
         HIGH_DENSITY_COMMERCIAL_URBAN_BUILTUP: 1000.0
         INSTITUTIONAL_RELIGIOUS_COMPOUND_FOOTPRINT: 2500.0
         NODATA: 0.0
       structure-demolition-cost-km-eq:
-        RESIDENTIAL: 15.0
-        COMMERCIAL: 25.0
-        INSTITUTIONAL: 60.0
-        RELIGIOUS: 60.0
-        INDUSTRIAL: 35.0
-        VILLAGE_INFRASTRUCTURE: 20.0
+        RESIDENTIAL: 55.0
+        COMMERCIAL: 65.0
+        INSTITUTIONAL: 120.0
+        RELIGIOUS: 120.0
+        INDUSTRIAL: 75.0
+        VILLAGE_INFRASTRUCTURE: 60.0
       settlement-severance-penalty:
-        RURAL: 25.0
+        RURAL: 8.0
         URBAN: 1000.0
-        INDUSTRIAL: 150.0
+        INDUSTRIAL: 100.0
 
     demographic:
       block-very-high-urban-density-core: false

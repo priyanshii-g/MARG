@@ -533,18 +533,9 @@ public class HighwayNetworkPlannerService {
         // Settlement buffers/cores, and Railway ROB crossings, while permitting tie-in onto target roads.
         List<CostLayer> spurLayers = new ArrayList<>(terrainAndSocialSpurLayers);
         spurLayers.add(buildRailwayOnlySpurLayer(policy));
-        CostSurface spurSurface = new CompositeCostSurface(spurLayers);
-        List<CostLayer> lastResortSpurLayers = new ArrayList<>(spurLayers.size());
-        for (CostLayer layer : spurLayers) {
-            if (layer instanceof BuildingFootprintCostLayer bcl) {
-                lastResortSpurLayers.add(bcl.withDenseColonyLastResortMode());
-            } else if (layer instanceof SettlementCostLayer scl) {
-                lastResortSpurLayers.add(scl.withUrbanCoreLastResortMode());
-            } else {
-                lastResortSpurLayers.add(layer);
-            }
-        }
-        CostSurface lastResortSpurSurface = new CompositeCostSurface(lastResortSpurLayers);
+        CompositeCostSurface spurSurface = new CompositeCostSurface(spurLayers);
+        CostSurface denseColonyFallbackSpurSurface = spurSurface.withDenseColonyLastResortMode();
+        CostSurface geoHazardFallbackSpurSurface = spurSurface.withAllGeoHazardLastResortMode();
 
         List<PlannedInterchange> interchanges = new ArrayList<>();
         List<PlannedFeederSpur> feederSpurs = new ArrayList<>();
@@ -592,12 +583,14 @@ public class HighwayNetworkPlannerService {
                     immutable);
             interchanges.add(ic);
 
+            GeoPoint spurTargetTieIn = resolveDryStableHubTieIn(fullRegion, hub, spurSurface, mode);
             List<GeoPoint> spurPath = routeDedicatedSpur(
                     fullRegion,
                     chosen.point(),
-                    hub.bypassTieIn(),
+                    spurTargetTieIn,
                     spurSurface,
-                    lastResortSpurSurface);
+                    denseColonyFallbackSpurSurface,
+                    geoHazardFallbackSpurSurface);
             if (!spurPath.isEmpty()) {
                 double spurLengthKm = router.routeLengthKm(spurPath);
                 feederSpurs.add(new PlannedFeederSpur(
@@ -1249,47 +1242,101 @@ public class HighwayNetworkPlannerService {
                 && tc != TransportCorridorClass.RAILWAY_BUFFER;
     }
 
+    /**
+     * If a hub's default road tie-in lies inside a High/Severe flood zone or Active/High landslide
+     * hazard (penalty >= 25.0 or blocked on spurSurface), shifts the spur tie-in onto the nearest
+     * dry, stable stretch of existing arterial road within 3.5 km so connecting roads avoid
+     * floodplains and unstable scarps.
+     */
+    private GeoPoint resolveDryStableHubTieIn(
+            StudyRegion fullRegion,
+            RegionalHub hub,
+            CostSurface spurSurface,
+            FacilityMode mode) {
+        GeoPoint defaultTie = hub.bypassTieIn();
+        if (defaultTie == null || spurSurface == null || vectorIndex == null) {
+            return defaultTie;
+        }
+        CostAssessment curr = spurSurface.assess(defaultTie);
+        if (!curr.blocked() && curr.penaltyMultiplier() < 15.0) {
+            return defaultTie;
+        }
+        TransportNetworkVectorIndex.NearestRoadTieIn dryTie = vectorIndex.findNearestRoadTieIn(
+                hub.center(),
+                pt -> fullRegion.contains(pt)
+                        && projection.distanceMeters(defaultTie, pt) <= 5000.0
+                        && !spurSurface.assess(pt).blocked()
+                        && spurSurface.assess(pt).penaltyMultiplier() < 15.0,
+                mode);
+        if (dryTie != null && dryTie.tieInPoint() != null) {
+            return dryTie.tieInPoint();
+        }
+        return defaultTie;
+    }
+
     private List<GeoPoint> routeDedicatedSpur(
             StudyRegion fullRegion,
             GeoPoint interchangePoint,
             GeoPoint hubBypassTieIn,
             CostSurface spurSurface,
-            CostSurface lastResortSpurSurface) {
+            CostSurface denseColonyFallbackSpurSurface,
+            CostSurface geoHazardFallbackSpurSurface) {
 
         double directMeters = projection.distanceMeters(interchangePoint, hubBypassTieIn);
         if (directMeters <= 300.0) {
-            boolean directSafe = buildingVectorIndex == null
+            boolean directSafe = (buildingVectorIndex == null
                     || !buildingVectorIndex.hasSegmentBuildingOrExclusionConflict(
-                            interchangePoint, hubBypassTieIn, 20.0, 75.0);
+                            interchangePoint, hubBypassTieIn, 20.0, 75.0))
+                    && (spurSurface == null
+                    || (!spurSurface.assess(hubBypassTieIn).blocked()
+                    && !spurSurface.assessEdge(interchangePoint, hubBypassTieIn).blocked()));
             if (directSafe) {
                 return List.of(interchangePoint, hubBypassTieIn);
             }
         }
 
-        for (CostSurface activeSurface : new CostSurface[]{spurSurface, lastResortSpurSurface}) {
+        in.marg.routing.RouteConstraints spurConstraints =
+                in.marg.routing.RouteConstraints.forFacilityMode(null, FacilityMode.NATIONAL_HIGHWAY);
+        for (CostSurface activeSurface : new CostSurface[]{spurSurface, denseColonyFallbackSpurSurface, geoHazardFallbackSpurSurface}) {
             if (activeSurface == null) continue;
             for (double bufferDeg : new double[]{0.06, 0.12, 0.20, 0.35}) {
                 StudyRegion localWindow = localWindow(fullRegion, interchangePoint, hubBypassTieIn, bufferDeg);
                 try {
-                    return router.route(
+                    List<GeoPoint> rawSpur = router.route(
                             fullRegion,
                             interchangePoint,
                             hubBypassTieIn,
                             activeSurface,
                             SPUR_ROUTING_RESOLUTION_METERS,
-                            localWindow);
+                            localWindow,
+                            spurConstraints);
+                    return in.marg.routing.HorizontalCurveSmoother.smoothAndAudit(
+                            rawSpur,
+                            activeSurface,
+                            buildingVectorIndex,
+                            projection,
+                            localWindow,
+                            in.marg.routing.HorizontalCurveSmoother.CurveProfile.FEEDER_SPUR).smoothedPath();
                 } catch (RuntimeException ignored) {
                     // Expand local spur window on steep ridges or exclusion detours
                 }
             }
             try {
-                return router.route(
+                List<GeoPoint> rawSpur = router.route(
                         fullRegion,
                         interchangePoint,
                         hubBypassTieIn,
                         activeSurface,
                         SPUR_ROUTING_RESOLUTION_METERS,
-                        fullRegion);
+                        fullRegion,
+                        spurConstraints);
+                return in.marg.routing.HorizontalCurveSmoother.smoothAndAudit(
+                        rawSpur,
+                        activeSurface,
+                        buildingVectorIndex,
+                        projection,
+                        fullRegion,
+                        in.marg.routing.HorizontalCurveSmoother.CurveProfile.FEEDER_SPUR).smoothedPath();
             } catch (RuntimeException ignored) {
             }
         }
@@ -1887,7 +1934,9 @@ public class HighwayNetworkPlannerService {
         }
 
         // 14. Wetland Hydrological Mitigation Zones along the corridor
+        java.util.Set<String> emittedWetlandIds = new java.util.HashSet<>();
         for (PlannedWetlandMitigationZone wmz : plan.wetlandMitigationZones()) {
+            emittedWetlandIds.add(wmz.wetlandId());
             Map<String, Object> wmzProps = new LinkedHashMap<>();
             wmzProps.put("featureRole", "WETLAND_HYDROLOGIC_MITIGATION_ZONE");
             wmzProps.put("zoneId", wmz.zoneId());
@@ -1904,6 +1953,9 @@ public class HighwayNetworkPlannerService {
             wmzProps.put("buffer250mAreaHectares", wmz.buffer250mAreaHectares());
             wmzProps.put("clearanceFromDirectRowEdgeMeters", wmz.clearanceFromDirectRowEdgeMeters());
             wmzProps.put("recommendedMitigation", wmz.recommendedMitigation());
+            wmzProps.put("recommendedEngineeringMitigation", wmz.recommendedMitigation());
+            wmzProps.put("centroidLat", wmz.point().lat());
+            wmzProps.put("centroidLon", wmz.point().lon());
 
             features.add(Map.of(
                     "type", "Feature",
@@ -1911,6 +1963,155 @@ public class HighwayNetworkPlannerService {
                     "geometry", Map.of(
                             "type", "Point",
                             "coordinates", List.of(wmz.point().lon(), wmz.point().lat()))));
+        }
+
+        // 15. Corridor Wetlands Polygons & Micro-Drainage Channels (L13 Map Context Overlay)
+        if (drainageVectorIndex != null) {
+            double cMinLat = sMinLat - 0.22;
+            double cMaxLat = sMaxLat + 0.22;
+            double cMinLon = sMinLon - 0.22;
+            double cMaxLon = sMaxLon + 0.22;
+            boolean hasMainlineBbox = !mainline.isEmpty() && Double.isFinite(sMinLat);
+
+            for (DrainageWetlandVectorIndex.WetlandPolygon wp : drainageVectorIndex.allWetlands()) {
+                GeoPoint cg = wp.centroidGeo();
+                if (hasMainlineBbox && (cg.lat() < cMinLat || cg.lat() > cMaxLat
+                        || cg.lon() < cMinLon || cg.lon() > cMaxLon)) {
+                    continue;
+                }
+                List<GeoPoint> ringPts = wp.boundaryRing();
+                if (ringPts == null || ringPts.size() < 4) {
+                    continue;
+                }
+                List<List<Double>> ringCoords = new ArrayList<>(ringPts.size() + 1);
+                for (GeoPoint rp : ringPts) {
+                    ringCoords.add(List.of(
+                            Math.round(rp.lon() * 100000.0) / 100000.0,
+                            Math.round(rp.lat() * 100000.0) / 100000.0));
+                }
+                if (!ringCoords.get(0).equals(ringCoords.get(ringCoords.size() - 1))) {
+                    ringCoords.add(ringCoords.get(0));
+                }
+                Map<String, Object> wpProps = new LinkedHashMap<>();
+                wpProps.put("featureRole", "CORRIDOR_WETLAND_POLYGON");
+                wpProps.put("wetlandId", wp.id());
+                wpProps.put("wetlandName", wp.name());
+                wpProps.put("wetlandCategory", wp.wetlandCategory());
+                wpProps.put("district", wp.district());
+                wpProps.put("watershedId", wp.watershedId());
+                wpProps.put("areaHectares", round(wp.areaHectares()));
+                wpProps.put("isProtectedBeel", wp.isProtectedBeel());
+                wpProps.put("isMitigatedNearRoute", emittedWetlandIds.contains(wp.id()));
+                wpProps.put("ecologicalAndHydrologicalSensitivity", wp.ecologicalAndHydrologicalSensitivity());
+                wpProps.put("recommendedMitigation", wp.recommendedMitigation());
+                wpProps.put("centroidLat", round(cg.lat()));
+                wpProps.put("centroidLon", round(cg.lon()));
+                features.add(Map.of(
+                        "type", "Feature",
+                        "properties", wpProps,
+                        "geometry", Map.of(
+                                "type", "Polygon",
+                                "coordinates", List.of(ringCoords))));
+            }
+
+            // Also include any authoritative Pan-India Wetlands Registry polygons within the corridor window
+            // that are not already covered by a local polygon centroid within ~1.2 km
+            if (hasMainlineBbox) {
+                for (in.marg.drainage.IndianWetlandRegistry.MappedWetland mw :
+                        in.marg.drainage.IndianWetlandRegistry.getDefaultInstance()
+                                .findWetlandsInWindow(cMinLat, cMinLon, cMaxLat, cMaxLon)) {
+                    boolean duplicate = false;
+                    for (DrainageWetlandVectorIndex.WetlandPolygon localWp : drainageVectorIndex.allWetlands()) {
+                        double dLat = localWp.centroidGeo().lat() - mw.centerLat();
+                        double dLon = localWp.centroidGeo().lon() - mw.centerLon();
+                        if (Math.hypot(dLat, dLon) < 0.012) {
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    if (duplicate) {
+                        continue;
+                    }
+                    List<List<Double>> ringCoords = new ArrayList<>(mw.polygonLonLat().size());
+                    for (double[] pt : mw.polygonLonLat()) {
+                        ringCoords.add(List.of(
+                                Math.round(pt[0] * 100000.0) / 100000.0,
+                                Math.round(pt[1] * 100000.0) / 100000.0));
+                    }
+                    Map<String, Object> mwProps = new LinkedHashMap<>();
+                    mwProps.put("featureRole", "CORRIDOR_WETLAND_POLYGON");
+                    mwProps.put("wetlandId", mw.id());
+                    mwProps.put("wetlandName", mw.name());
+                    mwProps.put("wetlandCategory", mw.wetlandCategory());
+                    mwProps.put("district", mw.district());
+                    mwProps.put("state", mw.state());
+                    mwProps.put("basin", mw.basin());
+                    mwProps.put("areaHectares", round(mw.areaHectares()));
+                    mwProps.put("isRamsar", mw.isRamsar());
+                    mwProps.put("isProtectedBeel", mw.isProtectedWetland());
+                    mwProps.put("legalStatute", mw.legalStatute());
+                    mwProps.put("recommendedMitigation", "WETLAND_AVOIDANCE_OR_PILE_VIADUCT_EQUALIZER_CAUSEWAY");
+                    mwProps.put("centroidLat", mw.centerLat());
+                    mwProps.put("centroidLon", mw.centerLon());
+                    features.add(Map.of(
+                            "type", "Feature",
+                            "properties", mwProps,
+                            "geometry", Map.of(
+                                    "type", "Polygon",
+                                    "coordinates", List.of(ringCoords))));
+                }
+            }
+
+            // Emit local seasonal streams, irrigation canals & drainage channels inside corridor bbox
+            double dMinLat = sMinLat - 0.16;
+            double dMaxLat = sMaxLat + 0.16;
+            double dMinLon = sMinLon - 0.16;
+            double dMaxLon = sMaxLon + 0.16;
+            int emittedChannels = 0;
+            for (DrainageWetlandVectorIndex.DrainageChannelLine dl : drainageVectorIndex.allDrainageLines()) {
+                if (emittedChannels >= 200) {
+                    break;
+                }
+                List<GeoPoint> pts = dl.coordinates();
+                if (pts == null || pts.size() < 2) {
+                    continue;
+                }
+                if (hasMainlineBbox) {
+                    boolean anyInside = false;
+                    for (GeoPoint p : pts) {
+                        if (p.lat() >= dMinLat && p.lat() <= dMaxLat
+                                && p.lon() >= dMinLon && p.lon() <= dMaxLon) {
+                            anyInside = true;
+                            break;
+                        }
+                    }
+                    if (!anyInside) {
+                        continue;
+                    }
+                }
+                List<List<Double>> lineCoords = new ArrayList<>(pts.size());
+                for (GeoPoint p : pts) {
+                    lineCoords.add(List.of(
+                            Math.round(p.lon() * 100000.0) / 100000.0,
+                            Math.round(p.lat() * 100000.0) / 100000.0));
+                }
+                Map<String, Object> dlProps = new LinkedHashMap<>();
+                dlProps.put("featureRole", "CORRIDOR_DRAINAGE_CHANNEL");
+                dlProps.put("channelId", dl.id());
+                dlProps.put("channelName", dl.name());
+                dlProps.put("sublayerType", dl.sublayerType().name());
+                dlProps.put("strahlerOrder", dl.strahlerOrder());
+                dlProps.put("watershedId", dl.watershedId());
+                dlProps.put("designWidthMeters", round(dl.designWidthMeters()));
+                dlProps.put("recommendedStructureType", dl.recommendedStructureType());
+                features.add(Map.of(
+                        "type", "Feature",
+                        "properties", dlProps,
+                        "geometry", Map.of(
+                                "type", "LineString",
+                                "coordinates", lineCoords)));
+                emittedChannels++;
+            }
         }
 
         return List.copyOf(features);

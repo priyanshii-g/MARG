@@ -39,20 +39,20 @@ public class TransportCostPolicy {
     public static TransportCostPolicy defaultPolicy() {
         Map<TransportCorridorClass, Double> nodeDefaults = new EnumMap<>(TransportCorridorClass.class);
         nodeDefaults.put(TransportCorridorClass.NONE, 0.0);
-        nodeDefaults.put(TransportCorridorClass.ROAD_PARALLEL_BUFFER, 0.40);
-        nodeDefaults.put(TransportCorridorClass.MDR_CORRIDOR, 1.10);
-        nodeDefaults.put(TransportCorridorClass.SH_CORRIDOR, 1.60);
-        nodeDefaults.put(TransportCorridorClass.NH_CORRIDOR, 2.20);
-        nodeDefaults.put(TransportCorridorClass.RAILWAY_BUFFER, 0.90);
-        nodeDefaults.put(TransportCorridorClass.RAILWAY_CORRIDOR, 3.50);
+        nodeDefaults.put(TransportCorridorClass.ROAD_PARALLEL_BUFFER, 1.20);
+        nodeDefaults.put(TransportCorridorClass.MDR_CORRIDOR, 2.00);
+        nodeDefaults.put(TransportCorridorClass.SH_CORRIDOR, 3.00);
+        nodeDefaults.put(TransportCorridorClass.NH_CORRIDOR, 4.00);
+        nodeDefaults.put(TransportCorridorClass.RAILWAY_BUFFER, 2.00);
+        nodeDefaults.put(TransportCorridorClass.RAILWAY_CORRIDOR, 6.00);
         nodeDefaults.put(TransportCorridorClass.NODATA, 0.0);
 
         Map<TransportCategory, Double> crossingDefaults = new EnumMap<>(TransportCategory.class);
-        crossingDefaults.put(TransportCategory.RAILWAY, 2.40);
-        crossingDefaults.put(TransportCategory.NATIONAL_HIGHWAY, 1.50);
-        crossingDefaults.put(TransportCategory.STATE_HIGHWAY, 0.95);
-        crossingDefaults.put(TransportCategory.MAJOR_DISTRICT_ROAD, 0.55);
-        crossingDefaults.put(TransportCategory.LOCAL_ROAD, 0.35);
+        crossingDefaults.put(TransportCategory.RAILWAY, 5.00);
+        crossingDefaults.put(TransportCategory.NATIONAL_HIGHWAY, 3.00);
+        crossingDefaults.put(TransportCategory.STATE_HIGHWAY, 1.80);
+        crossingDefaults.put(TransportCategory.MAJOR_DISTRICT_ROAD, 1.00);
+        crossingDefaults.put(TransportCategory.LOCAL_ROAD, 0.50);
 
         return new TransportCostPolicy(
                 nodeDefaults,

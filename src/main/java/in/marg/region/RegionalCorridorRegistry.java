@@ -41,6 +41,7 @@ import in.marg.routing.DrainageWetlandCostLayer;
 import in.marg.routing.GeotechLandslideCostLayer;
 import in.marg.routing.GreenfieldAStarRouter;
 import in.marg.routing.ProtectedAreaCostLayer;
+import in.marg.routing.RouteAlignmentPostRefiner;
 import in.marg.routing.RouteConstraints;
 import in.marg.routing.SettlementCostLayer;
 import in.marg.routing.SlopeCostLayer;
@@ -583,7 +584,7 @@ public class RegionalCorridorRegistry {
                             .filter(s -> !s.isEmpty())
                             .toList();
             return panIndiaService.routeDynamicPanIndia(
-                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, deep);
+                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, deep, maxVcRatio);
         }
 
         // Case 2: Explicit preset region ("assam", "western_ghats", "gangetic_plains")
@@ -667,7 +668,7 @@ public class RegionalCorridorRegistry {
                             .filter(s -> !s.isEmpty())
                             .toList();
             return panIndiaService.routeDynamicPanIndia(
-                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, deep);
+                    start, goal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, deep, maxVcRatio);
         }
 
         throw new IllegalArgumentException(
@@ -777,7 +778,7 @@ public class RegionalCorridorRegistry {
                                 .filter(s -> !s.isEmpty())
                                 .toList();
                 return panIndiaService.routeDynamicPanIndia(
-                        requestedStart, requestedGoal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref);
+                        requestedStart, requestedGoal, mode, corridorBufferDeg, maxDeviationPercent, hubList, autoConnectHubs, maxAutoHubs, pref, false, maxVcRatio);
             }
         }
 
@@ -882,18 +883,41 @@ public class RegionalCorridorRegistry {
 
             double baselineLengthKm = bundle.router().routeLengthKm(baseline);
 
-            RouteConstraints constraints = RouteConstraints.none();
+            RouteConstraints constraints = RouteConstraints.forFacilityMode(null, mode);
             if (effectiveMaxDev != null) {
                 if (!Double.isFinite(effectiveMaxDev)
                         || effectiveMaxDev < 0.0
                         || effectiveMaxDev > 200.0) {
                     throw new IllegalArgumentException("maxDeviationPercent must be between 0 and 200");
                 }
-                double maxLengthKm = baselineLengthKm * (1.0 + effectiveMaxDev / 100.0);
-                constraints = RouteConstraints.maxLengthKm(maxLengthKm);
+                // Fair detour floor: if the raw straight line illegally slices through hard-blocked
+                // Protected Areas, base the user's +X% detour allowance on the shortest sanctuary-legal
+                // path so soft layers (Forest, Steep Hills, Buildings, Transport) aren't starved.
+                double legalFloorLengthKm = baselineLengthKm;
+                ProtectedAreaCostLayer paOnlyLayer = new ProtectedAreaCostLayer(bundle.protectedAreaProvider());
+                if (RouteAlignmentPostRefiner.crossesProtectedArea(baseline, paOnlyLayer)) {
+                    try {
+                        List<GeoPoint> legalFloorPath = bundle.router().route(
+                                fullRegion,
+                                start,
+                                goal,
+                                new CompositeCostSurface(List.of(paOnlyLayer)),
+                                ROUTING_RESOLUTION_METERS,
+                                searchWindow);
+                        legalFloorLengthKm = Math.max(baselineLengthKm, bundle.router().routeLengthKm(legalFloorPath));
+                    } catch (RuntimeException ignored) {
+                        legalFloorLengthKm = baselineLengthKm;
+                    }
+                }
+                double maxLengthKm = legalFloorLengthKm * (1.0 + effectiveMaxDev / 100.0);
+                constraints = RouteConstraints.forFacilityMode(maxLengthKm, mode);
             }
 
-            // Stage 3: Route 13-Layer Greenfield Mainline (Hard-block dense colonies, fallback to 1000x barrier if surrounded)
+            // Stage 3: Route 13-Layer Greenfield Mainline
+            // Tier 1: Strict hard-blocks (dense colonies + >30 deg vertices & sub-grid edges + active landslides + severe flood)
+            // Tier 2: Relax only sub-grid >30 deg slope edges to 500x barrier (keeps active landslides, severe flood & dense colonies hard-blocked)
+            // Tier 3: Relax dense colonies (1000x) and sub-grid slope edges (500x) (keeps active landslides & severe flood hard-blocked)
+            // Tier 4: Absolute last-resort barrier for active landslides (2500x) & severe flood (150x) if valley/pass is completely sealed
             try {
                 mainline = bundle.router().route(
                         fullRegion,
@@ -904,14 +928,36 @@ public class RegionalCorridorRegistry {
                         searchWindow,
                         constraints);
             } catch (RuntimeException primaryBlocked) {
-                mainline = bundle.router().route(
-                        fullRegion,
-                        start,
-                        goal,
-                        built.surface().withDenseColonyLastResortMode(),
-                        ROUTING_RESOLUTION_METERS,
-                        searchWindow,
-                        constraints);
+                try {
+                    mainline = bundle.router().route(
+                            fullRegion,
+                            start,
+                            goal,
+                            built.surface().withSlopeEdgeLastResortMode(),
+                            ROUTING_RESOLUTION_METERS,
+                            searchWindow,
+                            constraints);
+                } catch (RuntimeException slopeFallbackBlocked) {
+                    try {
+                        mainline = bundle.router().route(
+                                fullRegion,
+                                start,
+                                goal,
+                                built.surface().withDenseColonyLastResortMode(),
+                                ROUTING_RESOLUTION_METERS,
+                                searchWindow,
+                                constraints);
+                    } catch (RuntimeException denseColonyFallbackBlocked) {
+                        mainline = bundle.router().route(
+                                fullRegion,
+                                start,
+                                goal,
+                                built.surface().withAllGeoHazardLastResortMode(),
+                                ROUTING_RESOLUTION_METERS,
+                                searchWindow,
+                                constraints);
+                    }
+                }
             }
         } else {
             // Adaptive corridor stage windows across long corridors (> 72 km) to preserve 250 m IRC grid resolution
@@ -932,13 +978,13 @@ public class RegionalCorridorRegistry {
                         ROUTING_RESOLUTION_METERS,
                         stageWindow);
 
-                RouteConstraints stageConstraints = RouteConstraints.none();
+                RouteConstraints stageConstraints = RouteConstraints.forFacilityMode(null, mode);
                 if (effectiveMaxDev != null
                         && Double.isFinite(effectiveMaxDev)
                         && effectiveMaxDev >= 0.0
                         && effectiveMaxDev <= 200.0) {
                     double maxStageKm = bundle.router().routeLengthKm(stageBaseline) * (1.0 + effectiveMaxDev / 100.0);
-                    stageConstraints = RouteConstraints.maxLengthKm(maxStageKm);
+                    stageConstraints = RouteConstraints.forFacilityMode(maxStageKm, mode);
                 }
 
                 List<GeoPoint> stageMainline;
@@ -952,14 +998,36 @@ public class RegionalCorridorRegistry {
                             stageWindow,
                             stageConstraints);
                 } catch (RuntimeException primaryBlocked) {
-                    stageMainline = bundle.router().route(
-                            fullRegion,
-                            stageStart,
-                            stageGoal,
-                            built.surface().withDenseColonyLastResortMode(),
-                            ROUTING_RESOLUTION_METERS,
-                            stageWindow,
-                            stageConstraints);
+                    try {
+                        stageMainline = bundle.router().route(
+                                fullRegion,
+                                stageStart,
+                                stageGoal,
+                                built.surface().withSlopeEdgeLastResortMode(),
+                                ROUTING_RESOLUTION_METERS,
+                                stageWindow,
+                                stageConstraints);
+                    } catch (RuntimeException slopeFallbackBlocked) {
+                        try {
+                            stageMainline = bundle.router().route(
+                                    fullRegion,
+                                    stageStart,
+                                    stageGoal,
+                                    built.surface().withDenseColonyLastResortMode(),
+                                    ROUTING_RESOLUTION_METERS,
+                                    stageWindow,
+                                    stageConstraints);
+                        } catch (RuntimeException denseColonyFallbackBlocked) {
+                            stageMainline = bundle.router().route(
+                                    fullRegion,
+                                    stageStart,
+                                    stageGoal,
+                                    built.surface().withAllGeoHazardLastResortMode(),
+                                    ROUTING_RESOLUTION_METERS,
+                                    stageWindow,
+                                    stageConstraints);
+                        }
+                    }
                 }
 
                 appendPathSegment(baseline, stageBaseline);
@@ -1047,6 +1115,23 @@ public class RegionalCorridorRegistry {
             mainline = stitched;
         }
 
+        // Surgical lateral micro-shift (35–95 m) around isolated roadside buildings inside Direct RoW
+        double rowHalfWidthForRefine = mode == FacilityMode.EXPRESSWAY ? 30.0 : 22.5;
+        mainline = RouteAlignmentPostRefiner.refineAroundIsolatedBuildings(
+                mainline, bldIdx, built.surface(), bundle.projection(), searchWindow, rowHalfWidthForRefine);
+
+        // IRC horizontal curve smoothing (string-pulling + circular arc filleting with full 13-layer verification)
+        in.marg.routing.HorizontalCurveSmoother.SmoothingResult curveSmoothing =
+                in.marg.routing.HorizontalCurveSmoother.smoothAndAudit(
+                        mainline,
+                        built.surface(),
+                        bldIdx,
+                        bundle.projection(),
+                        searchWindow,
+                        in.marg.routing.HorizontalCurveSmoother.CurveProfile.forFacilityMode(mode));
+        mainline = curveSmoothing.smoothedPath();
+        Map<String, Object> horizontalGeometryAudit = curveSmoothing.report().toMap();
+
         double totalTerminalAccessRoadLengthKm = round(startConnectorKm + goalConnectorKm);
         double routeLengthKm = bundle.router().routeLengthKm(mainline);
         double deviationPercent = baselineLengthKm > 0.0
@@ -1060,7 +1145,8 @@ public class RegionalCorridorRegistry {
                 hubEvaluation,
                 built.terrainAndSocialLayers());
 
-        Map<String, Object> routeDiagnostics = bundle.routeMetricsService().summarize(mainline, mode);
+        Map<String, Object> routeDiagnostics = new LinkedHashMap<>(bundle.routeMetricsService().summarize(mainline, mode));
+        routeDiagnostics.put("horizontalGeometryAudit", horizontalGeometryAudit);
         var flood = built.floodPreload().mosaic();
 
         Map<String, Object> terminalRoadConnections = buildTerminalRoadConnectionsMetadata(
@@ -1078,6 +1164,7 @@ public class RegionalCorridorRegistry {
         metadata.put("lazyLoadedOnThisRequest", !wasAlreadyLoaded);
         metadata.put("endpointResolution", endpointResolution.toMetadataMap());
         metadata.put("terminalRoadConnections", terminalRoadConnections);
+        metadata.put("horizontalGeometryAudit", horizontalGeometryAudit);
         metadata.put("routeDiagnostics", routeDiagnostics);
         metadata.put("facilityMode", mode.name());
         metadata.put("accessibilityPullApplied", built.accessibilityPullApplied());
@@ -1102,6 +1189,11 @@ public class RegionalCorridorRegistry {
                 "WETLANDS_SEASONAL_STREAMS_AND_DRAINAGE"
         ));
 
+        List<Map<String, Object>> capacityAlertMaps = hubEvaluation.capacityAlerts().stream()
+                .map(HubEvaluationService.CapacityAlert::toMap)
+                .toList();
+        metadata.put("trafficCapacityAlerts", capacityAlertMaps);
+
         metadata.put("hubEvaluationPipeline", Map.of(
                 "facilityMode", mode.name(),
                 "minHubPopulationApplied", hubEvaluation.minHubPopulationApplied(),
@@ -1114,7 +1206,8 @@ public class RegionalCorridorRegistry {
                         .toList(),
                 "hubDecisions", hubEvaluation.decisions().stream()
                         .map(HubEvaluationService.HubDecision::toMap)
-                        .toList()
+                        .toList(),
+                "capacityAlerts", capacityAlertMaps
         ));
 
         Map<String, Object> networkAndCapacitySummary = new LinkedHashMap<>();
@@ -1262,17 +1355,37 @@ public class RegionalCorridorRegistry {
         metadata.put("alignmentPreference", pref.toMap());
 
         Map<String, Object> baselineDiagnostics = bundle.routeMetricsService().summarize(baseline, mode, false);
-        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
-                routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode);
-        List<Map<String, Object>> routeLayerProfile = bundle.routeMetricsService().sampleRouteLayerProfile(mainline);
+        HighwayNetworkPlannerService.SpurEngineeringAnalysis spurAnalysis =
+                bundle.networkPlannerService().analyzeFeederSpurStructures(networkPlan);
+
+        List<in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry> spurDiagEntries = new ArrayList<>();
+        List<in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry> baselineSpurDiagEntries = new ArrayList<>();
         List<Map<String, Object>> spurLayerProfiles = new ArrayList<>();
         for (HighwayNetworkPlannerService.PlannedFeederSpur spur : networkPlan.feederSpurs()) {
             if (spur.path() != null && spur.path().size() >= 2) {
+                String hubName = spur.hub() != null ? spur.hub().name() : "Regional Hub";
                 Map<String, Object> sp = new LinkedHashMap<>();
                 sp.put("spurId", spur.spurId());
-                sp.put("servedHubName", spur.hub() != null ? spur.hub().name() : "Regional Hub");
+                sp.put("servedHubName", hubName);
                 sp.put("samples", bundle.routeMetricsService().sampleRouteLayerProfile(spur.path()));
                 spurLayerProfiles.add(sp);
+
+                Map<String, Object> spDiag = bundle.routeMetricsService().summarize(
+                        spur.path(), FacilityMode.NATIONAL_HIGHWAY, false);
+                spurDiagEntries.add(new in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry(
+                        spur.spurId(), hubName, spur.spurLengthKm(), spDiag));
+
+                // Apples-to-apples Straight-Line Baseline Feeder Spur for this same hub
+                GeoPoint hubTarget = spur.path().get(spur.path().size() - 1);
+                List<GeoPoint> straightSpurPath = RouteAlignmentPostRefiner.buildStraightLineSpurPath(
+                        baseline, hubTarget, bundle.projection(), ROUTING_RESOLUTION_METERS);
+                if (straightSpurPath.size() >= 2) {
+                    double baseSpurLenKm = bundle.router().routeLengthKm(straightSpurPath);
+                    Map<String, Object> baseSpDiag = bundle.routeMetricsService().summarize(
+                            straightSpurPath, FacilityMode.NATIONAL_HIGHWAY, false);
+                    baselineSpurDiagEntries.add(new in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry(
+                            "BASE-" + spur.spurId(), hubName, baseSpurLenKm, baseSpDiag));
+                }
             }
         }
         if (startConnectorPath != null && startConnectorPath.size() >= 2) {
@@ -1290,8 +1403,10 @@ public class RegionalCorridorRegistry {
             spurLayerProfiles.add(sp);
         }
 
-        HighwayNetworkPlannerService.SpurEngineeringAnalysis spurAnalysis =
-                bundle.networkPlannerService().analyzeFeederSpurStructures(networkPlan);
+        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
+                routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode,
+                spurDiagEntries, baselineSpurDiagEntries, spurAnalysis.summary());
+        List<Map<String, Object>> routeLayerProfile = bundle.routeMetricsService().sampleRouteLayerProfile(mainline);
 
         metadata.put("layerAudit", layerAudit);
         metadata.put("routeLayerProfile", routeLayerProfile);
@@ -1779,13 +1894,13 @@ public class RegionalCorridorRegistry {
         LulcRoutingProperties out = props != null ? props : new LulcRoutingProperties();
         if (out.getPenalties() == null || out.getPenalties().isEmpty()) {
             Map<String, Double> lulcPen = new LinkedHashMap<>();
-            lulcPen.put("BUILT_UP", 1.5);
-            lulcPen.put("FOREST", 0.8);
-            lulcPen.put("WETLAND_WATER", 2.0);
-            lulcPen.put("AGRICULTURE", 0.25);
+            lulcPen.put("BUILT_UP", 3.5);
+            lulcPen.put("FOREST", 2.8);
+            lulcPen.put("WETLAND_WATER", 4.0);
+            lulcPen.put("AGRICULTURE", 0.30);
             lulcPen.put("GRASS_GRAZING", 0.10);
             lulcPen.put("BARREN_WASTELAND", 0.0);
-            lulcPen.put("SNOW", 2.5);
+            lulcPen.put("SNOW", 3.5);
             lulcPen.put("UNKNOWN", 1.0);
             out.setPenalties(lulcPen);
         }
@@ -1801,10 +1916,10 @@ public class RegionalCorridorRegistry {
         if (out.getPenalties() == null || out.getPenalties().isEmpty()) {
             Map<String, Double> floodPen = new LinkedHashMap<>();
             floodPen.put("VERY_LOW", 0.0);
-            floodPen.put("LOW", 0.20);
-            floodPen.put("MODERATE", 0.60);
-            floodPen.put("HIGH", 1.50);
-            floodPen.put("VERY_HIGH", 3.00);
+            floodPen.put("LOW", 0.40);
+            floodPen.put("MODERATE", 3.50);
+            floodPen.put("HIGH", 22.00);
+            floodPen.put("VERY_HIGH", 60.00);
             floodPen.put("NOT_IN_HAZARD_LAYER", 0.0);
             floodPen.put("UNKNOWN", 2.00);
             out.setPenalties(floodPen);

@@ -93,6 +93,9 @@ public class CompositeRoutingController {
     @Autowired(required = false)
     private in.marg.settlement.SettlementRasterProvider settlementRasterProvider;
 
+    @Autowired(required = false)
+    private in.marg.routing.ProtectedAreaCostLayer protectedAreaCostLayer;
+
     public CompositeRoutingController(
             StudyRegion region,
             GreenfieldAStarRouter router,
@@ -805,7 +808,7 @@ public class CompositeRoutingController {
             }
         }
 
-        RouteConstraints constraints = RouteConstraints.none();
+        RouteConstraints constraints = RouteConstraints.forFacilityMode(null, mode);
         if (effectiveMaxDev != null) {
             if (!Double.isFinite(effectiveMaxDev)
                     || effectiveMaxDev < 0.0
@@ -813,11 +816,29 @@ public class CompositeRoutingController {
                 throw new IllegalArgumentException(
                         "maxDeviationPercent must be between 0 and 200");
             }
-            double maxLengthKm = baselineLengthKm * (1.0 + effectiveMaxDev / 100.0);
-            constraints = RouteConstraints.maxLengthKm(maxLengthKm);
+            double legalFloorLengthKm = baselineLengthKm;
+            if (protectedAreaCostLayer != null && in.marg.routing.RouteAlignmentPostRefiner.crossesProtectedArea(baseline, protectedAreaCostLayer)) {
+                try {
+                    List<GeoPoint> legalFloorPath = router.route(
+                            this.region,
+                            start,
+                            goal,
+                            new in.marg.routing.CompositeCostSurface(List.of(protectedAreaCostLayer)),
+                            ROUTING_RESOLUTION_METERS,
+                            searchWindow);
+                    legalFloorLengthKm = Math.max(baselineLengthKm, router.routeLengthKm(legalFloorPath));
+                } catch (RuntimeException ignored) {
+                    legalFloorLengthKm = baselineLengthKm;
+                }
+            }
+            double maxLengthKm = legalFloorLengthKm * (1.0 + effectiveMaxDev / 100.0);
+            constraints = RouteConstraints.forFacilityMode(maxLengthKm, mode);
         }
 
-        // Stage 3: Route Greenfield Mainline (Hard-block dense colonies, fallback to 1000x barrier if surrounded)
+        // Stage 3: Route Greenfield Mainline
+        // Tier 1: Strict hard-blocks (dense colonies + >30 deg vertices & sub-grid edges)
+        // Tier 2: Relax only sub-grid >30 deg slope edges to 500x barrier (keeps dense colonies hard-blocked)
+        // Tier 3: Last-resort barrier for dense colonies (1000x) and sub-grid slope edges (500x)
         List<GeoPoint> mainline;
         try {
             mainline = router.route(
@@ -829,15 +850,52 @@ public class CompositeRoutingController {
                     searchWindow,
                     constraints);
         } catch (RuntimeException primaryBlocked) {
-            mainline = router.route(
-                    this.region,
-                    start,
-                    goal,
-                    built.surface().withDenseColonyLastResortMode(),
-                    ROUTING_RESOLUTION_METERS,
-                    searchWindow,
-                    constraints);
+            try {
+                mainline = router.route(
+                        this.region,
+                        start,
+                        goal,
+                        built.surface().withSlopeEdgeLastResortMode(),
+                        ROUTING_RESOLUTION_METERS,
+                        searchWindow,
+                        constraints);
+            } catch (RuntimeException slopeFallbackBlocked) {
+                try {
+                    mainline = router.route(
+                            this.region,
+                            start,
+                            goal,
+                            built.surface().withDenseColonyLastResortMode(),
+                            ROUTING_RESOLUTION_METERS,
+                            searchWindow,
+                            constraints);
+                } catch (RuntimeException denseColonyFallbackBlocked) {
+                    mainline = router.route(
+                            this.region,
+                            start,
+                            goal,
+                            built.surface().withAllGeoHazardLastResortMode(),
+                            ROUTING_RESOLUTION_METERS,
+                            searchWindow,
+                            constraints);
+                }
+            }
         }
+
+        double rowHalfWidthForRefine = mode == FacilityMode.EXPRESSWAY ? 30.0 : 22.5;
+        mainline = in.marg.routing.RouteAlignmentPostRefiner.refineAroundIsolatedBuildings(
+                mainline, buildingVectorIndex, built.surface(), projection, searchWindow, rowHalfWidthForRefine);
+
+        in.marg.routing.HorizontalCurveSmoother.SmoothingResult curveSmoothing =
+                in.marg.routing.HorizontalCurveSmoother.smoothAndAudit(
+                        mainline,
+                        built.surface(),
+                        buildingVectorIndex,
+                        projection,
+                        searchWindow,
+                        in.marg.routing.HorizontalCurveSmoother.CurveProfile.forFacilityMode(mode));
+        mainline = curveSmoothing.smoothedPath();
+        Map<String, Object> horizontalGeometryAudit = curveSmoothing.report().toMap();
 
         double routeLengthKm = router.routeLengthKm(mainline);
         double deviationPercent =
@@ -903,7 +961,8 @@ public class CompositeRoutingController {
                         hubEvaluation,
                         built.terrainAndSocialLayers());
 
-        Map<String, Object> routeDiagnostics = routeMetrics.summarize(mainline, mode);
+        Map<String, Object> routeDiagnostics = new LinkedHashMap<>(routeMetrics.summarize(mainline, mode));
+        routeDiagnostics.put("horizontalGeometryAudit", horizontalGeometryAudit);
 
         var flood = built.floodPreload().mosaic();
 
@@ -914,6 +973,7 @@ public class CompositeRoutingController {
         if (terminalRoadConnections != null) {
             metadata.put("terminalRoadConnections", terminalRoadConnections);
         }
+        metadata.put("horizontalGeometryAudit", horizontalGeometryAudit);
         metadata.put("routeDiagnostics", routeDiagnostics);
         metadata.put("facilityMode", mode.name());
         metadata.put("accessibilityPullApplied", built.accessibilityPullApplied());
@@ -957,6 +1017,11 @@ public class CompositeRoutingController {
                 "protectedAreaRule",
                 "PROTECTED_AREA and PROTECTED_AREA_NODATA are hard constraints");
 
+        List<Map<String, Object>> capacityAlertMaps = hubEvaluation.capacityAlerts().stream()
+                .map(HubEvaluationService.CapacityAlert::toMap)
+                .toList();
+        metadata.put("trafficCapacityAlerts", capacityAlertMaps);
+
         metadata.put(
                 "hubEvaluationPipeline",
                 Map.of(
@@ -971,7 +1036,8 @@ public class CompositeRoutingController {
                                 .toList(),
                         "hubDecisions", hubEvaluation.decisions().stream()
                                 .map(HubEvaluationService.HubDecision::toMap)
-                                .toList()));
+                                .toList(),
+                        "capacityAlerts", capacityAlertMaps));
 
         Map<String, Object> networkAndCapacitySummary = new LinkedHashMap<>();
         networkAndCapacitySummary.put("mainlineLengthKm", networkPlan.mainlineLengthKm());
@@ -1295,21 +1361,42 @@ public class CompositeRoutingController {
         }
 
         Map<String, Object> baselineDiagnostics = routeMetrics.summarize(baseline, mode, false);
-        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
-                routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode);
-        List<Map<String, Object>> routeLayerProfile = routeMetrics.sampleRouteLayerProfile(mainline);
+        HighwayNetworkPlannerService.SpurEngineeringAnalysis spurAnalysis =
+                networkPlannerService.analyzeFeederSpurStructures(networkPlan);
+
+        List<in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry> spurDiagEntries = new java.util.ArrayList<>();
+        List<in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry> baselineSpurDiagEntries = new java.util.ArrayList<>();
         List<Map<String, Object>> spurLayerProfiles = new java.util.ArrayList<>();
         for (HighwayNetworkPlannerService.PlannedFeederSpur spur : networkPlan.feederSpurs()) {
             if (spur.path() != null && spur.path().size() >= 2) {
+                String hubName = spur.hub() != null ? spur.hub().name() : "Regional Hub";
                 Map<String, Object> sp = new LinkedHashMap<>();
                 sp.put("spurId", spur.spurId());
-                sp.put("servedHubName", spur.hub() != null ? spur.hub().name() : "Regional Hub");
+                sp.put("servedHubName", hubName);
                 sp.put("samples", routeMetrics.sampleRouteLayerProfile(spur.path()));
                 spurLayerProfiles.add(sp);
+
+                Map<String, Object> spDiag = routeMetrics.summarize(
+                        spur.path(), FacilityMode.NATIONAL_HIGHWAY, false);
+                spurDiagEntries.add(new in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry(
+                        spur.spurId(), hubName, spur.spurLengthKm(), spDiag));
+
+                GeoPoint hubTarget = spur.path().get(spur.path().size() - 1);
+                List<GeoPoint> straightSpurPath = in.marg.routing.RouteAlignmentPostRefiner.buildStraightLineSpurPath(
+                        baseline, hubTarget, projection, ROUTING_RESOLUTION_METERS);
+                if (straightSpurPath.size() >= 2) {
+                    double baseSpurLenKm = router.routeLengthKm(straightSpurPath);
+                    Map<String, Object> baseSpDiag = routeMetrics.summarize(
+                            straightSpurPath, FacilityMode.NATIONAL_HIGHWAY, false);
+                    baselineSpurDiagEntries.add(new in.marg.routing.LayerVerificationAuditService.SpurDiagnosticsEntry(
+                            "BASE-" + spur.spurId(), hubName, baseSpurLenKm, baseSpDiag));
+                }
             }
         }
-        HighwayNetworkPlannerService.SpurEngineeringAnalysis spurAnalysis =
-                networkPlannerService.analyzeFeederSpurStructures(networkPlan);
+        List<Map<String, Object>> layerAudit = in.marg.routing.LayerVerificationAuditService.buildTier2Audit(
+                routeDiagnostics, baselineDiagnostics, networkPlan, terminalRoadConnections, mode,
+                spurDiagEntries, baselineSpurDiagEntries, spurAnalysis.summary());
+        List<Map<String, Object>> routeLayerProfile = routeMetrics.sampleRouteLayerProfile(mainline);
 
         metadata.put("layerAudit", layerAudit);
         metadata.put("routeLayerProfile", routeLayerProfile);
